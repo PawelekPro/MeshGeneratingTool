@@ -9,7 +9,7 @@ To compile and run this project, the following libraries are required:
    - [VTK Website](https://vtk.org/)
 
 2. **OpenCASCADE**
-   - Version: 7.7
+   - Version: 7.7.0
    - [OpenCASCADE Website](https://www.opencascade.com/)
 
 3. **Qt**
