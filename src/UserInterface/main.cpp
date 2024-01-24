@@ -6,18 +6,20 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication application(argc, argv);
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale : uiLanguages) {
+    for (const QString &locale : uiLanguages)
+    {
         const QString baseName = "meshGeneratorUI_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
+        if (translator.load(":/i18n/" + baseName))
+        {
+            application.installTranslator(&translator);
             break;
         }
     }
-    MainWindow w;
-    w.show();
-    return a.exec();
+    MainWindow window;
+    window.showMaximized();
+    return application.exec();
 }
