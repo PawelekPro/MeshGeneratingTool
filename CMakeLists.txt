@@ -38,6 +38,7 @@ message(STATUS "Qt major version: ${QT_VERSION_MAJOR}")
 set(UI_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
 set(FORMS_PATH "${UI_FILES}/Forms")
 set(CAD_MANAGER "${CMAKE_CURRENT_SOURCE_DIR}/src/CADManager")
+set(RENDERING_CORE "${UI_FILES}/Rendering")
 
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
@@ -45,6 +46,10 @@ set(PROJECT_SOURCES
     ${UI_FILES}/main.cpp
     ${UI_FILES}/mainwindow.cpp
     ${UI_FILES}/mainwindow.h
+    ${RENDERING_CORE}/QVTKRenderWindow.cpp
+    ${RENDERING_CORE}/QVTKRenderWindow.h
+    # ${CAD_MANAGER}/main.cpp
+    # ${CAD_MANAGER}/CADFileManager.cpp
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
