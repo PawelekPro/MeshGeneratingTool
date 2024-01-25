@@ -1,94 +1,77 @@
-#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkLookupTable.h>
 
 #include "QVTKRenderWindow.h"
+
+#include <QLayout>
+
 #include <vtkActor.h>
+#include <vtkAxesActor.h>
 #include <vtkCamera.h>
+#include <vtkCaptionActor2D.h>
 #include <vtkNamedColors.h>
+#include <vtkOrientationMarkerWidget.h>
 #include <vtkPlatonicSolidSource.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkRenderer.h>
-
-namespace
-{
-/** Get a specialised lookup table for the platonic solids.
- *
- * @return The lookup table.
- */
-vtkNew<vtkLookupTable> GetPlatonicLUT();
-} // namespace
+#include <vtkProperty.h>
+#include <vtkTextProperty.h>
 
 namespace Rendering
 {
 
-QVTKRenderWindow::QVTKRenderWindow(QVTKOpenGLNativeWidget *vtkWidget)
-    : _vtkWidget(vtkWidget)
+QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
+    : _widget(widget)
 {
+    _vtkWidget = new QVTKOpenGLNativeWidget();
+    _renderer = vtkSmartPointer<vtkRenderer>::New();
+    _vtkWidget->setRenderWindow(vtkGenericOpenGLRenderWindow::New());
+    _vtkWidget->renderWindow()->AddRenderer(_renderer);
+    _vtkWidget->setFocusPolicy(Qt::StrongFocus);
+    generateCoordinateSystemAxes();
 
-    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
-    _vtkWidget->setRenderWindow(renderWindow);
-
+    // Background color
     vtkNew<vtkNamedColors> colors;
+    _renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 
-    auto lut = GetPlatonicLUT();
-
-    vtkNew<vtkPlatonicSolidSource> source;
-    source->SetSolidTypeToIcosahedron();
-
-    vtkNew<vtkPolyDataMapper> mapper;
-    mapper->SetInputConnection(source->GetOutputPort());
-    mapper->SetLookupTable(lut);
-    mapper->SetScalarRange(0, 19);
-
-    vtkNew<vtkActor> actor;
-    actor->SetMapper(mapper);
-
-    vtkNew<vtkRenderer> renderer;
-    renderer->AddActor(actor);
-    renderer->GetActiveCamera()->Azimuth(180.0);
-    renderer->ResetCamera();
-    renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
-
-    this->_vtkWidget->renderWindow()->AddRenderer(renderer);
-    this->_vtkWidget->renderWindow()->SetWindowName(
-        "RenderWindowUISingleInheritance");
-
-    // Add the actors to the scene.
-    renderer->AddActor(actor);
-    renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
+    _renderer->ResetCamera();
+    _widget->layout()->addWidget(_vtkWidget);
 }
+
+QVTKRenderWindow::~QVTKRenderWindow() { }
+
+void QVTKRenderWindow::generateCoordinateSystemAxes()
+{
+    vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+    _vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+
+    vtkSmartPointer<vtkProperty> shaftProps[] = {
+        axes->GetXAxisShaftProperty(), axes->GetYAxisShaftProperty(),
+        axes->GetZAxisShaftProperty()
+    };
+
+    vtkSmartPointer<vtkProperty> tipProps[] = {
+        axes->GetXAxisTipProperty(), axes->GetYAxisTipProperty(),
+        axes->GetZAxisTipProperty()
+    };
+
+    vtkSmartPointer<vtkTextProperty> labelProps[] = {
+        axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty(),
+        axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty(),
+        axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()
+    };
+
+    for (int i = 0; i < 3; ++i)
+    {
+        shaftProps[i]->SetColor(1.0, 1.0, 1.0);
+        tipProps[i]->SetColor(1.0, 1.0, 1.0);
+        labelProps[i]->ShadowOff();
+        labelProps[i]->ItalicOff();
+    }
+
+    _vtkAxesWidget->SetOrientationMarker(axes);
+    _vtkAxesWidget->SetInteractor(_vtkWidget->renderWindow()->GetInteractor());
+    _vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
+    _vtkAxesWidget->SetEnabled(1);
+    _vtkAxesWidget->InteractiveOn();
+}
+
 } // namespace Rendering
-
-namespace
-{
-
-vtkNew<vtkLookupTable> GetPlatonicLUT()
-{
-    vtkNew<vtkLookupTable> lut;
-    lut->SetNumberOfTableValues(20);
-    lut->SetTableRange(0.0, 19.0);
-    lut->Build();
-    lut->SetTableValue(0, 0.1, 0.1, 0.1);
-    lut->SetTableValue(1, 0, 0, 1);
-    lut->SetTableValue(2, 0, 1, 0);
-    lut->SetTableValue(3, 0, 1, 1);
-    lut->SetTableValue(4, 1, 0, 0);
-    lut->SetTableValue(5, 1, 0, 1);
-    lut->SetTableValue(6, 1, 1, 0);
-    lut->SetTableValue(7, 0.9, 0.7, 0.9);
-    lut->SetTableValue(8, 0.5, 0.5, 0.5);
-    lut->SetTableValue(9, 0.0, 0.0, 0.7);
-    lut->SetTableValue(10, 0.5, 0.7, 0.5);
-    lut->SetTableValue(11, 0, 0.7, 0.7);
-    lut->SetTableValue(12, 0.7, 0, 0);
-    lut->SetTableValue(13, 0.7, 0, 0.7);
-    lut->SetTableValue(14, 0.7, 0.7, 0);
-    lut->SetTableValue(15, 0, 0, 0.4);
-    lut->SetTableValue(16, 0, 0.4, 0);
-    lut->SetTableValue(17, 0, 0.4, 0.4);
-    lut->SetTableValue(18, 0.4, 0, 0);
-    lut->SetTableValue(19, 0.4, 0, 0.4);
-    return lut;
-}
-
-} // namespace
