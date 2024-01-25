@@ -18,13 +18,14 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-  public:
-    MainWindow(QWidget *parent = nullptr);
+public:
+    MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
-  private:
-    Ui::MainWindow *ui;
+private:
+    Ui::MainWindow* ui;
 
-    Rendering::QVTKRenderWindow *QVTKRender;
+    // Render window
+    Rendering::QVTKRenderWindow* QVTKRender;
 };
 #endif // MAINWINDOW_H

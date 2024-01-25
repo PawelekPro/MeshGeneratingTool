@@ -70,6 +70,6 @@ void QVTKRenderWindow::generateCoordinateSystemAxes()
     _vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
     _vtkAxesWidget->SetEnabled(1);
     _vtkAxesWidget->InteractiveOn();
-}
+};
 
 } // namespace Rendering

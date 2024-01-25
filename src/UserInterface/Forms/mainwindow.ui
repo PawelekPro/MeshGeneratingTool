@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>947</width>
-    <height>647</height>
+    <width>1046</width>
+    <height>754</height>
    </rect>
   </property>
   <property name="font">
@@ -43,11 +43,17 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QWidget" name="interactionWidget" native="true">
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <property name="leftMargin">
          <number>2</number>
@@ -126,7 +132,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>947</width>
+     <width>1046</width>
      <height>20</height>
     </rect>
    </property>
