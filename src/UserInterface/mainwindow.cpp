@@ -5,10 +5,10 @@
 
 #include <vtkCaptionActor2D.h>
 #include <vtkGenericOpenGLRenderWindow.h>
-#include <vtkNew.h>
+#include <vtkNamedColors.h>
+#include <vtkOrientationMarkerWidget.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkTextProperty.h>
 #include <vtkTransform.h>
@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QVTKRender = new Rendering::QVTKRenderWindow(ui->qvtkWidget);
+    QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 }
 
 MainWindow::~MainWindow()

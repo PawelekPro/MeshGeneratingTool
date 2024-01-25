@@ -111,9 +111,6 @@
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QVTKOpenGLNativeWidget" name="qvtkWidget"/>
-            </item>
            </layout>
           </widget>
          </widget>
@@ -154,13 +151,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QVTKOpenGLNativeWidget</class>
-   <extends>QOpenGLWidget</extends>
-   <header>QVTKOpenGLNativeWidget.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
