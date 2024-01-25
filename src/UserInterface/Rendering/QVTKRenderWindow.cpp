@@ -1,5 +1,3 @@
-#include <vtkLookupTable.h>
-
 #include "QVTKRenderWindow.h"
 
 #include <QLayout>
