@@ -87,9 +87,10 @@ std::string Importing::STEPFileReader::load(const std::string& fileName) {
 				auto message = "STEP: Transferring Shape " + stringStream.str();
 				vtkLogF(INFO, message.c_str());
 				if (stringStream.str().size() == 0) {
-					stringStream << "Solid";
+					stringStream << "Part";
 				}
 				partsMap[uniqueName] = solid;
+				std::cout << uniqueName.c_str() << std::endl;
 			}
 		}
 	}
@@ -97,7 +98,7 @@ std::string Importing::STEPFileReader::load(const std::string& fileName) {
 	return baseName;
 }
 
-std::string getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap) {
+std::string Importing::STEPFileReader::getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap) {
 	// find already existing path that match prefix
 	std::vector<std::string> allNames;
 	for (const auto& partsMapIt : partsMap) {
@@ -120,4 +121,5 @@ std::string getUniqueObjectName(std::string prefix, const Importing::PartsMap& p
 		}
 		i++;
 	}
+	return uniqueName;
 }
