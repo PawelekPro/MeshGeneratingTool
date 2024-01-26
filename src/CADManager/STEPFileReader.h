@@ -25,11 +25,10 @@ using PartsMap = std::map<std::string, TopoDS_Shape>;
 using Trinity = std::tuple<STEPCAFControl_Reader, Handle(TDocStd_Document), PartsMap>;
 
 class STEPFileReader {
-protected:
-	STEPFileReader() { }
-	~STEPFileReader() { }
 
 public:
+	STEPFileReader() { }
+	~STEPFileReader() { }
 	std::string load(const std::string& fileName);
 
 private:
