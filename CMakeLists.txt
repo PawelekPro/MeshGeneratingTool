@@ -48,8 +48,8 @@ set(PROJECT_SOURCES
     ${UI_FILES}/mainwindow.h
     ${RENDERING_CORE}/QVTKRenderWindow.cpp
     ${RENDERING_CORE}/QVTKRenderWindow.h
-    # ${CAD_MANAGER}/main.cpp
-    # ${CAD_MANAGER}/CADFileManager.cpp
+    ${CAD_MANAGER}/STEPFileReader.cpp
+    ${CAD_MANAGER}/STEPFileReader.h
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -63,23 +63,21 @@ if(OCC_FOUND)
     link_directories(${OCC_LIBRARY_DIR})
 endif()
 
-find_package(VTK COMPONENTS
-    CommonColor
-    CommonCore
-    CommonDataModel
-    CommonTransforms
-    FiltersSources
-    InteractionStyle
-    FiltersSources
-    RenderingAnnotation
-    RenderingContextOpenGL2
-    RenderingCore
-    RenderingFreeType
-    RenderingGL2PSOpenGL2
-    RenderingOpenGL2
-    GUISupportQt
-    RenderingQt
-)
+if(WIN32)
+    find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
+    vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
+    vtkRenderingContextOpenGL2 vtkRenderingCore vtkRenderingFreeType
+    vtkRenderingGL2PSOpenGL2 vtkRenderingOpenGL2 vtkIOGeometry
+    vtkInfovisLayout vtkViewsInfovis vtkGUISupportQt vtkRenderingQt)
+else()
+    find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
+    vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
+    vtkInteractionWidgets vtkRenderingAnnotation vtkRenderingContextOpenGL2
+    vtkRenderingCore vtkRenderingFreeType vtkRenderingGL2PSOpenGL2
+    vtkRenderingOpenGL2 vtkIOGeometry vtkInfovisLayout vtkViewsInfovis
+    vtkFiltersParallelDIY2 vtkGUISupportQt vtkRenderingQt)
+endif()
+
 
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "vtk_example: Unable to find the VTK build folder.")
@@ -100,7 +98,6 @@ foreach(_headerFile ${HEADERS})
     list(APPEND INCLUDE_DIRS ${_dir})
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
-include_directories("./src")
 include_directories("./include")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -120,6 +117,7 @@ target_link_libraries(meshGenerator PRIVATE
     Qt${QT_VERSION_MAJOR}::OpenGLWidgets 
     Qt${QT_VERSION_MAJOR}::OpenGL
     ${VTK_LIBRARIES}
+    ${OCC_LIBRARIES}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
