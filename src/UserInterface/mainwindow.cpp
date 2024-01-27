@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget* parent)
 	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	Importing::STEPFileReader stepReader {};
 	stepReader.load("/home/pgilewicz/geometrySample/rubixCube.step");
+	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	QVTKRender->addActors(actorsMap);
 }
 
 MainWindow::~MainWindow() {

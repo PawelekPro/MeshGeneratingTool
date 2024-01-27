@@ -18,7 +18,10 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_vtkWidget = new QVTKOpenGLNativeWidget();
 	_renderer = vtkSmartPointer<vtkRenderer>::New();
 	_vtkWidget->setRenderWindow(vtkGenericOpenGLRenderWindow::New());
-	_vtkWidget->renderWindow()->AddRenderer(_renderer);
+
+	_rendererWindow = _vtkWidget->renderWindow();
+	_rendererWindow->AddRenderer(_renderer);
+
 	_vtkWidget->setFocusPolicy(Qt::StrongFocus);
 	generateCoordinateSystemAxes();
 
@@ -31,6 +34,15 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 }
 
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() { }
+
+void Rendering::QVTKRenderWindow::addActors(const Importing::ActorsMap& actorsMap) {
+	for (const auto& entry : actorsMap) {
+		vtkSmartPointer<vtkActor> actor = entry.second;
+		this->_renderer->AddActor(actor);
+	}
+	this->_renderer->ResetCamera();
+	this->_rendererWindow->Render();
+}
 
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();

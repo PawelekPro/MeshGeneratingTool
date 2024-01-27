@@ -1,11 +1,14 @@
 #include <filesystem>
 
 #include <vtkLogger.h>
+#include <vtkProperty.h>
 
 #include <XCAFApp_Application.hxx>
 
 #include "STEPFileReader.h"
 #include <BRep_Builder.hxx>
+#include <IVtkOCC_Shape.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
 #include <TDF_Attribute.hxx>
 #include <TDataStd_Name.hxx>
 #include <TopAbs.hxx>
@@ -13,10 +16,13 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Solid.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_ColorType.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
+#include <vtkPolyDataMapper.h>
 
-Importing::PartsMap Importing::STEPFileReader::load(const std::string& fileName) {
+void Importing::STEPFileReader::load(const std::string& fileName) {
 	if (!std::filesystem::exists(fileName)) {
 		auto message = "File " + fileName + " can not be found.";
 		vtkLogF(ERROR, message.c_str());
@@ -26,9 +32,9 @@ Importing::PartsMap Importing::STEPFileReader::load(const std::string& fileName)
 	auto baseName = std::filesystem::path { fileName }.stem().generic_string();
 	vtkLogF(INFO, "Geometry file path: \"%s\"", fileName.c_str());
 
-	auto doc = Handle(TDocStd_Document) {};
+	this->dataFramework = Handle(TDocStd_Document) {};
 	auto app = XCAFApp_Application::GetApplication();
-	app->NewDocument("MDTV-XCAF", doc);
+	app->NewDocument("MDTV-XCAF", this->dataFramework);
 	STEPCAFControl_Reader cafReader {};
 
 	// Reading colors mode
@@ -46,7 +52,7 @@ Importing::PartsMap Importing::STEPFileReader::load(const std::string& fileName)
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
 
-	if (!cafReader.Transfer(doc)) {
+	if (!cafReader.Transfer(this->dataFramework)) {
 		auto message = "Error while reading file:" + fileName;
 		vtkLogF(ERROR, message.c_str());
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
@@ -57,7 +63,7 @@ Importing::PartsMap Importing::STEPFileReader::load(const std::string& fileName)
 
 	auto& reader = cafReader.Reader();
 	this->partsMap = Importing::PartsMap {};
-	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
+	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->dataFramework->Main());
 
 	Standard_Integer numberOfShapes = reader.NbShapes();
 	if (numberOfShapes == 0) {
@@ -164,7 +170,48 @@ Importing::PartsMap Importing::STEPFileReader::load(const std::string& fileName)
 	std::filesystem::path stepName = filePath.filename();
 	auto message = "STEP file: " + stepName.string() + " loaded successfully.";
 	vtkLogF(INFO, message.c_str());
-	return this->partsMap;
+}
+
+Importing::ActorsMap Importing::STEPFileReader::getVTKActorsMap() {
+	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->dataFramework->Main());
+	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->dataFramework->Main());
+
+	Importing::ActorsMap actorsMap {};
+
+	for (const auto& it : this->partsMap) {
+		const auto& shape = it.second;
+
+		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
+
+		auto color = Quantity_Color {};
+		colorTool->GetColor(shape, XCAFDoc_ColorGen, color);
+		colorTool->GetInstanceColor(shape, XCAFDoc_ColorGen, color);
+		colorTool->GetInstanceColor(shape, XCAFDoc_ColorSurf, color);
+		colorTool->GetInstanceColor(shape, XCAFDoc_ColorCurv, color);
+
+		// FIXME:
+		actor->GetProperty()->SetColor(color.Red(), color.Green(), color.Blue());
+		std::stringstream stringStream;
+		stringStream << std::addressof(*actor.GetPointer());
+		std::string actorKey = stringStream.str();
+
+		actorsMap[actorKey] = actor;
+	}
+
+	return actorsMap;
+}
+
+vtkSmartPointer<vtkActor> Importing::STEPFileReader::createVTKActor(TopoDS_Shape shape) {
+	IVtkOCC_Shape* vtkShapeAdapter = new IVtkOCC_Shape(shape);
+	auto dataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
+	dataSource->SetShape(vtkShapeAdapter);
+
+	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	mapper->SetInputConnection(dataSource->GetOutputPort());
+	auto actor = vtkSmartPointer<vtkActor>::New();
+	actor->SetMapper(mapper);
+
+	return actor;
 }
 
 std::string Importing::STEPFileReader::getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap) {

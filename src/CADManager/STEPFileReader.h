@@ -22,16 +22,19 @@ using ActorsMap = std::map<std::string, vtkSmartPointer<vtkActor>>;
 using LabelsMap = std::map<std::string, std::string>;
 using PartsMap = std::map<std::string, TopoDS_Shape>;
 
-using Trinity = std::tuple<STEPCAFControl_Reader, Handle(TDocStd_Document), PartsMap>;
-
 class STEPFileReader {
 
 public:
 	STEPFileReader() { }
 	~STEPFileReader() { }
-	PartsMap load(const std::string& fileName);
+	void load(const std::string& fileName);
+	vtkSmartPointer<vtkActor> createVTKActor(TopoDS_Shape shape);
+	ActorsMap getVTKActorsMap();
 
+	// Container for storing loaded parts
 	PartsMap partsMap;
+	// Data framework composed of labels and attributes
+	Handle(TDocStd_Document) dataFramework;
 
 private:
 	std::string getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap);
