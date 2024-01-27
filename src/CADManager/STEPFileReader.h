@@ -29,7 +29,9 @@ class STEPFileReader {
 public:
 	STEPFileReader() { }
 	~STEPFileReader() { }
-	std::string load(const std::string& fileName);
+	PartsMap load(const std::string& fileName);
+
+	PartsMap partsMap;
 
 private:
 	std::string getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap);

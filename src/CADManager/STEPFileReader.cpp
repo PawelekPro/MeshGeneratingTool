@@ -5,15 +5,18 @@
 #include <XCAFApp_Application.hxx>
 
 #include "STEPFileReader.h"
+#include <BRep_Builder.hxx>
 #include <TDF_Attribute.hxx>
 #include <TDataStd_Name.hxx>
+#include <TopAbs.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Shell.hxx>
 #include <TopoDS_Solid.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 
-std::string Importing::STEPFileReader::load(const std::string& fileName) {
+Importing::PartsMap Importing::STEPFileReader::load(const std::string& fileName) {
 	if (!std::filesystem::exists(fileName)) {
 		auto message = "File " + fileName + " can not be found.";
 		vtkLogF(ERROR, message.c_str());
@@ -53,10 +56,10 @@ std::string Importing::STEPFileReader::load(const std::string& fileName) {
 	vtkLogF(INFO, "STEPCAFControl_Reader transferred successfully.");
 
 	auto& reader = cafReader.Reader();
-	auto partsMap = Importing::PartsMap {};
+	this->partsMap = Importing::PartsMap {};
 	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
 
-	auto numberOfShapes = reader.NbShapes();
+	Standard_Integer numberOfShapes = reader.NbShapes();
 	if (numberOfShapes == 0) {
 		auto message = "No shapes found in given STEP file.";
 		vtkLogF(ERROR, message);
@@ -73,29 +76,95 @@ std::string Importing::STEPFileReader::load(const std::string& fileName) {
 				// Get the shape
 				auto& solid = TopoDS::Solid(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("Part", partsMap);
-				std::stringstream stringStream;
-				auto label = shapeTool->FindShape(solid);
+				auto uniqueName = getUniqueObjectName("SolidPart", this->partsMap);
 
-				if (!label.IsNull()) {
-					Handle(TDF_Attribute) attribute;
-					if (label.FindAttribute(TDataStd_Name::GetID(), attribute)) {
-						stringStream << Handle(TDataStd_Name)::DownCast(attribute)->Get();
-					}
-				}
+				// Do we need to collect labels? (Solid/Shell)
+				// std::stringstream stringStream;
+				// auto label = shapeTool->FindShape(solid);
 
-				auto message = "STEP: Transferring Shape " + stringStream.str();
-				vtkLogF(INFO, message.c_str());
-				if (stringStream.str().size() == 0) {
-					stringStream << "Part";
+				// if (!label.IsNull()) {
+				// 	Handle(TDF_Attribute) attribute;
+				// 	if (label.FindAttribute(TDataStd_Name::GetID(), attribute)) {
+				// 		stringStream << Handle(TDataStd_Name)::DownCast(attribute)->Get();
+				// 	}
+				// }
+
+				// auto message = "STEP: Transferring Shape " + stringStream.str();
+				// vtkLogF(INFO, message.c_str());
+				// if (stringStream.str().size() == 0) {
+				// 	stringStream << "Solid";
+				// }
+				this->partsMap[uniqueName] = solid;
+				// std::cout << uniqueName.c_str() << std::endl;
+			}
+
+			// Load each non-solid part
+			for (explorer.Init(_shape, TopAbs_SHELL, TopAbs_SOLID); explorer.More(); explorer.Next()) {
+				// Get the shape
+				auto _shell = TopoDS::Shell(explorer.Current());
+
+				auto uniqueName = getUniqueObjectName("ShellPart", this->partsMap);
+
+				// Do we need to collect labels? (Solid/Shell)
+				// std::stringstream stringStream;
+				// auto label = shapeTool->FindShape(_shell);
+				// if (!label.IsNull()) {
+				// 	Handle(TDF_Attribute) attribute;
+				// 	if (label.FindAttribute(TDataStd_Name::GetID(), attribute)) {
+				// 		stringStream << Handle(TDataStd_Name)::DownCast(attribute)->Get();
+				// 	}
+				// }
+
+				// if (stringStream.str().size() == 0) {
+				// 	stringStream << "Shell";
+				// }
+				this->partsMap[uniqueName] = _shell;
+			}
+
+			// Put all other components into a single compound
+			Standard_Boolean emptyComp = Standard_True;
+			auto builder = BRep_Builder {};
+			TopoDS_Compound compound;
+			builder.MakeCompound(compound);
+			for (explorer.Init(_shape, TopAbs_FACE, TopAbs_SHELL); explorer.More(); explorer.Next()) {
+				if (!explorer.Current().IsNull()) {
+					builder.Add(compound, explorer.Current());
+					emptyComp = Standard_False;
 				}
-				partsMap[uniqueName] = solid;
-				std::cout << uniqueName.c_str() << std::endl;
+			}
+			for (explorer.Init(_shape, TopAbs_WIRE, TopAbs_FACE); explorer.More(); explorer.Next()) {
+				if (!explorer.Current().IsNull()) {
+					builder.Add(compound, explorer.Current());
+					emptyComp = Standard_False;
+				}
+			}
+			for (explorer.Init(_shape, TopAbs_EDGE, TopAbs_WIRE); explorer.More(); explorer.Next()) {
+				if (!explorer.Current().IsNull()) {
+					builder.Add(compound, explorer.Current());
+					emptyComp = Standard_False;
+				}
+			}
+			for (explorer.Init(_shape, TopAbs_VERTEX, TopAbs_EDGE); explorer.More(); explorer.Next()) {
+				if (!explorer.Current().IsNull()) {
+					builder.Add(compound, explorer.Current());
+					emptyComp = Standard_False;
+				}
+			}
+
+			if (!emptyComp) {
+				vtkLogF(INFO, "Loaded all other free-flying shapes into a single compound.");
+				// TODO: Do we need to collect labels? (Solid/Shell)
+				std::string uniqueName = getUniqueObjectName("CompoundPart", this->partsMap);
+				this->partsMap[uniqueName] = compound;
 			}
 		}
 	}
 
-	return baseName;
+	std::filesystem::path filePath(fileName);
+	std::filesystem::path stepName = filePath.filename();
+	auto message = "STEP file: " + stepName.string() + " loaded successfully.";
+	vtkLogF(INFO, message.c_str());
+	return this->partsMap;
 }
 
 std::string Importing::STEPFileReader::getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap) {
