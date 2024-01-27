@@ -189,7 +189,6 @@ Importing::ActorsMap Importing::STEPFileReader::getVTKActorsMap() {
 		colorTool->GetInstanceColor(shape, XCAFDoc_ColorSurf, color);
 		colorTool->GetInstanceColor(shape, XCAFDoc_ColorCurv, color);
 
-		// FIXME:
 		actor->GetProperty()->SetColor(color.Red(), color.Green(), color.Blue());
 		std::stringstream stringStream;
 		stringStream << std::addressof(*actor.GetPointer());
