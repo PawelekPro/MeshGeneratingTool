@@ -9,27 +9,31 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 
-namespace Rendering
-{
+#include "../../CADManager/STEPFileReader.h"
 
-class QVTKRenderWindow
-{
-  public:
-    QVTKRenderWindow(QWidget *widget);
-    ~QVTKRenderWindow();
+namespace Rendering {
 
-    void generateCoordinateSystemAxes();
+class QVTKRenderWindow {
+public:
+	QVTKRenderWindow(QWidget* widget);
+	~QVTKRenderWindow();
 
-  private:
-    QWidget *_widget;
+	void generateCoordinateSystemAxes();
+	void addActors(const Importing::ActorsMap& actorsMap);
 
-    // the Qt widget containing a VTK viewport
-    QVTKOpenGLNativeWidget *_vtkWidget;
+private:
+	QWidget* _widget;
 
-    // the VTK renderer (add VTK actors to it to build the scene).
-    vtkSmartPointer<vtkRenderer> _renderer;
+	// the Qt widget containing a VTK viewport
+	QVTKOpenGLNativeWidget* _vtkWidget;
 
-    vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
+	// the VTK renderer (add VTK actors to it to build the scene).
+	vtkSmartPointer<vtkRenderer> _renderer;
+
+	// the VTK renderer window.
+	vtkSmartPointer<vtkRenderWindow> _rendererWindow;
+
+	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 };
 }; // namespace Rendering
 

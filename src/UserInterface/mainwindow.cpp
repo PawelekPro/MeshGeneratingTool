@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "../CADManager/STEPFileReader.h"
 #include "./ui_mainwindow.h"
 
 #include <vtkAxesActor.h>
@@ -15,21 +16,23 @@
 #include <vtkVersion.h>
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
+	: QMainWindow(parent)
+	, ui(new Ui::MainWindow) {
+	ui->setupUi(this);
 
-    // Set initial sizes of the splitter sections
-    QList<int> sizes;
-    sizes << 100 << 400;
-    ui->mainSplitter->setSizes(sizes);
+	// Set initial sizes of the splitter sections
+	QList<int> sizes;
+	sizes << 100 << 400;
+	ui->mainSplitter->setSizes(sizes);
 
-    QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
+	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
+	Importing::STEPFileReader stepReader {};
+	stepReader.load("/home/pgilewicz/geometrySample/rubixCube.step");
+	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	QVTKRender->addActors(actorsMap);
 }
 
-MainWindow::~MainWindow()
-{
-    delete QVTKRender;
-    delete ui;
+MainWindow::~MainWindow() {
+	delete QVTKRender;
+	delete ui;
 }
