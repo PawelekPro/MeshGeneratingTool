@@ -1,4 +1,5 @@
 #include "QVTKRenderWindow.h"
+#include "QVTKInteractorStyle.h"
 
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
@@ -22,8 +23,13 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_rendererWindow = _vtkWidget->renderWindow();
 	_rendererWindow->AddRenderer(_renderer);
 
+	_interactor = _rendererWindow->GetInteractor();
+
 	_vtkWidget->setFocusPolicy(Qt::StrongFocus);
-	generateCoordinateSystemAxes();
+	this->generateCoordinateSystemAxes();
+
+	vtkSmartPointer<Interactor::QVTKInteractorStyle> interactorStyle = vtkSmartPointer<Interactor::QVTKInteractorStyle>::New(this);
+	this->setInteractorStyle(interactorStyle);
 
 	// Background color
 	vtkNew<vtkNamedColors> colors;
@@ -34,6 +40,15 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 }
 
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() { }
+
+void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interactorStyle) {
+	this->_interactor->SetInteractorStyle(interactorStyle);
+}
+
+void Rendering::QVTKRenderWindow::fitView() {
+	this->_renderer->ResetCamera();
+	this->_rendererWindow->Render();
+}
 
 void Rendering::QVTKRenderWindow::addActors(const Importing::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {

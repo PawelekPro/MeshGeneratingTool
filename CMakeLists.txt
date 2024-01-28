@@ -30,6 +30,7 @@ find_package(QT NAMES Qt6 REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS 
     Widgets 
     OpenGLWidgets 
+    Core
     Gui
 )
 
@@ -48,6 +49,8 @@ set(PROJECT_SOURCES
     ${UI_FILES}/mainwindow.h
     ${RENDERING_CORE}/QVTKRenderWindow.cpp
     ${RENDERING_CORE}/QVTKRenderWindow.h
+    ${RENDERING_CORE}/QVTKInteractorStyle.cpp
+    ${RENDERING_CORE}/QVTKInteractorStyle.h
     ${CAD_MANAGER}/STEPFileReader.cpp
     ${CAD_MANAGER}/STEPFileReader.h
 )
@@ -116,6 +119,7 @@ target_link_libraries(meshGenerator PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::OpenGLWidgets 
     Qt${QT_VERSION_MAJOR}::OpenGL
+    Qt${QT_VERSION_MAJOR}::Core
     ${VTK_LIBRARIES}
     ${OCC_LIBRARIES}
 )

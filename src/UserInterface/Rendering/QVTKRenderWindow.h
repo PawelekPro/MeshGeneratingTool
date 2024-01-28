@@ -10,6 +10,7 @@
 #include <vtkRenderer.h>
 
 #include "../../CADManager/STEPFileReader.h"
+#include <vtkInteractorStyle.h>
 
 namespace Rendering {
 
@@ -21,17 +22,23 @@ public:
 	void generateCoordinateSystemAxes();
 	void addActors(const Importing::ActorsMap& actorsMap);
 
+	void setInteractorStyle(vtkInteractorStyle* interactorStyle);
+	void fitView();
+
 private:
 	QWidget* _widget;
 
-	// the Qt widget containing a VTK viewport
+	// The Qt widget containing a VTK viewport
 	QVTKOpenGLNativeWidget* _vtkWidget;
 
-	// the VTK renderer (add VTK actors to it to build the scene).
+	// The VTK renderer (add VTK actors to it to build the scene)
 	vtkSmartPointer<vtkRenderer> _renderer;
 
-	// the VTK renderer window.
+	// The VTK renderer window
 	vtkSmartPointer<vtkRenderWindow> _rendererWindow;
+
+	// The VTK render window interactor
+	vtkSmartPointer<vtkRenderWindowInteractor> _interactor;
 
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 };
