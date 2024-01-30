@@ -39,4 +39,17 @@ To compile and run this project, the following libraries are required:
     ```bash
     make
     ```
+## Using MinGW:
+
+   ```bash
+   mkdir build && cd build
+   ```
+   
+   ```bash
+   cmake -G "MSYS Makefiles" ..
+   ```
+
+   ```bash
+   make
+   ```
 
