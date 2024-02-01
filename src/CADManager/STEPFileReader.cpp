@@ -1,26 +1,26 @@
-#include <filesystem>
-
-#include <vtkLogger.h>
-#include <vtkProperty.h>
-
-#include <XCAFApp_Application.hxx>
+/*
+ * Copyright (C) 2024 Paweł Gilewicz
+ *
+ * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ *
+ *
+ * Created by Paweł Gilewicz on 01/02/2024.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "STEPFileReader.h"
-#include <BRep_Builder.hxx>
-#include <IVtkOCC_Shape.hxx>
-#include <IVtkTools_ShapeDataSource.hxx>
-#include <TDF_Attribute.hxx>
-#include <TDataStd_Name.hxx>
-#include <TopAbs.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Shell.hxx>
-#include <TopoDS_Solid.hxx>
-#include <XCAFDoc_ColorTool.hxx>
-#include <XCAFDoc_ColorType.hxx>
-#include <XCAFDoc_DocumentTool.hxx>
-#include <XCAFDoc_ShapeTool.hxx>
-#include <vtkPolyDataMapper.h>
 
 void Importing::STEPFileReader::load(const std::string& fileName) {
 	if (!std::filesystem::exists(fileName)) {
@@ -32,9 +32,9 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 	auto baseName = std::filesystem::path { fileName }.stem().generic_string();
 	vtkLogF(INFO, "Geometry file path: \"%s\"", fileName.c_str());
 
-	this->dataFramework = Handle(TDocStd_Document) {};
+	this->_dataFrame = Handle(TDocStd_Document) {};
 	auto app = XCAFApp_Application::GetApplication();
-	app->NewDocument("MDTV-XCAF", this->dataFramework);
+	app->NewDocument("MDTV-XCAF", this->_dataFrame);
 	STEPCAFControl_Reader cafReader {};
 
 	// Reading colors mode
@@ -52,7 +52,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
 
-	if (!cafReader.Transfer(this->dataFramework)) {
+	if (!cafReader.Transfer(this->_dataFrame)) {
 		auto message = "Error while reading file:" + fileName;
 		vtkLogF(ERROR, message.c_str());
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
@@ -62,8 +62,8 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 	vtkLogF(INFO, "STEPCAFControl_Reader transferred successfully.");
 
 	auto& reader = cafReader.Reader();
-	this->partsMap = Importing::PartsMap {};
-	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->dataFramework->Main());
+	this->_partsMap = Importing::PartsMap {};
+	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
 	Standard_Integer numberOfShapes = reader.NbShapes();
 	if (numberOfShapes == 0) {
@@ -82,7 +82,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 				// Get the shape
 				auto& solid = TopoDS::Solid(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("SolidPart", this->partsMap);
+				auto uniqueName = getUniqueObjectName("SolidPart");
 
 				// Do we need to collect labels? (Solid/Shell)
 				// std::stringstream stringStream;
@@ -100,7 +100,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 				// if (stringStream.str().size() == 0) {
 				// 	stringStream << "Solid";
 				// }
-				this->partsMap[uniqueName] = solid;
+				this->_partsMap[uniqueName] = solid;
 				// std::cout << uniqueName.c_str() << std::endl;
 			}
 
@@ -109,7 +109,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 				// Get the shape
 				auto _shell = TopoDS::Shell(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("ShellPart", this->partsMap);
+				auto uniqueName = getUniqueObjectName("ShellPart");
 
 				// Do we need to collect labels? (Solid/Shell)
 				// std::stringstream stringStream;
@@ -124,7 +124,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 				// if (stringStream.str().size() == 0) {
 				// 	stringStream << "Shell";
 				// }
-				this->partsMap[uniqueName] = _shell;
+				this->_partsMap[uniqueName] = _shell;
 			}
 
 			// Put all other components into a single compound
@@ -160,8 +160,8 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 			if (!emptyComp) {
 				vtkLogF(INFO, "Loaded all other free-flying shapes into a single compound.");
 				// TODO: Do we need to collect labels? (Solid/Shell)
-				std::string uniqueName = getUniqueObjectName("CompoundPart", this->partsMap);
-				this->partsMap[uniqueName] = compound;
+				std::string uniqueName = getUniqueObjectName("CompoundPart");
+				this->_partsMap[uniqueName] = compound;
 			}
 		}
 	}
@@ -173,12 +173,12 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 }
 
 Importing::ActorsMap Importing::STEPFileReader::getVTKActorsMap() {
-	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->dataFramework->Main());
-	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->dataFramework->Main());
+	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->_dataFrame->Main());
+	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
 	Importing::ActorsMap actorsMap {};
 
-	for (const auto& it : this->partsMap) {
+	for (const auto& it : this->_partsMap) {
 		const auto& shape = it.second;
 
 		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
@@ -198,43 +198,4 @@ Importing::ActorsMap Importing::STEPFileReader::getVTKActorsMap() {
 	}
 
 	return actorsMap;
-}
-
-vtkSmartPointer<vtkActor> Importing::STEPFileReader::createVTKActor(TopoDS_Shape shape) {
-	IVtkOCC_Shape* vtkShapeAdapter = new IVtkOCC_Shape(shape);
-	auto dataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
-	dataSource->SetShape(vtkShapeAdapter);
-
-	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInputConnection(dataSource->GetOutputPort());
-	auto actor = vtkSmartPointer<vtkActor>::New();
-	actor->SetMapper(mapper);
-
-	return actor;
-}
-
-std::string Importing::STEPFileReader::getUniqueObjectName(std::string prefix, const Importing::PartsMap& partsMap) {
-	// find already existing path that match prefix
-	std::vector<std::string> allNames;
-	for (const auto& partsMapIt : partsMap) {
-		// String object is the first element of parts map
-		const std::string stringObj = partsMapIt.first;
-		if (stringObj.find(prefix) != std::string::npos) {
-			allNames.push_back(stringObj);
-		}
-	}
-
-	int i = 0;
-	std::string uniqueName;
-	while (true) {
-		std::stringstream stringStream;
-		stringStream << prefix << std::setfill('0') << std::setw(3) << i;
-		uniqueName = stringStream.str();
-		auto res = std::find(std::begin(allNames), std::end(allNames), uniqueName);
-		if (res == std::end(allNames)) {
-			break;
-		}
-		i++;
-	}
-	return uniqueName;
 }

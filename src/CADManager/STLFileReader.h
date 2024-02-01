@@ -41,7 +41,12 @@
 
 namespace Importing {
 
-class STLFileReader : public Importing::CADFileReader {
+/**
+ * @brief  	The STLFileReader provides class for importing STL files.
+ *
+ * @details	Inherits from CADFileReader class.
+ */
+class STLFileReader : public CADFileReader {
 public:
 	/**
 	 * Constructor of STLFileReader class instance.
