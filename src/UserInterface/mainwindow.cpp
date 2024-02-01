@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "../CADManager/STEPFileReader.h"
+#include "../CADManager/STLFileReader.h"
 #include "./ui_mainwindow.h"
 
 #include <vtkAxesActor.h>
@@ -26,6 +27,12 @@ MainWindow::MainWindow(QWidget* parent)
 	ui->mainSplitter->setSizes(sizes);
 
 	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
+
+	// Importing::STLFileReader stlReader {};
+	// stlReader.load("/home/pgilewicz/geometrySample/ibrahim.stl");
+	// Importing::ActorsMap actorsMap = stlReader.getVTKActorsMap();
+	// QVTKRender->addActors(actorsMap);
+
 	Importing::STEPFileReader stepReader {};
 	stepReader.load("/home/pgilewicz/geometrySample/Ref_XYZ .stp");
 	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();

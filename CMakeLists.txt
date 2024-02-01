@@ -51,8 +51,12 @@ set(PROJECT_SOURCES
     ${RENDERING_CORE}/QVTKRenderWindow.h
     ${RENDERING_CORE}/QVTKInteractorStyle.cpp
     ${RENDERING_CORE}/QVTKInteractorStyle.h
+    ${CAD_MANAGER}/CADFileReader.cpp
+    ${CAD_MANAGER}/CADFileReader.h
     ${CAD_MANAGER}/STEPFileReader.cpp
     ${CAD_MANAGER}/STEPFileReader.h
+    ${CAD_MANAGER}/STLFileReader.cpp
+    ${CAD_MANAGER}/STLFileReader.h
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")

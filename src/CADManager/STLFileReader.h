@@ -20,51 +20,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STEPFILEREADER_H
-#define STEPFILEREADER_H
+#ifndef STLFILEREADER_H
+#define STLFILEREADER_H
 
-#include <filesystem>
-
-#include <vtkLogger.h>
-#include <vtkProperty.h>
-
-#include <BRep_Builder.hxx>
-#include <STEPCAFControl_Reader.hxx>
-#include <TopExp_Explorer.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeSolid.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
+#include <RWStl.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
-#include <XCAFApp_Application.hxx>
-#include <XCAFDoc_ColorTool.hxx>
-#include <XCAFDoc_ColorType.hxx>
-#include <XCAFDoc_DocumentTool.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Shell.hxx>
+#include <TopoDS_Solid.hxx>
+#include <TopoDS_Wire.hxx>
 
 #include "CADFileReader.h"
 
 namespace Importing {
 
 /**
- * @brief  	The STEPFileReader provides class for importing STEP files.
+ * @brief  	The STLFileReader provides class for importing STL files.
  *
  * @details	Inherits from CADFileReader class.
  */
-class STEPFileReader : public CADFileReader {
-
+class STLFileReader : public CADFileReader {
 public:
 	/**
-	 * Construct instance of STEPFileReader class.
+	 * Constructor of STLFileReader class instance.
 	 *
 	 */
-	STEPFileReader() { }
+	STLFileReader() {};
 
 	/**
-	 * Destructor for instance of STEPFileReader class.
+	 * Destructor of STLFileReader class instance.
 	 *
 	 */
-	~STEPFileReader() { }
+	~STLFileReader() {};
 
 	/**
-	 * @brief  Load step/stp file and fill parts map container.
+	 * @brief  Load STL file and fill parts map container.
 	 *
-	 * @param  {std::string} fileName :  Path to step/stp file.
+	 * @param  {std::string} fileName : Path to the .stl file.
 	 */
 	void load(const std::string& fileName) override;
 
@@ -75,7 +74,6 @@ public:
 	 */
 	ActorsMap getVTKActorsMap() override;
 };
-
-};
+}
 
 #endif
