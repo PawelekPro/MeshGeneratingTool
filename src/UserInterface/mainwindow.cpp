@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget* parent)
 	stepReader.load("/home/pgilewicz/geometrySample/Ref_XYZ .stp");
 	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
+
+	ProgressBar* progressBar = new ProgressBar(this);
+	this->ui->statusBar->addWidget(progressBar);
+	progressBar->show();
 }
 
 MainWindow::~MainWindow() {

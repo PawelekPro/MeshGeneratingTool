@@ -40,6 +40,7 @@ set(UI_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
 set(FORMS_PATH "${UI_FILES}/Forms")
 set(CAD_MANAGER "${CMAKE_CURRENT_SOURCE_DIR}/src/CADManager")
 set(RENDERING_CORE "${UI_FILES}/Rendering")
+set(UI_UTILS "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
 
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
@@ -47,6 +48,8 @@ set(PROJECT_SOURCES
     ${UI_FILES}/main.cpp
     ${UI_FILES}/mainwindow.cpp
     ${UI_FILES}/mainwindow.h
+    ${UI_UTILS}/ProgressBar.cpp
+    ${UI_UTILS}/ProgressBar.h
     ${RENDERING_CORE}/QVTKRenderWindow.cpp
     ${RENDERING_CORE}/QVTKRenderWindow.h
     ${RENDERING_CORE}/QVTKInteractorStyle.cpp
