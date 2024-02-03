@@ -50,6 +50,7 @@ set(PROJECT_SOURCES
     ${UI_FILES}/mainwindow.h
     ${UI_UTILS}/ProgressBar.cpp
     ${UI_UTILS}/ProgressBar.h
+    ${UI_UTILS}/Configuration.h
     ${RENDERING_CORE}/QVTKRenderWindow.cpp
     ${RENDERING_CORE}/QVTKRenderWindow.h
     ${RENDERING_CORE}/QVTKInteractorStyle.cpp

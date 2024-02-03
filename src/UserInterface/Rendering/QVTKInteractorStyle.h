@@ -28,6 +28,7 @@
 #include <vtkInteractorStyleTrackballCamera.h>
 
 #include <QAction>
+#include <QFont>
 #include <QMenu>
 
 namespace Interactor {

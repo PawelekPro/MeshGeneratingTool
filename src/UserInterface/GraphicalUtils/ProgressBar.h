@@ -23,6 +23,8 @@
 #ifndef PROGRESSBAR_H
 #define PROGRESSBAR_H
 
+#include "./ui_ProgressBar.h"
+
 #include <QWidget>
 #include <QtCore/QtGlobal>
 

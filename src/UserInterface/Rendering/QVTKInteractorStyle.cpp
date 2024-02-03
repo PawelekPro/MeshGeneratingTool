@@ -52,6 +52,12 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 void Interactor::QVTKInteractorStyle::createContextMenu() {
 	if (!_contextMenu) {
 		_contextMenu = new QMenu;
+
+		// Set font size
+		QFont font;
+		font.setPointSize(10);
+		_contextMenu->setFont(font);
+
 		_customAction = new QAction("Fit view", _contextMenu);
 
 		QObject::connect(_customAction, &QAction::triggered, [this]() {

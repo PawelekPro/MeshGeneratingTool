@@ -1,20 +1,26 @@
+/*
+ * Copyright (C) 2024 Paweł Gilewicz
+ *
+ * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ *
+ *
+ * Created by Paweł Gilewicz on 01/02/2024.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "mainwindow.h"
-#include "../CADManager/STEPFileReader.h"
-#include "../CADManager/STLFileReader.h"
-#include "./ui_mainwindow.h"
-
-#include <vtkAxesActor.h>
-
-#include <vtkCaptionActor2D.h>
-#include <vtkGenericOpenGLRenderWindow.h>
-#include <vtkNamedColors.h>
-#include <vtkOrientationMarkerWidget.h>
-#include <vtkProperty.h>
-#include <vtkRenderWindow.h>
-#include <vtkSmartPointer.h>
-#include <vtkTextProperty.h>
-#include <vtkTransform.h>
-#include <vtkVersion.h>
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
@@ -33,17 +39,44 @@ MainWindow::MainWindow(QWidget* parent)
 	// Importing::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	// QVTKRender->addActors(actorsMap);
 
-	Importing::STEPFileReader stepReader {};
-	stepReader.load("/home/pgilewicz/geometrySample/Ref_XYZ .stp");
-	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
-	QVTKRender->addActors(actorsMap);
-
 	ProgressBar* progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 	progressBar->show();
+
+	this->setConnections();
 }
 
 MainWindow::~MainWindow() {
 	delete QVTKRender;
 	delete ui;
+}
+
+void MainWindow::setConnections() {
+	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
+		openFileDialog([this](QString fname) { importSTEP(fname); }, "Import", filters::StepFilter);
+	});
+}
+
+int MainWindow::openFileDialog(Callable action, QString actionName, QString filter) {
+	QFileDialog dlg(this);
+	dlg.setWindowTitle("Select file to " + actionName);
+	dlg.setNameFilter(filter);
+
+	QString fname = dlg.getOpenFileName(this, actionName, "", filter);
+
+	if (!fname.isEmpty()) {
+		action(fname);
+		return QMessageBox::Accepted;
+	}
+	return QMessageBox::Rejected;
+}
+
+void MainWindow::importSTEP(QString fileName) {
+	Importing::STEPFileReader stepReader {};
+
+	const std::string& filePath = fileName.toStdString();
+	stepReader.load(filePath);
+
+	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	QVTKRender->addActors(actorsMap);
 }

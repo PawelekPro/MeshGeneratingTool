@@ -20,15 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ProgressBar.h"
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
 
-ProgressBar::ProgressBar(QWidget* parent)
-	: QWidget(parent)
-	, ui(new Ui::ProgressBar) {
-	ui->setupUi(this);
-	this->hide();
+#include <QString>
+
+namespace filters {
+const QString StepFilter = "STEP Physical File (*.stp *.step *.STP *.STEP)";
 }
 
-ProgressBar::~ProgressBar() {
-	delete ui;
-}
+#endif

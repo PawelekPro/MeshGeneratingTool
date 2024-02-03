@@ -137,9 +137,28 @@
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuImport">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Import Geometry</string>
+     </property>
+     <addaction name="actionImportSTEP"/>
+     <addaction name="actionImportSTL"/>
+    </widget>
+    <addaction name="menuImport"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -156,6 +175,26 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionImportSTEP">
+   <property name="text">
+    <string>Import STEP</string>
+   </property>
+  </action>
+  <action name="actionImportSTL">
+   <property name="text">
+    <string>Import STL</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
