@@ -44,7 +44,13 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 
 	std::cout << " -> converting to faces" << std::endl;
 
+	_progressBar->initialize();
+	_progressBar->setProgressMessage("Converting to faces...");
+
 	for (Standard_Integer i = 1; i <= numberOfTriangles; i++) {
+		int progress = static_cast<int>(100.0 * i / numberOfTriangles);
+		_progressBar->setValue(progress);
+
 		Poly_Triangle triangle = aSTLMesh->Triangle(i);
 
 		Standard_Integer n1;
@@ -83,8 +89,14 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 	TopTools_IndexedMapOfShape shellMap;
 	TopExp::MapShapes(shape, TopAbs_SHELL, shellMap);
 
+	_progressBar->initialize();
+	_progressBar->setProgressMessage("Extracting shells...");
+
 	unsigned int counter = 0;
 	for (int ishell = 1; ishell <= shellMap.Extent(); ++ishell) {
+		int progress = static_cast<int>(100.0 * ishell / shellMap.Extent());
+		_progressBar->setValue(progress);
+
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
 		counter++;

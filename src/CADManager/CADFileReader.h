@@ -23,6 +23,8 @@
 #ifndef CADFILEMANAGER_H
 #define CADFILEMANAGER_H
 
+#include "../UserInterface/GraphicalUtils/ProgressBar.h"
+
 #include <iostream>
 #include <map>
 #include <string>

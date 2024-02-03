@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent)
 	// Importing::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	// QVTKRender->addActors(actorsMap);
 
-	ProgressBar* progressBar = new ProgressBar(this);
+	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 	progressBar->show();
 
@@ -48,12 +48,17 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow() {
 	delete QVTKRender;
+	delete progressBar;
 	delete ui;
 }
 
 void MainWindow::setConnections() {
 	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
 		openFileDialog([this](QString fname) { importSTEP(fname); }, "Import", filters::StepFilter);
+	});
+
+	connect(ui->actionImportSTL, &QAction::triggered, [this]() {
+		openFileDialog([this](QString fname) { importSTL(fname); }, "Import", filters::StlFilter);
 	});
 }
 
@@ -72,11 +77,23 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 }
 
 void MainWindow::importSTEP(QString fileName) {
-	Importing::STEPFileReader stepReader {};
+	ProgressBar* progressBar = this->getProgressBar();
+	Importing::STEPFileReader stepReader(progressBar);
 
 	const std::string& filePath = fileName.toStdString();
 	stepReader.load(filePath);
 
 	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	QVTKRender->addActors(actorsMap);
+}
+
+void MainWindow::importSTL(QString fileName) {
+	ProgressBar* progressBar = this->getProgressBar();
+	Importing::STLFileReader stlReader(progressBar);
+
+	const std::string& filePath = fileName.toStdString();
+	stlReader.load(filePath);
+
+	Importing::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
 }

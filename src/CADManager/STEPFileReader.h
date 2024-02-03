@@ -53,13 +53,14 @@ public:
 	 * Construct instance of STEPFileReader class.
 	 *
 	 */
-	STEPFileReader() { }
+	STEPFileReader(ProgressBar* progressBar)
+		: _progressBar(progressBar) { }
 
 	/**
 	 * Destructor for instance of STEPFileReader class.
 	 *
 	 */
-	~STEPFileReader() { }
+	~STEPFileReader() {};
 
 	/**
 	 * @brief  Load step/stp file and fill parts map container.
@@ -74,6 +75,9 @@ public:
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
 	ActorsMap getVTKActorsMap() override;
+
+private:
+	ProgressBar* _progressBar;
 };
 
 };

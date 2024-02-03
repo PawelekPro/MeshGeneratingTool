@@ -26,9 +26,20 @@ ProgressBar::ProgressBar(QWidget* parent)
 	: QWidget(parent)
 	, ui(new Ui::ProgressBar) {
 	ui->setupUi(this);
+
+	this->ui->progressBar->setMinimum(0);
+	this->ui->progressBar->setMaximum(100);
 	this->hide();
 }
 
 ProgressBar::~ProgressBar() {
 	delete ui;
+}
+
+void ProgressBar::setValue(const int value) {
+	ui->progressBar->setValue(value);
+}
+
+void ProgressBar::setProgressMessage(const std::string text) {
+	ui->message->setText(QString::fromStdString(text));
 }

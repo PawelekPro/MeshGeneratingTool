@@ -66,11 +66,28 @@ public:
 	int openFileDialog(Callable action, QString actionName, QString filter);
 
 	/**
-	 * @brief  Import step file, load it to project DOM and render parts.
+	 * @brief  Import step file, load it to project DOM and render geometry.
 	 *
 	 * @param  {QString} fileName : Path to the physical STEP file.
 	 */
 	void importSTEP(QString fileName);
+
+	/**
+	 * @brief  Import stl file, load it to project DOM and render geometry.
+	 *
+	 * @param  {QString} fileName : Path to the STL file.
+	 */
+	void importSTL(QString fileName);
+
+	/**
+	 * @brief  Get access to progress bar.
+	 *
+	 * @return {ProgressBar*}  : Progress bar instance.
+	 */
+	ProgressBar* getProgressBar() const { return this->progressBar; }
+
+	// Progress bar
+	ProgressBar* progressBar;
 
 private:
 	Ui::MainWindow* ui;

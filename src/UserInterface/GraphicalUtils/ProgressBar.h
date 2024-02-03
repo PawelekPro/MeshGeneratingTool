@@ -24,6 +24,7 @@
 #define PROGRESSBAR_H
 
 #include "./ui_ProgressBar.h"
+#include <iostream>
 
 #include <QWidget>
 #include <QtCore/QtGlobal>
@@ -39,6 +40,17 @@ class ProgressBar : public QWidget {
 public:
 	ProgressBar(QWidget* parent = nullptr);
 	~ProgressBar();
+
+	/**
+	 * @brief  Set currently displayed value of progress bar.
+	 *
+	 * @param  {int} value : Progress value of current process.
+	 */
+	void setValue(const int value);
+
+	void initialize() { setValue(0); }
+
+	void setProgressMessage(const std::string text);
 
 private:
 	Ui::ProgressBar* ui;

@@ -51,8 +51,10 @@ public:
 	/**
 	 * Constructor of STLFileReader class instance.
 	 *
+	 * @param  {ProgressBar*} progressBar : Pointer to ProgressBar object.
 	 */
-	STLFileReader() {};
+	STLFileReader(ProgressBar* progressBar)
+		: _progressBar(progressBar) {};
 
 	/**
 	 * Destructor of STLFileReader class instance.
@@ -73,7 +75,11 @@ public:
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
 	ActorsMap getVTKActorsMap() override;
+
+private:
+	ProgressBar* _progressBar;
 };
+
 }
 
 #endif
