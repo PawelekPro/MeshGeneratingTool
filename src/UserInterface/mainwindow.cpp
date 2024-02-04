@@ -34,14 +34,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 
-	// Importing::STLFileReader stlReader {};
-	// stlReader.load("/home/pgilewicz/geometrySample/ibrahim.stl");
-	// Importing::ActorsMap actorsMap = stlReader.getVTKActorsMap();
-	// QVTKRender->addActors(actorsMap);
-
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
-	progressBar->show();
 
 	this->setConnections();
 }

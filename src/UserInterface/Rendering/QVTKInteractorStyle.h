@@ -26,6 +26,8 @@
 #include "QVTKRenderWindow.h"
 
 #include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkNamedColors.h>
+#include <vtkPropPicker.h>
 
 #include <QAction>
 #include <QFont>
@@ -53,6 +55,8 @@ public:
 	 */
 	virtual void OnRightButtonDown() override;
 
+	virtual void OnLeftButtonDown() override;
+
 	/**
 	 * @brief  Get rendering window instance.
 	 *
@@ -62,7 +66,7 @@ public:
 
 protected:
 	QVTKInteractorStyle(Rendering::QVTKRenderWindow* qvtkRenderWindow);
-	~QVTKInteractorStyle();
+	virtual ~QVTKInteractorStyle();
 
 private:
 	/**
@@ -74,6 +78,9 @@ private:
 	Rendering::QVTKRenderWindow* _qvtkRenderWindow;
 	QMenu* _contextMenu;
 	QAction* _customAction;
+
+	vtkActor* LastPickedActor;
+	vtkProperty* LastPickedProperty;
 };
 };
 

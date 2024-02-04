@@ -31,11 +31,17 @@ Interactor::QVTKInteractorStyle* Interactor::QVTKInteractorStyle::New(Rendering:
 Interactor::QVTKInteractorStyle::QVTKInteractorStyle(Rendering::QVTKRenderWindow* qvtkRenderWindow)
 	: _contextMenu(nullptr)
 	, _customAction(nullptr)
-	, _qvtkRenderWindow(qvtkRenderWindow) { }
+	, _qvtkRenderWindow(qvtkRenderWindow) {
+
+	LastPickedActor = NULL;
+	LastPickedProperty = vtkProperty::New();
+}
 
 Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
+
+	LastPickedProperty->Delete();
 }
 
 Rendering::QVTKRenderWindow* Interactor::QVTKInteractorStyle::getRenderWindow() {
@@ -47,6 +53,34 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 	_contextMenu->exec(QCursor::pos());
 
 	vtkInteractorStyle::OnRightButtonDown();
+}
+
+void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
+	vtkNew<vtkNamedColors> colors;
+	int* clickPos = this->GetInteractor()->GetEventPosition();
+
+	// Pick from this location
+	vtkNew<vtkPropPicker> picker;
+	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getRenderer());
+
+	// If picked something before, reset its property.
+	if (this->LastPickedActor) {
+		this->LastPickedActor->GetProperty()->DeepCopy(this->LastPickedProperty);
+	}
+	this->LastPickedActor = picker->GetActor();
+	if (this->LastPickedActor) {
+		// Save the property of the pciked actor so that it can be restored next time.
+		this->LastPickedProperty->DeepCopy(this->LastPickedActor->GetProperty());
+
+		// Highlight the picked actor
+		this->LastPickedActor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
+		this->LastPickedActor->GetProperty()->SetDiffuse(1.0);
+		this->LastPickedActor->GetProperty()->SetSpecular(0.0);
+		// this->LastPickedActor->GetProperty()->EdgeVisibilityOn();
+	}
+
+	// Forward events
+	vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
 void Interactor::QVTKInteractorStyle::createContextMenu() {

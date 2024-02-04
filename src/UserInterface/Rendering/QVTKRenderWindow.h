@@ -45,6 +45,9 @@ public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
 
+	// The VTK renderer (add VTK actors to it to build the scene)
+	vtkSmartPointer<vtkRenderer> _renderer;
+
 	/**
 	 * @brief Generate global coordinate system.
 	 *
@@ -71,14 +74,13 @@ public:
 	 */
 	void fitView();
 
+	vtkRenderer* getRenderer() { return this->_renderer; }
+
 private:
 	QWidget* _widget;
 
 	// The Qt widget containing a VTK viewport
 	QVTKOpenGLNativeWidget* _vtkWidget;
-
-	// The VTK renderer (add VTK actors to it to build the scene)
-	vtkSmartPointer<vtkRenderer> _renderer;
 
 	// The VTK renderer window
 	vtkSmartPointer<vtkRenderWindow> _rendererWindow;

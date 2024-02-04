@@ -61,7 +61,10 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_widget->layout()->addWidget(_vtkWidget);
 }
 
-Rendering::QVTKRenderWindow::~QVTKRenderWindow() { }
+Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
+	_renderer->Delete();
+	delete _vtkWidget;
+}
 
 void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interactorStyle) {
 	this->_interactor->SetInteractorStyle(interactorStyle);

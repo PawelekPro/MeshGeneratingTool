@@ -42,8 +42,6 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 	TopoDS_Face face;
 	TopoDS_Wire wire;
 
-	std::cout << " -> converting to faces" << std::endl;
-
 	_progressBar->initialize();
 	_progressBar->setProgressMessage("Converting to faces...");
 
@@ -78,19 +76,18 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 		}
 	}
 
-	std::cout << " -> sewing faces" << std::endl;
+	_progressBar->initialize();
+	_progressBar->setProgressMessage("Sewing faces...");
 
 	shapeSewer.Perform();
 	shape = shapeSewer.SewedShape();
 
-	std::cout << " -> extracting shells" << std::endl;
+	_progressBar->initialize();
+	_progressBar->setProgressMessage("Extracting shells...");
 
 	BRepBuilderAPI_MakeSolid solidmaker;
 	TopTools_IndexedMapOfShape shellMap;
 	TopExp::MapShapes(shape, TopAbs_SHELL, shellMap);
-
-	_progressBar->initialize();
-	_progressBar->setProgressMessage("Extracting shells...");
 
 	unsigned int counter = 0;
 	for (int ishell = 1; ishell <= shellMap.Extent(); ++ishell) {
@@ -106,11 +103,13 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 
 	std::cout << " -> shells found: " << counter << std::endl;
 
-	std::cout << " -> converting to solid" << std::endl;
+	_progressBar->setProgressMessage("Converting to solid...");
 
 	TopoDS_Shape solid = solidmaker.Solid();
 
 	std::cout << " -> done." << std::endl;
+
+	_progressBar->finish();
 }
 
 Importing::ActorsMap Importing::STLFileReader::getVTKActorsMap() {

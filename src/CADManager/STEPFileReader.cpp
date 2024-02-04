@@ -23,10 +23,14 @@
 #include "STEPFileReader.h"
 
 void Importing::STEPFileReader::load(const std::string& fileName) {
+	_progressBar->initialize();
+	_progressBar->setProgressMessage("Loading parts...");
+
 	if (!std::filesystem::exists(fileName)) {
 		auto message = "File " + fileName + " can not be found.";
 		vtkLogF(ERROR, message.c_str());
 		auto errorCode = std::make_error_code(std::errc::no_such_file_or_directory);
+		_progressBar->finish();
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
 	auto baseName = std::filesystem::path { fileName }.stem().generic_string();
@@ -49,6 +53,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 		auto message = "Error while reading file:" + fileName;
 		vtkLogF(ERROR, message.c_str());
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
+		_progressBar->finish();
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
 
@@ -56,6 +61,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 		auto message = "Error while reading file:" + fileName;
 		vtkLogF(ERROR, message.c_str());
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
+		_progressBar->finish();
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
 
@@ -70,9 +76,13 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 		auto message = "No shapes found in given STEP file.";
 		vtkLogF(ERROR, message);
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
+		_progressBar->finish();
 		throw std::filesystem::filesystem_error(message, errorCode);
 	} else {
 		for (auto i = 1; i <= numberOfShapes; i++) {
+			int progress = static_cast<int>(100.0 * i / numberOfShapes);
+			_progressBar->setValue(progress);
+
 			auto _shape = reader.Shape(i);
 
 			// Load each solid as an own object
@@ -169,6 +179,7 @@ void Importing::STEPFileReader::load(const std::string& fileName) {
 	std::filesystem::path filePath(fileName);
 	std::filesystem::path stepName = filePath.filename();
 	auto message = "STEP file: " + stepName.string() + " loaded successfully.";
+	_progressBar->finish();
 	vtkLogF(INFO, message.c_str());
 }
 

@@ -91,17 +91,13 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton{
-	
-	background-color: red;
-}
-QPushButton:pressed{
-	background-color: rgb(224, 27, 36);
-}
-</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="media-playback-stop"/>
        </property>
        <property name="iconSize">
         <size>

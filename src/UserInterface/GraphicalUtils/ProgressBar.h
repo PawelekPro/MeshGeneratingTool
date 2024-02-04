@@ -48,7 +48,13 @@ public:
 	 */
 	void setValue(const int value);
 
-	void initialize() { setValue(0); }
+	void initialize() {
+		this->show();
+		ui->stopButton->show();
+		setValue(0);
+	}
+
+	void finish();
 
 	void setProgressMessage(const std::string text);
 
