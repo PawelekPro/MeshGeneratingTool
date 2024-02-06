@@ -7,18 +7,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 23)
 
 # Check compiler standert supports
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
+# include(CheckCXXCompilerFlag)
+# CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 
-if(COMPILER_SUPPORTS_CXX17)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-    add_definitions(-DCOMPILEDWITHC17)
-    message(STATUS "Using flag -std=c++17.")
-else()
-    message(FATAL_ERROR
-        "The compiler ${CMAKE_CXX_COMPILER} has no 
-        required standard support. Please use a different C++ compiler.")
-endif()
+# if(COMPILER_SUPPORTS_CXX17)
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+#     add_definitions(-DCOMPILEDWITHC17)
+#     message(STATUS "Using flag -std=c++17.")
+# else()
+#     message(FATAL_ERROR
+#         "The compiler ${CMAKE_CXX_COMPILER} has no 
+#         required standard support. Please use a different C++ compiler.")
+# endif()
 
 
 SET(CMAKE_PREFIX_PATH "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6")
@@ -41,6 +41,7 @@ set(FORMS_PATH "${UI_FILES}/Forms")
 set(CAD_MANAGER "${CMAKE_CURRENT_SOURCE_DIR}/src/CADManager")
 set(RENDERING_CORE "${UI_FILES}/Rendering")
 set(UI_UTILS "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
+set(GEOM_CORE "${CMAKE_CURRENT_SOURCE_DIR}/src/GeometryCore")
 
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
@@ -61,6 +62,9 @@ set(PROJECT_SOURCES
     ${CAD_MANAGER}/STEPFileReader.h
     ${CAD_MANAGER}/STLFileReader.cpp
     ${CAD_MANAGER}/STLFileReader.h
+    ${GEOM_CORE}/STEPPlugin/STEPPlugin.h
+    ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.cpp
+    ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.h
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -109,7 +113,7 @@ foreach(_headerFile ${HEADERS})
     list(APPEND INCLUDE_DIRS ${_dir})
 endforeach()
 list(REMOVE_DUPLICATES INCLUDE_DIRS)
-include_directories("./include")
+# include_directories("./include")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(meshGenerator

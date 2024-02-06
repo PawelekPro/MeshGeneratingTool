@@ -3,9 +3,6 @@
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
- *
- * Created by Paweł Gilewicz on 01/02/2024.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,45 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROGRESSBAR_H
-#define PROGRESSBAR_H
+#ifndef STEPPLUGINOPERATIONS_H
+#define STEPPLUGINOPERATIONS_H
 
-#include "./ui_ProgressBar.h"
-#include <iostream>
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <TCollection_AsciiString.hxx>
 
-#include <QWidget>
-#include <QtCore/QtGlobal>
-
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class ProgressBar;
-}
-QT_END_NAMESPACE
-
-class ProgressBar : public QWidget {
-	Q_OBJECT
+namespace STEPPlugin {
+class STEPPluginOperations {
 public:
-	ProgressBar(QWidget* parent = nullptr);
-	~ProgressBar();
+	STEPPluginOperations() {};
+	~STEPPluginOperations() {};
 
 	/**
-	 * @brief  Set currently displayed value of progress bar.
+	 * @brief  Import STEP file.
 	 *
-	 * @param  {int} value : Progress value of current process.
+	 * @param  {TCollection_AsciiString} fileName      : Name of the file to import.
+	 * @return {Handle(TColStd_HSequenceOfTransient)}  : List of geometry objects
 	 */
-	void setValue(const int value);
-
-	void initialize() {
-		show();
-		setValue(0);
-	}
-
-	void finish();
-
-	void setProgressMessage(const std::string text);
-
-private:
-	Ui::ProgressBar* ui;
+	Handle(TColStd_HSequenceOfTransient) importSTEP(const TCollection_AsciiString& fileName);
 };
+}
 
 #endif

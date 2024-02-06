@@ -24,14 +24,13 @@
 
 void Importing::STLFileReader::load(const std::string& fileName) {
 
-	std::cout << "> importing STL file" << std::endl;
+	_progressBar->initialize();
+	_progressBar->setProgressMessage("Converting to faces...");
 
 	TCollection_AsciiString aName((Standard_CString)fileName.data());
 	OSD_Path aFile(aName);
 
 	BRepBuilderAPI_Sewing shapeSewer;
-
-	std::cout << " -> reading '" << fileName << "'" << std::endl;
 
 	Handle(Poly_Triangulation) aSTLMesh = RWStl::ReadFile(aFile);
 
@@ -41,9 +40,6 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 	TopoDS_Shape shape;
 	TopoDS_Face face;
 	TopoDS_Wire wire;
-
-	_progressBar->initialize();
-	_progressBar->setProgressMessage("Converting to faces...");
 
 	for (Standard_Integer i = 1; i <= numberOfTriangles; i++) {
 		int progress = static_cast<int>(100.0 * i / numberOfTriangles);
@@ -76,14 +72,13 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 		}
 	}
 
-	_progressBar->initialize();
-	_progressBar->setProgressMessage("Sewing faces...");
+	// _progressBar->setValue(0);
+	// _progressBar->setProgressMessage("Sewing faces...");
 
 	shapeSewer.Perform();
 	shape = shapeSewer.SewedShape();
 
-	_progressBar->initialize();
-	_progressBar->setProgressMessage("Extracting shells...");
+	// _progressBar->setProgressMessage("Extracting shells...");
 
 	BRepBuilderAPI_MakeSolid solidmaker;
 	TopTools_IndexedMapOfShape shellMap;
@@ -91,8 +86,8 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 
 	unsigned int counter = 0;
 	for (int ishell = 1; ishell <= shellMap.Extent(); ++ishell) {
-		int progress = static_cast<int>(100.0 * ishell / shellMap.Extent());
-		_progressBar->setValue(progress);
+		// int progress = static_cast<int>(100.0 * ishell / shellMap.Extent());
+		// _progressBar->setValue(progress);
 
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
@@ -103,7 +98,7 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 
 	std::cout << " -> shells found: " << counter << std::endl;
 
-	_progressBar->setProgressMessage("Converting to solid...");
+	// _progressBar->setProgressMessage("Converting to solid...");
 
 	TopoDS_Shape solid = solidmaker.Solid();
 

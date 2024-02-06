@@ -3,9 +3,6 @@
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
- *
- * Created by Paweł Gilewicz on 01/02/2024.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,45 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROGRESSBAR_H
-#define PROGRESSBAR_H
+#include "STEPPluginOperations.h"
 
-#include "./ui_ProgressBar.h"
-#include <iostream>
-
-#include <QWidget>
-#include <QtCore/QtGlobal>
-
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class ProgressBar;
-}
-QT_END_NAMESPACE
-
-class ProgressBar : public QWidget {
-	Q_OBJECT
-public:
-	ProgressBar(QWidget* parent = nullptr);
-	~ProgressBar();
-
-	/**
-	 * @brief  Set currently displayed value of progress bar.
-	 *
-	 * @param  {int} value : Progress value of current process.
-	 */
-	void setValue(const int value);
-
-	void initialize() {
-		show();
-		setValue(0);
+Handle(TColStd_HSequenceOfTransient)
+	STEPPlugin::STEPPluginOperations::importSTEP(const TCollection_AsciiString& fileName) {
+	if (fileName.IsEmpty()) {
+		return NULL;
 	}
-
-	void finish();
-
-	void setProgressMessage(const std::string text);
-
-private:
-	Ui::ProgressBar* ui;
-};
-
-#endif
+}
