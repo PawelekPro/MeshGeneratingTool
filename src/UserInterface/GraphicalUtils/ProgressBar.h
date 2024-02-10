@@ -20,6 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Take a look:
+// https://opencascade.blogspot.com/2009/01/
+
 #ifndef PROGRESSBAR_H
 #define PROGRESSBAR_H
 

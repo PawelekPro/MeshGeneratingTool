@@ -20,23 +20,63 @@
 #ifndef STEPPLUGINOPERATIONS_H
 #define STEPPLUGINOPERATIONS_H
 
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <TCollection_AsciiString.hxx>
+#include <filesystem>
+
+#include <QWidget>
+
+#include <vtkLogger.h>
+#include <vtkProperty.h>
+
+#include <BRep_Builder.hxx>
+#include <STEPCAFControl_Reader.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <XCAFApp_Application.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_ColorType.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+
+#include "../Geometry/GeometryFunctions.h"
 
 namespace STEPPlugin {
-class STEPPluginOperations {
+
+/**
+ * @brief  	The STEPFileReader provides class for importing STEP files.
+ *
+ * @details	Inherits from CADFileReader class.
+ */
+class STEPPluginImport : public Geometry::GeometryFunctions {
+
 public:
-	STEPPluginOperations() {};
-	~STEPPluginOperations() {};
+	/**
+	 * Construct instance of STEPFileReader class.
+	 *
+	 */
+	STEPPluginImport() {};
 
 	/**
-	 * @brief  Import STEP file.
+	 * Destructor for instance of STEPFileReader class.
 	 *
-	 * @param  {TCollection_AsciiString} fileName      : Name of the file to import.
-	 * @return {Handle(TColStd_HSequenceOfTransient)}  : List of geometry objects
 	 */
-	Handle(TColStd_HSequenceOfTransient) importSTEP(const TCollection_AsciiString& fileName);
+	~STEPPluginImport() {};
+
+	/**
+	 * @brief  Load step/stp file and fill parts map container.
+	 *
+	 * @param  {std::string} fileName :  Path to step/stp file.
+	 */
+	void load(const std::string& fileName, QWidget* parent) override;
+
+	/**
+	 * @brief  Get container of vtkActor class instances.
+	 *
+	 * @return {ActorsMap}  : Container of vtkActor class instances.
+	 */
+	Geometry::ActorsMap getVTKActorsMap() override;
+
+private:
 };
-}
+
+};
 
 #endif

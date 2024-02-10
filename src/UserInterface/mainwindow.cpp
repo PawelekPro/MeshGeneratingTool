@@ -72,12 +72,12 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 
 void MainWindow::importSTEP(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
-	Importing::STEPFileReader stepReader(progressBar);
+	STEPPlugin::STEPPluginImport stepReader {};
 
 	const std::string& filePath = fileName.toStdString();
-	stepReader.load(filePath);
+	stepReader.load(filePath, this);
 
-	Importing::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
 }
 

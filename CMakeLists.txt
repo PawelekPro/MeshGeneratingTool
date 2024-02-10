@@ -62,6 +62,9 @@ set(PROJECT_SOURCES
     ${CAD_MANAGER}/STEPFileReader.h
     ${CAD_MANAGER}/STLFileReader.cpp
     ${CAD_MANAGER}/STLFileReader.h
+    ${GEOM_CORE}/Geometry/GeometryFunctions.cpp
+    ${GEOM_CORE}/Geometry/GeometryFunctions.h
+    ${GEOM_CORE}/STEPPlugin/progressbar.h
     ${GEOM_CORE}/STEPPlugin/STEPPlugin.h
     ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.cpp
     ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.h
