@@ -24,7 +24,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Progress, Message_ProgressIndicator)
 
 void STEPPlugin::STEPPluginImport::load(const std::string& fileName, QWidget* parent) {
 
-	Handle(Progress) theProgress = new Progress(parent);
+	Handle(Progress) theProgress = new Progress(parent, fileName);
 
 	if (!std::filesystem::exists(fileName)) {
 		auto message = "File " + fileName + " can not be found.";

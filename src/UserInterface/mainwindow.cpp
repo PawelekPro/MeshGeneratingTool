@@ -78,6 +78,7 @@ void MainWindow::importSTEP(QString fileName) {
 	try {
 		stepReader.load(filePath, this->progressBar);
 	} catch (std::filesystem::filesystem_error) {
+		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
 		return;
 	}

@@ -62,6 +62,10 @@ bool ProgressBar::getTerminateIndicator() {
 	return this->_terminate;
 }
 
+void ProgressBar::setTerminateIndicator(const bool sigTerm) {
+	this->_terminate = sigTerm;
+}
+
 ProgressBar::~ProgressBar() {
 	delete ui;
 }

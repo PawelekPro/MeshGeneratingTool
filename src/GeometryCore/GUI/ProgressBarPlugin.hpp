@@ -44,11 +44,14 @@ public:
 	 *
 	 * @param  {QWidget*} parent  : The parent widget from which it should inherit attributes.
 	 */
-	Standard_EXPORT Progress(QWidget* parent) {
+	Standard_EXPORT Progress(QWidget* parent, const std::string& fileName) {
 		myProgress = qobject_cast<ProgressBar*>(parent);
 		myProgress->setMinimum(0);
 		myProgress->setMaximum(100);
 		myProgress->initialize();
+		auto message = "Reading file: " + fileName;
+		myProgress->setProgressMessage(message.c_str());
+		QCoreApplication::processEvents(); // Refresh user interface
 	}
 
 	/**
@@ -110,7 +113,7 @@ public:
 			}
 		}
 		myProgress->setProgressMessage(aText.str().c_str());
-		QApplication::processEvents(); // keep GUI responsive.
+		QApplication::processEvents(); // keep GUI responsive
 	}
 
 	/**

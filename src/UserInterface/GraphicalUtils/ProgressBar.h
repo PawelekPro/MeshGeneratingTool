@@ -89,6 +89,13 @@ public:
 	 */
 	bool getTerminateIndicator();
 
+	/**
+	 * @brief  Set terminate signal indicator.
+	 *
+	 * @param  {bool} sigTerm : True if terminated, false otherwise.
+	 */
+	void setTerminateIndicator(const bool);
+
 private:
 	// interface
 	Ui::ProgressBar* ui;
