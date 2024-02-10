@@ -49,7 +49,8 @@ public:
 	void setValue(const int value);
 
 	void initialize() {
-		show();
+		this->show();
+		this->ui->stopButton->show(); // fix for button not being displayed
 		setValue(0);
 	}
 

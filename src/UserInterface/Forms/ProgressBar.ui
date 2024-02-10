@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
+    <width>641</width>
     <height>16</height>
    </rect>
   </property>
@@ -62,6 +62,12 @@
      </property>
      <item>
       <widget class="QProgressBar" name="progressBar">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>150</width>
@@ -94,13 +100,10 @@
         <bool>false</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">selection-color: rgb(153, 193, 241);</string>
+        <string notr="true">background-color: rgb(255, 0, 0);</string>
        </property>
        <property name="text">
         <string/>
-       </property>
-       <property name="icon">
-        <iconset theme="media-playback-stop"/>
        </property>
        <property name="iconSize">
         <size>
