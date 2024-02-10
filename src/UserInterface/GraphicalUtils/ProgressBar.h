@@ -3,9 +3,6 @@
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
- *
- * Created by Paweł Gilewicz on 01/02/2024.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -56,6 +53,23 @@ public:
 		setValue(0);
 	}
 
+	/**
+	 * @brief  Set maximum value of progress bar.
+	 *
+	 * @param  {int} max : Maximum value.
+	 */
+	void setMaximum(const int max);
+
+	/**
+	 * @brief  Set minimum value of progress bar.
+	 *
+	 * @param  {int} min : Minimum value.
+	 */
+	void setMinimum(const int min);
+
+	/**
+	 * @brief  Finish progress indication and hide progress bar.
+	 */
 	void finish();
 
 	void setProgressMessage(const std::string text);

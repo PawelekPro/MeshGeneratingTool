@@ -64,11 +64,13 @@ set(PROJECT_SOURCES
     ${CAD_MANAGER}/STLFileReader.h
     ${GEOM_CORE}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE}/Geometry/GeometryFunctions.h
-    ${GEOM_CORE}/STEPPlugin/progressbar.h
     ${GEOM_CORE}/STEPPlugin/STEPPlugin.h
     ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.cpp
     ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.h
 )
+
+include_directories("./src/UserInterface/GraphicalUtils" 
+"./src/GeometryCore/GUI")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 

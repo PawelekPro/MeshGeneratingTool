@@ -37,6 +37,7 @@
 #include <XCAFDoc_DocumentTool.hxx>
 
 #include "../Geometry/GeometryFunctions.h"
+#include "ProgressBarPlugin.hpp"
 
 namespace STEPPlugin {
 

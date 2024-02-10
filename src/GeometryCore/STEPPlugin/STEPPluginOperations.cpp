@@ -18,7 +18,6 @@
  */
 
 #include "STEPPluginOperations.h"
-#include "progressbar.h"
 
 DEFINE_STANDARD_HANDLE(Progress, Message_ProgressIndicator);
 IMPLEMENT_STANDARD_RTTIEXT(Progress, Message_ProgressIndicator)

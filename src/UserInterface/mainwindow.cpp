@@ -75,7 +75,7 @@ void MainWindow::importSTEP(QString fileName) {
 	STEPPlugin::STEPPluginImport stepReader {};
 
 	const std::string& filePath = fileName.toStdString();
-	stepReader.load(filePath, this);
+	stepReader.load(filePath, this->progressBar);
 
 	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
