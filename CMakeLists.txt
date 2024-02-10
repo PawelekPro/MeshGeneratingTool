@@ -58,8 +58,6 @@ set(PROJECT_SOURCES
     ${RENDERING_CORE}/QVTKInteractorStyle.h
     ${CAD_MANAGER}/CADFileReader.cpp
     ${CAD_MANAGER}/CADFileReader.h
-    ${CAD_MANAGER}/STEPFileReader.cpp
-    ${CAD_MANAGER}/STEPFileReader.h
     ${CAD_MANAGER}/STLFileReader.cpp
     ${CAD_MANAGER}/STLFileReader.h
     ${GEOM_CORE}/Geometry/GeometryFunctions.cpp
@@ -69,8 +67,10 @@ set(PROJECT_SOURCES
     ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.h
 )
 
-include_directories("./src/UserInterface/GraphicalUtils" 
-"./src/GeometryCore/GUI")
+include_directories(
+    "./src/UserInterface/GraphicalUtils" 
+    "./src/GeometryCore/GUI"
+    "./src/GeometryCore/Geometry")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 

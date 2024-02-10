@@ -28,6 +28,7 @@
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNamedColors.h>
 #include <vtkPropPicker.h>
+#include <vtkProperty.h>
 
 #include <QAction>
 #include <QFont>

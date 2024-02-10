@@ -75,7 +75,7 @@ void Rendering::QVTKRenderWindow::fitView() {
 	this->_rendererWindow->Render();
 }
 
-void Rendering::QVTKRenderWindow::addActors(const Importing::ActorsMap& actorsMap) {
+void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {
 		vtkSmartPointer<vtkActor> actor = entry.second;
 		this->_renderer->AddActor(actor);

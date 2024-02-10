@@ -25,7 +25,6 @@
 
 #include <functional>
 
-#include "../CADManager/STEPFileReader.h"
 #include "../CADManager/STLFileReader.h"
 #include "../GeometryCore/STEPPlugin/STEPPluginOperations.h"
 #include "./ui_mainwindow.h"

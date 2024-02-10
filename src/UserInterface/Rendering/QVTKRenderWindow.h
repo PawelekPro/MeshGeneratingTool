@@ -23,6 +23,8 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
+#include "GeometryFunctions.h"
+
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkNew.h>
@@ -31,7 +33,6 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 
-#include "../../CADManager/STEPFileReader.h"
 #include <vtkInteractorStyle.h>
 
 namespace Rendering {
@@ -59,7 +60,7 @@ public:
 	 *
 	 * @param  {Importing::ActorsMap} actorsMap : Container of vtkActors.
 	 */
-	void addActors(const Importing::ActorsMap& actorsMap);
+	void addActors(const Geometry::ActorsMap& actorsMap);
 
 	/**
 	 * @brief  Set interator style to customize interaction.

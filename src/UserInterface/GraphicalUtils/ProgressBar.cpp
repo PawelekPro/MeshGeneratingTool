@@ -53,6 +53,8 @@ void ProgressBar::setMinimum(const int min) {
 }
 
 void ProgressBar::handleStopButtonClicked() {
+	auto message = "Process aborted by the user.";
+	vtkLogF(ERROR, message);
 	this->_terminate = true;
 }
 

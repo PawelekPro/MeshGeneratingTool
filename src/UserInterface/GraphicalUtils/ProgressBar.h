@@ -23,6 +23,8 @@
 #include "./ui_ProgressBar.h"
 #include <iostream>
 
+#include <vtkLogger.h>
+
 #include <QEvent>
 #include <QPushButton>
 #include <QWidget>
@@ -73,15 +75,32 @@ public:
 	 */
 	void finish();
 
+	/**
+	 * @brief  Set currently displayed message on progress bar.
+	 *
+	 * @param  {std::string} text : Text to be displayed.
+	 */
 	void setProgressMessage(const std::string text);
 
+	/**
+	 * @brief  Get terminate signal (bool indicator).
+	 *
+	 * @return {bool}  : True if process aborted, false otherwise.
+	 */
 	bool getTerminateIndicator();
 
 private:
+	// interface
 	Ui::ProgressBar* ui;
+
+	// Terminate signal (bool indicator)
 	bool _terminate = false;
 
 private slots:
+	/**
+	 * @brief Slot for handling stop button pressed event.
+	 *
+	 */
 	void handleStopButtonClicked();
 };
 
