@@ -17,15 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Take a look:
-// https://opencascade.blogspot.com/2009/01/
-
 #ifndef PROGRESSBAR_H
 #define PROGRESSBAR_H
 
 #include "./ui_ProgressBar.h"
 #include <iostream>
 
+#include <QEvent>
+#include <QPushButton>
 #include <QWidget>
 #include <QtCore/QtGlobal>
 
@@ -37,6 +36,7 @@ QT_END_NAMESPACE
 
 class ProgressBar : public QWidget {
 	Q_OBJECT
+
 public:
 	ProgressBar(QWidget* parent = nullptr);
 	~ProgressBar();
@@ -75,8 +75,14 @@ public:
 
 	void setProgressMessage(const std::string text);
 
+	bool getTerminateIndicator();
+
 private:
 	Ui::ProgressBar* ui;
+	bool _terminate = false;
+
+private slots:
+	void handleStopButtonClicked();
 };
 
 #endif

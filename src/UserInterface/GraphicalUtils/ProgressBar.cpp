@@ -26,6 +26,9 @@ ProgressBar::ProgressBar(QWidget* parent)
 
 	this->ui->progressBar->setMinimum(0);
 	this->ui->progressBar->setMaximum(100);
+
+	connect(this->ui->stopButton, &QPushButton::clicked, this, &ProgressBar::handleStopButtonClicked);
+
 	this->hide();
 }
 
@@ -47,6 +50,14 @@ void ProgressBar::setMaximum(const int max) {
 
 void ProgressBar::setMinimum(const int min) {
 	this->ui->progressBar->setMinimum(min);
+}
+
+void ProgressBar::handleStopButtonClicked() {
+	this->_terminate = true;
+}
+
+bool ProgressBar::getTerminateIndicator() {
+	return this->_terminate;
 }
 
 ProgressBar::~ProgressBar() {

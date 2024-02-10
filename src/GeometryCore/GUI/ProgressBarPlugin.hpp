@@ -20,6 +20,7 @@
 #include <Message_ProgressIndicator.hxx>
 
 #include <QApplication>
+#include <QObject>
 #include <QProgressDialog>
 #include <QWidget>
 
@@ -31,6 +32,7 @@
  *
  */
 class Progress : public Message_ProgressIndicator {
+
 protected:
 	ProgressBar* myProgress;
 
@@ -118,6 +120,6 @@ public:
 	 * @return {Standard_EXPORT}  : Defines platform-specific pre-processor macros necessary for correct compilation.
 	 */
 	Standard_EXPORT virtual Standard_Boolean UserBreak() Standard_OVERRIDE {
-		return false;
+		return myProgress->getTerminateIndicator();
 	}
 };
