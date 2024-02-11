@@ -122,7 +122,8 @@ public:
 	 *
 	 * @return {Standard_EXPORT}  : Defines platform-specific pre-processor macros necessary for correct compilation.
 	 */
-	Standard_EXPORT virtual Standard_Boolean UserBreak() Standard_OVERRIDE {
+	Standard_EXPORT virtual Standard_Boolean
+	UserBreak() Standard_OVERRIDE {
 		return myProgress->getTerminateIndicator();
 	}
 };

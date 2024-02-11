@@ -20,7 +20,7 @@
 #ifndef PROGRESSBAR_H
 #define PROGRESSBAR_H
 
-#include "./ui_ProgressBar.h"
+#include "ui_ProgressBar.h"
 #include <iostream>
 
 #include <vtkLogger.h>

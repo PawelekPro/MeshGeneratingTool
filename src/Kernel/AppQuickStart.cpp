@@ -17,14 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#include "MainWindow.h"
 
-#include <QString>
+#include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 
-namespace filters {
-const QString StepFilter = "STEP Physical File (*.stp *.step *.STP *.STEP)";
-const QString StlFilter = "STL file (*.stl *.STL)";
+int main(int argc, char* argv[]) {
+	QApplication application(argc, argv);
+
+	QTranslator translator;
+	const QStringList uiLanguages = QLocale::system().uiLanguages();
+	for (const QString& locale : uiLanguages) {
+		const QString baseName = "meshGeneratorUI_" + QLocale(locale).name();
+		if (translator.load(":/i18n/" + baseName)) {
+			application.installTranslator(&translator);
+			break;
+		}
+	}
+	MainWindow window;
+	window.showMaximized();
+	return application.exec();
 }
-
-#endif

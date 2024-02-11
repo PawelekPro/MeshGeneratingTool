@@ -36,41 +36,44 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
 
 message(STATUS "Qt major version: ${QT_VERSION_MAJOR}")
 
-set(UI_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
-set(FORMS_PATH "${UI_FILES}/Forms")
+set(KERNEL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/Kernel")
+set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
+set(UI_UTILS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
+set(FORMS_PATH "${UI_PATH}/Forms")
 set(CAD_MANAGER "${CMAKE_CURRENT_SOURCE_DIR}/src/CADManager")
-set(RENDERING_CORE "${UI_FILES}/Rendering")
-set(UI_UTILS "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
-set(GEOM_CORE "${CMAKE_CURRENT_SOURCE_DIR}/src/GeometryCore")
+set(GEOM_CORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/GeometryCore")
 
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
 set(PROJECT_SOURCES
-    ${UI_FILES}/main.cpp
-    ${UI_FILES}/mainwindow.cpp
-    ${UI_FILES}/mainwindow.h
-    ${UI_UTILS}/ProgressBar.cpp
-    ${UI_UTILS}/ProgressBar.h
-    ${UI_UTILS}/Configuration.h
-    ${RENDERING_CORE}/QVTKRenderWindow.cpp
-    ${RENDERING_CORE}/QVTKRenderWindow.h
-    ${RENDERING_CORE}/QVTKInteractorStyle.cpp
-    ${RENDERING_CORE}/QVTKInteractorStyle.h
+    ${KERNEL_PATH}/AppQuickStart.cpp
+    ${UI_PATH}/MainWindow.cpp
+    ${UI_PATH}/MainWindow.h
+    ${UI_UTILS_PATH}/ProgressBar.cpp
+    ${UI_UTILS_PATH}/ProgressBar.h
+    ${UI_UTILS_PATH}/Configuration.h
+    ${UI_PATH}/Rendering/QVTKRenderWindow.cpp
+    ${UI_PATH}/Rendering/QVTKRenderWindow.h
+    ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
+    ${UI_PATH}/Rendering/QVTKInteractorStyle.h
     ${CAD_MANAGER}/CADFileReader.cpp
     ${CAD_MANAGER}/CADFileReader.h
     ${CAD_MANAGER}/STLFileReader.cpp
     ${CAD_MANAGER}/STLFileReader.h
-    ${GEOM_CORE}/Geometry/GeometryFunctions.cpp
-    ${GEOM_CORE}/Geometry/GeometryFunctions.h
-    ${GEOM_CORE}/STEPPlugin/STEPPlugin.h
-    ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.cpp
-    ${GEOM_CORE}/STEPPlugin/STEPPluginOperations.h
+    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
+    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
 )
 
 include_directories(
-    "./src/UserInterface/GraphicalUtils" 
-    "./src/GeometryCore/GUI"
-    "./src/GeometryCore/Geometry")
+    ${KERNEL_PATH}
+    ${UI_PATH}
+    ${UI_UTILS_PATH}
+    ${GEOM_CORE_PATH}
+    ${GEOM_CORE_PATH}/GUI
+    ${GEOM_CORE_PATH}/Geometry)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
