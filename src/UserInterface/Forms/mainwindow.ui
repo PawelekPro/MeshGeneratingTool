@@ -71,13 +71,7 @@
          <number>4</number>
         </property>
         <item row="0" column="0">
-         <widget class="QTreeWidget" name="treeWidget">
-          <column>
-           <property name="text">
-            <string>Tree View</string>
-           </property>
-          </column>
-         </widget>
+         <widget class="TreeStructure" name="treeWidget"/>
         </item>
         <item row="1" column="0">
          <widget class="QTableWidget" name="tableWidget"/>
@@ -196,6 +190,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TreeStructure</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">TreeStructure.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
