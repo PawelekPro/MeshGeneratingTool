@@ -86,11 +86,11 @@ void MainWindow::importSTEP(QString fileName) {
 
 void MainWindow::importSTL(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
-	Importing::STLFileReader stlReader(progressBar);
+	STLPlugin::STLFileReader stlReader {};
 
 	const std::string& filePath = fileName.toStdString();
-	stlReader.load(filePath);
+	stlReader.load(filePath, progressBar);
 
-	Importing::ActorsMap actorsMap = stlReader.getVTKActorsMap();
+	Geometry::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
 }

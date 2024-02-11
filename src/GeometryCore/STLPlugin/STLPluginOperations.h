@@ -3,9 +3,6 @@
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
- *
- * Created by Paweł Gilewicz on 01/02/2024.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -23,6 +20,9 @@
 #ifndef STLFILEREADER_H
 #define STLFILEREADER_H
 
+#include "../../UserInterface/GraphicalUtils/ProgressBar.h"
+#include "../Geometry/GeometryFunctions.h"
+
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
@@ -37,24 +37,20 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Wire.hxx>
 
-#include "CADFileReader.h"
-
-namespace Importing {
+namespace STLPlugin {
 
 /**
  * @brief  	The STLFileReader provides class for importing STL files.
  *
- * @details	Inherits from CADFileReader class.
+ * @details	Inherits from GeometryFunctions class.
  */
-class STLFileReader : public CADFileReader {
+class STLFileReader : public Geometry::GeometryFunctions {
 public:
 	/**
 	 * Constructor of STLFileReader class instance.
 	 *
-	 * @param  {ProgressBar*} progressBar : Pointer to ProgressBar object.
 	 */
-	STLFileReader(ProgressBar* progressBar)
-		: _progressBar(progressBar) {};
+	STLFileReader() {};
 
 	/**
 	 * Destructor of STLFileReader class instance.
@@ -67,17 +63,14 @@ public:
 	 *
 	 * @param  {std::string} fileName : Path to the .stl file.
 	 */
-	void load(const std::string& fileName) override;
+	void load(const std::string& fileName, QWidget* parent) override;
 
 	/**
 	 * @brief  Get container of vtkActor class instances.
 	 *
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
-	ActorsMap getVTKActorsMap() override;
-
-private:
-	ProgressBar* _progressBar;
+	Geometry::ActorsMap getVTKActorsMap() override;
 };
 
 }

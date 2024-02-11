@@ -3,9 +3,6 @@
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
- *
- * Created by Paweł Gilewicz on 01/02/2024.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,12 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "STLFileReader.h"
+#include "STLPluginOperations.h"
 
-void Importing::STLFileReader::load(const std::string& fileName) {
+void STLPlugin::STLFileReader::load(const std::string& fileName, QWidget* parent) {
 
-	_progressBar->initialize();
-	_progressBar->setProgressMessage("Converting to faces...");
+	ProgressBar* progressBar = qobject_cast<ProgressBar*>(parent);
+	progressBar->initialize();
+	progressBar->setProgressMessage("Converting to faces...");
 
 	TCollection_AsciiString aName((Standard_CString)fileName.data());
 	OSD_Path aFile(aName);
@@ -43,7 +41,7 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 
 	for (Standard_Integer i = 1; i <= numberOfTriangles; i++) {
 		int progress = static_cast<int>(100.0 * i / numberOfTriangles);
-		_progressBar->setValue(progress);
+		progressBar->setValue(progress);
 
 		Poly_Triangle triangle = aSTLMesh->Triangle(i);
 
@@ -72,13 +70,13 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 		}
 	}
 
-	// _progressBar->setValue(0);
-	// _progressBar->setProgressMessage("Sewing faces...");
+	// progressBar->setValue(0);
+	// progressBar->setProgressMessage("Sewing faces...");
 
 	shapeSewer.Perform();
 	shape = shapeSewer.SewedShape();
 
-	// _progressBar->setProgressMessage("Extracting shells...");
+	// progressBar->setProgressMessage("Extracting shells...");
 
 	BRepBuilderAPI_MakeSolid solidmaker;
 	TopTools_IndexedMapOfShape shellMap;
@@ -87,7 +85,7 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 	unsigned int counter = 0;
 	for (int ishell = 1; ishell <= shellMap.Extent(); ++ishell) {
 		// int progress = static_cast<int>(100.0 * ishell / shellMap.Extent());
-		// _progressBar->setValue(progress);
+		// progressBar->setValue(progress);
 
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
@@ -98,17 +96,17 @@ void Importing::STLFileReader::load(const std::string& fileName) {
 
 	std::cout << " -> shells found: " << counter << std::endl;
 
-	// _progressBar->setProgressMessage("Converting to solid...");
+	// progressBar->setProgressMessage("Converting to solid...");
 
 	TopoDS_Shape solid = solidmaker.Solid();
 
 	std::cout << " -> done." << std::endl;
 
-	_progressBar->finish();
+	progressBar->finish();
 }
 
-Importing::ActorsMap Importing::STLFileReader::getVTKActorsMap() {
-	Importing::ActorsMap actorsMap {};
+Geometry::ActorsMap STLPlugin::STLFileReader::getVTKActorsMap() {
+	Geometry::ActorsMap actorsMap {};
 
 	for (const auto& it : this->_partsMap) {
 		const auto& shape = it.second;

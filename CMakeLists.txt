@@ -40,7 +40,6 @@ set(KERNEL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/Kernel")
 set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
 set(UI_UTILS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
 set(FORMS_PATH "${UI_PATH}/Forms")
-set(CAD_MANAGER "${CMAKE_CURRENT_SOURCE_DIR}/src/CADManager")
 set(GEOM_CORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/GeometryCore")
 
 
@@ -56,15 +55,13 @@ set(PROJECT_SOURCES
     ${UI_PATH}/Rendering/QVTKRenderWindow.h
     ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
     ${UI_PATH}/Rendering/QVTKInteractorStyle.h
-    ${CAD_MANAGER}/CADFileReader.cpp
-    ${CAD_MANAGER}/CADFileReader.h
-    ${CAD_MANAGER}/STLFileReader.cpp
-    ${CAD_MANAGER}/STLFileReader.h
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
+    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
+    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
 )
 
 include_directories(

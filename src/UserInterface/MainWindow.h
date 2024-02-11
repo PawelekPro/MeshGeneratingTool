@@ -22,8 +22,8 @@
 
 #include <functional>
 
-#include "../CADManager/STLFileReader.h"
 #include "../GeometryCore/STEPPlugin/STEPPluginOperations.h"
+#include "../GeometryCore/STLPlugin/STLPluginOperations.h"
 #include "./ui_mainwindow.h"
 #include "GraphicalUtils/Configuration.h"
 #include "GraphicalUtils/ProgressBar.h"

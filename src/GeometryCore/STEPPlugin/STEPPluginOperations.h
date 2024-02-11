@@ -44,7 +44,7 @@ namespace STEPPlugin {
 /**
  * @brief  	The STEPFileReader provides class for importing STEP files.
  *
- * @details	Inherits from CADFileReader class.
+ * @details	Inherits from GeometryFunctions class.
  */
 class STEPPluginImport : public Geometry::GeometryFunctions {
 
