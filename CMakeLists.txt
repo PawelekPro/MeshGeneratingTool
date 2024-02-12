@@ -57,6 +57,8 @@ set(PROJECT_SOURCES
     ${UI_PATH}/Rendering/QVTKRenderWindow.h
     ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
     ${UI_PATH}/Rendering/QVTKInteractorStyle.h
+    ${UI_PATH}/Rendering/QVTKNavigationWidget.h
+    ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
