@@ -31,6 +31,7 @@
 #include <vtkProperty.h>
 #include <vtkTextProperty.h>
 
+#include "QVTKNavigationWidget.h"
 #include <QLayout>
 
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
@@ -81,34 +82,41 @@ void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap
 	this->_rendererWindow->Render();
 }
 
+void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
+	this->_renderer->AddActor(actor);
+	this->_rendererWindow->Render();
+}
+
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
-	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
-	_vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+	// vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+	// tests
+	// _vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+	_vtkAxesWidget = Navigation::QVTKNavigationWidget::New(this);
 
-	vtkSmartPointer<vtkProperty> shaftProps[] = { axes->GetXAxisShaftProperty(),
-		axes->GetYAxisShaftProperty(),
-		axes->GetZAxisShaftProperty() };
+	// vtkSmartPointer<vtkProperty> shaftProps[] = { axes->GetXAxisShaftProperty(),
+	// 	axes->GetYAxisShaftProperty(),
+	// 	axes->GetZAxisShaftProperty() };
 
-	vtkSmartPointer<vtkProperty> tipProps[] = { axes->GetXAxisTipProperty(),
-		axes->GetYAxisTipProperty(),
-		axes->GetZAxisTipProperty() };
+	// vtkSmartPointer<vtkProperty> tipProps[] = { axes->GetXAxisTipProperty(),
+	// 	axes->GetYAxisTipProperty(),
+	// 	axes->GetZAxisTipProperty() };
 
-	vtkSmartPointer<vtkTextProperty> labelProps[] = {
-		axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty(),
-		axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty(),
-		axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()
-	};
+	// vtkSmartPointer<vtkTextProperty> labelProps[] = {
+	// 	axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty(),
+	// 	axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty(),
+	// 	axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()
+	// };
 
-	for (int i = 0; i < 3; ++i) {
-		shaftProps[i]->SetColor(1.0, 1.0, 1.0);
-		tipProps[i]->SetColor(1.0, 1.0, 1.0);
-		labelProps[i]->ShadowOff();
-		labelProps[i]->ItalicOff();
-	}
+	// for (int i = 0; i < 3; ++i) {
+	// 	shaftProps[i]->SetColor(1.0, 1.0, 1.0);
+	// 	tipProps[i]->SetColor(1.0, 1.0, 1.0);
+	// 	labelProps[i]->ShadowOff();
+	// 	labelProps[i]->ItalicOff();
+	// }
 
-	_vtkAxesWidget->SetOrientationMarker(axes);
+	// _vtkAxesWidget->SetOrientationMarker(axes);
 	_vtkAxesWidget->SetInteractor(_vtkWidget->renderWindow()->GetInteractor());
 	_vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
-	_vtkAxesWidget->SetEnabled(1);
-	_vtkAxesWidget->InteractiveOn();
+	_vtkAxesWidget->SetEnabled(true);
+	_vtkAxesWidget->InteractiveOff();
 };

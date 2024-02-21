@@ -59,6 +59,8 @@ public:
 	 */
 	void addActors(const Geometry::ActorsMap& actorsMap);
 
+	void addActor(vtkActor* actor);
+
 	/**
 	 * @brief  Set interator style to customize interaction.
 	 *
@@ -73,6 +75,10 @@ public:
 	void fitView();
 
 	vtkRenderer* getRenderer() { return this->_renderer; }
+
+	vtkRenderWindowInteractor* getInteractor() { return this->_rendererWindow->GetInteractor(); }
+
+	vtkOrientationMarkerWidget* getOrientationMarkerWidget() { return this->_vtkAxesWidget; }
 
 private:
 	QWidget* _widget;

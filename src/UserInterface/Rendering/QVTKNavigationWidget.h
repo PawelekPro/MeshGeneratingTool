@@ -17,20 +17,96 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "QVTKRenderWindow.h"
+#include <vtkArrowSource.h>
+#include <vtkAxesActor.h>
+#include <vtkCellArray.h>
+#include <vtkLineSource.h>
+#include <vtkMath.h>
+#include <vtkPlaneSource.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkPropAssembly.h>
+#include <vtkProperty.h>
 #include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
 
 namespace Navigation {
 
-class QVTKNavigationWidget {
+class QVTKAxesActor : public vtkPropAssembly {
 public:
-	QVTKNavigationWidget(vtkRenderer* viewer)
-		: _viewer(viewer) { }
+	static QVTKAxesActor* New();
+	vtkTypeMacro(QVTKAxesActor, vtkPropAssembly);
+
+protected:
+	QVTKAxesActor() { this->drawCoordinateSystem(); }
+	~QVTKAxesActor() { }
+
+	vtkNew<vtkAxesActor> MakeAxesActor() {
+		vtkNew<vtkAxesActor> axes;
+		return axes;
+	}
+
+	vtkNew<vtkActor> MakeLineActor() {
+		// vtkNew<vtkLineSource> line;
+		// line->SetPoint1(0.0, 0.5, 0.0);
+		// line->SetPoint2(0.5, 0.5, 0.0);
+		// vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+		// lineMapper->SetInputConnection(line->GetOutputPort());
+		// vtkNew<vtkActor> lineActor;
+		// lineActor->SetMapper(lineMapper);
+		// return lineActor;
+
+		vtkNew<vtkPlaneSource> planeSource;
+		// planeSource->SetCenter(1.0, 0.0, 0.0);
+		// planeSource->SetNormal(1.0, 0.0, 0.0);
+		planeSource->SetOrigin(0.0, 0.0, 0.0);
+		planeSource->SetPoint1(0.5, 0, 0.0);
+		planeSource->SetPoint2(0, 0.5, 0.0);
+
+		planeSource->Update();
+		vtkPolyData* plane = planeSource->GetOutput();
+
+		// Create a mapper and actor
+		vtkNew<vtkPolyDataMapper> mapper;
+		mapper->SetInputData(plane);
+
+		vtkNew<vtkActor> actor;
+		actor->SetMapper(mapper);
+		return actor;
+	}
+
+	void drawCoordinateSystem() {
+		auto axes = MakeAxesActor();
+		auto line = MakeLineActor();
+		this->AddPart(axes);
+		this->AddPart(line);
+	}
+};
+
+class QVTKNavigationWidget : public vtkOrientationMarkerWidget {
+public:
+	// vtkTypeMacro(QVTKNavigationWidget, vtkOrientationMarkerWidget);
+	QVTKNavigationWidget(Rendering::QVTKRenderWindow* qvtkRenderWindow)
+		: _viewer(qvtkRenderWindow) {
+		vtkSmartPointer<QVTKAxesActor> axes = vtkSmartPointer<QVTKAxesActor>::New();
+		this->SetOrientationMarker(axes);
+	}
 	~QVTKNavigationWidget() { }
+
+	static vtkSmartPointer<QVTKNavigationWidget> New(Rendering::QVTKRenderWindow* renWin) {
+		return vtkSmartPointer<QVTKNavigationWidget>(new QVTKNavigationWidget(renWin));
+	}
+
+	void drawCoordinateSystem();
 
 	void drawNavigationWidget();
 	void drawNavigationWidget(bool pickMode, float opacity);
-};
 
 private:
-vtkSmartPointer<vtkRenderWindow> _viewer;
+	Rendering::QVTKRenderWindow* _viewer;
+};
+
 }
