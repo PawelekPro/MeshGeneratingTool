@@ -23,6 +23,7 @@
 #include "GeometryFunctions.h"
 
 #include <QVTKOpenGLNativeWidget.h>
+#include <vtkCameraOrientationWidget.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkNew.h>
 #include <vtkOrientationMarkerWidget.h>
@@ -80,6 +81,8 @@ public:
 
 	vtkOrientationMarkerWidget* getOrientationMarkerWidget() { return this->_vtkAxesWidget; }
 
+	void enableCameraOrientationWidget() { _camOrientManipulator->On(); }
+
 private:
 	QWidget* _widget;
 
@@ -94,6 +97,8 @@ private:
 
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
+
+	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
 };
 }; // namespace Rendering
 

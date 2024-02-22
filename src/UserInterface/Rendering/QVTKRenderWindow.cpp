@@ -48,7 +48,12 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_vtkWidget->setFocusPolicy(Qt::StrongFocus);
 	this->generateCoordinateSystemAxes();
 
-	vtkSmartPointer<Interactor::QVTKInteractorStyle> interactorStyle = vtkSmartPointer<Interactor::QVTKInteractorStyle>::New(this);
+	_interactor->SetRenderWindow(_rendererWindow);
+
+	_camOrientManipulator->SetParentRenderer(_renderer);
+
+	vtkSmartPointer<Interactor::QVTKInteractorStyle> interactorStyle
+		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New(this);
 	this->setInteractorStyle(interactorStyle);
 
 	// Background color
@@ -56,6 +61,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 
 	_renderer->ResetCamera();
+
 	_widget->layout()->addWidget(_vtkWidget);
 }
 

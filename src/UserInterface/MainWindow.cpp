@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget* parent)
 	ui->mainSplitter->setSizes(sizes);
 
 	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
+	QVTKRender->enableCameraOrientationWidget();
 
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);

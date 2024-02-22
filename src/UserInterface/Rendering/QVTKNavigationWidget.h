@@ -20,6 +20,7 @@
 #include "QVTKRenderWindow.h"
 #include <vtkArrowSource.h>
 #include <vtkAxesActor.h>
+#include <vtkCallbackCommand.h>
 #include <vtkCellArray.h>
 #include <vtkLineSource.h>
 #include <vtkMath.h>
@@ -93,8 +94,25 @@ public:
 		: _viewer(qvtkRenderWindow) {
 		vtkSmartPointer<QVTKAxesActor> axes = vtkSmartPointer<QVTKAxesActor>::New();
 		this->SetOrientationMarker(axes);
+
+		_interactor = _viewer->getInteractor();
+
+		auto interactor = _viewer->getInteractor();
+		vtkNew<vtkCallbackCommand> clickCallback;
+		clickCallback->SetCallback(ClickCallbackFunction);
+		interactor->AddObserver(vtkCommand::LeftButtonPressEvent, clickCallback);
+		clickCallback->SetClientData(this);
 	}
 	~QVTKNavigationWidget() { }
+
+	// Callback function for left button press event
+	static void ClickCallbackFunction(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData) {
+		auto* interactor = static_cast<vtkRenderWindowInteractor*>(caller);
+		auto* widget = static_cast<QVTKNavigationWidget*>(clientData);
+
+		int x, y;
+		interactor->GetEventPosition(x, y);
+	}
 
 	static vtkSmartPointer<QVTKNavigationWidget> New(Rendering::QVTKRenderWindow* renWin) {
 		return vtkSmartPointer<QVTKNavigationWidget>(new QVTKNavigationWidget(renWin));
@@ -107,6 +125,6 @@ public:
 
 private:
 	Rendering::QVTKRenderWindow* _viewer;
+	vtkRenderWindowInteractor* _interactor;
 };
-
 }
