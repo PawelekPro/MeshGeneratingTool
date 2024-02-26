@@ -19,77 +19,39 @@
 
 #include "QVTKNavigationWidget.h"
 
-vtkStandardNewMacro(Navigation::QVTKAxesActor);
+#include "vtkActor.h"
+#include "vtkAssemblyPath.h"
+#include "vtkBoundingBox.h"
+#include "vtkCamera.h"
+#include "vtkCellArray.h"
+#include "vtkCellData.h"
+#include "vtkDiskSource.h"
+#include "vtkDoubleArray.h"
+#include "vtkEllipticalButtonSource.h"
+#include "vtkFreeTypeTools.h"
+#include "vtkImageData.h"
+#include "vtkInteractorObserver.h"
+#include "vtkMath.h"
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
+#include "vtkPickingManager.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkProp3D.h"
+#include "vtkPropCollection.h"
+#include "vtkPropPicker.h"
+#include "vtkProperty.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderer.h"
+#include "vtkTextProperty.h"
+#include "vtkTexture.h"
+#include "vtkTransform.h"
+#include "vtkTubeFilter.h"
+#include "vtkVectorText.h"
 
-// Navigation::QVTKAxesActor* Navigation::QVTKAxesActor::New() {
-// 	return new Navigation::QVTKAxesActor();
+// vtkStandardNewMacro(Navigation::NavigationWidgetRepresentation);
+
+// Navigation::NavigationWidgetRepresentation::NavigationWidgetRepresentation() {
+// 	std::cout << "test" << std::endl;
 // }
-
-void Navigation::QVTKNavigationWidget::drawNavigationWidget() {
-}
-
-void Navigation::QVTKNavigationWidget::drawCoordinateSystem() {
-	double startPoint[3];
-	double endPoint[3];
-
-	startPoint[0] = 0;
-	startPoint[1] = 0;
-	startPoint[2] = 0;
-
-	endPoint[0] = 0.05;
-	endPoint[1] = 0;
-	endPoint[2] = 0;
-
-	// Compute a basis
-	double normalizedX[3];
-	double normalizedY[3];
-	double normalizedZ[3];
-
-	// Create an arrow.
-	vtkNew<vtkArrowSource> arrowSource;
-	arrowSource->SetTipResolution(100);
-	arrowSource->SetShaftResolution(50);
-
-	// The X axis is a vector from start to end
-	vtkMath::Subtract(endPoint, startPoint, normalizedX);
-	double length = vtkMath::Norm(normalizedX);
-	vtkMath::Normalize(normalizedX);
-
-	double arbitrary[3];
-	arbitrary[0] = 1;
-	arbitrary[1] = 2;
-	arbitrary[2] = 3;
-	vtkMath::Cross(normalizedX, arbitrary, normalizedZ);
-	vtkMath::Normalize(normalizedZ);
-
-	vtkMath::Cross(normalizedZ, normalizedX, normalizedY);
-	vtkNew<vtkMatrix4x4> matrix;
-
-	// Create the direction cosine matrix
-	matrix->Identity();
-	for (auto i = 0; i < 3; i++) {
-		matrix->SetElement(i, 0, normalizedX[i]);
-		matrix->SetElement(i, 1, normalizedY[i]);
-		matrix->SetElement(i, 2, normalizedZ[i]);
-	}
-
-	// Apply the transforms
-	vtkNew<vtkTransform> transform;
-	transform->Translate(startPoint);
-	transform->Concatenate(matrix);
-	transform->Scale(length, length, length);
-
-	// Transform the polydata
-	vtkNew<vtkTransformPolyDataFilter> transformPD;
-	transformPD->SetTransform(transform);
-	transformPD->SetInputConnection(arrowSource->GetOutputPort());
-
-	// Create a mapper and actor for the arrow
-	vtkNew<vtkPolyDataMapper> mapper;
-	vtkNew<vtkActor> actor;
-
-	mapper->SetInputConnection(transformPD->GetOutputPort());
-	actor->SetMapper(mapper);
-
-	_viewer->addActor(actor);
-}

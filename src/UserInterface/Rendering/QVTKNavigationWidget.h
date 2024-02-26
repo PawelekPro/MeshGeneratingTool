@@ -17,114 +17,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "QVTKRenderWindow.h"
-#include <vtkArrowSource.h>
-#include <vtkAxesActor.h>
-#include <vtkCallbackCommand.h>
-#include <vtkCellArray.h>
-#include <vtkLineSource.h>
-#include <vtkMath.h>
-#include <vtkPlaneSource.h>
-#include <vtkPolyData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkPropAssembly.h>
-#include <vtkProperty.h>
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-#include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
+// https://gitlab.kitware.com/vtk/vtk/-/blob/master/Interaction/Widgets/vtkCameraOrientationWidget.cxx
+// https://gitlab.kitware.com/SeunOdutola/vtk/-/blob/master/Interaction/Widgets/vtkCameraOrientationWidget.h
+// https://gitlab.kitware.com/vtk/vtk/-/blob/master/Interaction/Widgets/vtkCameraOrientationRepresentation.h
+// https://gitlab.kitware.com/vtk/vtk/-/blob/master/Interaction/Widgets/vtkCameraOrientationRepresentation.cxx
+
+#ifndef QVTKNAVIGATIONWIDGET_H
+#define QVTKNAVIGATIONWIDGET_H
+
+#include "vtkInteractionWidgetsModule.h"
+#include "vtkWidgetRepresentation.h"
 
 namespace Navigation {
+const double xyzBaseColor[3][3] = { { 1.0, 1.0, 1.0 }, { 1.0, 1.0, 1.0 },
+	{ 1.0, 1.0, 1.0 } };
 
-class QVTKAxesActor : public vtkPropAssembly {
+template <typename EnumT>
+constexpr typename std::underlying_type<EnumT>::type to_underlying(const EnumT& e) noexcept {
+	return static_cast<typename std::underlying_type<EnumT>::type>(e);
+};
+
+class NavigationWidgetRepresentation
+	: public vtkWidgetRepresentation {
 public:
-	static QVTKAxesActor* New();
-	vtkTypeMacro(QVTKAxesActor, vtkPropAssembly);
+	static NavigationWidgetRepresentation* New();
+	vtkTypeMacro(NavigationWidgetRepresentation, vtkWidgetRepresentation);
+	void PrintSelf(ostream& os, vtkIndent indent) override {};
+
+	enum class InteractionStateType : int {
+		Outside = 0, // corresponds to vtkCameraOrientationWidget::Inactive
+		Hovering, // corresponds to vtkCameraOrientationWidget::Hot
+		Rotating // corresponds to vtkCameraOrientationWidget::Active
+	};
+
+	/**
+	 * Convenient method to get InteractionState as enum.
+	 * This method clamps the interaction state to possible values.
+	 * Hence, it does not raise any exceptions.
+	 */
+	InteractionStateType GetInteractionStateAsEnum() noexcept {
+		// clamp to 0-2
+		this->InteractionState = this->InteractionState < 0 ? 0 : (this->InteractionState > 2 ? 2 : this->InteractionState);
+		// convert
+		return static_cast<InteractionStateType>(this->InteractionState);
+	}
 
 protected:
-	QVTKAxesActor() { this->drawCoordinateSystem(); }
-	~QVTKAxesActor() { }
-
-	vtkNew<vtkAxesActor> MakeAxesActor() {
-		vtkNew<vtkAxesActor> axes;
-		return axes;
-	}
-
-	vtkNew<vtkActor> MakeLineActor() {
-		// vtkNew<vtkLineSource> line;
-		// line->SetPoint1(0.0, 0.5, 0.0);
-		// line->SetPoint2(0.5, 0.5, 0.0);
-		// vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-		// lineMapper->SetInputConnection(line->GetOutputPort());
-		// vtkNew<vtkActor> lineActor;
-		// lineActor->SetMapper(lineMapper);
-		// return lineActor;
-
-		vtkNew<vtkPlaneSource> planeSource;
-		// planeSource->SetCenter(1.0, 0.0, 0.0);
-		// planeSource->SetNormal(1.0, 0.0, 0.0);
-		planeSource->SetOrigin(0.0, 0.0, 0.0);
-		planeSource->SetPoint1(0.5, 0, 0.0);
-		planeSource->SetPoint2(0, 0.5, 0.0);
-
-		planeSource->Update();
-		vtkPolyData* plane = planeSource->GetOutput();
-
-		// Create a mapper and actor
-		vtkNew<vtkPolyDataMapper> mapper;
-		mapper->SetInputData(plane);
-
-		vtkNew<vtkActor> actor;
-		actor->SetMapper(mapper);
-		return actor;
-	}
-
-	void drawCoordinateSystem() {
-		auto axes = MakeAxesActor();
-		auto line = MakeLineActor();
-		this->AddPart(axes);
-		this->AddPart(line);
-	}
-};
-
-class QVTKNavigationWidget : public vtkOrientationMarkerWidget {
-public:
-	// vtkTypeMacro(QVTKNavigationWidget, vtkOrientationMarkerWidget);
-	QVTKNavigationWidget(Rendering::QVTKRenderWindow* qvtkRenderWindow)
-		: _viewer(qvtkRenderWindow) {
-		vtkSmartPointer<QVTKAxesActor> axes = vtkSmartPointer<QVTKAxesActor>::New();
-		this->SetOrientationMarker(axes);
-
-		_interactor = _viewer->getInteractor();
-
-		auto interactor = _viewer->getInteractor();
-		vtkNew<vtkCallbackCommand> clickCallback;
-		clickCallback->SetCallback(ClickCallbackFunction);
-		interactor->AddObserver(vtkCommand::LeftButtonPressEvent, clickCallback);
-		clickCallback->SetClientData(this);
-	}
-	~QVTKNavigationWidget() { }
-
-	// Callback function for left button press event
-	static void ClickCallbackFunction(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData) {
-		auto* interactor = static_cast<vtkRenderWindowInteractor*>(caller);
-		auto* widget = static_cast<QVTKNavigationWidget*>(clientData);
-
-		int x, y;
-		interactor->GetEventPosition(x, y);
-	}
-
-	static vtkSmartPointer<QVTKNavigationWidget> New(Rendering::QVTKRenderWindow* renWin) {
-		return vtkSmartPointer<QVTKNavigationWidget>(new QVTKNavigationWidget(renWin));
-	}
-
-	void drawCoordinateSystem();
-
-	void drawNavigationWidget();
-	void drawNavigationWidget(bool pickMode, float opacity);
+	NavigationWidgetRepresentation();
+	~NavigationWidgetRepresentation() override;
+	void RegisterPickers() override {};
 
 private:
-	Rendering::QVTKRenderWindow* _viewer;
-	vtkRenderWindowInteractor* _interactor;
+	NavigationWidgetRepresentation(const NavigationWidgetRepresentation&) = delete;
+	void operator=(const NavigationWidgetRepresentation&) = delete;
 };
 }
+
+#endif

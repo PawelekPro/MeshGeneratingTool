@@ -51,6 +51,8 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_interactor->SetRenderWindow(_rendererWindow);
 
 	_camOrientManipulator->SetParentRenderer(_renderer);
+	_camOrientManipulator->SetAnimate(true);
+	_camOrientManipulator->AnimateOn();
 
 	vtkSmartPointer<Interactor::QVTKInteractorStyle> interactorStyle
 		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New(this);
@@ -94,33 +96,32 @@ void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
 }
 
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
-	// vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
-	// tests
-	// _vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
-	_vtkAxesWidget = Navigation::QVTKNavigationWidget::New(this);
+	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+	_vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+	// _vtkAxesWidget = Navigation::QVTKNavigationWidget::New(this);
 
-	// vtkSmartPointer<vtkProperty> shaftProps[] = { axes->GetXAxisShaftProperty(),
-	// 	axes->GetYAxisShaftProperty(),
-	// 	axes->GetZAxisShaftProperty() };
+	vtkSmartPointer<vtkProperty> shaftProps[] = { axes->GetXAxisShaftProperty(),
+		axes->GetYAxisShaftProperty(),
+		axes->GetZAxisShaftProperty() };
 
-	// vtkSmartPointer<vtkProperty> tipProps[] = { axes->GetXAxisTipProperty(),
-	// 	axes->GetYAxisTipProperty(),
-	// 	axes->GetZAxisTipProperty() };
+	vtkSmartPointer<vtkProperty> tipProps[] = { axes->GetXAxisTipProperty(),
+		axes->GetYAxisTipProperty(),
+		axes->GetZAxisTipProperty() };
 
-	// vtkSmartPointer<vtkTextProperty> labelProps[] = {
-	// 	axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty(),
-	// 	axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty(),
-	// 	axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()
-	// };
+	vtkSmartPointer<vtkTextProperty> labelProps[] = {
+		axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty(),
+		axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty(),
+		axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()
+	};
 
-	// for (int i = 0; i < 3; ++i) {
-	// 	shaftProps[i]->SetColor(1.0, 1.0, 1.0);
-	// 	tipProps[i]->SetColor(1.0, 1.0, 1.0);
-	// 	labelProps[i]->ShadowOff();
-	// 	labelProps[i]->ItalicOff();
-	// }
+	for (int i = 0; i < 3; ++i) {
+		shaftProps[i]->SetColor(1.0, 1.0, 1.0);
+		tipProps[i]->SetColor(1.0, 1.0, 1.0);
+		labelProps[i]->ShadowOff();
+		labelProps[i]->ItalicOff();
+	}
 
-	// _vtkAxesWidget->SetOrientationMarker(axes);
+	_vtkAxesWidget->SetOrientationMarker(axes);
 	_vtkAxesWidget->SetInteractor(_vtkWidget->renderWindow()->GetInteractor());
 	_vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
 	_vtkAxesWidget->SetEnabled(true);
