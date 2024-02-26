@@ -29,8 +29,10 @@
 
 #include <BRep_Builder.hxx>
 #include <STEPCAFControl_Reader.hxx>
+#include <TopAbs_ShapeEnum.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <XCAFDoc_ColorType.hxx>
@@ -75,7 +77,24 @@ public:
 	 */
 	Geometry::ActorsMap getVTKActorsMap() override;
 
+	/**
+	 * @brief  Get container of vtkActor class instances representing edges.
+	 *
+	 * @return {ActorsMap}  : Container of vtkActor class instances.
+	 */
+	Geometry::ActorsMap getVTKEdgesMap();
+
+	/**
+	 * @brief  Get new unique label of edge object.
+	 *
+	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
+	 * @param  {Importing::PartsMap} partsMap : Container of all loaded edges (occ shapes).
+	 * @return {std::string}                  : Label containing unique index and given prefix.
+	 */
+	std::string getUniqueEdgeName(std::string prefix);
+
 private:
+	Geometry::PartsMap _edgesMap;
 };
 
 };

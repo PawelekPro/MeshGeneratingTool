@@ -47,6 +47,10 @@ public:
 	// The VTK renderer (add VTK actors to it to build the scene)
 	vtkSmartPointer<vtkRenderer> _renderer;
 
+	vtkSmartPointer<vtkRenderer> _edgeRenderer;
+
+	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
+
 	/**
 	 * @brief Generate global coordinate system.
 	 *
@@ -60,6 +64,18 @@ public:
 	 */
 	void addActors(const Geometry::ActorsMap& actorsMap);
 
+	/**
+	 * @brief  Add vtkActors to the current renderer and display them.
+	 *
+	 * @param  {Importing::ActorsMap} actorsMap : Container of vtkActors.
+	 */
+	void addEdgesActors(const Geometry::ActorsMap& actorsMap);
+
+	/**
+	 * @brief  Add actor to the renderer.
+	 *
+	 * @param  {vtkActor*} actor : vtkActor object.
+	 */
 	void addActor(vtkActor* actor);
 
 	/**
@@ -75,13 +91,21 @@ public:
 	 */
 	void fitView();
 
-	vtkRenderer* getRenderer() { return this->_renderer; }
+	vtkRenderer* getRenderer() { return this->activeLayerRenderer; }
 
 	vtkRenderWindowInteractor* getInteractor() { return this->_rendererWindow->GetInteractor(); }
 
 	vtkOrientationMarkerWidget* getOrientationMarkerWidget() { return this->_vtkAxesWidget; }
 
 	void enableCameraOrientationWidget() { _camOrientManipulator->On(); }
+
+	void setActiveLayerRenderer(int layer) {
+		if (layer == 0) {
+			this->activeLayerRenderer = _renderer;
+		} else {
+			this->activeLayerRenderer = _edgeRenderer;
+		}
+	}
 
 private:
 	QWidget* _widget;

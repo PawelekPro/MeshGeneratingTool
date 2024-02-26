@@ -37,11 +37,22 @@
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget) {
 	_vtkWidget = new QVTKOpenGLNativeWidget();
+
 	_renderer = vtkSmartPointer<vtkRenderer>::New();
+	_renderer->SetLayer(0);
+	_edgeRenderer = vtkSmartPointer<vtkRenderer>::New();
+	_edgeRenderer->SetLayer(1);
+	// _renderer->PreserveDepthBufferOn();
+	_edgeRenderer->EraseOff();
+
 	_vtkWidget->setRenderWindow(vtkGenericOpenGLRenderWindow::New());
 
 	_rendererWindow = _vtkWidget->renderWindow();
+
+	_rendererWindow->SetNumberOfLayers(2);
 	_rendererWindow->AddRenderer(_renderer);
+	_rendererWindow->AddRenderer(_edgeRenderer);
+	_edgeRenderer->SetActiveCamera(_renderer->GetActiveCamera());
 
 	_interactor = _rendererWindow->GetInteractor();
 
@@ -54,13 +65,17 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
 
-	vtkSmartPointer<Interactor::QVTKInteractorStyle> interactorStyle
+	setActiveLayerRenderer(0);
+
+	vtkSmartPointer<Interactor::QVTKInteractorStyle>
+		interactorStyle
 		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New(this);
 	this->setInteractorStyle(interactorStyle);
 
 	// Background color
 	vtkNew<vtkNamedColors> colors;
 	_renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
+	_edgeRenderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 
 	_renderer->ResetCamera();
 
@@ -87,6 +102,15 @@ void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap
 		this->_renderer->AddActor(actor);
 	}
 	this->_renderer->ResetCamera();
+	this->_rendererWindow->Render();
+}
+
+void Rendering::QVTKRenderWindow::addEdgesActors(const Geometry::ActorsMap& actorsMap) {
+	for (const auto& entry : actorsMap) {
+		vtkSmartPointer<vtkActor> actor = entry.second;
+		this->_edgeRenderer->AddActor(actor);
+	}
+	this->_edgeRenderer->ResetCamera();
 	this->_rendererWindow->Render();
 }
 

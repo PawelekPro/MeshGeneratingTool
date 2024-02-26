@@ -83,6 +83,10 @@ void MainWindow::importSTEP(QString fileName) {
 
 	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
+
+	Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
+	QVTKRender->addEdgesActors(edgesMap);
+	QVTKRender->setActiveLayerRenderer(1);
 }
 
 void MainWindow::importSTL(QString fileName) {
