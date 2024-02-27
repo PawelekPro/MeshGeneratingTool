@@ -21,18 +21,13 @@
 
 #include <QAction>
 
-Interactor::QVTKInteractorStyle* Interactor::QVTKInteractorStyle::New(Rendering::QVTKRenderWindow* renWin) {
-	return new Interactor::QVTKInteractorStyle(renWin);
-}
+vtkStandardNewMacro(Interactor::QVTKInteractorStyle);
 
-Interactor::QVTKInteractorStyle::QVTKInteractorStyle(Rendering::QVTKRenderWindow* qvtkRenderWindow)
-	: _contextMenu(nullptr)
-	, _customAction(nullptr)
-	, _qvtkRenderWindow(qvtkRenderWindow) {
+// Interactor::QVTKInteractorStyle* Interactor::QVTKInteractorStyle::New() {
+// 	return new Interactor::QVTKInteractorStyle(renWin);
+// }
 
-	LastPickedActor = NULL;
-	LastPickedProperty = vtkProperty::New();
-}
+Interactor::QVTKInteractorStyle::QVTKInteractorStyle() = default;
 
 Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
@@ -49,7 +44,7 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 	this->createContextMenu();
 	_contextMenu->exec(QCursor::pos());
 
-	vtkInteractorStyle::OnRightButtonDown();
+	this->Superclass::OnRightButtonDown();
 }
 
 void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
@@ -77,7 +72,7 @@ void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
 	}
 
 	// Forward events
-	vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+	this->Superclass::OnLeftButtonDown();
 }
 
 void Interactor::QVTKInteractorStyle::createContextMenu() {
@@ -98,4 +93,37 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 		// Add the custom QAction to the context menu
 		_contextMenu->addAction(_customAction);
 	}
+}
+
+void Interactor::QVTKInteractorStyle::OnMouseMove() {
+	if (this->hoveredActor) {
+		this->hoveredActor->GetProperty()->DeepCopy(this->LastHoveredProperty);
+	}
+
+	int* clickPos = this->GetInteractor()->GetEventPosition();
+	vtkNew<vtkCellPicker> picker;
+	picker->SetTolerance(0.001);
+	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getRenderer());
+
+	this->hoveredActor = picker->GetActor();
+
+	// Sprawdź, czy coś zostało wybrane
+	if (this->hoveredActor) {
+		this->LastHoveredProperty->DeepCopy(this->hoveredActor->GetProperty());
+		this->hoveredActor->GetProperty()->SetLineWidth(10);
+		this->hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
+	}
+	// this->GetInteractor()->Render();
+	this->Superclass::OnMouseMove();
+}
+
+void Interactor::QVTKInteractorStyle::Activate(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
+	_qvtkRenderWindow = qvtkRenderWindow;
+	_contextMenu = nullptr;
+	_customAction = nullptr;
+	LastPickedActor = NULL;
+	LastPickedProperty = vtkProperty::New();
+
+	hoveredActor = NULL;
+	LastHoveredProperty = vtkProperty::New();
 }

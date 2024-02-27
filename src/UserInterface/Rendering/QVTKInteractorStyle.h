@@ -22,6 +22,8 @@
 
 #include "QVTKRenderWindow.h"
 
+#include <vtkCellPicker.h>
+#include <vtkHardwarePicker.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNamedColors.h>
 #include <vtkPropPicker.h>
@@ -45,7 +47,8 @@ public:
 	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window for which the interactor will be set.
 	 * @return {QVTKInteractorStyle*}                : Instance of QVTKInteractorStyle class.
 	 */
-	static QVTKInteractorStyle* New(Rendering::QVTKRenderWindow* renWin);
+	static QVTKInteractorStyle* New();
+	vtkTypeMacro(QVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
 
 	/**
 	 * @brief Handle the right mouse button press event.
@@ -55,6 +58,10 @@ public:
 
 	virtual void OnLeftButtonDown() override;
 
+	virtual void OnMouseMove() override;
+
+	void Activate(Rendering::QVTKRenderWindow* renWin);
+
 	/**
 	 * @brief  Get rendering window instance.
 	 *
@@ -63,8 +70,8 @@ public:
 	Rendering::QVTKRenderWindow* getRenderWindow();
 
 protected:
-	QVTKInteractorStyle(Rendering::QVTKRenderWindow* qvtkRenderWindow);
-	virtual ~QVTKInteractorStyle();
+	QVTKInteractorStyle();
+	~QVTKInteractorStyle() override;
 
 private:
 	/**
@@ -79,6 +86,8 @@ private:
 
 	vtkActor* LastPickedActor;
 	vtkProperty* LastPickedProperty;
+	vtkActor* hoveredActor;
+	vtkProperty* LastHoveredProperty;
 };
 };
 

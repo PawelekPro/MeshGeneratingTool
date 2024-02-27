@@ -69,7 +69,8 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 
 	vtkSmartPointer<Interactor::QVTKInteractorStyle>
 		interactorStyle
-		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New(this);
+		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New();
+	interactorStyle->Activate(this);
 	this->setInteractorStyle(interactorStyle);
 
 	// Background color
