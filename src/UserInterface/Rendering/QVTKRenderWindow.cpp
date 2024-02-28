@@ -79,6 +79,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_edgeRenderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
 
 	_renderer->ResetCamera();
+	_rendererWindow->Render();
 
 	_widget->layout()->addWidget(_vtkWidget);
 }

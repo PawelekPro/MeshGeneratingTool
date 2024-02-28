@@ -44,28 +44,41 @@ public:
 	/**
 	 * @brief  Return new instance of class.
 	 *
-	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window for which the interactor will be set.
-	 * @return {QVTKInteractorStyle*}                : Instance of QVTKInteractorStyle class.
+	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window for which the interactor will be set
+	 * @return {QVTKInteractorStyle*}                : Instance of QVTKInteractorStyle class
 	 */
 	static QVTKInteractorStyle* New();
 	vtkTypeMacro(QVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
 
 	/**
-	 * @brief Handle the right mouse button press event.
+	 * @brief  Handle the right mouse button press event.
 	 *
 	 */
 	virtual void OnRightButtonDown() override;
 
+	/**
+	 * @brief  Handle the left mouse button press event.
+	 *
+	 */
 	virtual void OnLeftButtonDown() override;
 
+	/**
+	 * @brief  Method for handling mouse moving event.
+	 *
+	 */
 	virtual void OnMouseMove() override;
 
+	/**
+	 * @brief  Activate interactor style and set its default render window widget.
+	 *
+	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window to set interactor style
+	 */
 	void Activate(Rendering::QVTKRenderWindow* renWin);
 
 	/**
 	 * @brief  Get rendering window instance.
 	 *
-	 * @return {Rendering::QVTKRenderWindow*}  : Rendering window instance.
+	 * @return {Rendering::QVTKRenderWindow*}  : Rendering window instance
 	 */
 	Rendering::QVTKRenderWindow* getRenderWindow();
 
@@ -84,8 +97,11 @@ private:
 	QMenu* _contextMenu;
 	QAction* _customAction;
 
+	// Container for storing picked actor and its properties.
 	vtkActor* LastPickedActor;
 	vtkProperty* LastPickedProperty;
+
+	// Container for storing hovered actor and its properties.
 	vtkActor* hoveredActor;
 	vtkProperty* LastHoveredProperty;
 };
