@@ -119,6 +119,7 @@ public:
 
 	void enableButton() {
 		// this->buttonWidget->On();
+		this->_toolBar->enableButtons();
 	}
 
 private:

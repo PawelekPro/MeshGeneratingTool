@@ -41,6 +41,7 @@ set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
 set(UI_UTILS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
 set(FORMS_PATH "${UI_PATH}/Forms")
 set(GEOM_CORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/GeometryCore")
+set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
 
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
@@ -129,6 +130,7 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(meshGenerator
         MANUAL_FINALIZATION
+        ${RESOURCES_PATH}
         ${PROJECT_SOURCES}
     )
 else()
@@ -136,7 +138,6 @@ else()
         ${PROJECT_SOURCES}
     )
 endif()
-
 
 target_link_libraries(meshGenerator PRIVATE 
     Qt${QT_VERSION_MAJOR}::Widgets

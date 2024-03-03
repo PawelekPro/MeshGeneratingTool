@@ -49,10 +49,8 @@ void ToolBar::QVTKToolBarRepresentation::createDefaultGeometry(vtkRenderWindowIn
 }
 
 void ToolBar::QVTKToolBarRepresentation::addButton(vtkRenderWindowInteractor* iren) {
-	vtkSmartPointer<vtkTexturedButtonRepresentation2D> buttonRepresentation
-		= vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
-	vtkSmartPointer<vtkButtonWidget> buttonWidget
-		= vtkSmartPointer<vtkButtonWidget>::New();
+	buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
+	buttonWidget = vtkSmartPointer<vtkButtonWidget>::New();
 
 	buttonRepresentation->SetNumberOfStates(1);
 
@@ -67,12 +65,11 @@ void ToolBar::QVTKToolBarRepresentation::addButton(vtkRenderWindowInteractor* ir
 	buttonWidget->SetInteractor(iren);
 	buttonWidget->SetRepresentation(buttonRepresentation);
 
-	double bounds[6] = { 0.1, 0, 0.1, 0.5, 0.0, 0.0 };
+	double bounds[6] = { 5, 35, 1000, 1030, 0.0, 0.0 };
 
 	// Scale to 1, default is .5
 	buttonRepresentation->SetPlaceFactor(1);
 	buttonRepresentation->PlaceWidget(bounds);
-	buttonWidget->On();
 }
 
 void ToolBar::QVTKToolBarRepresentation::createDefaultProperties() {
@@ -106,7 +103,7 @@ void ToolBar::QVTKToolBarRepresentation::ApplyInteractionState(const Interaction
 		this->container->GetProperty()->SetOpacity(0.2);
 		break;
 	default: // outside
-		this->container->SetVisibility(true);
+		this->container->SetVisibility(false);
 		this->container->GetProperty()->SetOpacity(0.1);
 		break;
 	}

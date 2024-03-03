@@ -20,6 +20,7 @@
 #include <vtkAbstractWidget.h>
 #include <vtkActor.h>
 #include <vtkBoundingBox.h>
+#include <vtkButtonWidget.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkEvent.h>
@@ -29,6 +30,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
+#include <vtkTexturedButtonRepresentation2D.h>
 #include <vtkWeakPointer.h>
 #include <vtkWidgetCallbackMapper.h>
 #include <vtkWidgetEvent.h>
@@ -123,6 +125,9 @@ public:
 	double* GetPadding() { return this->Padding; }
 
 	void createDefaultGeometry(vtkRenderWindowInteractor* iren);
+	void enableButtons() {
+		this->buttonWidget->On();
+	}
 
 protected:
 	QVTKToolBarRepresentation();
@@ -144,6 +149,9 @@ private:
 
 	double Padding[2] = { 0.8, 0.05 }; // In display coords.
 	double Size[2] = { 1, 1 }; // In display coords.
+
+	vtkSmartPointer<vtkTexturedButtonRepresentation2D> buttonRepresentation;
+	vtkSmartPointer<vtkButtonWidget> buttonWidget;
 };
 
 class QVTKToolBar : public vtkAbstractWidget {
@@ -166,6 +174,16 @@ public:
 			return;
 		} else {
 			rep->createDefaultGeometry(this->Interactor);
+		}
+	}
+
+	void enableButtons() {
+		auto rep = ToolBar::QVTKToolBarRepresentation::SafeDownCast(this->WidgetRep);
+		if (rep == nullptr) {
+			std::cout << "SIEMA" << std::endl;
+			return;
+		} else {
+			rep->enableButtons();
 		}
 	}
 

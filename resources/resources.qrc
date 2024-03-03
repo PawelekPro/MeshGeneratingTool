@@ -1,5 +1,5 @@
 <RCC>
   <qresource prefix="icons">
-    <file>icons/Stop-icon.svg</file>
+    <file>icons/draft.svg</file>
   </qresource>
 </RCC>
