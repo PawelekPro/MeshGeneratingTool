@@ -21,6 +21,7 @@
 #define QVTKRENDERWINDOW_H
 
 #include "GeometryFunctions.h"
+#include "QVTKToolBar.h"
 
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkCameraOrientationWidget.h>
@@ -32,6 +33,9 @@
 #include <vtkRenderer.h>
 
 #include <vtkInteractorStyle.h>
+
+#include <vtkButtonWidget.h>
+#include <vtkTexturedButtonRepresentation2D.h>
 
 namespace Rendering {
 
@@ -97,7 +101,11 @@ public:
 
 	vtkOrientationMarkerWidget* getOrientationMarkerWidget() { return this->_vtkAxesWidget; }
 
-	void enableCameraOrientationWidget() { _camOrientManipulator->On(); }
+	void enableCameraOrientationWidget() {
+		_camOrientManipulator->On();
+		_toolBar->On();
+		_toolBar->createDefaultGeometry();
+	}
 
 	void setActiveLayerRenderer(int layer) {
 		if (layer == 0) {
@@ -105,6 +113,12 @@ public:
 		} else {
 			this->activeLayerRenderer = _edgeRenderer;
 		}
+	}
+
+	void addButton();
+
+	void enableButton() {
+		// this->buttonWidget->On();
 	}
 
 private:
@@ -123,6 +137,11 @@ private:
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
 	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
+
+	vtkNew<ToolBar::QVTKToolBar> _toolBar;
+
+	// vtkSmartPointer<vtkTexturedButtonRepresentation2D> buttonRepresentation;
+	// vtkSmartPointer<vtkButtonWidget> buttonWidget;
 };
 }; // namespace Rendering
 

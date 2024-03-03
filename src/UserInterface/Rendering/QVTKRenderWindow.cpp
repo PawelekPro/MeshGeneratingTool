@@ -33,9 +33,58 @@
 
 #include "QVTKNavigationWidget.h"
 #include <QLayout>
+#include <QPushButton>
+#include <QSurfaceFormat>
+
+#include <vtkButtonRepresentation.h>
+#include <vtkButtonWidget.h>
+#include <vtkCoordinate.h>
+#include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkPNGReader.h> // Do odczytu obrazka PNG
+#include <vtkProperty.h>
+#include <vtkTexturedButtonRepresentation2D.h>
+
+// void Rendering::QVTKRenderWindow::addButton() {
+
+// 	buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
+// 	buttonWidget = vtkSmartPointer<vtkButtonWidget>::New();
+
+// 	buttonRepresentation->SetNumberOfStates(1);
+
+// 	vtkNew<vtkPNGReader> pngReader;
+// 	pngReader->SetFileName("image.png");
+// 	pngReader->Update();
+
+// 	// Create the widget and its representation
+
+// 	buttonRepresentation->SetButtonTexture(0, pngReader->GetOutput());
+
+// 	// buttonWidget->SetInteractor(_rendererWindow->GetInteractor());
+// 	buttonWidget->SetInteractor(_rendererWindow->GetInteractor());
+// 	buttonWidget->SetRepresentation(buttonRepresentation);
+
+// 	vtkNew<vtkCoordinate> upperRight;
+// 	upperRight->SetCoordinateSystemToNormalizedDisplay();
+// 	upperRight->SetValue(1, 1);
+
+// 	double bds[6];
+// 	double bounds[6] = { 50, 0, 50, 100, 0.0, 0.0 };
+// 	double sz = 50.0;
+// 	bds[0] = upperRight->GetComputedDisplayValue(getRenderer())[0] - sz;
+// 	bds[1] = bds[0] + sz;
+// 	bds[2] = upperRight->GetComputedDisplayValue(getRenderer())[1] - sz;
+// 	bds[3] = bds[2] + sz;
+// 	bds[4] = bds[5] = 0.0;
+
+// 	// Scale to 1, default is .5
+// 	buttonRepresentation->SetPlaceFactor(1);
+// 	buttonRepresentation->PlaceWidget(bounds);
+// }
 
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget) {
+
 	_vtkWidget = new QVTKOpenGLNativeWidget();
 
 	_renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -65,6 +114,8 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
 
+	_toolBar->SetParentRenderer(_renderer);
+
 	setActiveLayerRenderer(0);
 
 	vtkSmartPointer<Interactor::QVTKInteractorStyle>
@@ -81,6 +132,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_renderer->ResetCamera();
 	_rendererWindow->Render();
 
+	// this->addButton();
 	_widget->layout()->addWidget(_vtkWidget);
 }
 
