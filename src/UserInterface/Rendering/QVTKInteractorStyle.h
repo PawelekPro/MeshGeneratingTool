@@ -98,12 +98,12 @@ private:
 	QAction* _customAction;
 
 	// Container for storing picked actor and its properties.
-	vtkActor* LastPickedActor;
-	vtkProperty* LastPickedProperty;
+	vtkActor* lastPickedActor;
+	vtkProperty* lastPickedProperty;
 
 	// Container for storing hovered actor and its properties.
-	vtkActor* hoveredActor;
-	vtkProperty* LastHoveredProperty;
+	vtkActor* lastHoveredActor;
+	vtkProperty* lastHoveredProperty;
 };
 };
 
