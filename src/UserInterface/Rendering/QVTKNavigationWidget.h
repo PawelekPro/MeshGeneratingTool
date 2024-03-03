@@ -1,3 +1,5 @@
+/* TRASH FILE - MAY BE USEFUL IN THE FUTURE */
+
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
