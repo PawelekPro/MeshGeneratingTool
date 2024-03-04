@@ -34,74 +34,17 @@
 #include "QVTKNavigationWidget.h"
 #include <QLayout>
 #include <QPushButton>
-#include <QSurfaceFormat>
-
-#include <vtkButtonRepresentation.h>
-#include <vtkButtonWidget.h>
-#include <vtkCoordinate.h>
-#include <vtkImageData.h>
-#include <vtkNew.h>
-#include <vtkPNGReader.h> // Do odczytu obrazka PNG
-#include <vtkProperty.h>
-#include <vtkTexturedButtonRepresentation2D.h>
-
-// void Rendering::QVTKRenderWindow::addButton() {
-
-// 	buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
-// 	buttonWidget = vtkSmartPointer<vtkButtonWidget>::New();
-
-// 	buttonRepresentation->SetNumberOfStates(1);
-
-// 	vtkNew<vtkPNGReader> pngReader;
-// 	pngReader->SetFileName("image.png");
-// 	pngReader->Update();
-
-// 	// Create the widget and its representation
-
-// 	buttonRepresentation->SetButtonTexture(0, pngReader->GetOutput());
-
-// 	// buttonWidget->SetInteractor(_rendererWindow->GetInteractor());
-// 	buttonWidget->SetInteractor(_rendererWindow->GetInteractor());
-// 	buttonWidget->SetRepresentation(buttonRepresentation);
-
-// 	vtkNew<vtkCoordinate> upperRight;
-// 	upperRight->SetCoordinateSystemToNormalizedDisplay();
-// 	upperRight->SetValue(1, 1);
-
-// 	double bds[6];
-// 	double bounds[6] = { 50, 0, 50, 100, 0.0, 0.0 };
-// 	double sz = 50.0;
-// 	bds[0] = upperRight->GetComputedDisplayValue(getRenderer())[0] - sz;
-// 	bds[1] = bds[0] + sz;
-// 	bds[2] = upperRight->GetComputedDisplayValue(getRenderer())[1] - sz;
-// 	bds[3] = bds[2] + sz;
-// 	bds[4] = bds[5] = 0.0;
-
-// 	// Scale to 1, default is .5
-// 	buttonRepresentation->SetPlaceFactor(1);
-// 	buttonRepresentation->PlaceWidget(bounds);
-// }
 
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget) {
 
 	_vtkWidget = new QVTKOpenGLNativeWidget();
-
-	_renderer = vtkSmartPointer<vtkRenderer>::New();
-	_renderer->SetLayer(0);
-	_edgeRenderer = vtkSmartPointer<vtkRenderer>::New();
-	_edgeRenderer->SetLayer(1);
-	// _renderer->PreserveDepthBufferOn();
-	_edgeRenderer->EraseOff();
-
 	_vtkWidget->setRenderWindow(vtkGenericOpenGLRenderWindow::New());
 
 	_rendererWindow = _vtkWidget->renderWindow();
 
-	_rendererWindow->SetNumberOfLayers(2);
-	_rendererWindow->AddRenderer(_renderer);
-	_rendererWindow->AddRenderer(_edgeRenderer);
-	_edgeRenderer->SetActiveCamera(_renderer->GetActiveCamera());
+	// Create renderers and add them to render window
+	this->initializeRenderers();
 
 	_interactor = _rendererWindow->GetInteractor();
 
@@ -110,11 +53,9 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 
 	_interactor->SetRenderWindow(_rendererWindow);
 
-	_camOrientManipulator->SetParentRenderer(_renderer);
+	_camOrientManipulator->SetParentRenderer(this->mRenderers.at(0));
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
-
-	_toolBar->SetParentRenderer(_renderer);
 
 	setActiveLayerRenderer(0);
 
@@ -124,21 +65,50 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	interactorStyle->Activate(this);
 	this->setInteractorStyle(interactorStyle);
 
-	// Background color
-	vtkNew<vtkNamedColors> colors;
-	_renderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
-	_edgeRenderer->SetBackground(colors->GetColor3d("SlateGray").GetData());
-
-	_renderer->ResetCamera();
-	_rendererWindow->Render();
-
-	// this->addButton();
+	this->RenderScene();
 	_widget->layout()->addWidget(_vtkWidget);
 }
 
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
-	_renderer->Delete();
+	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
+		this->mRenderers.at(i)->Delete();
+	}
 	delete _vtkWidget;
+}
+
+void Rendering::QVTKRenderWindow::initializeRenderers() {
+	// Background color
+	vtkNew<vtkNamedColors> colors;
+
+	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
+		// Create new renderers
+		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
+		this->mRenderers.at(i)->SetLayer(i);
+		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData());
+
+		if (i > 0) {
+			this->mRenderers.at(i)->EraseOff();
+			this->mRenderers.at(i)->PreserveDepthBufferOff();
+		}
+	}
+	const int nLayers = static_cast<int>(Renderers::Count);
+	this->_rendererWindow->SetNumberOfLayers(nLayers);
+
+	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
+		// Add renderers to render window
+		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
+		if (i > 0) {
+			this->mRenderers.at(i)->SetActiveCamera(
+				this->mRenderers.at(0)->GetActiveCamera());
+		}
+	}
+}
+
+void Rendering::QVTKRenderWindow::RenderScene() {
+	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
+		this->mRenderers.at(i)->Render();
+	}
+	_rendererWindow->Render();
 }
 
 void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interactorStyle) {
@@ -146,37 +116,52 @@ void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interac
 }
 
 void Rendering::QVTKRenderWindow::fitView() {
-	this->_renderer->ResetCamera();
+	this->activeLayerRenderer->ResetCamera();
 	this->_rendererWindow->Render();
 }
 
 void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {
 		vtkSmartPointer<vtkActor> actor = entry.second;
-		this->_renderer->AddActor(actor);
+		this->mRenderers.at(0)->AddActor(actor);
 	}
-	this->_renderer->ResetCamera();
+	this->mRenderers.at(0)->ResetCamera();
 	this->_rendererWindow->Render();
+}
+
+void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap, bool layered) {
+	for (const auto& entry : actorsMap) {
+		std::string label = entry.first;
+		vtkSmartPointer<vtkActor> actor = entry.second;
+		Renderers renderer;
+		if (label.find("Face") != std::string::npos) {
+			renderer = Renderers::Main;
+		} else if (label.find("Edge") != std::string::npos) {
+			renderer = Renderers::Edges;
+		}
+
+		this->mRenderers.at(static_cast<int>(renderer))->AddActor(actor);
+	}
+	this->RenderScene();
 }
 
 void Rendering::QVTKRenderWindow::addEdgesActors(const Geometry::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {
 		vtkSmartPointer<vtkActor> actor = entry.second;
-		this->_edgeRenderer->AddActor(actor);
+		this->mRenderers.at(1)->AddActor(actor);
 	}
-	this->_edgeRenderer->ResetCamera();
+	this->mRenderers.at(1)->ResetCamera();
 	this->_rendererWindow->Render();
 }
 
 void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
-	this->_renderer->AddActor(actor);
+	this->mRenderers.at(0)->AddActor(actor);
 	this->_rendererWindow->Render();
 }
 
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
-	_vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
-	// _vtkAxesWidget = Navigation::QVTKNavigationWidget::New(this);
+	this->_vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
 
 	vtkSmartPointer<vtkProperty> shaftProps[] = { axes->GetXAxisShaftProperty(),
 		axes->GetYAxisShaftProperty(),
@@ -199,9 +184,9 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 		labelProps[i]->ItalicOff();
 	}
 
-	_vtkAxesWidget->SetOrientationMarker(axes);
-	_vtkAxesWidget->SetInteractor(_vtkWidget->renderWindow()->GetInteractor());
-	_vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
-	_vtkAxesWidget->SetEnabled(true);
-	_vtkAxesWidget->InteractiveOff();
+	this->_vtkAxesWidget->SetOrientationMarker(axes);
+	this->_vtkAxesWidget->SetInteractor(_vtkWidget->renderWindow()->GetInteractor());
+	this->_vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
+	this->_vtkAxesWidget->SetEnabled(true);
+	this->_vtkAxesWidget->InteractiveOff();
 };

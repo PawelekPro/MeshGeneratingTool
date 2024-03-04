@@ -65,6 +65,7 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.cpp
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
@@ -77,7 +78,8 @@ include_directories(
     ${UI_UTILS_PATH}
     ${GEOM_CORE_PATH}
     ${GEOM_CORE_PATH}/GUI
-    ${GEOM_CORE_PATH}/Geometry)
+    ${GEOM_CORE_PATH}/Geometry
+    ${GEOM_CORE_PATH}/STEPPlugin)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 

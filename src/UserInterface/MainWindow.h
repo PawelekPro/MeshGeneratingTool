@@ -22,12 +22,12 @@
 
 #include <functional>
 
-#include "../GeometryCore/STEPPlugin/STEPPluginOperations.h"
 #include "../GeometryCore/STLPlugin/STLPluginOperations.h"
 #include "./ui_mainwindow.h"
 #include "GraphicalUtils/Configuration.h"
 #include "GraphicalUtils/ProgressBar.h"
 #include "Rendering/QVTKRenderWindow.h"
+#include "STEPPlugin.h"
 
 #include <vtkAxesActor.h>
 

@@ -21,7 +21,8 @@
 #define QVTKRENDERWINDOW_H
 
 #include "GeometryFunctions.h"
-#include "QVTKToolBar.h"
+
+#include <array>
 
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkCameraOrientationWidget.h>
@@ -34,9 +35,6 @@
 
 #include <vtkInteractorStyle.h>
 
-#include <vtkButtonWidget.h>
-#include <vtkTexturedButtonRepresentation2D.h>
-
 namespace Rendering {
 
 /**
@@ -47,13 +45,6 @@ class QVTKRenderWindow {
 public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
-
-	// The VTK renderer (add VTK actors to it to build the scene)
-	vtkSmartPointer<vtkRenderer> _renderer;
-
-	vtkSmartPointer<vtkRenderer> _edgeRenderer;
-
-	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
 
 	/**
 	 * @brief Generate global coordinate system.
@@ -67,6 +58,15 @@ public:
 	 * @param  {Importing::ActorsMap} actorsMap : Container of vtkActors.
 	 */
 	void addActors(const Geometry::ActorsMap& actorsMap);
+
+	/**
+	 * @brief  Add vtkActors to the current renderer and display them in separated layers.
+	 *
+	 * @param  {Geometry::ActorsMap} actorsMap : Container of vtkActors.
+	 * @param  {bool} layered                  : Bool indicator wheter actors
+	 * 	should be located into separated layers.
+	 */
+	void addActors(const Geometry::ActorsMap& actorsMap, bool layered);
 
 	/**
 	 * @brief  Add vtkActors to the current renderer and display them.
@@ -95,6 +95,8 @@ public:
 	 */
 	void fitView();
 
+	void RenderScene();
+
 	vtkRenderer* getRenderer() { return this->activeLayerRenderer; }
 
 	vtkRenderWindowInteractor* getInteractor() { return this->_rendererWindow->GetInteractor(); }
@@ -103,24 +105,30 @@ public:
 
 	void enableCameraOrientationWidget() {
 		_camOrientManipulator->On();
-		_toolBar->On();
-		_toolBar->createDefaultGeometry();
 	}
 
 	void setActiveLayerRenderer(int layer) {
 		if (layer == 0) {
-			this->activeLayerRenderer = _renderer;
+			this->activeLayerRenderer = this->mRenderers.at(0);
 		} else {
-			this->activeLayerRenderer = _edgeRenderer;
+			this->activeLayerRenderer = this->mRenderers.at(1);
 		}
 	}
 
-	void addButton();
+	// Enumerator definition
+	enum class Renderers {
+		Main,
+		Edges,
+		Count // Count for definition of array size
+	};
 
-	void enableButton() {
-		// this->buttonWidget->On();
-		this->_toolBar->enableButtons();
-	}
+protected:
+	void initializeRenderers();
+
+	// Definition of array of pointers to VTK renderers
+	std::array<vtkSmartPointer<vtkRenderer>, static_cast<int>(Renderers::Count)> mRenderers;
+
+	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
 
 private:
 	QWidget* _widget;
@@ -138,11 +146,6 @@ private:
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
 	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
-
-	vtkNew<ToolBar::QVTKToolBar> _toolBar;
-
-	// vtkSmartPointer<vtkTexturedButtonRepresentation2D> buttonRepresentation;
-	// vtkSmartPointer<vtkButtonWidget> buttonWidget;
 };
 }; // namespace Rendering
 

@@ -22,7 +22,7 @@
 DEFINE_STANDARD_HANDLE(Progress, Message_ProgressIndicator);
 IMPLEMENT_STANDARD_RTTIEXT(Progress, Message_ProgressIndicator)
 
-void STEPPlugin::STEPPluginImport::load(const std::string& fileName, QWidget* parent) {
+void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget* parent) {
 
 	Handle(Progress) theProgress = new Progress(parent, fileName);
 
@@ -136,6 +136,12 @@ void STEPPlugin::STEPPluginImport::load(const std::string& fileName, QWidget* pa
 				this->_edgesMap[uniqueName] = _edge;
 			}
 
+			for (explorer.Init(_shape, TopAbs_FACE); explorer.More(); explorer.Next()) {
+				auto _face = TopoDS::Face(explorer.Current());
+				auto uniqueName = getUniqueFaceName("Face");
+				this->_facesMap[uniqueName] = _face;
+			}
+
 			// Put all other components into a single compound
 			Standard_Boolean emptyComp = Standard_True;
 			auto builder = BRep_Builder {};
@@ -181,7 +187,7 @@ void STEPPlugin::STEPPluginImport::load(const std::string& fileName, QWidget* pa
 	vtkLogF(INFO, message.c_str());
 }
 
-Geometry::ActorsMap STEPPlugin::STEPPluginImport::getVTKActorsMap() {
+Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKActorsMap() {
 	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->_dataFrame->Main());
 	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
@@ -199,17 +205,17 @@ Geometry::ActorsMap STEPPlugin::STEPPluginImport::getVTKActorsMap() {
 		colorTool->GetInstanceColor(shape, XCAFDoc_ColorCurv, color);
 
 		actor->GetProperty()->SetColor(color.Red(), color.Green(), color.Blue());
-		std::stringstream stringStream;
-		stringStream << std::addressof(*actor.GetPointer());
-		std::string actorKey = stringStream.str();
+		// std::stringstream stringStream;
+		// stringStream << std::addressof(*actor.GetPointer());
+		// std::string actorKey = stringStream.str();
 
-		actorsMap[actorKey] = actor;
+		actorsMap[it.first] = actor;
 	}
 
 	return actorsMap;
 }
 
-Geometry::ActorsMap STEPPlugin::STEPPluginImport::getVTKEdgesMap() {
+Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
 	Geometry::ActorsMap edgesMap {};
 
 	for (const auto& it : this->_edgesMap) {
@@ -220,17 +226,38 @@ Geometry::ActorsMap STEPPlugin::STEPPluginImport::getVTKEdgesMap() {
 		actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
 		actor->GetProperty()->SetLineWidth(3);
 
-		std::stringstream stringStream;
-		stringStream << std::addressof(*actor.GetPointer());
-		std::string actorKey = stringStream.str();
+		// std::stringstream stringStream;
+		// stringStream << std::addressof(*actor.GetPointer());
+		// std::string actorKey = stringStream.str();
 
-		edgesMap[actorKey] = actor;
+		edgesMap[it.first] = actor;
 	}
 
 	return edgesMap;
 }
 
-std::string STEPPlugin::STEPPluginImport::getUniqueEdgeName(std::string prefix) {
+Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKFacesMap() {
+	Geometry::ActorsMap facesMap {};
+
+	for (const auto& it : this->_facesMap) {
+		const auto& shape = it.second;
+
+		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
+
+		actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
+		actor->GetProperty()->SetLineWidth(3);
+
+		// std::stringstream stringStream;
+		// stringStream << std::addressof(*actor.GetPointer());
+		// std::string actorKey = stringStream.str();
+
+		facesMap[it.first] = actor;
+	}
+
+	return facesMap;
+}
+
+std::string STEPPlugin::STEPPluginOperations::getUniqueEdgeName(std::string prefix) {
 	// Find already existing path that match prefix.
 	std::vector<std::string> allNames;
 	for (const auto& edgesMapIt : this->_edgesMap) {
@@ -255,4 +282,39 @@ std::string STEPPlugin::STEPPluginImport::getUniqueEdgeName(std::string prefix) 
 		i++;
 	}
 	return uniqueName;
+}
+
+std::string STEPPlugin::STEPPluginOperations::getUniqueFaceName(std::string prefix) {
+	// Find already existing path that match prefix.
+	std::vector<std::string> allNames;
+	for (const auto& faceMapIt : this->_facesMap) {
+		// String object is the first element of parts map.
+		const std::string stringObj = faceMapIt.first;
+
+		if (stringObj.find(prefix) != std::string::npos) {
+			allNames.push_back(stringObj);
+		}
+	}
+
+	int i = 0;
+	std::string uniqueName;
+	while (true) {
+		std::stringstream stringStream;
+		stringStream << prefix << std::setfill('0') << std::setw(3) << i;
+		uniqueName = stringStream.str();
+		auto res = std::find(std::begin(allNames), std::end(allNames), uniqueName);
+		if (res == std::end(allNames)) {
+			break;
+		}
+		i++;
+	}
+	return uniqueName;
+}
+
+Geometry::PartsMap STEPPlugin::STEPPluginOperations::getEdgesPartsMap() {
+	return this->_edgesMap;
+}
+
+Geometry::PartsMap STEPPlugin::STEPPluginOperations::getFacesPartsMap() {
+	return this->_facesMap;
 }

@@ -31,7 +31,6 @@ MainWindow::MainWindow(QWidget* parent)
 
 	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	QVTKRender->enableCameraOrientationWidget();
-	QVTKRender->enableButton();
 
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
@@ -71,7 +70,7 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 
 void MainWindow::importSTEP(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
-	STEPPlugin::STEPPluginImport stepReader {};
+	STEPGeometryPlugin stepReader {};
 
 	const std::string& filePath = fileName.toStdString();
 	try {
@@ -83,11 +82,11 @@ void MainWindow::importSTEP(QString fileName) {
 	}
 
 	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
-	QVTKRender->addActors(actorsMap);
+	QVTKRender->addActors(actorsMap, true);
 
-	Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
-	QVTKRender->addEdgesActors(edgesMap);
-	QVTKRender->setActiveLayerRenderer(0);
+	// Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
+	// QVTKRender->addEdgesActors(edgesMap);
+	// QVTKRender->setActiveLayerRenderer(0);
 }
 
 void MainWindow::importSTL(QString fileName) {

@@ -33,6 +33,7 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <XCAFDoc_ColorType.hxx>
@@ -48,20 +49,20 @@ namespace STEPPlugin {
  *
  * @details	Inherits from GeometryFunctions class.
  */
-class STEPPluginImport : public Geometry::GeometryFunctions {
+class STEPPluginOperations : public Geometry::GeometryFunctions {
 
 public:
 	/**
 	 * Construct instance of STEPFileReader class.
 	 *
 	 */
-	STEPPluginImport() {};
+	STEPPluginOperations() {};
 
 	/**
 	 * Destructor for instance of STEPFileReader class.
 	 *
 	 */
-	~STEPPluginImport() {};
+	~STEPPluginOperations() {};
 
 	/**
 	 * @brief  Load step/stp file and fill parts map container.
@@ -85,6 +86,13 @@ public:
 	Geometry::ActorsMap getVTKEdgesMap();
 
 	/**
+	 * @brief  Get container of vtkActor class instances representing faces.
+	 *
+	 * @return {ActorsMap}  : Container of vtkActor class instances.
+	 */
+	Geometry::ActorsMap getVTKFacesMap();
+
+	/**
 	 * @brief  Get new unique label of edge object.
 	 *
 	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
@@ -93,8 +101,22 @@ public:
 	 */
 	std::string getUniqueEdgeName(std::string prefix);
 
+	/**
+	 * @brief  Get new unique label of edge object.
+	 *
+	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
+	 * @param  {Importing::PartsMap} partsMap : Container of all loaded edges (occ shapes).
+	 * @return {std::string}                  : Label containing unique index and given prefix.
+	 */
+	std::string getUniqueFaceName(std::string prefix);
+
+	Geometry::PartsMap getEdgesPartsMap();
+
+	Geometry::PartsMap getFacesPartsMap();
+
 private:
 	Geometry::PartsMap _edgesMap;
+	Geometry::PartsMap _facesMap;
 };
 
 };

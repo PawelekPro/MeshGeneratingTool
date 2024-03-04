@@ -17,41 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STEPPLUGINIMPORT_H
-#define STEPPLUGINIMPORT_H
+#include "STEPPlugin.h"
 
-#include "STEPPluginOperations.h"
+STEPGeometryPlugin::STEPGeometryPlugin() {
+	this->stepOperations = STEPPlugin::STEPPluginOperations {};
+}
 
-#include <map>
-#include <string>
+void STEPGeometryPlugin::load(const std::string& fileName, QWidget* parent) {
+	this->stepOperations.load(fileName, parent);
 
-#include <vtkActor.h>
-#include <vtkSmartPointer.h>
+	this->edgesPartsMap = this->stepOperations.getEdgesPartsMap();
 
-#include <TopoDS_Shape.hxx>
+	this->facesPartsMap = this->stepOperations.getEdgesPartsMap();
 
-class STEPGeometryPlugin {
-public:
-	STEPGeometryPlugin();
-	~STEPGeometryPlugin() = default;
+	this->edgesActorsMap = this->stepOperations.getVTKEdgesMap();
 
-	/**
-	 * @brief  Load step/stp file and fill shapes map container.
-	 *
-	 * @param  {std::string} fileName :  Path to step/stp file.
-	 */
-	void load(const std::string& fileName, QWidget* parent);
+	this->facesActorsMap = this->stepOperations.getVTKFacesMap();
+}
 
-	Geometry::ActorsMap getVTKActorsMap();
+Geometry::ActorsMap STEPGeometryPlugin::getVTKActorsMap() {
+	Geometry::ActorsMap mergedMap;
+	mergedMap.insert(
+		this->facesActorsMap.begin(), this->facesActorsMap.end());
+	mergedMap.insert(
+		this->edgesActorsMap.begin(), this->edgesActorsMap.end());
 
-	// Containers for vtkActor and OccShapes
-	Geometry::PartsMap edgesPartsMap;
-	Geometry::PartsMap facesPartsMap;
-	Geometry::ActorsMap edgesActorsMap;
-	Geometry::ActorsMap facesActorsMap;
-
-private:
-	STEPPlugin::STEPPluginOperations stepOperations;
-};
-
-#endif
+	return mergedMap;
+}
