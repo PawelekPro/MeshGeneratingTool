@@ -96,7 +96,7 @@ public:
 	 * @brief  Get new unique label of edge object.
 	 *
 	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
-	 * @param  {Importing::PartsMap} partsMap : Container of all loaded edges (occ shapes).
+	 * @param  {Geometry::PartsMap} partsMap : Container of all loaded edges (occ shapes).
 	 * @return {std::string}                  : Label containing unique index and given prefix.
 	 */
 	std::string getUniqueEdgeName(std::string prefix);
@@ -105,13 +105,23 @@ public:
 	 * @brief  Get new unique label of edge object.
 	 *
 	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
-	 * @param  {Importing::PartsMap} partsMap : Container of all loaded edges (occ shapes).
+	 * @param  {Geometry::PartsMap} partsMap : Container of all loaded edges (occ shapes).
 	 * @return {std::string}                  : Label containing unique index and given prefix.
 	 */
 	std::string getUniqueFaceName(std::string prefix);
 
+	/**
+	 * @brief  Get map of objects representing edge shapes.
+	 *
+	 * @return {Geometry::PartsMap}  : Map of TopoDS_Shape shapes representing edges.
+	 */
 	Geometry::PartsMap getEdgesPartsMap();
 
+	/**
+	 * @brief  Get map of objects representing face shapes.
+	 *
+	 * @return {Geometry::PartsMap}  : Map of TopoDS_Shape shapes representing faces.
+	 */
 	Geometry::PartsMap getFacesPartsMap();
 
 private:

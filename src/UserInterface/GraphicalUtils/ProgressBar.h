@@ -50,11 +50,11 @@ public:
 	 */
 	void setValue(const int value);
 
-	void initialize() {
-		this->show();
-		this->ui->stopButton->show(); // fix for button not being displayed
-		setValue(0);
-	}
+	/**
+	 * @brief  Set up the initial state of the widget and display it..
+	 *
+	 */
+	void initialize();
 
 	/**
 	 * @brief  Set maximum value of progress bar.

@@ -19,9 +19,11 @@
 
 #include "STEPPluginOperations.h"
 
+//----------------------------------------------------------------------------
 DEFINE_STANDARD_HANDLE(Progress, Message_ProgressIndicator);
 IMPLEMENT_STANDARD_RTTIEXT(Progress, Message_ProgressIndicator)
 
+//----------------------------------------------------------------------------
 void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget* parent) {
 
 	Handle(Progress) theProgress = new Progress(parent, fileName);
@@ -187,6 +189,7 @@ void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget
 	vtkLogF(INFO, message.c_str());
 }
 
+//----------------------------------------------------------------------------
 Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKActorsMap() {
 	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->_dataFrame->Main());
 	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
@@ -215,6 +218,7 @@ Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKActorsMap() {
 	return actorsMap;
 }
 
+//----------------------------------------------------------------------------
 Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
 	Geometry::ActorsMap edgesMap {};
 
@@ -236,6 +240,7 @@ Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
 	return edgesMap;
 }
 
+//----------------------------------------------------------------------------
 Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKFacesMap() {
 	Geometry::ActorsMap facesMap {};
 
@@ -257,6 +262,7 @@ Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKFacesMap() {
 	return facesMap;
 }
 
+//----------------------------------------------------------------------------
 std::string STEPPlugin::STEPPluginOperations::getUniqueEdgeName(std::string prefix) {
 	// Find already existing path that match prefix.
 	std::vector<std::string> allNames;
@@ -284,6 +290,7 @@ std::string STEPPlugin::STEPPluginOperations::getUniqueEdgeName(std::string pref
 	return uniqueName;
 }
 
+//----------------------------------------------------------------------------
 std::string STEPPlugin::STEPPluginOperations::getUniqueFaceName(std::string prefix) {
 	// Find already existing path that match prefix.
 	std::vector<std::string> allNames;
@@ -311,10 +318,12 @@ std::string STEPPlugin::STEPPluginOperations::getUniqueFaceName(std::string pref
 	return uniqueName;
 }
 
+//----------------------------------------------------------------------------
 Geometry::PartsMap STEPPlugin::STEPPluginOperations::getEdgesPartsMap() {
 	return this->_edgesMap;
 }
 
+//----------------------------------------------------------------------------
 Geometry::PartsMap STEPPlugin::STEPPluginOperations::getFacesPartsMap() {
 	return this->_facesMap;
 }

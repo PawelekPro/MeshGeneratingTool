@@ -20,21 +20,20 @@
 #include "QVTKRenderWindow.h"
 #include "QVTKInteractorStyle.h"
 
+#include "QVTKNavigationWidget.h"
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
 #include <vtkCaptionActor2D.h>
 #include <vtkNamedColors.h>
 #include <vtkOrientationMarkerWidget.h>
-#include <vtkPlatonicSolidSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextProperty.h>
 
-#include "QVTKNavigationWidget.h"
 #include <QLayout>
-#include <QPushButton>
 
+//----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget) {
 
@@ -57,7 +56,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
 
-	setActiveLayerRenderer(0);
+	this->setActiveLayerRenderer(0);
 
 	vtkSmartPointer<Interactor::QVTKInteractorStyle>
 		interactorStyle
@@ -69,6 +68,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_widget->layout()->addWidget(_vtkWidget);
 }
 
+//----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		this->mRenderers.at(i)->Delete();
@@ -76,6 +76,7 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 	delete _vtkWidget;
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::initializeRenderers() {
 	// Background color
 	vtkNew<vtkNamedColors> colors;
@@ -104,6 +105,7 @@ void Rendering::QVTKRenderWindow::initializeRenderers() {
 	}
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::RenderScene() {
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		this->mRenderers.at(i)->Render();
@@ -111,15 +113,18 @@ void Rendering::QVTKRenderWindow::RenderScene() {
 	_rendererWindow->Render();
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interactorStyle) {
 	this->_interactor->SetInteractorStyle(interactorStyle);
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::fitView() {
 	this->activeLayerRenderer->ResetCamera();
 	this->_rendererWindow->Render();
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {
 		vtkSmartPointer<vtkActor> actor = entry.second;
@@ -129,6 +134,7 @@ void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap
 	this->_rendererWindow->Render();
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap, bool layered) {
 	for (const auto& entry : actorsMap) {
 		std::string label = entry.first;
@@ -145,20 +151,13 @@ void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap
 	this->RenderScene();
 }
 
-void Rendering::QVTKRenderWindow::addEdgesActors(const Geometry::ActorsMap& actorsMap) {
-	for (const auto& entry : actorsMap) {
-		vtkSmartPointer<vtkActor> actor = entry.second;
-		this->mRenderers.at(1)->AddActor(actor);
-	}
-	this->mRenderers.at(1)->ResetCamera();
-	this->_rendererWindow->Render();
-}
-
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
 	this->mRenderers.at(0)->AddActor(actor);
 	this->_rendererWindow->Render();
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
 	this->_vtkAxesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
@@ -190,3 +189,22 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	this->_vtkAxesWidget->SetEnabled(true);
 	this->_vtkAxesWidget->InteractiveOff();
 };
+
+//----------------------------------------------------------------------------
+vtkRenderer* Rendering::QVTKRenderWindow::getRenderer() {
+	return this->activeLayerRenderer;
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
+	this->_camOrientManipulator->On();
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layer) {
+	if (layer == static_cast<int>(Renderers::Main)) {
+		this->activeLayerRenderer = this->mRenderers.at(layer);
+	} else if (layer == static_cast<int>(Renderers::Edges)) {
+		this->activeLayerRenderer = this->mRenderers.at(layer);
+	}
+}

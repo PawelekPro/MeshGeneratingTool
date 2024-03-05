@@ -23,7 +23,7 @@
 #include <functional>
 
 #include "../GeometryCore/STLPlugin/STLPluginOperations.h"
-#include "./ui_mainwindow.h"
+#include "./ui_MainWindow.h"
 #include "GraphicalUtils/Configuration.h"
 #include "GraphicalUtils/ProgressBar.h"
 #include "Rendering/QVTKRenderWindow.h"
@@ -85,13 +85,13 @@ public:
 	 */
 	ProgressBar* getProgressBar() const { return this->progressBar; }
 
-	// Progress bar
+	// Progress bar widget
 	ProgressBar* progressBar;
 
 private:
 	Ui::MainWindow* ui;
 
-	// Render window
+	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 
 	/**

@@ -21,14 +21,17 @@
 
 #include <QAction>
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(Interactor::QVTKInteractorStyle);
 
 // Interactor::QVTKInteractorStyle* Interactor::QVTKInteractorStyle::New() {
 // 	return new Interactor::QVTKInteractorStyle(renWin);
 // }
 
+//----------------------------------------------------------------------------
 Interactor::QVTKInteractorStyle::QVTKInteractorStyle() = default;
 
+//----------------------------------------------------------------------------
 Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
@@ -37,10 +40,12 @@ Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
 	lastHoveredProperty->Delete();
 }
 
+//----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow* Interactor::QVTKInteractorStyle::getRenderWindow() {
 	return this->_qvtkRenderWindow;
 }
 
+//----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 	this->createContextMenu();
 	_contextMenu->exec(QCursor::pos());
@@ -48,6 +53,7 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 	this->Superclass::OnRightButtonDown();
 }
 
+//----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
 	vtkNew<vtkNamedColors> colors;
 	int* clickPos = this->GetInteractor()->GetEventPosition();
@@ -76,6 +82,7 @@ void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
 	this->Superclass::OnLeftButtonDown();
 }
 
+//----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::createContextMenu() {
 	if (!_contextMenu) {
 		_contextMenu = new QMenu;
@@ -96,6 +103,7 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 	}
 }
 
+//----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnMouseMove() {
 	if (this->lastHoveredActor) {
 		this->lastHoveredActor->GetProperty()->DeepCopy(this->lastHoveredProperty);
@@ -120,6 +128,7 @@ void Interactor::QVTKInteractorStyle::OnMouseMove() {
 	this->Superclass::OnMouseMove();
 }
 
+//----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::Activate(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
 	_qvtkRenderWindow = qvtkRenderWindow;
 	_contextMenu = nullptr;

@@ -55,7 +55,7 @@ public:
 	/**
 	 * @brief  Add vtkActors to the current renderer and display them.
 	 *
-	 * @param  {Importing::ActorsMap} actorsMap : Container of vtkActors.
+	 * @param  {Geometry::ActorsMap} actorsMap : Container of vtkActors.
 	 */
 	void addActors(const Geometry::ActorsMap& actorsMap);
 
@@ -67,13 +67,6 @@ public:
 	 * 	should be located into separated layers.
 	 */
 	void addActors(const Geometry::ActorsMap& actorsMap, bool layered);
-
-	/**
-	 * @brief  Add vtkActors to the current renderer and display them.
-	 *
-	 * @param  {Importing::ActorsMap} actorsMap : Container of vtkActors.
-	 */
-	void addEdgesActors(const Geometry::ActorsMap& actorsMap);
 
 	/**
 	 * @brief  Add actor to the renderer.
@@ -90,30 +83,36 @@ public:
 	void setInteractorStyle(vtkInteractorStyle* interactorStyle);
 
 	/**
-	 * @brief Adjust the displayed objects to the size of the rendering window.
+	 * @brief  Adjust the displayed objects to the size of the rendering window.
 	 *
 	 */
 	void fitView();
 
+	/**
+	 * @brief  Reset render view to update currently displayed state.
+	 *
+	 */
 	void RenderScene();
 
-	vtkRenderer* getRenderer() { return this->activeLayerRenderer; }
+	/**
+	 * @brief  Get renderer representing currently active layer.
+	 *
+	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
+	 */
+	vtkRenderer* getRenderer();
 
-	vtkRenderWindowInteractor* getInteractor() { return this->_rendererWindow->GetInteractor(); }
+	/**
+	 * @brief  Enable and start displaying the camera orientation widget.
+	 *
+	 */
+	void enableCameraOrientationWidget();
 
-	vtkOrientationMarkerWidget* getOrientationMarkerWidget() { return this->_vtkAxesWidget; }
-
-	void enableCameraOrientationWidget() {
-		_camOrientManipulator->On();
-	}
-
-	void setActiveLayerRenderer(int layer) {
-		if (layer == 0) {
-			this->activeLayerRenderer = this->mRenderers.at(0);
-		} else {
-			this->activeLayerRenderer = this->mRenderers.at(1);
-		}
-	}
+	/**
+	 * @brief  Set active renderer represented by layer ID.
+	 *
+	 * @param  {int} layer : ID of layer to be activated.
+	 */
+	void setActiveLayerRenderer(const int layer);
 
 	// Enumerator definition
 	enum class Renderers {
@@ -123,11 +122,16 @@ public:
 	};
 
 protected:
+	/**
+	 * @brief  Construct and initialize renderes at each layer.
+	 *
+	 */
 	void initializeRenderers();
 
 	// Definition of array of pointers to VTK renderers
 	std::array<vtkSmartPointer<vtkRenderer>, static_cast<int>(Renderers::Count)> mRenderers;
 
+	// Attribute for storing the currently active renderer (layer)
 	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
 
 private:
@@ -145,8 +149,9 @@ private:
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
+	// Navigation widget
 	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
 };
-}; // namespace Rendering
+};
 
 #endif

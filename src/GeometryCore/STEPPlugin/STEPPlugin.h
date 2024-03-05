@@ -42,15 +42,21 @@ public:
 	 */
 	void load(const std::string& fileName, QWidget* parent);
 
+	/**
+	 * @brief  Get merged map containing all VTK actors representing loaded geometry.
+	 *
+	 * @return {Geometry::ActorsMap}  : Map containing all actors for created shapes
+	 */
 	Geometry::ActorsMap getVTKActorsMap();
 
-	// Containers for vtkActor and OccShapes
+	// Containers for vtkActor and occ shapes
 	Geometry::PartsMap edgesPartsMap;
 	Geometry::PartsMap facesPartsMap;
 	Geometry::ActorsMap edgesActorsMap;
 	Geometry::ActorsMap facesActorsMap;
 
 private:
+	// Attribute for handling operations on step file
 	STEPPlugin::STEPPluginOperations stepOperations;
 };
 

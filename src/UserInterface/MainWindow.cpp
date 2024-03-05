@@ -19,6 +19,7 @@
 
 #include "MainWindow.h"
 
+//----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow) {
@@ -35,18 +36,20 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
-	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 0);
-	this->buttonGroup.addButton(this->ui->facesSelectorButton, 1);
+	this->buttonGroup.addButton(this->ui->facesSelectorButton, 0);
+	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 1);
 
 	this->setConnections();
 }
 
+//----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
 }
 
+//----------------------------------------------------------------------------
 void MainWindow::setConnections() {
 	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
 		openFileDialog([this](QString fname) { importSTEP(fname); }, "Import", filters::StepFilter);
@@ -60,6 +63,7 @@ void MainWindow::setConnections() {
 		this, &MainWindow::handleSelectorButtonClicked);
 }
 
+//----------------------------------------------------------------------------
 int MainWindow::openFileDialog(Callable action, QString actionName, QString filter) {
 	QFileDialog dlg(this);
 	dlg.setWindowTitle("Select file to " + actionName);
@@ -74,6 +78,7 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 	return QMessageBox::Rejected;
 }
 
+//----------------------------------------------------------------------------
 void MainWindow::importSTEP(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
 	STEPGeometryPlugin stepReader {};
@@ -95,6 +100,7 @@ void MainWindow::importSTEP(QString fileName) {
 	// QVTKRender->setActiveLayerRenderer(0);
 }
 
+//----------------------------------------------------------------------------
 void MainWindow::importSTL(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
 	STLPlugin::STLFileReader stlReader {};
@@ -106,6 +112,7 @@ void MainWindow::importSTL(QString fileName) {
 	QVTKRender->addActors(actorsMap);
 }
 
+//----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
 		if (btn != button)

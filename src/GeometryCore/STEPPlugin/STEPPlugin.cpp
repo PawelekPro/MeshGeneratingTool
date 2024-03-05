@@ -19,10 +19,12 @@
 
 #include "STEPPlugin.h"
 
+//----------------------------------------------------------------------------
 STEPGeometryPlugin::STEPGeometryPlugin() {
 	this->stepOperations = STEPPlugin::STEPPluginOperations {};
 }
 
+//----------------------------------------------------------------------------
 void STEPGeometryPlugin::load(const std::string& fileName, QWidget* parent) {
 	this->stepOperations.load(fileName, parent);
 
@@ -35,6 +37,7 @@ void STEPGeometryPlugin::load(const std::string& fileName, QWidget* parent) {
 	this->facesActorsMap = this->stepOperations.getVTKFacesMap();
 }
 
+//----------------------------------------------------------------------------
 Geometry::ActorsMap STEPGeometryPlugin::getVTKActorsMap() {
 	Geometry::ActorsMap mergedMap;
 	mergedMap.insert(

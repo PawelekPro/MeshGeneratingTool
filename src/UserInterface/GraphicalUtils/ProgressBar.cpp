@@ -19,6 +19,7 @@
 
 #include "ProgressBar.h"
 
+//----------------------------------------------------------------------------
 ProgressBar::ProgressBar(QWidget* parent)
 	: QWidget(parent)
 	, ui(new Ui::ProgressBar) {
@@ -32,40 +33,56 @@ ProgressBar::ProgressBar(QWidget* parent)
 	this->hide();
 }
 
+//----------------------------------------------------------------------------
+ProgressBar::~ProgressBar() {
+	delete ui;
+}
+
+void ProgressBar::initialize() {
+	this->show();
+	// fix for button not being displayed
+	this->ui->stopButton->show();
+	setValue(0);
+}
+
+//----------------------------------------------------------------------------
 void ProgressBar::setValue(const int value) {
 	this->ui->progressBar->setValue(value);
 }
 
+//----------------------------------------------------------------------------
 void ProgressBar::setProgressMessage(const std::string text) {
 	this->ui->message->setText(QString::fromStdString(text));
 }
 
+//----------------------------------------------------------------------------
 void ProgressBar::finish() {
 	this->hide();
 }
 
+//----------------------------------------------------------------------------
 void ProgressBar::setMaximum(const int max) {
 	this->ui->progressBar->setMaximum(max);
 }
 
+//----------------------------------------------------------------------------
 void ProgressBar::setMinimum(const int min) {
 	this->ui->progressBar->setMinimum(min);
 }
 
+//----------------------------------------------------------------------------
 void ProgressBar::handleStopButtonClicked() {
 	auto message = "Process aborted by the user.";
 	vtkLogF(ERROR, message);
 	this->_terminate = true;
 }
 
+//----------------------------------------------------------------------------
 bool ProgressBar::getTerminateIndicator() {
 	return this->_terminate;
 }
 
+//----------------------------------------------------------------------------
 void ProgressBar::setTerminateIndicator(const bool sigTerm) {
 	this->_terminate = sigTerm;
-}
-
-ProgressBar::~ProgressBar() {
-	delete ui;
 }
