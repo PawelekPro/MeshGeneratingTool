@@ -98,7 +98,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="facesSelectorButton">
             <property name="minimumSize">
              <size>
               <width>28</width>
@@ -133,7 +133,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="edgesSelectorButton">
             <property name="minimumSize">
              <size>
               <width>28</width>

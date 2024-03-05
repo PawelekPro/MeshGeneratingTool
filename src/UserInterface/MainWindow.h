@@ -31,9 +31,11 @@
 
 #include <vtkAxesActor.h>
 
+#include <QButtonGroup>
 #include <QFileDialog>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QString>
 
 // Declaration of callable type
@@ -97,5 +99,16 @@ private:
 	 *
 	 */
 	void setConnections();
+
+	// Push button group of the switch type
+	QButtonGroup buttonGroup;
+
+private slots:
+	/**
+	 * @brief  Handle changing entity (edges/faces/etc) selection event.
+	 *
+	 * @param  {QAbstractButton*} button : Button that sends a signal
+	 */
+	void handleSelectorButtonClicked(QAbstractButton* button);
 };
 #endif // MAINWINDOW_H

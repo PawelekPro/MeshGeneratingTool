@@ -29,11 +29,14 @@ MainWindow::MainWindow(QWidget* parent)
 	sizes << 100 << 400;
 	ui->mainSplitter->setSizes(sizes);
 
-	QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
-	QVTKRender->enableCameraOrientationWidget();
+	this->QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
+	this->QVTKRender->enableCameraOrientationWidget();
 
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
+
+	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 0);
+	this->buttonGroup.addButton(this->ui->facesSelectorButton, 1);
 
 	this->setConnections();
 }
@@ -52,6 +55,9 @@ void MainWindow::setConnections() {
 	connect(ui->actionImportSTL, &QAction::triggered, [this]() {
 		openFileDialog([this](QString fname) { importSTL(fname); }, "Import", filters::StlFilter);
 	});
+
+	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
+		this, &MainWindow::handleSelectorButtonClicked);
 }
 
 int MainWindow::openFileDialog(Callable action, QString actionName, QString filter) {
@@ -98,4 +104,15 @@ void MainWindow::importSTL(QString fileName) {
 
 	Geometry::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
+}
+
+void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
+	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
+		if (btn != button)
+			btn->setChecked(false);
+	}
+
+	// Set active layer according to selected button
+	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
+	this->QVTKRender->setActiveLayerRenderer(buttonGroup.id(button));
 }
