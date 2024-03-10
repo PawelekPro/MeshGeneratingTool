@@ -22,9 +22,9 @@
 TreeStructure::TreeStructure(QWidget* parent)
 	: QTreeWidget(parent) {
 
-	QStringList headers; // Create list of headers
-	headers << tr("Label") << tr("Attribute") << tr("Visibility");
-	setHeaderLabels(headers); // Set headers for columns
+	QHeaderView* header = this->header();
+	header->setSectionResizeMode(QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(QHeaderView::Interactive);
 }
 
-TreeStructure::~TreeStructure() { }
+void TreeStructure::buildBaseObjectsRepresentation() { }

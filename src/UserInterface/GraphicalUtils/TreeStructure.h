@@ -20,6 +20,10 @@
 #ifndef TREESTRUCTURE_H
 #define TREESTRUCTURE_H
 
+#include <QDomDocument>
+#include <QDomElement>
+#include <QHeaderView>
+#include <QPointer>
 #include <QStringList>
 #include <QTreeWidget>
 
@@ -27,7 +31,21 @@ class TreeStructure : public QTreeWidget {
 	Q_OBJECT
 public:
 	TreeStructure(QWidget* parent);
-	~TreeStructure();
+	~TreeStructure() = default;
+
+	void buildBaseObjectsRepresentation();
+
+private:
+	QPointer<QDomDocument> docObjectModel;
+
+	std::map<int, QPointer<QDomElement>> domElements;
+
+	std::map<std::string, std::string> TreeRoots = {
+		{ "GeomImport", "Geometry Imports" },
+		{ "GeomModel", "Geometry Model" },
+		{ "CSYS", "Coordinate System" },
+		{ "Mesh", "Mesh" }
+	};
 };
 
 #endif
