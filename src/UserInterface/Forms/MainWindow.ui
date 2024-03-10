@@ -71,7 +71,73 @@
          <number>4</number>
         </property>
         <item row="0" column="0">
-         <widget class="TreeStructure" name="treeWidget"/>
+         <widget class="TreeStructure" name="treeWidget">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="midLineWidth">
+           <number>0</number>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <attribute name="headerVisible">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="headerCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="headerMinimumSectionSize">
+           <number>100</number>
+          </attribute>
+          <attribute name="headerDefaultSectionSize">
+           <number>100</number>
+          </attribute>
+          <attribute name="headerShowSortIndicator" stdset="0">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="headerStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Attribute</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Visibility</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Actor</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>Geometry Imports</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Geometry Model</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Coordinate System</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Mesh</string>
+           </property>
+          </item>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QTableWidget" name="tableWidget"/>
@@ -111,6 +177,9 @@
               <height>28</height>
              </size>
             </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Select faces&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -148,6 +217,9 @@
               <width>28</width>
               <height>28</height>
              </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Select edges&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -190,6 +262,9 @@
         </item>
         <item row="1" column="0">
          <widget class="QTabWidget" name="tabWidget">
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
           <property name="tabPosition">
            <enum>QTabWidget::South</enum>
           </property>
