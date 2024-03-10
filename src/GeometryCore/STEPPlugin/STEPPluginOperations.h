@@ -39,7 +39,7 @@
 #include <XCAFDoc_ColorType.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 
-#include "../Geometry/GeometryFunctions.h"
+#include "GeometryFunctions.h"
 #include "ProgressBarPlugin.hpp"
 
 namespace STEPPlugin {
