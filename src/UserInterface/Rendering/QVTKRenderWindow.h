@@ -28,8 +28,14 @@
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkCameraOrientationWidget.h>
 #include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkInteractorStyle.h>
+#include <vtkLogger.h>
+#include <vtkLogoRepresentation.h>
+#include <vtkLogoWidget.h>
 #include <vtkNew.h>
 #include <vtkOrientationMarkerWidget.h>
+#include <vtkPNGReader.h>
+#include <vtkQImageToImageSource.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
@@ -44,6 +50,10 @@
 #include <vtkProperty.h>
 #include <vtkTextProperty.h>
 
+#include <QImage>
+#include <QPixmap>
+#include <QPointer>
+
 namespace Rendering {
 
 /**
@@ -51,6 +61,7 @@ namespace Rendering {
  *
  */
 class QVTKRenderWindow {
+
 public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
@@ -117,11 +128,23 @@ public:
 	void enableCameraOrientationWidget();
 
 	/**
+	 * @brief  Enable and start displaying the water mark widget.
+	 *
+	 */
+	void enableWaterMark();
+
+	/**
 	 * @brief  Set active renderer represented by layer ID.
 	 *
 	 * @param  {int} layer : ID of layer to be activated.
 	 */
 	void setActiveLayerRenderer(const int layer);
+
+	/**
+	 * @brief  Initialize and setup water mark widget.
+	 *
+	 */
+	void setWaterMark();
 
 	// Enumerator definition
 	enum class Renderers {
@@ -144,7 +167,7 @@ protected:
 	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
 
 private:
-	QWidget* _widget;
+	QPointer<QWidget> _widget;
 
 	// The Qt widget containing a VTK viewport
 	QVTKOpenGLNativeWidget* _vtkWidget;
@@ -160,6 +183,9 @@ private:
 
 	// Navigation widget
 	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
+
+	// Water mark
+	vtkSmartPointer<vtkLogoWidget> _logoWidget;
 };
 };
 

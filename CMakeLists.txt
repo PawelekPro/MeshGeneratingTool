@@ -32,6 +32,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
     OpenGLWidgets 
     Core
     Gui
+    Xml
 )
 
 message(STATUS "Qt major version: ${QT_VERSION_MAJOR}")
@@ -149,6 +150,7 @@ target_link_libraries(meshGenerator PRIVATE
     Qt${QT_VERSION_MAJOR}::OpenGLWidgets 
     Qt${QT_VERSION_MAJOR}::OpenGL
     Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Xml
     ${VTK_LIBRARIES}
 )
 
