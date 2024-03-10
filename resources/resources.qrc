@@ -2,4 +2,7 @@
   <qresource prefix="icons">
     <file>icons/draft.svg</file>
   </qresource>
+  <qresource prefix="uxSetup">
+    <file>icons/watermark.png</file>
+  </qresource>
 </RCC>

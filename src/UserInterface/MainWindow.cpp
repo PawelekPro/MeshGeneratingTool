@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	this->QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	this->QVTKRender->enableCameraOrientationWidget();
+	this->QVTKRender->enableWaterMark();
 
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);

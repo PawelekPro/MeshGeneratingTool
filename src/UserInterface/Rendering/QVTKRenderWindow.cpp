@@ -49,6 +49,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 
 	_vtkWidget->setFocusPolicy(Qt::StrongFocus);
 	this->generateCoordinateSystemAxes();
+	this->setWaterMark();
 
 	_interactor->SetRenderWindow(_rendererWindow);
 
@@ -184,7 +185,7 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	}
 
 	this->_vtkAxesWidget->SetOrientationMarker(axes);
-	this->_vtkAxesWidget->SetInteractor(_vtkWidget->renderWindow()->GetInteractor());
+	this->_vtkAxesWidget->SetInteractor(this->_interactor);
 	this->_vtkAxesWidget->SetViewport(0.0, 0.0, 0.15, 0.25);
 	this->_vtkAxesWidget->SetEnabled(true);
 	this->_vtkAxesWidget->InteractiveOff();
@@ -207,4 +208,36 @@ void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layer) {
 	} else if (layer == static_cast<int>(Renderers::Edges)) {
 		this->activeLayerRenderer = this->mRenderers.at(layer);
 	}
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::enableWaterMark() {
+	this->_logoWidget->On();
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setWaterMark() {
+	QPixmap pixmap(":/uxSetup/icons/watermark.png");
+
+	if (pixmap.isNull()) {
+		qDebug() << "Failed to load image from resource";
+		vtkLogF(ERROR, "Failed to load image from resource");
+	}
+
+	vtkNew<vtkQImageToImageSource> qimageToImageSource;
+	QImage qimage = pixmap.toImage();
+
+	qimageToImageSource->SetQImage(&qimage);
+	qimageToImageSource->Update();
+
+	vtkNew<vtkLogoRepresentation> logoRepresentation;
+	logoRepresentation->SetPosition(0.01, 0.6);
+	logoRepresentation->SetPosition2(0.15, 0.65);
+	logoRepresentation->SetImage(qimageToImageSource->GetOutput());
+
+	this->_logoWidget = vtkSmartPointer<vtkLogoWidget>::New();
+	this->_logoWidget->SetInteractor(this->_interactor);
+	this->_logoWidget->SetRepresentation(logoRepresentation);
+	this->_logoWidget->ProcessEventsOff();
+	this->_logoWidget->ManagesCursorOff();
 }
