@@ -75,10 +75,7 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 		this->mRenderers.at(i)->Delete();
 	}
 
-	_camOrientManipulator->Delete();
-	_logoWidget->Delete();
-
-	delete _vtkWidget;
+	_vtkWidget->deleteLater();
 }
 
 //----------------------------------------------------------------------------

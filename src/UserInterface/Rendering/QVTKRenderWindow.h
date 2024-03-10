@@ -41,6 +41,7 @@
 
 #include <QImage>
 #include <QPixmap>
+#include <QPointer>
 
 namespace Rendering {
 
@@ -155,7 +156,7 @@ protected:
 	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
 
 private:
-	QWidget* _widget;
+	QPointer<QWidget> _widget;
 
 	// The Qt widget containing a VTK viewport
 	QVTKOpenGLNativeWidget* _vtkWidget;
