@@ -74,6 +74,10 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		this->mRenderers.at(i)->Delete();
 	}
+
+	_camOrientManipulator->Delete();
+	_logoWidget->Delete();
+
 	delete _vtkWidget;
 }
 
