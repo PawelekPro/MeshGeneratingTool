@@ -21,10 +21,10 @@ set(CMAKE_CXX_STANDARD 23)
 # endif()
 
 
-SET(CMAKE_PREFIX_PATH "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6")
-SET(Qt6Widgets_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6Widgets")
-SET(Qt6CoreTools_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6CoreTools")
-SET(Qt6GuiTools_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6GuiTools")
+# SET(CMAKE_PREFIX_PATH "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6")
+# SET(Qt6Widgets_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6Widgets")
+# SET(Qt6CoreTools_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6CoreTools")
+# SET(Qt6GuiTools_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6GuiTools")
 
 find_package(QT NAMES Qt6 REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS 
@@ -37,15 +37,15 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
 
 message(STATUS "Qt major version: ${QT_VERSION_MAJOR}")
 
-set(KERNEL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/Kernel")
-set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface")
-set(UI_UTILS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/UserInterface/GraphicalUtils")
-set(FORMS_PATH "${UI_PATH}/Forms")
-set(GEOM_CORE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/GeometryCore")
+set(KERNEL_PATH ${CMAKE_SOURCE_DIR}/src/Kernel)
+set(UI_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface)
+set(UI_UTILS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/GraphicalUtils)
+set(FORMS_PATH ${UI_PATH}/Forms)
+set(GEOM_CORE_PATH ${CMAKE_SOURCE_DIR}/src/GeometryCore)
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
 
-
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
+
 set(PROJECT_SOURCES
     ${KERNEL_PATH}/AppQuickStart.cpp
     ${UI_PATH}/MainWindow.cpp
@@ -73,32 +73,49 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
 )
 
-include_directories(
+set(INCLUDE_DIRS
     ${KERNEL_PATH}
+
     ${UI_PATH}
-    ${UI_UTILS_PATH}
+    ${UI_PATH}/GraphicalUtils
+    ${UI_PATH}/Rendering
+    ${UI_PATH}/Forms
+
     ${GEOM_CORE_PATH}
     ${GEOM_CORE_PATH}/GUI
     ${GEOM_CORE_PATH}/Geometry
-    ${GEOM_CORE_PATH}/STEPPlugin)
+    ${GEOM_CORE_PATH}/STLPlugin
+    ${GEOM_CORE_PATH}/STEPPlugin
+    )
+
+include_directories(
+    ${INCLUDE_DIRS}
+)
+    
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Try to find OCC
-set(OCC_INCLUDE_DIR "/opt/opencascade/include/opencascade")
-find_package(OCC REQUIRED)
-
-if(OCC_FOUND) 
-    include_directories(SYSTEM ${OCC_INCLUDE_DIR})
-    link_directories(${OCC_LIBRARY_DIR})
+if(WIN32)
+    find_package(OpenCASCADE REQUIRED)
+    if(OpenCASCADE_INCLUDE_DIR) 
+        include_directories(SYSTEM ${OpenCASCADE_INCLUDE_DIR})
+        link_directories(${OpenCASCADE_LIBRARY_DIR})
+    endif()
+else()
+    find_package(OCC REQUIRED)
+    if(OCC_INCLUDE_DIR) 
+        include_directories(SYSTEM ${OCC_INCLUDE_DIR})
+        link_directories(${OCC_LIBRARY_DIR})
+    endif()
 endif()
 
 if(WIN32)
-    find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
-    vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
-    vtkRenderingContextOpenGL2 vtkRenderingCore vtkRenderingFreeType
-    vtkRenderingGL2PSOpenGL2 vtkRenderingOpenGL2 vtkIOGeometry
-    vtkInfovisLayout vtkViewsInfovis vtkGUISupportQt vtkRenderingQt)
+    find_package(VTK QUIET REQUIRED CommonCore CommonDataModel
+    CommonColor FiltersCore FiltersSources InteractionStyle
+    RenderingContextOpenGL2 RenderingCore RenderingFreeType
+    RenderingGL2PSOpenGL2 RenderingOpenGL2 IOGeometry
+    InfovisLayout ViewsInfovis GUISupportQt RenderingQt RenderingAnnotation)
 else()
     find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
     vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
@@ -121,26 +138,12 @@ if(NOT(TARGET VTK::GUISupportQt))
   message(FATAL_ERROR "VTK not built with Qt support.")
 endif()
 
-file(GLOB_RECURSE HEADERS "include/*.h" "include/*.hpp")
-SET(INCLUDE_DIRS "")
-foreach(_headerFile ${HEADERS})
-    get_filename_component(_dir ${_headerFile} PATH)
-    list(APPEND INCLUDE_DIRS ${_dir})
-endforeach()
-list(REMOVE_DUPLICATES INCLUDE_DIRS)
-# include_directories("./include")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(meshGenerator
-        MANUAL_FINALIZATION
-        ${RESOURCES_PATH}
-        ${PROJECT_SOURCES}
-    )
-else()
-    add_executable(meshGenerator
-        ${PROJECT_SOURCES}
-    )
-endif()
+add_executable(meshGenerator
+    ${PROJECT_SOURCES}
+    ${RESOURCES_PATH}
+)
+
 
 target_link_libraries(meshGenerator PRIVATE 
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -149,9 +152,17 @@ target_link_libraries(meshGenerator PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Xml
     ${VTK_LIBRARIES}
-    ${OCC_LIBRARIES}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(meshGenerator)
+if(WIN32)
+    target_link_libraries(meshGenerator PRIVATE 
+        ${OpenCASCADE_LIBRARIES})
+else()
+    target_link_libraries(meshGenerator PRIVATE
+        ${OCC_LIBRARIES})
 endif()
+
+# vtk_module_autoinit(
+#   TARGETS meshGenerator
+#   MODULES ${VTK_LIBRARIES}
+# )

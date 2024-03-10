@@ -22,14 +22,12 @@
 
 #include <functional>
 
-#include "../GeometryCore/STLPlugin/STLPluginOperations.h"
+#include "STLPluginOperations.h"
 #include "./ui_MainWindow.h"
-#include "GraphicalUtils/Configuration.h"
-#include "GraphicalUtils/ProgressBar.h"
-#include "Rendering/QVTKRenderWindow.h"
+#include "Configuration.h"
+#include "ProgressBar.h"
+#include "QVTKRenderWindow.h"
 #include "STEPPlugin.h"
-
-#include <vtkAxesActor.h>
 
 #include <QButtonGroup>
 #include <QFileDialog>

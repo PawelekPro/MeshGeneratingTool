@@ -20,8 +20,8 @@
 #ifndef STLFILEREADER_H
 #define STLFILEREADER_H
 
-#include "../../UserInterface/GraphicalUtils/ProgressBar.h"
-#include "../Geometry/GeometryFunctions.h"
+#include "ProgressBar.h"
+#include "GeometryFunctions.h"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
