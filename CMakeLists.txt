@@ -41,37 +41,34 @@ set(UI_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface)
 set(UI_UTILS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/GraphicalUtils)
 set(FORMS_PATH ${UI_PATH}/Forms)
 set(GEOM_CORE_PATH ${CMAKE_SOURCE_DIR}/src/GeometryCore)
-
+set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
 
 set(PROJECT_SOURCES
     ${KERNEL_PATH}/AppQuickStart.cpp
-
     ${UI_PATH}/MainWindow.cpp
-    ${UI_PATH}/Rendering/QVTKRenderWindow.cpp
-    ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
-    # ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
-
-    ${UI_UTILS_PATH}/ProgressBar.cpp
-    ${UI_UTILS_PATH}/TreeStructure.cpp
-
-    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
-    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
-
     ${UI_PATH}/MainWindow.h
-    ${UI_PATH}/Rendering/QVTKRenderWindow.h
-    ${UI_PATH}/Rendering/QVTKInteractorStyle.h
-    # ${UI_PATH}/Rendering/QVTKNavigationWidget.h
-
+    ${UI_UTILS_PATH}/ProgressBar.cpp
     ${UI_UTILS_PATH}/ProgressBar.h
+    ${UI_UTILS_PATH}/TreeStructure.cpp
     ${UI_UTILS_PATH}/TreeStructure.h
     ${UI_UTILS_PATH}/Configuration.h
-
+    ${UI_PATH}/Rendering/QVTKRenderWindow.cpp
+    ${UI_PATH}/Rendering/QVTKRenderWindow.h
+    ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
+    ${UI_PATH}/Rendering/QVTKInteractorStyle.h
+#    ${UI_PATH}/Rendering/QVTKNavigationWidget.h
+#    ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
+#    ${UI_PATH}/Rendering/QVTKToolBar.h
+#    ${UI_PATH}/Rendering/QVTKToolBar.cpp
+    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.cpp
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
+    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
 )
 
@@ -112,13 +109,12 @@ else()
     endif()
 endif()
 
-
 if(WIN32)
-    find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
-    vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
-    vtkRenderingContextOpenGL2 vtkRenderingCore vtkRenderingFreeType
-    vtkRenderingGL2PSOpenGL2 vtkRenderingOpenGL2 vtkIOGeometry
-    vtkInfovisLayout vtkViewsInfovis vtkGUISupportQt vtkRenderingQt)
+    find_package(VTK QUIET REQUIRED CommonCore CommonDataModel
+    CommonColor FiltersCore FiltersSources InteractionStyle
+    RenderingContextOpenGL2 RenderingCore RenderingFreeType
+    RenderingGL2PSOpenGL2 RenderingOpenGL2 IOGeometry
+    InfovisLayout ViewsInfovis GUISupportQt RenderingQt RenderingAnnotation)
 else()
     find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
     vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
@@ -144,6 +140,7 @@ endif()
 
 add_executable(meshGenerator
     ${PROJECT_SOURCES}
+    ${RESOURCES_PATH}
 )
 
 
@@ -163,7 +160,7 @@ else()
         ${OCC_LIBRARIES})
 endif()
 
-vtk_module_autoinit(
-  TARGETS meshGenerator
-  MODULES ${VTK_LIBRARIES}
-)
+# vtk_module_autoinit(
+#   TARGETS meshGenerator
+#   MODULES ${VTK_LIBRARIES}
+# )

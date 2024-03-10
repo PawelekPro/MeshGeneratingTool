@@ -19,17 +19,7 @@
 
 #include "QVTKRenderWindow.h"
 #include "QVTKInteractorStyle.h"
-
 #include "QVTKNavigationWidget.h"
-#include <vtkActor.h>
-#include <vtkAxesActor.h>
-#include <vtkCamera.h>
-#include <vtkCaptionActor2D.h>
-#include <vtkNamedColors.h>
-#include <vtkOrientationMarkerWidget.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
-#include <vtkTextProperty.h>
 
 #include <QLayout>
 

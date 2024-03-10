@@ -29,8 +29,6 @@
 #include "QVTKRenderWindow.h"
 #include "STEPPlugin.h"
 
-#include <vtkAxesActor.h>
-
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QMainWindow>
