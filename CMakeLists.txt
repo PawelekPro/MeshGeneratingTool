@@ -6,25 +6,26 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 23)
 
-# Check compiler standert supports
-# include(CheckCXXCompilerFlag)
-# CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 
-# if(COMPILER_SUPPORTS_CXX17)
-#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-#     add_definitions(-DCOMPILEDWITHC17)
-#     message(STATUS "Using flag -std=c++17.")
-# else()
-#     message(FATAL_ERROR
-#         "The compiler ${CMAKE_CXX_COMPILER} has no 
-#         required standard support. Please use a different C++ compiler.")
-# endif()
+# add gmsh
+if(WIN32)
+    set(GMSH_ROOT "D:/GmshSDK/gmsh-4.12.2")
+else()
+    set(GMSH_ROOT "your path to gmsh sdk ...")
+endif()
 
+find_path(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
+find_path(GMSH_LIB_DIR gmsh.lib PATHS ${GMSH_ROOT}/lib)
+find_library(GMSH_LIB gmsh)
+find_path(GMSH_INC gmsh.h_cwrap)
 
-# SET(CMAKE_PREFIX_PATH "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6")
-# SET(Qt6Widgets_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6Widgets")
-# SET(Qt6CoreTools_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6CoreTools")
-# SET(Qt6GuiTools_DIR "/opt/Qt/6.6.1/gcc_64/lib/cmake/Qt6GuiTools")
+if(NOT GMSH_LIB)
+  message(FATAL_ERROR "Could not find libgmsh")
+endif()
+if(NOT GMSH_INC)
+  message(FATAL_ERROR "Could not find gmsh.h_cwrap")
+endif()
+
 
 find_package(QT NAMES Qt6 REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS 
@@ -42,6 +43,8 @@ set(UI_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface)
 set(UI_UTILS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/GraphicalUtils)
 set(FORMS_PATH ${UI_PATH}/Forms)
 set(GEOM_CORE_PATH ${CMAKE_SOURCE_DIR}/src/GeometryCore)
+set(MODEL_PATH ${CMAKE_SOURCE_DIR}/src/Model)
+
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
@@ -71,6 +74,8 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
+    ${MODEL_PATH}/Model.h
+    ${MODEL_PATH}/Model.cpp
 )
 
 set(INCLUDE_DIRS
@@ -86,6 +91,10 @@ set(INCLUDE_DIRS
     ${GEOM_CORE_PATH}/Geometry
     ${GEOM_CORE_PATH}/STLPlugin
     ${GEOM_CORE_PATH}/STEPPlugin
+
+    ${MODEL_PATH}
+
+    ${GMSH_INC}
     )
 
 include_directories(
@@ -153,6 +162,7 @@ target_link_libraries(meshGenerator PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Xml
     ${VTK_LIBRARIES}
+    ${GMSH_LIB}
 )
 
 if(WIN32)
@@ -163,7 +173,3 @@ else()
         ${OCC_LIBRARIES})
 endif()
 
-# vtk_module_autoinit(
-#   TARGETS meshGenerator
-#   MODULES ${VTK_LIBRARIES}
-# )

@@ -77,6 +77,7 @@ public:
 	 */
 	virtual ActorsMap getVTKActorsMap() = 0;
 
+	PartsMap getPartsMap();
 	/**
 	 * @brief  Convert TopoDS_shape object into vtkActor.
 	 *

@@ -301,7 +301,7 @@
      <x>0</x>
      <y>0</y>
      <width>1046</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -338,9 +338,24 @@
      <string>Help</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuModel">
+    <property name="title">
+     <string>Model</string>
+    </property>
+    <addaction name="actionNewModel"/>
+    <addaction name="actionGenerateMesh"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionShowMesh"/>
+   </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuModel"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionImportSTEP">
@@ -361,6 +376,24 @@
     <font>
      <pointsize>10</pointsize>
     </font>
+   </property>
+  </action>
+  <action name="actionNewModel">
+   <property name="text">
+    <string>New Model</string>
+   </property>
+  </action>
+  <action name="actionShowMesh">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Mesh</string>
+   </property>
+  </action>
+  <action name="actionGenerateMesh">
+   <property name="text">
+    <string>Generate Mesh</string>
    </property>
   </action>
  </widget>

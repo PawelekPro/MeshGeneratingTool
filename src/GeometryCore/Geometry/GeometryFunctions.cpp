@@ -58,3 +58,7 @@ std::string Geometry::GeometryFunctions::getUniqueObjectName(std::string prefix)
 	}
 	return uniqueName;
 }
+
+Geometry::PartsMap Geometry::GeometryFunctions::getPartsMap(){
+	return this->_partsMap;
+}

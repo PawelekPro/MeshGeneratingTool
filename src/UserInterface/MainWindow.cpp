@@ -39,10 +39,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 	this->buttonGroup.addButton(this->ui->facesSelectorButton, 0);
 	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 1);
-
+	
 	this->setConnections();
-}
-
+	this->initializeActions();
+	}
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	delete QVTKRender;
@@ -62,6 +62,14 @@ void MainWindow::setConnections() {
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
+
+	connect(ui->actionNewModel, &QAction::triggered, [this]() {
+		newModel();
+	});
+	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
+		generateMesh();
+	});
+
 }
 
 //----------------------------------------------------------------------------
@@ -92,10 +100,10 @@ void MainWindow::importSTEP(QString fileName) {
 		std::cout << "Display some message or dialog box..." << std::endl;
 		return;
 	}
-
+	this->model->addParts(stepReader.stepOperations.getPartsMap());
 	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap, true);
-
+	QVTKRender->fitView();
 	// Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
 	// QVTKRender->addEdgesActors(edgesMap);
 	// QVTKRender->setActiveLayerRenderer(0);
@@ -108,11 +116,26 @@ void MainWindow::importSTL(QString fileName) {
 
 	const std::string& filePath = fileName.toStdString();
 	stlReader.load(filePath, progressBar);
+	this->model->addParts(stlReader.getPartsMap());
 
 	Geometry::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
+	QVTKRender->fitView();
 }
+//----------------------------------------------------------------------------
+void MainWindow::newModel() {
+	std::string  modelName = "Model_1";
+	this->model = std::make_unique<Model>(modelName);
 
+	// enable imports
+	ui->actionImportSTEP->setEnabled(true);
+	ui->actionImportSTL->setEnabled(true);
+	ui->actionGenerateMesh->setEnabled(true);
+
+}
+void MainWindow::generateMesh() {
+	this->model->meshParts();
+}
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
@@ -123,4 +146,14 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// Set active layer according to selected button
 	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
 	this->QVTKRender->setActiveLayerRenderer(buttonGroup.id(button));
+}
+
+void MainWindow::initializeActions(){
+	ui->actionImportSTEP->setEnabled(false);
+	ui->actionImportSTL->setEnabled(false);
+	ui->actionGenerateMesh->setEnabled(false);
+	// importSTEPAction = ui->actionImportSTEP;
+	// importSTLAction = ui->actionImportSTL;
+	// importSTEPAction->setEnabled(false);
+	// importSTLAction->setEnabled(false);
 }

@@ -54,10 +54,11 @@ public:
 	Geometry::PartsMap facesPartsMap;
 	Geometry::ActorsMap edgesActorsMap;
 	Geometry::ActorsMap facesActorsMap;
-
-private:
+	
 	// Attribute for handling operations on step file
 	STEPPlugin::STEPPluginOperations stepOperations;
+private:
+
 };
 
 #endif
