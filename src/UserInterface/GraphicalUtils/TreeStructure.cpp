@@ -19,12 +19,87 @@
 
 #include "TreeStructure.h"
 
+//--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
 	: QTreeWidget(parent) {
 
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
+
+	this->docObjectModel = new QDomDocument();
+
+	this->buildBaseObjectsRepresentation();
+	this->writeDataToXML("/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
 }
 
-void TreeStructure::buildBaseObjectsRepresentation() { }
+//--------------------------------------------------------------------------------------
+TreeStructure::~TreeStructure() {
+	delete this->docObjectModel;
+
+	for (auto& pair : this->domElements) {
+		delete pair.first;
+	}
+}
+
+//--------------------------------------------------------------------------------------
+void TreeStructure::buildBaseObjectsRepresentation() {
+	// QList<QTreeWidgetItem*> qlist
+	// 	= this->findTreeWidgetItems(TreeRoots.at(TreeRoot::GeomImport), Qt::MatchExactly);
+
+	for (const auto& pair : this->TreeRoots) {
+		QString rootName = QString::fromStdString(pair.second);
+
+		QString xmlTag(rootName);
+		if (xmlTag.contains(" ")) {
+			xmlTag.remove(" ");
+		}
+		QDomElement rootElement
+			= this->docObjectModel->createElement(xmlTag);
+
+		QTreeWidgetItem* rootItem = this->createItem(&rootElement);
+		rootItem->setText(static_cast<int>(Column::Label), rootName);
+
+		this->docObjectModel->appendChild(rootElement);
+	}
+}
+
+//--------------------------------------------------------------------------------------
+QList<QTreeWidgetItem*> TreeStructure::findTreeWidgetItems(
+	std::string stdString, Qt::MatchFlags flags) {
+
+	QString qstring = QString::fromStdString(stdString);
+	return this->findItems(qstring, flags);
+}
+
+//--------------------------------------------------------------------------------------
+QTreeWidgetItem* TreeStructure::createItem(QDomElement* element, QTreeWidgetItem* parent) {
+	QTreeWidgetItem* item = nullptr;
+
+	if (parent) {
+		item = new QTreeWidgetItem(parent);
+	} else {
+		item = new QTreeWidgetItem(this);
+	}
+	domElements[item] = element;
+	return item;
+}
+
+void TreeStructure::writeDataToXML(const std::string path) {
+	QFile file(QString::fromStdString(path));
+
+	// Open the file in write mode
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		qDebug() << "Failed to open file for writing.";
+		return;
+	}
+
+	// Create a QTextStream object to write to the file
+	QTextStream out(&file);
+
+	// Indentation of 4 spaces
+	this->docObjectModel->save(out, 4);
+
+	// Close the file
+	file.close();
+}

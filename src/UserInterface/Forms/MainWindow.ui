@@ -104,7 +104,7 @@
           </attribute>
           <column>
            <property name="text">
-            <string>Attribute</string>
+            <string>Label</string>
            </property>
           </column>
           <column>
@@ -117,26 +117,6 @@
             <string>Actor</string>
            </property>
           </column>
-          <item>
-           <property name="text">
-            <string>Geometry Imports</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Geometry Model</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Coordinate System</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mesh</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="1" column="0">

@@ -20,31 +20,67 @@
 #ifndef TREESTRUCTURE_H
 #define TREESTRUCTURE_H
 
+#include <QDebug>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QFile>
 #include <QHeaderView>
 #include <QPointer>
+#include <QSharedPointer>
 #include <QStringList>
+#include <QTextStream>
 #include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 class TreeStructure : public QTreeWidget {
 	Q_OBJECT
 public:
 	TreeStructure(QWidget* parent);
-	~TreeStructure() = default;
+	~TreeStructure();
 
-	void buildBaseObjectsRepresentation();
+	void writeDataToXML(const std::string);
+
+	QList<QTreeWidgetItem*> findTreeWidgetItems(std::string, Qt::MatchFlags);
+
+	// Container for handling content of columns
+	enum class Column {
+		Label,
+		Visible,
+		Actor
+	};
 
 private:
-	QPointer<QDomDocument> docObjectModel;
+	/**
+	 * @brief  Build base widget representation by adding roots item to the tree structure.
+	 *
+	 */
+	void buildBaseObjectsRepresentation();
 
-	std::map<int, QPointer<QDomElement>> domElements;
+	/**
+	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
+	 *
+	 * @param  {QDomElement*} element    : QDomElement object coresponding to tree item.
+	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
+	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
+	 */
+	QTreeWidgetItem* createItem(QDomElement* element, QTreeWidgetItem* parent = nullptr);
 
-	std::map<std::string, std::string> TreeRoots = {
-		{ "GeomImport", "Geometry Imports" },
-		{ "GeomModel", "Geometry Model" },
-		{ "CSYS", "Coordinate System" },
-		{ "Mesh", "Mesh" }
+	QDomDocument* docObjectModel;
+
+	std::map<QTreeWidgetItem*, QDomElement*> domElements;
+
+	enum class TreeRoot {
+		GeomImport,
+		GeomModel,
+		CSYS,
+		Mesh
+	};
+
+	const std::map<TreeRoot, std::string> TreeRoots {
+		{ TreeRoot::GeomImport, "Geometry Imports" },
+		{ TreeRoot::GeomModel, "Geometry Model" },
+		{ TreeRoot::CSYS, "Coordinate System" },
+		{ TreeRoot::Mesh, "Mesh" }
 	};
 };
 
