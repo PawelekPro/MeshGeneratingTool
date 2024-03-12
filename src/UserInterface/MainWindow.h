@@ -91,6 +91,11 @@ public:
 	void generateMesh();
 
 	/**
+	 * @brief  Toggle mesh view on -> add Model mesh actor to renderer
+	 */
+	void showMesh();
+
+	/**
 	 * @brief  Get access to progress bar.
 	 *
 	 * @return {ProgressBar*}  : Progress bar instance.
@@ -120,11 +125,7 @@ private:
 	 * model is created
 	 */
 	void initializeActions();
-	// Action pointers that enable setting their state
-	QAction* importSTEPAction;
-	QAction* importSTLAction;
-	QAction* generateMeshAction;
-	
+
 private slots:
 	/**
 	 * @brief  Handle changing entity (edges/faces/etc) selection event.

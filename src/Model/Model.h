@@ -17,13 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef MODEL_H
 #define MODEL_H
-
-
 #include "GeometryFunctions.h"
 
 #include <gmsh.h_cwrap>
@@ -42,20 +37,30 @@ class Model
 {
     public:
         std::string _modelName;
-        vtkSmartPointer<vtkPolyData> polyData;
+        
 
         Model(std::string modelName);
         ~Model();
 
         void addParts(Geometry::PartsMap partsMap);
         void meshParts();
+        void updateMeshActor();
+
+
         vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
+
+
+        vtkSmartPointer<vtkActor> meshActor;
 
     private:
         enum ElementType{
         TETRA = 4,
+        LINE = 1,
         };
+
     Geometry::PartsMap _partsMap;
+    vtkSmartPointer<vtkPolyData> polyData;
+
 };
 
 #endif //MODEL_H

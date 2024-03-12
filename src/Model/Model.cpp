@@ -55,67 +55,97 @@ void Model::meshParts() {
 }
 
 vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
-                std::cout << "moving mesh to vtkPolyData..." << std::endl;
+    std::cout << "moving mesh to vtkPolyData..." << std::endl;
 
-            // extract nodes from gmsh model, and transfer them to vtkPoints container
-            // nodeTags is a vector containing node numbering (tag - hence the name)
-            // nodeCoords holds coordinates of each node [node_1_x, node_1_y, node_1_z, node_2_x, etc...]
+    // extract nodes from gmsh model, and transfer them to vtkPoints container
+    // nodeTags is a vector containing node numbering (tag - hence the name)
+    // nodeCoords holds coordinates of each node [node_1_x, node_1_y, node_1_z, node_2_x, etc...]
 
-            std::vector<unsigned long long> nodeTags;
-            std::vector<double> nodeCoords;
-            std::vector<double> parametricCoord;
+    std::vector<unsigned long long> nodeTags;
+    std::vector<double> nodeCoords;
+    std::vector<double> parametricCoord;
 
-            gmsh::model::mesh::getNodes(nodeTags, nodeCoords, parametricCoord);
+    gmsh::model::mesh::getNodes(nodeTags, nodeCoords, parametricCoord);
 
-            vtkSmartPointer<vtkPoints> vtkNodes = vtkSmartPointer<vtkPoints>::New();
-            int xNodeId, yNodeId, zNodeId;
-            for(size_t i = 0; i < nodeTags.size(); ++i)
+    vtkSmartPointer<vtkPoints> vtkNodes = vtkSmartPointer<vtkPoints>::New();
+    int xNodeId, yNodeId, zNodeId;
+    for(size_t i = 0; i < nodeTags.size(); ++i)
+    {
+        xNodeId = i*3;
+        yNodeId = xNodeId + 1;
+        zNodeId = xNodeId + 2;
+        vtkNodes->InsertNextPoint(nodeCoords[xNodeId],
+                                    nodeCoords[yNodeId],
+                                    nodeCoords[zNodeId]);
+    }
+
+
+    // extract 3D elements from gmsh model, and transfer them to vtkCellArray container
+    // elementTypes is a vector containing types of elemnts in the mesh
+    // elementTags is a vevtor of length equal to elementTypes. It holds a vector of element
+    // ids (tags) for each element type. Ex elementTags[0].size() would return a total number
+    // of elements of type elementTags[0] (so far only tetras)
+    // elementNodeTags is a vevtor of length equal to elementTypes. For each type it stores
+    // a vector of node tags concatenated: [e1n1, e1n2, ..., e1nN, e2n1, ...]
+    // in our case we so far handle only tetrahedral elements (so 4 nodes per ele)
+
+    std::vector<int> elementTypes;
+    std::vector<std::vector<unsigned long long>> elementTags;
+    std::vector<std::vector<unsigned long long>> elementNodeTags;
+
+    gmsh::model::mesh::getElements(elementTypes, elementTags, elementNodeTags, -1);
+    vtkSmartPointer<vtkCellArray> vtkElements = vtkSmartPointer<vtkCellArray>::New();
+    std::vector<vtkIdType> currentElementNodeTags;
+    currentElementNodeTags.reserve(4);
+
+    vtkSmartPointer<vtkCellArray> vtkLines = vtkSmartPointer<vtkCellArray>::New();
+    std::vector<vtkIdType> currentLineNodeTags;
+    currentLineNodeTags.reserve(2); // Assuming each line has two nodes
+
+    for(size_t i = 0; i < elementTypes.size(); ++i)
+    {
+            if (elementTypes[i] == ElementType::TETRA)
             {
-                xNodeId = i*3;
-                yNodeId = xNodeId + 1;
-                zNodeId = xNodeId + 2;
-                vtkNodes->InsertNextPoint(nodeCoords[xNodeId],
-                                          nodeCoords[yNodeId],
-                                          nodeCoords[zNodeId]);
-            }
+                for(size_t j = 0; j < elementTags[i].size(); ++j)
+                {
+                    auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 4);
+                    auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (j + 1) * 4);
 
-            // extract 3D elements from gmsh model, and transfer them to vtkCellArray container
-            // elementTypes is a vector containing types of elemnts in the mesh
-            // elementTags is a vevtor of length equal to elementTypes. It holds a vector of element
-            // ids (tags) for each element type. Ex elementTags[0].size() would return a total number
-            // of elements of type elementTags[0] (so far only tetras)
-            // elementNodeTags is a vevtor of length equal to elementTypes. For each type it stores
-            // a vector of node tags concatenated: [e1n1, e1n2, ..., e1nN, e2n1, ...]
-            // in our case we so far handle only tetrahedral elements (so 4 nodes per ele)
-
-            std::vector<int> elementTypes;
-            std::vector<std::vector<unsigned long long>> elementTags;
-            std::vector<std::vector<unsigned long long>> elementNodeTags;
-
-            gmsh::model::mesh::getElements(elementTypes, elementTags, elementNodeTags, 3);
-            vtkSmartPointer<vtkCellArray> vtkElements = vtkSmartPointer<vtkCellArray>::New();
-            std::vector<vtkIdType> currentElementNodeTags;
-            currentElementNodeTags.reserve(4);
-
-            for(size_t i = 0; i < elementTypes.size(); ++i)
+                    std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentElementNodeTags),
+                    [](unsigned long long nodeId) { return static_cast<vtkIdType>(nodeId);});
+                    vtkElements->InsertNextCell(4, currentElementNodeTags.data());
+                    currentElementNodeTags.clear();
+                }
+            }else if (elementTypes[i] == ElementType::LINE) // Assuming ElementType::LINE is the type for lines
             {
-                    if (elementTypes[i] == ElementType::TETRA)
-                    {
-                        for(size_t j = 0; j < elementTags[i].size(); ++j)
-                        {
-                            auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 4);
-                            auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (j + 1) * 4);
+                for(size_t j = 0; j < elementTags[i].size(); ++j)
+                {
+                    auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 2); // Assuming each line has two nodes
+                    auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (j + 1) * 2);
 
-                            std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentElementNodeTags),
-                            [](unsigned long long nodeId) { return static_cast<vtkIdType>(nodeId);});
-                            vtkElements->InsertNextCell(4, currentElementNodeTags.data());
-                            currentElementNodeTags.clear();
-                        }
-                    }
+                    std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentLineNodeTags),
+                    [](unsigned long long nodeId) { return static_cast<vtkIdType>(nodeId);});
+                    vtkLines->InsertNextCell(2, currentLineNodeTags.data());
+                    currentLineNodeTags.clear();
+                }
             }
-            vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-            polyData->SetPoints(vtkNodes);
-            polyData->SetPolys(vtkElements);
-            std::cout << "Succesively created vtkPolyData object!" << std::endl;
-            return polyData;
+    }
+
+    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+
+    polyData->SetPoints(vtkNodes);
+    polyData->SetLines(vtkLines);
+    polyData->SetPolys(vtkElements);
+    
+    std::cout << "Succesively created vtkPolyData object!" << std::endl;
+    return polyData;
 }
+
+
+void Model::updateMeshActor()
+{
+    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputData(this->polyData);
+    this->meshActor = vtkSmartPointer<vtkActor>::New();
+    this->meshActor->SetMapper(mapper);
+};

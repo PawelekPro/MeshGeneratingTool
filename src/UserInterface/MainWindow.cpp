@@ -69,7 +69,9 @@ void MainWindow::setConnections() {
 	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
 		generateMesh();
 	});
-
+	connect(ui->actionShowMesh, &QAction::triggered, [this]() {
+		showMesh();
+	});
 }
 
 //----------------------------------------------------------------------------
@@ -152,8 +154,10 @@ void MainWindow::initializeActions(){
 	ui->actionImportSTEP->setEnabled(false);
 	ui->actionImportSTL->setEnabled(false);
 	ui->actionGenerateMesh->setEnabled(false);
-	// importSTEPAction = ui->actionImportSTEP;
-	// importSTLAction = ui->actionImportSTL;
-	// importSTEPAction->setEnabled(false);
-	// importSTLAction->setEnabled(false);
+}
+
+void MainWindow::showMesh(){
+	this->model->updateMeshActor();
+	this->QVTKRender->addActor(this->model->meshActor);
+	this->QVTKRender->getRenderer()->Render();
 }
