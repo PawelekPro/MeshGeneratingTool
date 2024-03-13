@@ -19,6 +19,10 @@
 
 #include <QSettings>
 
+/**
+ * @brief  Class for handling default application properties like name, version, etc.
+ *
+ */
 class AppDefaults {
 public:
 	AppDefaults() {
@@ -31,28 +35,47 @@ public:
 	}
 	~AppDefaults() = default;
 
+	/**
+	 * @brief  Get name of application as a QString.
+	 *
+	 * @return {QString}  : Name of application
+	 */
 	QString getAppName() {
-		settings.beginGroup("ApplicationDefaults");
-		QString name = settings.value("Name").toString();
-		settings.endGroup();
-		return name;
+		return getValue("Name");
 	}
 
+	/**
+	 * @brief  Get version of application as a QString.
+	 *
+	 * @return {QString}  : Version of application.
+	 */
 	QString getAppVersion() {
-		settings.beginGroup("ApplicationDefaults");
-		QString version = settings.value("Version").toString();
-		settings.endGroup();
-		return version;
+		return getValue("Version");
 	}
 
+	/**
+	 * @brief  Get version of application proejct file as a QString.
+	 *
+	 * @return {QString}  : Version of application project file.
+	 */
 	QString getAppProjFileVersion() {
-		settings.beginGroup("ApplicationDefaults");
-		QString projFileVersion = settings.value("ProjFileVersion").toString();
-		settings.endGroup();
-		return projFileVersion;
+		return getValue("ProjFileVersion");
 	}
 
 private:
 	// Container for application settings
 	QSettings settings;
+
+	/**
+	 * @brief  Get application default setting for key with given name.
+	 *
+	 * @param  {QString} key : Key representing default setting.
+	 * @return {QString}     : Corresponding value for given settings key.
+	 */
+	QString getValue(const QString& key) {
+		settings.beginGroup("ApplicationDefaults");
+		QString value = settings.value(key).toString();
+		settings.endGroup();
+		return value;
+	}
 };
