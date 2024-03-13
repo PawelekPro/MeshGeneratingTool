@@ -90,6 +90,7 @@ QTreeWidgetItem* TreeStructure::createItem(QDomElement* element, QTreeWidgetItem
 	return item;
 }
 
+//--------------------------------------------------------------------------------------
 void TreeStructure::writeDataToXML(const std::string path) {
 	QFile file(QString::fromStdString(path));
 
@@ -101,6 +102,8 @@ void TreeStructure::writeDataToXML(const std::string path) {
 
 	// Create a QTextStream object to write to the file
 	QTextStream out(&file);
+
+	// Add XML header with xml version and encoding
 	out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
 	// Indentation of 4 spaces
