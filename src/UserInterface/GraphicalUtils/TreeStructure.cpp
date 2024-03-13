@@ -37,8 +37,8 @@ TreeStructure::TreeStructure(QWidget* parent)
 TreeStructure::~TreeStructure() {
 	delete this->docObjectModel;
 
-	for (auto& pair : this->domElements) {
-		delete pair.first;
+	for (auto it = domElements.begin(); it != domElements.end(); ++it) {
+		delete it.key();
 	}
 }
 

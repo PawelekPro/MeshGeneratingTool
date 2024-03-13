@@ -27,6 +27,7 @@
 #include <QDomElement>
 #include <QFile>
 #include <QHeaderView>
+#include <QMap>
 #include <QPointer>
 #include <QSharedPointer>
 #include <QStringList>
@@ -69,7 +70,7 @@ private:
 
 	QDomDocument* docObjectModel;
 
-	std::map<QTreeWidgetItem*, QDomElement*> domElements;
+	QMap<QTreeWidgetItem*, QDomElement*> domElements;
 
 	enum class TreeRoot {
 		GeomImport,
