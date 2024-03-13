@@ -48,6 +48,7 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
 
 set(PROJECT_SOURCES
     ${KERNEL_PATH}/AppQuickStart.cpp
+    ${KERNEL_PATH}/AppDefaults.hpp
     ${UI_PATH}/MainWindow.cpp
     ${UI_PATH}/MainWindow.h
     ${UI_UTILS_PATH}/ProgressBar.cpp

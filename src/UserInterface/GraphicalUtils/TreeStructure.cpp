@@ -46,6 +46,11 @@ TreeStructure::~TreeStructure() {
 void TreeStructure::buildBaseObjectsRepresentation() {
 	// QList<QTreeWidgetItem*> qlist
 	// 	= this->findTreeWidgetItems(TreeRoots.at(TreeRoot::GeomImport), Qt::MatchExactly);
+	AppDefaults appInfo;
+
+	QDomElement root = this->docObjectModel->createElement(appInfo.getAppName());
+	root.setAttribute("version", appInfo.getAppProjFileVersion());
+	this->docObjectModel->appendChild(root);
 
 	for (const auto& pair : this->TreeRoots) {
 		QString rootName = QString::fromStdString(pair.second);
@@ -60,7 +65,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		QTreeWidgetItem* rootItem = this->createItem(&rootElement);
 		rootItem->setText(static_cast<int>(Column::Label), rootName);
 
-		this->docObjectModel->appendChild(rootElement);
+		root.appendChild(rootElement);
 	}
 }
 
@@ -96,6 +101,7 @@ void TreeStructure::writeDataToXML(const std::string path) {
 
 	// Create a QTextStream object to write to the file
 	QTextStream out(&file);
+	out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
 	// Indentation of 4 spaces
 	this->docObjectModel->save(out, 4);

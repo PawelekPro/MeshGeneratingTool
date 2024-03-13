@@ -20,6 +20,8 @@
 #ifndef TREESTRUCTURE_H
 #define TREESTRUCTURE_H
 
+#include "AppDefaults.hpp"
+
 #include <QDebug>
 #include <QDomDocument>
 #include <QDomElement>
