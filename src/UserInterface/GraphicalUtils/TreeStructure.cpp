@@ -44,16 +44,14 @@ TreeStructure::~TreeStructure() {
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::buildBaseObjectsRepresentation() {
-	// QList<QTreeWidgetItem*> qlist
-	// 	= this->findTreeWidgetItems(TreeRoots.at(TreeRoot::GeomImport), Qt::MatchExactly);
 	AppDefaults appInfo;
 
 	QDomElement root = this->docObjectModel->createElement(appInfo.getAppName());
 	root.setAttribute("version", appInfo.getAppProjFileVersion());
 	this->docObjectModel->appendChild(root);
 
-	for (const auto& pair : this->TreeRoots) {
-		QString rootName = QString::fromStdString(pair.second);
+	for (auto it = TreeRoots.begin(); it != TreeRoots.end(); ++it) {
+		QString rootName = QString::fromStdString(it.value());
 
 		QString xmlTag(rootName);
 		if (xmlTag.contains(" ")) {
@@ -88,6 +86,27 @@ QTreeWidgetItem* TreeStructure::createItem(QDomElement* element, QTreeWidgetItem
 	}
 	domElements[item] = element;
 	return item;
+}
+
+//--------------------------------------------------------------------------------------
+void TreeStructure::loadGeometryFile(const QString fileName) {
+	QString elementTag = this->TreeRoots.value(TreeRoot::GeomImport).c_str();
+	if (elementTag.contains(" ")) {
+		elementTag.remove(" ");
+	}
+	QDomElement element = this->docObjectModel->firstChildElement(elementTag);
+
+	QList<QTreeWidgetItem*> qlist
+		= this->findTreeWidgetItems(
+			TreeRoots.value(TreeRoot::GeomImport).c_str(), Qt::MatchExactly);
+
+	QTreeWidgetItem* parentItem = nullptr;
+	if (!qlist.isEmpty()) {
+		parentItem = qlist.first();
+	}
+
+	auto item = this->createItem(&element, parentItem);
+	item->setText(static_cast<int>(Column::Label), fileName);
 }
 
 //--------------------------------------------------------------------------------------

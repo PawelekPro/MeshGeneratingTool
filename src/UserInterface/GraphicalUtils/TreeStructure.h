@@ -43,6 +43,8 @@ public:
 
 	void writeDataToXML(const std::string);
 
+	void loadGeometryFile(const QString);
+
 	QList<QTreeWidgetItem*> findTreeWidgetItems(std::string, Qt::MatchFlags);
 
 	// Container for handling content of columns
@@ -79,7 +81,7 @@ private:
 		Mesh
 	};
 
-	const std::map<TreeRoot, std::string> TreeRoots {
+	const QMap<TreeRoot, std::string> TreeRoots {
 		{ TreeRoot::GeomImport, "Geometry Imports" },
 		{ TreeRoot::GeomModel, "Geometry Model" },
 		{ TreeRoot::CSYS, "Coordinate System" },

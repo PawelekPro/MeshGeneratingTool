@@ -96,9 +96,8 @@ void MainWindow::importSTEP(QString fileName) {
 	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap, true);
 
-	// Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
-	// QVTKRender->addEdgesActors(edgesMap);
-	// QVTKRender->setActiveLayerRenderer(0);
+	QFileInfo fileInfo(fileName);
+	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
 }
 
 //----------------------------------------------------------------------------

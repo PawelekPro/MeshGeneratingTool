@@ -22,15 +22,16 @@
 
 #include <functional>
 
-#include "STLPluginOperations.h"
 #include "./ui_MainWindow.h"
 #include "Configuration.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
 #include "STEPPlugin.h"
+#include "STLPluginOperations.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
