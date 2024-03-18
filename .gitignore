@@ -37,3 +37,6 @@ build
 
 # Clang-format
 .clang-format
+
+# XML test file
+test.xml
