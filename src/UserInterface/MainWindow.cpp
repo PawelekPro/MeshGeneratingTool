@@ -98,6 +98,8 @@ void MainWindow::importSTEP(QString fileName) {
 
 	QFileInfo fileInfo(fileName);
 	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
+	this->ui->treeWidget->writeDataToXML(
+		"/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
 }
 
 //----------------------------------------------------------------------------

@@ -30,7 +30,6 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->docObjectModel = new QDomDocument();
 
 	this->buildBaseObjectsRepresentation();
-	this->writeDataToXML("/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
 }
 
 //--------------------------------------------------------------------------------------
@@ -39,6 +38,7 @@ TreeStructure::~TreeStructure() {
 
 	for (auto it = domElements.begin(); it != domElements.end(); ++it) {
 		delete it.key();
+		delete it.value();
 	}
 }
 
@@ -57,13 +57,12 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		if (xmlTag.contains(" ")) {
 			xmlTag.remove(" ");
 		}
-		QDomElement rootElement
-			= this->docObjectModel->createElement(xmlTag);
+		QDomElement* rootElement = new QDomElement(this->docObjectModel->createElement(xmlTag));
 
-		QTreeWidgetItem* rootItem = this->createItem(&rootElement);
+		QTreeWidgetItem* rootItem = this->createItem(rootElement);
 		rootItem->setText(static_cast<int>(Column::Label), rootName);
 
-		root.appendChild(rootElement);
+		root.appendChild(*rootElement);
 	}
 }
 
@@ -90,12 +89,6 @@ QTreeWidgetItem* TreeStructure::createItem(QDomElement* element, QTreeWidgetItem
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::loadGeometryFile(const QString fileName) {
-	QString elementTag = this->TreeRoots.value(TreeRoot::GeomImport).c_str();
-	if (elementTag.contains(" ")) {
-		elementTag.remove(" ");
-	}
-	QDomElement element = this->docObjectModel->firstChildElement(elementTag);
-
 	QList<QTreeWidgetItem*> qlist
 		= this->findTreeWidgetItems(
 			TreeRoots.value(TreeRoot::GeomImport).c_str(), Qt::MatchExactly);
@@ -103,6 +96,17 @@ void TreeStructure::loadGeometryFile(const QString fileName) {
 	QTreeWidgetItem* parentItem = nullptr;
 	if (!qlist.isEmpty()) {
 		parentItem = qlist.first();
+	}
+
+	QDomElement element = this->docObjectModel->createElement("group");
+	qDebug() << fileName;
+	element.setAttribute("label", fileName);
+
+	if (domElements.contains(parentItem)) {
+		QDomElement* node = domElements.value(parentItem);
+		if (node) {
+			node->appendChild(element);
+		}
 	}
 
 	auto item = this->createItem(&element, parentItem);
