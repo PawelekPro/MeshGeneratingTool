@@ -45,8 +45,6 @@ public:
 
 	void loadGeometryFile(const QString);
 
-	QList<QTreeWidgetItem*> findTreeWidgetItems(std::string, Qt::MatchFlags);
-
 	// Container for handling content of columns
 	enum class Column {
 		Label,
@@ -70,6 +68,10 @@ private:
 	 */
 	QTreeWidgetItem* createItem(QDomElement* element, QTreeWidgetItem* parent = nullptr);
 
+	QList<QTreeWidgetItem*> findTreeWidgetItems(const QString&, Qt::MatchFlags);
+
+	void addNode(const QString&, const QString&);
+
 	QDomDocument* docObjectModel;
 
 	QMap<QTreeWidgetItem*, QDomElement*> domElements;
@@ -81,7 +83,7 @@ private:
 		Mesh
 	};
 
-	const QMap<TreeRoot, std::string> TreeRoots {
+	const QMap<TreeRoot, QString> TreeRoots {
 		{ TreeRoot::GeomImport, "Geometry Imports" },
 		{ TreeRoot::GeomModel, "Geometry Model" },
 		{ TreeRoot::CSYS, "Coordinate System" },
