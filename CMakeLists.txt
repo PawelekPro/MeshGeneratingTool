@@ -55,6 +55,8 @@ set(PROJECT_SOURCES
     ${UI_UTILS_PATH}/ProgressBar.h
     ${UI_UTILS_PATH}/TreeStructure.cpp
     ${UI_UTILS_PATH}/TreeStructure.h
+    ${UI_UTILS_PATH}/PropertiesModel.cpp
+    ${UI_UTILS_PATH}/PropertiesModel.h
     ${UI_UTILS_PATH}/Configuration.h
     ${UI_PATH}/Rendering/QVTKRenderWindow.cpp
     ${UI_PATH}/Rendering/QVTKRenderWindow.h
