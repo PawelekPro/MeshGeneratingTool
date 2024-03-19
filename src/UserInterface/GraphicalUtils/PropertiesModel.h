@@ -48,6 +48,10 @@ public:
 
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+	Qt::ItemFlags flags(const QModelIndex& index) const override;
+
 private:
 	QDomElement* _element;
 	QList<QDomElement> _properties;

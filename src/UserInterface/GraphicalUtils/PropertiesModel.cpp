@@ -88,3 +88,23 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 
 	return ret;
 }
+
+//--------------------------------------------------------------------------------------
+QVariant PropertiesModel::headerData(
+	int section, Qt::Orientation orientation, int role) const {
+	if (role == Qt::DisplayRole) {
+		if (orientation == Qt::Horizontal) {
+			return this->_header.value(section);
+		}
+	}
+	return QVariant();
+}
+
+//--------------------------------------------------------------------------------------
+Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
+	Qt::ItemFlags _flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	if (index.column() == 1) {
+		_flags |= Qt::ItemIsEditable;
+	}
+	return _flags;
+}
