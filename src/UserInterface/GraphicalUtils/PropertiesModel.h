@@ -27,17 +27,23 @@
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
+#include <QTableView>
 #include <Qt>
 
 class ModelFilter : public QSortFilterProxyModel {
-protected:
-	ModelFilter() = default;
+	Q_OBJECT
+
+public:
+	explicit ModelFilter(QObject* parent = nullptr)
+		: QSortFilterProxyModel(parent) { }
 	~ModelFilter() = default;
 
+protected:
 	bool filterAcceptsRow(int, const QModelIndex&) const override;
 };
 
 class PropertiesModel : public QAbstractTableModel {
+	Q_OBJECT
 public:
 	PropertiesModel(QDomElement* element, QObject* parent = nullptr);
 	~PropertiesModel();

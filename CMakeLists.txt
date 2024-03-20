@@ -57,6 +57,8 @@ set(PROJECT_SOURCES
     ${UI_UTILS_PATH}/TreeStructure.h
     ${UI_UTILS_PATH}/PropertiesModel.cpp
     ${UI_UTILS_PATH}/PropertiesModel.h
+    ${UI_UTILS_PATH}/PropertiesWidget.cpp
+    ${UI_UTILS_PATH}/PropertiesWidget.h
     ${UI_UTILS_PATH}/Configuration.h
     ${UI_PATH}/Rendering/QVTKRenderWindow.cpp
     ${UI_PATH}/Rendering/QVTKRenderWindow.h

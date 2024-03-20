@@ -120,7 +120,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QTableWidget" name="tableWidget"/>
+         <widget class="PropertiesWidget" name="propertiesTable"/>
         </item>
        </layout>
       </widget>
@@ -349,6 +349,11 @@
    <class>TreeStructure</class>
    <extends>QTreeWidget</extends>
    <header location="global">TreeStructure.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PropertiesWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">PropertiesWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
