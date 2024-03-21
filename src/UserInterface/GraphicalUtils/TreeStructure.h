@@ -21,6 +21,7 @@
 #define TREESTRUCTURE_H
 
 #include "AppDefaults.hpp"
+#include "PropertiesModel.h"
 
 #include <QDebug>
 #include <QDomDocument>
@@ -52,12 +53,21 @@ public:
 		Actor
 	};
 
+	QMap<QString, int> Role = {
+		{ "Properties", Qt::UserRole + 1 },
+		{ "Advanced", Qt::UserRole + 2 },
+		{ "References", Qt::UserRole + 3 },
+		{ "HiddenText", Qt::UserRole + 4 },
+		{ "Actor", Qt::UserRole + 6 }
+	};
+
 private:
 	/**
 	 * @brief  Build base widget representation by adding roots item to the tree structure.
 	 *
 	 */
-	void buildBaseObjectsRepresentation();
+	void
+	buildBaseObjectsRepresentation();
 
 	/**
 	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
@@ -71,6 +81,8 @@ private:
 	QList<QTreeWidgetItem*> findTreeWidgetItems(const QString&, Qt::MatchFlags);
 
 	void addNode(const QString&, const QString&);
+
+	void addPropertiesModel(QDomElement*, QTreeWidgetItem*);
 
 	QDomDocument* docObjectModel;
 
@@ -89,6 +101,9 @@ private:
 		{ TreeRoot::CSYS, "Coordinate System" },
 		{ TreeRoot::Mesh, "Mesh" }
 	};
+
+	// Handy-dandy container for application defaults
+	AppDefaults appInfo;
 };
 
 #endif

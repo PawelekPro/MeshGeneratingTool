@@ -21,8 +21,8 @@
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
-	: QTreeWidget(parent) {
-
+	: QTreeWidget(parent)
+	, appInfo() {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
@@ -44,10 +44,9 @@ TreeStructure::~TreeStructure() {
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::buildBaseObjectsRepresentation() {
-	AppDefaults appInfo;
 
-	QDomElement root = this->docObjectModel->createElement(appInfo.getAppName());
-	root.setAttribute("version", appInfo.getAppProjFileVersion());
+	QDomElement root = this->docObjectModel->createElement(this->appInfo.getAppName());
+	root.setAttribute("version", this->appInfo.getAppProjFileVersion());
 	this->docObjectModel->appendChild(root);
 
 	for (auto it = TreeRoots.begin(); it != TreeRoots.end(); ++it) {
@@ -62,6 +61,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		QTreeWidgetItem* rootItem = this->createItem(rootElement);
 		rootItem->setText(static_cast<int>(Column::Label), rootName);
 
+		this->addPropertiesModel(rootElement, rootItem);
 		root.appendChild(*rootElement);
 	}
 }
@@ -114,6 +114,17 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& fileName)
 
 	auto item = this->createItem(&element, parentItem);
 	item->setText(static_cast<int>(Column::Label), fileName);
+}
+
+//--------------------------------------------------------------------------------------
+void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* item) {
+	int role = Role.value(element->tagName());
+
+	PropertiesModel model(element, this);
+	QVariant variantModel = QVariant::fromValue(&model);
+
+	// ToDo: Model data changed detection
+	// item->setData(0, role, variantModel);
 }
 
 //--------------------------------------------------------------------------------------

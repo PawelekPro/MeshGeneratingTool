@@ -19,6 +19,11 @@
 
 #include <QSettings>
 
+#include <filesystem>
+#include <iostream>
+
+namespace fs = std::filesystem;
+
 /**
  * @brief  Class for handling default application properties like name, version, etc.
  *
@@ -32,6 +37,8 @@ public:
 		settings.setValue("Name", "MeshGeneratingTool");
 		// Space for more settings
 		settings.endGroup();
+
+		this->setupPaths();
 	}
 	~AppDefaults() = default;
 
@@ -62,10 +69,11 @@ public:
 		return getValue("ProjFileVersion");
 	}
 
-private:
-	// Container for application settings
-	QSettings settings;
+	fs::path getTemplatesPath() {
+		return this->_templatesPath;
+	}
 
+private:
 	/**
 	 * @brief  Get application default setting for key with given name.
 	 *
@@ -78,4 +86,15 @@ private:
 		settings.endGroup();
 		return value;
 	}
+
+	void setupPaths() {
+		fs::path currentPath = fs::current_path();
+		this->_templatesPath = currentPath / "../UserInterface/Templates";
+	};
+
+	// Container for application settings
+	QSettings settings;
+
+	// Templates path
+	fs::path _templatesPath;
 };

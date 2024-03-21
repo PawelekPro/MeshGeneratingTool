@@ -45,7 +45,7 @@ protected:
 class PropertiesModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	PropertiesModel(QDomElement* element, QObject* parent = nullptr);
+	PropertiesModel(QDomElement* element, QWidget* parent = nullptr);
 	~PropertiesModel();
 
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;

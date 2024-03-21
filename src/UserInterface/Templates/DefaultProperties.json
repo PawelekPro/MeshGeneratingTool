@@ -1,0 +1,38 @@
+{
+    "GeometryImports": {
+        "properties": [
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "test"
+            }
+        ]
+    },
+    "GeometryModel": {
+        "properties": [
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "test"
+            }
+        ]
+    },
+    "CoordinateSystem": {
+        "properties": [
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "test"
+            }
+        ]
+    },
+    "Mesh": {
+        "properties": [
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "test"
+            }
+        ]
+    }
+}
