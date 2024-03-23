@@ -89,12 +89,18 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
     // a vector of node tags concatenated: [e1n1, e1n2, ..., e1nN, e2n1, ...]
     // in our case we so far handle only tetrahedral elements (so 4 nodes per ele)
 
-    std::vector<int> elementTypes;
+    std::vector<int> _elementTypes;
+    std::vector<ElementType> elementTypes;
     std::vector<std::vector<unsigned long long>> elementTags;
     std::vector<std::vector<unsigned long long>> elementNodeTags;
 
-    gmsh::model::mesh::getElements(elementTypes, elementTags, elementNodeTags, -1);
+    gmsh::model::mesh::getElements(_elementTypes, elementTags, elementNodeTags, -1);
     vtkSmartPointer<vtkCellArray> vtkElements = vtkSmartPointer<vtkCellArray>::New();
+
+    elementTypes.reserve(_elementTypes.size());
+    std::transform(_elementTypes.begin(), _elementTypes.end(), std::back_inserter(elementTypes),
+    [](int& elem){return static_cast<ElementType>(elem);});
+
     std::vector<vtkIdType> currentElementNodeTags;
     currentElementNodeTags.reserve(4);
 

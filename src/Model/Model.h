@@ -53,7 +53,7 @@ class Model
         vtkSmartPointer<vtkActor> meshActor;
 
     private:
-        enum ElementType{
+        enum class ElementType : int{
         TETRA = 4,
         LINE = 1,
         };
@@ -62,6 +62,7 @@ class Model
     vtkSmartPointer<vtkPolyData> polyData;
 
 };
+// some code
 
 #endif //MODEL_H
 
