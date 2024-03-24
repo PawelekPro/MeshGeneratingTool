@@ -163,7 +163,7 @@ protected:
 	void initializeRenderers();
 
 	// Definition of array of pointers to VTK renderers
-	std::array<vtkSmartPointer<vtkRenderer>, static_cast<int>(Renderers::Count)> mRenderers;
+	std::array<vtkSmartPointer<vtkRenderer>, static_cast<size_t>(Renderers::Count)> mRenderers;
 
 	// Attribute for storing the currently active renderer (layer)
 	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
