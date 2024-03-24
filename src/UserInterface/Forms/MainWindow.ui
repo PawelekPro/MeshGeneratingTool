@@ -188,7 +188,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/icons/draft.svg</normaloff>:/icons/icons/draft.svg</iconset>
+              <normaloff>:/icons/icons/face_selector.svg</normaloff>:/icons/icons/face_selector.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -229,7 +229,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/icons/draft.svg</normaloff>:/icons/icons/draft.svg</iconset>
+              <normaloff>:/icons/icons/edge_selector.svg</normaloff>:/icons/icons/edge_selector.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
