@@ -3,6 +3,7 @@
     <file>icons/draft.svg</file>
     <file>icons/face_selector.svg</file>
     <file>icons/edge_selector.svg</file>
+    <file>icons/volume_selector.svg</file>
   </qresource>
   <qresource prefix="uxSetup">
     <file>icons/watermark.png</file>
