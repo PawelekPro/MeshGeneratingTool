@@ -73,7 +73,7 @@ public:
 	 *
 	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window to set interactor style
 	 */
-	void Activate(Rendering::QVTKRenderWindow* renWin);
+	void Initialize(Rendering::QVTKRenderWindow* renWin);
 
 	/**
 	 * @brief  Get rendering window instance.
@@ -98,12 +98,13 @@ private:
 	QAction* _customAction;
 
 	// Container for storing picked actor and its properties.
-	vtkActor* lastPickedActor;
-	vtkProperty* lastPickedProperty;
+	vtkSmartPointer<vtkActor> lastPickedActor;
+	vtkSmartPointer<vtkProperty> lastPickedProperty;
+	vtkSmartPointer<vtkPropPicker> picker;
 
 	// Container for storing hovered actor and its properties.
-	vtkActor* lastHoveredActor;
-	vtkProperty* lastHoveredProperty;
+	vtkSmartPointer<vtkActor> lastHoveredActor;
+	vtkSmartPointer<vtkProperty> lastHoveredProperty;
 };
 };
 

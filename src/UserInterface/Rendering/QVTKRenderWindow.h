@@ -150,6 +150,8 @@ public:
 	enum class Renderers {
 		Main,
 		Edges,
+		Faces,
+		Solids,
 		Count // Count for definition of array size
 	};
 

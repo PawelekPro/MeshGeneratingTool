@@ -52,7 +52,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	vtkSmartPointer<Interactor::QVTKInteractorStyle>
 		interactorStyle
 		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New();
-	interactorStyle->Activate(this);
+	interactorStyle->Initialize(this);
 	this->setInteractorStyle(interactorStyle);
 
 	this->RenderScene();

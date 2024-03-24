@@ -129,7 +129,7 @@ void Interactor::QVTKInteractorStyle::OnMouseMove() {
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::Activate(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
+void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
 	_qvtkRenderWindow = qvtkRenderWindow;
 	_contextMenu = nullptr;
 	_customAction = nullptr;
