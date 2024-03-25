@@ -78,6 +78,9 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
 )
 
+# rapidjson library for parsing json files
+set(RAPIDJSON_PATH ${CMAKE_SOURCE_DIR}/src/ThirdParty/rapidjson)
+
 set(INCLUDE_DIRS
     ${KERNEL_PATH}
 
@@ -91,6 +94,8 @@ set(INCLUDE_DIRS
     ${GEOM_CORE_PATH}/Geometry
     ${GEOM_CORE_PATH}/STLPlugin
     ${GEOM_CORE_PATH}/STEPPlugin
+
+    ${RAPIDJSON_PATH}
     )
 
 include_directories(

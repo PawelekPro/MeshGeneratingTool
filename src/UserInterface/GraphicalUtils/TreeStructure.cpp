@@ -30,6 +30,7 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->docObjectModel = new QDomDocument();
 
 	this->buildBaseObjectsRepresentation();
+	this->parseDefaultProperties();
 }
 
 //--------------------------------------------------------------------------------------
@@ -125,6 +126,63 @@ void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* it
 
 	// ToDo: Model data changed detection
 	// item->setData(0, role, variantModel);
+}
+
+//--------------------------------------------------------------------------------------
+void TreeStructure::parseDefaultProperties() {
+	rapidjson::Document document = this->readDefaultProperties();
+
+	// Iterate over all json objects
+	for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin();
+		 itr != document.MemberEnd();
+		 ++itr) {
+		const std::string& sectionName = itr->name.GetString();
+		const rapidjson::Value& sectionObject = itr->value;
+
+		// Print the section name
+		std::cout << "Section: " << sectionName << std::endl;
+
+		if (sectionObject.IsObject()) {
+			// Access the "properties" array within the section object
+			const rapidjson::Value& propertiesArray = sectionObject["Properties"];
+
+			// Check if "properties" is an array
+			if (propertiesArray.IsArray()) {
+				// Iterate over each element in the "properties" array
+				for (rapidjson::SizeType i = 0; i < propertiesArray.Size(); ++i) {
+					const rapidjson::Value& property = propertiesArray[i];
+
+					// Access and print properties
+					if (property.HasMember("name") && property["name"].IsString()) {
+						std::string name = property["name"].GetString();
+						std::cout << "Name: " << name << std::endl;
+					}
+				}
+			}
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------------
+rapidjson::Document TreeStructure::readDefaultProperties() {
+	fs::path templatesPath = this->appInfo.getTemplatesPath();
+	fs::path jsonPropsPath
+		= fs::path(templatesPath.string()) / "DefaultProperties.json";
+
+	std::ifstream ifs(jsonPropsPath.string());
+	if (!ifs.is_open()) {
+		vtkLogF(ERROR, "Failed to open DefaultProperties.json file.");
+	}
+
+	// Read the content into a stringstream
+	std::stringstream ss;
+	ss << ifs.rdbuf();
+	std::string jsonContent = ss.str();
+
+	// Parse the JSON string
+	rapidjson::Document document;
+	document.Parse(jsonContent.c_str());
+	return document;
 }
 
 //--------------------------------------------------------------------------------------

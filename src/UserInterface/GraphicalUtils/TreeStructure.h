@@ -23,6 +23,14 @@
 #include "AppDefaults.hpp"
 #include "PropertiesModel.h"
 
+#include "document.h"
+#include "istreamwrapper.h"
+
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
+
 #include <QDebug>
 #include <QDomDocument>
 #include <QDomElement>
@@ -35,6 +43,10 @@
 #include <QTextStream>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+
+#include <vtkLogger.h>
+
+namespace fs = std::filesystem;
 
 class TreeStructure : public QTreeWidget {
 	Q_OBJECT
@@ -66,8 +78,7 @@ private:
 	 * @brief  Build base widget representation by adding roots item to the tree structure.
 	 *
 	 */
-	void
-	buildBaseObjectsRepresentation();
+	void buildBaseObjectsRepresentation();
 
 	/**
 	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
@@ -83,6 +94,10 @@ private:
 	void addNode(const QString&, const QString&);
 
 	void addPropertiesModel(QDomElement*, QTreeWidgetItem*);
+
+	void parseDefaultProperties();
+
+	rapidjson::Document readDefaultProperties();
 
 	QDomDocument* docObjectModel;
 

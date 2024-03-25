@@ -1,6 +1,6 @@
 {
     "GeometryImports": {
-        "properties": [
+        "Properties": [
             {
                 "name": "test",
                 "label": "test",
@@ -9,7 +9,7 @@
         ]
     },
     "GeometryModel": {
-        "properties": [
+        "Properties": [
             {
                 "name": "test",
                 "label": "test",
@@ -18,7 +18,7 @@
         ]
     },
     "CoordinateSystem": {
-        "properties": [
+        "Properties": [
             {
                 "name": "test",
                 "label": "test",
@@ -27,7 +27,7 @@
         ]
     },
     "Mesh": {
-        "properties": [
+        "Properties": [
             {
                 "name": "test",
                 "label": "test",

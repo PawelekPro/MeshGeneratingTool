@@ -69,7 +69,7 @@ public:
 		return getValue("ProjFileVersion");
 	}
 
-	fs::path getTemplatesPath() {
+	const fs::path getTemplatesPath() {
 		return this->_templatesPath;
 	}
 
@@ -89,7 +89,7 @@ private:
 
 	void setupPaths() {
 		fs::path currentPath = fs::current_path();
-		this->_templatesPath = currentPath / "../UserInterface/Templates";
+		this->_templatesPath = currentPath / "../src/UserInterface/Templates";
 	};
 
 	// Container for application settings
