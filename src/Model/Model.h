@@ -21,6 +21,7 @@
 #define MODEL_H
 #include "GeometryFunctions.h"
 #include "Geometry.h"
+#include "Mesh.h"
 #include <gmsh.h_cwrap>
 #include <TopoDS_Shape.hxx>
 
@@ -37,7 +38,9 @@ class Model
 {
     public:
         std::string _modelName;
-        GeometryCore::Geometry geometry;
+        std::unique_ptr<GeometryCore::Geometry> geometry;
+        std::unique_ptr<MeshCore::Mesh> mesh;
+
 
         Model(std::string modelName);
         ~Model();
@@ -48,8 +51,6 @@ class Model
 
 
         vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
-
-
         vtkSmartPointer<vtkActor> meshActor;
 
     private:

@@ -7,7 +7,6 @@ namespace MeshCore{
         public:
         private:
     };
-
 };
 
 

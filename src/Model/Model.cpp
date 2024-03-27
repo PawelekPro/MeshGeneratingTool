@@ -25,6 +25,7 @@
 Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::initialize();
         gmsh::model::add(_modelName);
+    
         };
 Model::~Model(){
     gmsh::finalize();

@@ -13,7 +13,13 @@ namespace GeometryCore {
     class Geometry {
     public:
         void getPartsMap();
+        void getFacesMap();
+        void getEdgesMap();
 
+        void getPartsActorMap();
+        void getFacesActorMap();
+        void getEdgesActorMap();
+        
     private:
         PartsMap partsMap;
         PartsMap facesMap;

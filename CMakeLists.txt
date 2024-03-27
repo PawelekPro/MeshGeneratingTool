@@ -43,6 +43,7 @@ set(UI_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface)
 set(UI_UTILS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/GraphicalUtils)
 set(FORMS_PATH ${UI_PATH}/Forms)
 set(GEOM_CORE_PATH ${CMAKE_SOURCE_DIR}/src/GeometryCore)
+set(MESH_CORE_PATH ${CMAKE_SOURCE_DIR}/src/MeshCore)
 set(MODEL_PATH ${CMAKE_SOURCE_DIR}/src/Model)
 
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
@@ -74,6 +75,8 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
+    ${MESH_CORE_PATH}/Mesh.h
+    ${MESH_CORE_PATH}/Mesh.cpp
     ${MODEL_PATH}/Model.h
     ${MODEL_PATH}/Model.cpp
 )
@@ -91,7 +94,7 @@ set(INCLUDE_DIRS
     ${GEOM_CORE_PATH}/Geometry
     ${GEOM_CORE_PATH}/STLPlugin
     ${GEOM_CORE_PATH}/STEPPlugin
-
+    ${MESH_CORE_PATH}
     ${MODEL_PATH}
 
     ${GMSH_INC}
