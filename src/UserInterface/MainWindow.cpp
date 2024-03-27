@@ -103,10 +103,10 @@ void MainWindow::importSTEP(QString fileName) {
 		return;
 	}
 	this->model->addParts(stepReader.stepOperations.getPartsMap());
-	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	GeometryCore::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap, true);
 	QVTKRender->fitView();
-	// Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
+	// GeometryCore::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
 	// QVTKRender->addEdgesActors(edgesMap);
 	// QVTKRender->setActiveLayerRenderer(0);
 }
@@ -120,7 +120,7 @@ void MainWindow::importSTL(QString fileName) {
 	stlReader.load(filePath, progressBar);
 	this->model->addParts(stlReader.getPartsMap());
 
-	Geometry::ActorsMap actorsMap = stlReader.getVTKActorsMap();
+	GeometryCore::ActorsMap actorsMap = stlReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap);
 	QVTKRender->fitView();
 }

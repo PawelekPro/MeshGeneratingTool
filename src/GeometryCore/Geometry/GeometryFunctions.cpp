@@ -19,7 +19,7 @@
 
 #include "GeometryFunctions.h"
 
-vtkSmartPointer<vtkActor> Geometry::GeometryFunctions::createVTKActor(TopoDS_Shape shape) {
+vtkSmartPointer<vtkActor> GeometryCore::GeometryFunctions::createVTKActor(TopoDS_Shape shape) {
 	IVtkOCC_Shape* vtkShapeAdapter = new IVtkOCC_Shape(shape);
 	auto dataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
 	dataSource->SetShape(vtkShapeAdapter);
@@ -32,7 +32,7 @@ vtkSmartPointer<vtkActor> Geometry::GeometryFunctions::createVTKActor(TopoDS_Sha
 	return actor;
 }
 
-std::string Geometry::GeometryFunctions::getUniqueObjectName(std::string prefix) {
+std::string GeometryCore::GeometryFunctions::getUniqueObjectName(std::string prefix) {
 	// Find already existing path that match prefix.
 	std::vector<std::string> allNames;
 	for (const auto& partsMapIt : this->_partsMap) {
@@ -59,6 +59,6 @@ std::string Geometry::GeometryFunctions::getUniqueObjectName(std::string prefix)
 	return uniqueName;
 }
 
-Geometry::PartsMap Geometry::GeometryFunctions::getPartsMap(){
+GeometryCore::PartsMap GeometryCore::GeometryFunctions::getPartsMap(){
 	return this->_partsMap;
 }

@@ -67,7 +67,7 @@ void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget
 	vtkLogF(INFO, "STEPCAFControl_Reader transferred successfully.");
 
 	auto& reader = cafReader.Reader();
-	this->_partsMap = Geometry::PartsMap {};
+	this->_partsMap = GeometryCore::PartsMap {};
 	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
 	Standard_Integer numberOfShapes = reader.NbShapes();
@@ -190,11 +190,11 @@ void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget
 }
 
 //----------------------------------------------------------------------------
-Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKActorsMap() {
+GeometryCore::ActorsMap STEPPlugin::STEPPluginOperations::getVTKActorsMap() {
 	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->_dataFrame->Main());
 	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
-	Geometry::ActorsMap actorsMap {};
+	GeometryCore::ActorsMap actorsMap {};
 
 	for (const auto& it : this->_partsMap) {
 		const auto& shape = it.second;
@@ -219,8 +219,8 @@ Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKActorsMap() {
 }
 
 //----------------------------------------------------------------------------
-Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
-	Geometry::ActorsMap edgesMap {};
+GeometryCore::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
+	GeometryCore::ActorsMap edgesMap {};
 
 	for (const auto& it : this->_edgesMap) {
 		const auto& shape = it.second;
@@ -241,8 +241,8 @@ Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
 }
 
 //----------------------------------------------------------------------------
-Geometry::ActorsMap STEPPlugin::STEPPluginOperations::getVTKFacesMap() {
-	Geometry::ActorsMap facesMap {};
+GeometryCore::ActorsMap STEPPlugin::STEPPluginOperations::getVTKFacesMap() {
+	GeometryCore::ActorsMap facesMap {};
 
 	for (const auto& it : this->_facesMap) {
 		const auto& shape = it.second;
@@ -319,11 +319,11 @@ std::string STEPPlugin::STEPPluginOperations::getUniqueFaceName(std::string pref
 }
 
 //----------------------------------------------------------------------------
-Geometry::PartsMap STEPPlugin::STEPPluginOperations::getEdgesPartsMap() {
+GeometryCore::PartsMap STEPPlugin::STEPPluginOperations::getEdgesPartsMap() {
 	return this->_edgesMap;
 }
 
 //----------------------------------------------------------------------------
-Geometry::PartsMap STEPPlugin::STEPPluginOperations::getFacesPartsMap() {
+GeometryCore::PartsMap STEPPlugin::STEPPluginOperations::getFacesPartsMap() {
 	return this->_facesMap;
 }

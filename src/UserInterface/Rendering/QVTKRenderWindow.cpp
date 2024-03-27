@@ -117,7 +117,7 @@ void Rendering::QVTKRenderWindow::fitView() {
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap) {
+void Rendering::QVTKRenderWindow::addActors(const GeometryCore::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {
 		vtkSmartPointer<vtkActor> actor = entry.second;
 		this->mRenderers.at(0)->AddActor(actor);
@@ -127,7 +127,7 @@ void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap, bool layered) {
+void Rendering::QVTKRenderWindow::addActors(const GeometryCore::ActorsMap& actorsMap, bool layered) {
 	for (const auto& entry : actorsMap) {
 		std::string label = entry.first;
 		vtkSmartPointer<vtkActor> actor = entry.second;

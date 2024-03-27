@@ -31,7 +31,7 @@ Model::~Model(){
 }
 
 
-void Model::addParts(Geometry::PartsMap& partsMap) { 
+void Model::addParts(GeometryCore::PartsMap partsMap) { 
     this->_partsMap = partsMap;
             for (const auto& it : this->_partsMap) {
                 std::cout << it.first << std::endl;

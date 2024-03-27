@@ -44,7 +44,7 @@ namespace STLPlugin {
  *
  * @details	Inherits from GeometryFunctions class.
  */
-class STLFileReader : public Geometry::GeometryFunctions {
+class STLFileReader : public GeometryCore::GeometryFunctions {
 public:
 	/**
 	 * Constructor of STLFileReader class instance.
@@ -70,7 +70,7 @@ public:
 	 *
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
-	Geometry::ActorsMap getVTKActorsMap() override;
+	GeometryCore::ActorsMap getVTKActorsMap() override;
 };
 
 }

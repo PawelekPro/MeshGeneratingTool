@@ -49,7 +49,7 @@ namespace STEPPlugin {
  *
  * @details	Inherits from GeometryFunctions class.
  */
-class STEPPluginOperations : public Geometry::GeometryFunctions {
+class STEPPluginOperations : public GeometryCore::GeometryFunctions {
 
 public:
 	/**
@@ -76,27 +76,27 @@ public:
 	 *
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
-	Geometry::ActorsMap getVTKActorsMap() override;
+	GeometryCore::ActorsMap getVTKActorsMap() override;
 
 	/**
 	 * @brief  Get container of vtkActor class instances representing edges.
 	 *
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
-	Geometry::ActorsMap getVTKEdgesMap();
+	GeometryCore::ActorsMap getVTKEdgesMap();
 
 	/**
 	 * @brief  Get container of vtkActor class instances representing faces.
 	 *
 	 * @return {ActorsMap}  : Container of vtkActor class instances.
 	 */
-	Geometry::ActorsMap getVTKFacesMap();
+	GeometryCore::ActorsMap getVTKFacesMap();
 
 	/**
 	 * @brief  Get new unique label of edge object.
 	 *
 	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
-	 * @param  {Geometry::PartsMap} partsMap : Container of all loaded edges (occ shapes).
+	 * @param  {GeometryCore::PartsMap} partsMap : Container of all loaded edges (occ shapes).
 	 * @return {std::string}                  : Label containing unique index and given prefix.
 	 */
 	std::string getUniqueEdgeName(std::string prefix);
@@ -105,7 +105,7 @@ public:
 	 * @brief  Get new unique label of edge object.
 	 *
 	 * @param  {std::string} prefix           : Prefix to be combined with unique id.
-	 * @param  {Geometry::PartsMap} partsMap : Container of all loaded edges (occ shapes).
+	 * @param  {GeometryCore::PartsMap} partsMap : Container of all loaded edges (occ shapes).
 	 * @return {std::string}                  : Label containing unique index and given prefix.
 	 */
 	std::string getUniqueFaceName(std::string prefix);
@@ -113,20 +113,20 @@ public:
 	/**
 	 * @brief  Get map of objects representing edge shapes.
 	 *
-	 * @return {Geometry::PartsMap}  : Map of TopoDS_Shape shapes representing edges.
+	 * @return {GeometryCore::PartsMap}  : Map of TopoDS_Shape shapes representing edges.
 	 */
-	Geometry::PartsMap getEdgesPartsMap();
+	GeometryCore::PartsMap getEdgesPartsMap();
 
 	/**
 	 * @brief  Get map of objects representing face shapes.
 	 *
-	 * @return {Geometry::PartsMap}  : Map of TopoDS_Shape shapes representing faces.
+	 * @return {GeometryCore::PartsMap}  : Map of TopoDS_Shape shapes representing faces.
 	 */
-	Geometry::PartsMap getFacesPartsMap();
+	GeometryCore::PartsMap getFacesPartsMap();
 
 private:
-	Geometry::PartsMap _edgesMap;
-	Geometry::PartsMap _facesMap;
+	GeometryCore::PartsMap _edgesMap;
+	GeometryCore::PartsMap _facesMap;
 };
 
 };

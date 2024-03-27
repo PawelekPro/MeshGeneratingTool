@@ -105,8 +105,8 @@ void STLPlugin::STLFileReader::load(const std::string& fileName, QWidget* parent
 	progressBar->finish();
 }
 
-Geometry::ActorsMap STLPlugin::STLFileReader::getVTKActorsMap() {
-	Geometry::ActorsMap actorsMap {};
+GeometryCore::ActorsMap STLPlugin::STLFileReader::getVTKActorsMap() {
+	GeometryCore::ActorsMap actorsMap {};
 
 	for (const auto& it : this->_partsMap) {
 		const auto& shape = it.second;

@@ -20,7 +20,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include "GeometryFunctions.h"
-
+#include "Geometry.h"
 #include <gmsh.h_cwrap>
 #include <TopoDS_Shape.hxx>
 
@@ -37,12 +37,12 @@ class Model
 {
     public:
         std::string _modelName;
-        
+        GeometryCore::Geometry geometry;
 
         Model(std::string modelName);
         ~Model();
 
-        void addParts(Geometry::PartsMap& partsMap);
+        void addParts(GeometryCore::PartsMap partsMap);
         void meshParts();
         void updateMeshActor();
 
@@ -58,9 +58,9 @@ class Model
         LINE = 1,
         };
 
-    Geometry::PartsMap _edgesMap;
-    Geometry::PartsMap _facesMap;
-    Geometry::PartsMap _partsMap;
+    GeometryCore::PartsMap _edgesMap;
+    GeometryCore::PartsMap _facesMap;
+    GeometryCore::PartsMap _partsMap;
     vtkSmartPointer<vtkPolyData> polyData;
 
 };

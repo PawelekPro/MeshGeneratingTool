@@ -38,8 +38,8 @@ void STEPGeometryPlugin::load(const std::string& fileName, QWidget* parent) {
 }
 
 //----------------------------------------------------------------------------
-Geometry::ActorsMap STEPGeometryPlugin::getVTKActorsMap() {
-	Geometry::ActorsMap mergedMap;
+GeometryCore::ActorsMap STEPGeometryPlugin::getVTKActorsMap() {
+	GeometryCore::ActorsMap mergedMap;
 	mergedMap.insert(
 		this->facesActorsMap.begin(), this->facesActorsMap.end());
 	mergedMap.insert(

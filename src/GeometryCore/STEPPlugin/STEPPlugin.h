@@ -45,15 +45,15 @@ public:
 	/**
 	 * @brief  Get merged map containing all VTK actors representing loaded geometry.
 	 *
-	 * @return {Geometry::ActorsMap}  : Map containing all actors for created shapes
+	 * @return {GeometryCore::ActorsMap}  : Map containing all actors for created shapes
 	 */
-	Geometry::ActorsMap getVTKActorsMap();
+	GeometryCore::ActorsMap getVTKActorsMap();
 
 	// Containers for vtkActor and occ shapes
-	Geometry::PartsMap edgesPartsMap;
-	Geometry::PartsMap facesPartsMap;
-	Geometry::ActorsMap edgesActorsMap;
-	Geometry::ActorsMap facesActorsMap;
+	GeometryCore::PartsMap edgesPartsMap;
+	GeometryCore::PartsMap facesPartsMap;
+	GeometryCore::ActorsMap edgesActorsMap;
+	GeometryCore::ActorsMap facesActorsMap;
 	
 	// Attribute for handling operations on step file
 	STEPPlugin::STEPPluginOperations stepOperations;
