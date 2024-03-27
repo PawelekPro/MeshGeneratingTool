@@ -91,7 +91,7 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 
 //----------------------------------------------------------------------------
 void MainWindow::importSTEP(QString fileName) {
-	ProgressBar* progressBar = this->getProgressBar();
+	QPointer<ProgressBar> progressBar = this->getProgressBar();
 	STEPGeometryPlugin stepReader {};
 
 	const std::string& filePath = fileName.toStdString();
