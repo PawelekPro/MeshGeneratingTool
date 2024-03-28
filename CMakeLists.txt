@@ -67,6 +67,11 @@ set(PROJECT_SOURCES
 #    ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
 #    ${UI_PATH}/Rendering/QVTKToolBar.h
 #    ${UI_PATH}/Rendering/QVTKToolBar.cpp
+    ${GEOM_CORE_PATH}/Geometry/GeometryImporter.h
+    ${GEOM_CORE_PATH}/Geometry/GeometryImporter.cpp
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPImporter.h
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPImporter.cpp
+
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h

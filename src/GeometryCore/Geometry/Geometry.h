@@ -8,26 +8,34 @@ namespace GeometryCore {
     using ActorsMap = std::map<std::string, vtkSmartPointer<vtkActor>>;
     using PartsMap = std::map<std::string, TopoDS_Shape>;
 
-
-
     class Geometry {
     public:
-        void getPartsMap();
-        void getFacesMap();
-        void getEdgesMap();
+        PartsMap getPartsMap(){return this->_partsMap;};
+        PartsMap getFacesMap(){return this->_facesMap;};
+        PartsMap getEdgesMap(){return this->_edgesMap;};
+        ActorsMap getPartsActorMap(){return this->_partsActorMap;};
+        ActorsMap getFacesActorMap(){return this->_facesActorMap;};
+        ActorsMap getEdgesActorMap(){return this->_edgesActorMap;};
 
-        void getPartsActorMap();
-        void getFacesActorMap();
-        void getEdgesActorMap();
+        PartsMap setPartsMap(const PartsMap& partsMap){this->_partsMap = std::move(partsMap);};
+        PartsMap setFacesMap(const PartsMap& facesMap){this->_partsMap = std::move(facesMap);};
+        PartsMap setEdgesMap(const PartsMap& edgesMap){this->_partsMap = std::move(edgesMap);};
+        
+        ActorsMap setPartsActorMap(const ActorsMap& partsMap){this->_partsActorMap = std::move(partsMap);};
+        ActorsMap setFacesActorMap(const ActorsMap& facesMap){this->_facesActorMap = std::move(facesMap);};
+        ActorsMap setEdgesActorMap(const ActorsMap& edgesMap){this->_edgesActorMap = std::move(edgesMap);};
+
+        void importStep(std::string filePath);
+        void importSTL(std::string filePath);
         
     private:
-        PartsMap partsMap;
-        PartsMap facesMap;
-        PartsMap edgesMap;
+        PartsMap _partsMap;
+        PartsMap _facesMap;
+        PartsMap _edgesMap;
 
-        ActorsMap partsActorMap;
-        ActorsMap facesActorMap;
-        ActorsMap edgesActorMap;
+        ActorsMap _partsActorMap;
+        ActorsMap _facesActorMap;
+        ActorsMap _edgesActorMap;
     };
 };  
 
