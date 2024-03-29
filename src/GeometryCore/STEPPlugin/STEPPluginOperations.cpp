@@ -87,7 +87,7 @@ void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget
 				// Get the shape
 				auto& solid = TopoDS::Solid(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("SolidPart");
+				auto uniqueName = getUniquePartName("SolidPart");
 
 				// Do we need to collect labels? (Solid/Shell)
 				// std::stringstream stringStream;
@@ -114,7 +114,7 @@ void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget
 				// Get the shape
 				auto _shell = TopoDS::Shell(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("ShellPart");
+				auto uniqueName = getUniquePartName("ShellPart");
 
 				// Do we need to collect labels? (Solid/Shell)
 				// std::stringstream stringStream;
@@ -177,7 +177,7 @@ void STEPPlugin::STEPPluginOperations::load(const std::string& fileName, QWidget
 			if (!emptyComp) {
 				vtkLogF(INFO, "Loaded all other free-flying shapes into a single compound.");
 				// TODO: Do we need to collect labels? (Solid/Shell)
-				std::string uniqueName = getUniqueObjectName("CompoundPart");
+				std::string uniqueName = getUniquePartName("CompoundPart");
 				this->_partsMap[uniqueName] = compound;
 			}
 		}
@@ -227,7 +227,7 @@ GeometryCore::ActorsMap STEPPlugin::STEPPluginOperations::getVTKEdgesMap() {
 
 		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
 
-		actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
+		// actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
 		actor->GetProperty()->SetLineWidth(3);
 
 		// std::stringstream stringStream;
@@ -249,11 +249,11 @@ GeometryCore::ActorsMap STEPPlugin::STEPPluginOperations::getVTKFacesMap() {
 
 		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
 
-		actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
+		// actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
 		actor->GetProperty()->SetLineWidth(3);
 
 		// std::stringstream stringStream;
-		// stringStream << std::addressof(*actor.GetPointer());
+		// stringStream << std::addressof(* actor.GetPointer());
 		// std::string actorKey = stringStream.str();
 
 		facesMap[it.first] = actor;

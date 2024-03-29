@@ -90,7 +90,7 @@ void STLPlugin::STLFileReader::load(const std::string& fileName, QWidget* parent
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
 		counter++;
-		std::string uniqueName = getUniqueObjectName("ShellPart");
+		std::string uniqueName = getUniquePartName("ShellPart");
 		this->_partsMap[uniqueName] = shell;
 	}
 

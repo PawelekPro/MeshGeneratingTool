@@ -1,9 +1,13 @@
 #include "Geometry.h"
 
-GeometryCore::Geometry::importStep(std::string filePath){
-
+void GeometryCore::Geometry::importStep(const std::string& filePath){
+    this->_importer = std::make_unique<STEPImporter>();
 }
 
-GeometryCore::Geometry::importSTL(std::string filePath){
+
+
+
+
+void GeometryCore::Geometry::importSTL(const std::string& filePath){
     
 }

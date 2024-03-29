@@ -55,7 +55,7 @@ protected:
 	 * @param  {Importing::PartsMap} partsMap : Container of all loaded parts (shapes).
 	 * @return {std::string}                  : Label containing unique index and given prefix.
 	 */
-	std::string getUniqueObjectName(std::string prefix);
+	std::string getUniquePartName(std::string prefix);
 
 	// Container for loaded shapes.
 	PartsMap _partsMap;

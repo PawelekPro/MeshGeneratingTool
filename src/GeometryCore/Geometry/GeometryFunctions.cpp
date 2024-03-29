@@ -32,7 +32,7 @@ vtkSmartPointer<vtkActor> GeometryCore::GeometryFunctions::createVTKActor(TopoDS
 	return actor;
 }
 
-std::string GeometryCore::GeometryFunctions::getUniqueObjectName(std::string prefix) {
+std::string GeometryCore::GeometryFunctions::getUniquePartName(std::string prefix) {
 	// Find already existing path that match prefix.
 	std::vector<std::string> allNames;
 	for (const auto& partsMapIt : this->_partsMap) {

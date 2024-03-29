@@ -24,12 +24,23 @@ namespace GeometryCore {
 
     class GeometryImporter{
         public:
-            virtual void import(const std::string& filename) = 0;
             virtual ~GeometryImporter() {}
 
+        protected:
+            virtual void import(const std::string& filename, QWidget* parent) = 0;
+            ActorsMap getPartsActorMap();
+            ActorsMap getFacesActorMap();
+            ActorsMap getEdgesActorMap();
+            std::string getUniqueObjectName(const std::string& prefix, const PartsMap& objectMap);
+
+            PartsMap _partsMap;
+            PartsMap _facesMap;
+            PartsMap _edgesMap;
         private:
-        	Handle(TDocStd_Document) _dataFrame;
+
     };
 }
+
+
 
 #endif

@@ -2,6 +2,8 @@
 #define GEOMETRY_H
 
 #include "GeometryFunctions.h"
+#include "GeometryImporter.h"
+#include "STEPImporter.h"
 
 namespace GeometryCore {
     using namespace std::string_literals;
@@ -20,13 +22,12 @@ namespace GeometryCore {
         PartsMap setPartsMap(const PartsMap& partsMap){this->_partsMap = std::move(partsMap);};
         PartsMap setFacesMap(const PartsMap& facesMap){this->_partsMap = std::move(facesMap);};
         PartsMap setEdgesMap(const PartsMap& edgesMap){this->_partsMap = std::move(edgesMap);};
-        
         ActorsMap setPartsActorMap(const ActorsMap& partsMap){this->_partsActorMap = std::move(partsMap);};
         ActorsMap setFacesActorMap(const ActorsMap& facesMap){this->_facesActorMap = std::move(facesMap);};
         ActorsMap setEdgesActorMap(const ActorsMap& edgesMap){this->_edgesActorMap = std::move(edgesMap);};
 
-        void importStep(std::string filePath);
-        void importSTL(std::string filePath);
+        void importStep(const std::string& filePath);
+        void importSTL(const std::string& filePath);
         
     private:
         PartsMap _partsMap;
@@ -36,6 +37,8 @@ namespace GeometryCore {
         ActorsMap _partsActorMap;
         ActorsMap _facesActorMap;
         ActorsMap _edgesActorMap;
+
+        std::unique_ptr<GeometryImporter> _importer;
     };
 };  
 
