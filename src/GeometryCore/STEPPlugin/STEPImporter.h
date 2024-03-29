@@ -27,9 +27,7 @@ namespace GeometryCore {
     class STEPImporter : public GeometryImporter{
         public:
             void import(const std::string& filename, QWidget* parent) override;
-            void actorMaps();
         private:
-        	Handle(TDocStd_Document) _dataFrame;
     };
 }
 #endif
