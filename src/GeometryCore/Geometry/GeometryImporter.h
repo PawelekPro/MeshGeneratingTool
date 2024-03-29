@@ -14,18 +14,27 @@
 #include <vtkActor.h>
 #include <vtkLogger.h>
 #include <vtkProperty.h>
+#include <vtkPolyDataMapper.h>
+
 
 #include <BRep_Builder.hxx>
 #include <STEPCAFControl_Reader.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TDocStd_Document.hxx>
+#include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
+#include <Quantity_Color.hxx>
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <XCAFDoc_ColorType.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
+#include <IVtkOCC_Shape.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
+
+
 namespace GeometryCore {
 
     using namespace std::string_literals;
@@ -38,6 +47,9 @@ namespace GeometryCore {
             ActorsMap getPartsActorMap();
             ActorsMap getFacesActorMap();
             ActorsMap getEdgesActorMap();
+            PartsMap getPartsMap(){return this->_partsMap;};
+            PartsMap getFacesMap(){return this->_facesMap;};
+            PartsMap getEdgesMap(){return this->_edgesMap;};
 
         protected:
             virtual void import(const std::string& filename, QWidget* parent) = 0;
@@ -48,7 +60,7 @@ namespace GeometryCore {
             PartsMap _facesMap;
             PartsMap _edgesMap;
         private:
-            vtkSmartPointer<vtkActor> createVTKActor(TopoDS_Shape shape);
+            vtkSmartPointer<vtkActor> createVTKActor(const TopoDS_Shape& shape);
     };
 }
 

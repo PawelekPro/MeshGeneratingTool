@@ -84,3 +84,17 @@ GeometryCore::ActorsMap GeometryCore::GeometryImporter::getEdgesActorMap(){
 		facesMap[it.first] = actor;
 	}
 };
+
+
+vtkSmartPointer<vtkActor> GeometryCore::GeometryImporter::createVTKActor(const TopoDS_Shape& shape){
+	IVtkOCC_Shape* vtkShapeAdapter = new IVtkOCC_Shape(shape);
+	auto dataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
+	dataSource->SetShape(vtkShapeAdapter);
+
+	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	mapper->SetInputConnection(dataSource->GetOutputPort());
+	auto actor = vtkSmartPointer<vtkActor>::New();
+	actor->SetMapper(mapper);
+
+	return actor;
+}

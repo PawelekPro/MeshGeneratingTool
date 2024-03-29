@@ -163,34 +163,4 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 	std::filesystem::path stepName = filePath.filename();
 	auto message = "STEP file: " + stepName.string() + " loaded successfully.";
 	vtkLogF(INFO, message.c_str());
-}
-
-
-
-void GeometryCore::STEPImporter::getVTKActorsMap() {
-	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->_dataFrame->Main());
-	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
-
-	GeometryCore::ActorsMap actorsMap {};
-
-	for (const auto& it : this->_partsMap) {
-		const auto& shape = it.second;
-
-		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
-
-		auto color = Quantity_Color {};
-		colorTool->GetColor(shape, XCAFDoc_ColorGen, color);
-		colorTool->GetInstanceColor(shape, XCAFDoc_ColorGen, color);
-		colorTool->GetInstanceColor(shape, XCAFDoc_ColorSurf, color);
-		colorTool->GetInstanceColor(shape, XCAFDoc_ColorCurv, color);
-
-		actor->GetProperty()->SetColor(color.Red(), color.Green(), color.Blue());
-		// std::stringstream stringStream;
-		// stringStream << std::addressof(*actor.GetPointer());
-		// std::string actorKey = stringStream.str();
-
-		actorsMap[it.first] = actor;
-	}
-
-	return actorsMap;
-}
+};
