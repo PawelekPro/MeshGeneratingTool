@@ -27,7 +27,6 @@
 #include "Configuration.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
-// #include "STEPPlugin.h"
 #include "Model.h"
 
 #include <QButtonGroup>

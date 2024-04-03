@@ -2,7 +2,7 @@
 #define STLImporter_H
 
 #include "GeometryImporter.h"
-#include "ProgressBarPlugin.hpp"
+#include "ProgressBar.h"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
