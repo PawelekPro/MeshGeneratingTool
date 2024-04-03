@@ -73,6 +73,10 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/Geometry/GeometryImporter.cpp
     ${GEOM_CORE_PATH}/STEPPlugin/STEPImporter.h
     ${GEOM_CORE_PATH}/STEPPlugin/STEPImporter.cpp
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPImporter.h
+    ${GEOM_CORE_PATH}/STEPPlugin/STEPImporter.cpp
+    ${GEOM_CORE_PATH}/STLPlugin/STLImporter.h
+    ${GEOM_CORE_PATH}/STLPlugin/STLImporter.cpp
 
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
     ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
