@@ -183,7 +183,7 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 };
 
 //----------------------------------------------------------------------------
-vtkRenderer* Rendering::QVTKRenderWindow::getRenderer() {
+vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getRenderer() {
 	return this->activeLayerRenderer;
 }
 
@@ -197,6 +197,8 @@ void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layer) {
 	if (layer == static_cast<int>(Renderers::Main)) {
 		this->activeLayerRenderer = this->mRenderers.at(layer);
 	} else if (layer == static_cast<int>(Renderers::Edges)) {
+		this->activeLayerRenderer = this->mRenderers.at(layer);
+	} else if (layer == static_cast<int>(Renderers::Faces)) {
 		this->activeLayerRenderer = this->mRenderers.at(layer);
 	}
 }
@@ -245,15 +247,12 @@ void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geome
 	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
 
     for(const auto& actor : parts) {
-		std::cout << "Added actor: " << actor.first << " to part layer" << std::endl;
         this->mRenderers.at(static_cast<int>(Renderers::Main))->AddActor(actor.second);
     }
     for(const auto& actor : faces) {
-		std::cout << "Added actor: " << actor.first << " to face layer" << std::endl;
         this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
     }
     for(const auto& actor : edges) {
-		std::cout << "Added actor: " << actor.first << " to edge layer" << std::endl;
         this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
     }
 

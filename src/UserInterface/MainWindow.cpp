@@ -37,8 +37,16 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
-	this->buttonGroup.addButton(this->ui->facesSelectorButton, 0);
-	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 1);
+
+
+	this->buttonGroup.addButton(this->ui->volumeSelectorButton, 
+	static_cast<int>(Rendering::QVTKRenderWindow::Renderers::Main));
+
+	this->buttonGroup.addButton(this->ui->facesSelectorButton, 
+	static_cast<int>(Rendering::QVTKRenderWindow::Renderers::Faces));
+
+	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 
+	static_cast<int>(Rendering::QVTKRenderWindow::Renderers::Edges));
 	
 	this->setConnections();
 	this->initializeActions();
@@ -99,8 +107,6 @@ void MainWindow::importSTEP(QString fileName) {
 		stepReader.load(filePath, this->progressBar);
 		this->model->geometry.importSTEP(filePath, this->progressBar);
 		this->QVTKRender->updateGeometryActors(this->model->geometry);
-
-
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
@@ -148,7 +154,7 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 		if (btn != button)
 			btn->setChecked(false);
 	}
-
+	// std::cout<<"Button id: " << buttonGroup.id(button) << std::endl;
 	// Set active layer according to selected button
 	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
 	this->QVTKRender->setActiveLayerRenderer(buttonGroup.id(button));

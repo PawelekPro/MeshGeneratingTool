@@ -121,7 +121,7 @@ public:
 	 *
 	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
 	 */
-	vtkRenderer* getRenderer();
+	vtkSmartPointer<vtkRenderer> getRenderer();
 
 	/**
 	 * @brief  Enable and start displaying the camera orientation widget.
