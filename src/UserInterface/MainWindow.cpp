@@ -100,38 +100,26 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 //----------------------------------------------------------------------------
 void MainWindow::importSTEP(QString fileName) {
 	QPointer<ProgressBar> progressBar = this->getProgressBar();
-	STEPGeometryPlugin stepReader {};
-
 	const std::string& filePath = fileName.toStdString();
 	try {
-		stepReader.load(filePath, this->progressBar);
 		this->model->geometry.importSTEP(filePath, this->progressBar);
 		this->QVTKRender->updateGeometryActors(this->model->geometry);
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
 		return;
-	} 
-	// this->model->addParts(stepReader.stepOperations.getPartsMap());
-	// GeometryCore::ActorsMap actorsMap = stepReader.getVTKActorsMap();
-	// QVTKRender->addActors(actorsMap, true);
+	}
 	QVTKRender->fitView();
-	// GeometryCore::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
-	// QVTKRender->addEdgesActors(edgesMap);
-	// QVTKRender->setActiveLayerRenderer(0);
 }
 
 //----------------------------------------------------------------------------
 void MainWindow::importSTL(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
-	STLPlugin::STLFileReader stlReader {};
 
 	const std::string& filePath = fileName.toStdString();
-	stlReader.load(filePath, progressBar);
-	this->model->addParts(stlReader.getPartsMap());
+	this->model->geometry.importSTL(filePath, this->progressBar);
 
-	GeometryCore::ActorsMap actorsMap = stlReader.getVTKActorsMap();
-	QVTKRender->addActors(actorsMap);
+	this->QVTKRender->updateGeometryActors(this->model->geometry);
 	QVTKRender->fitView();
 }
 //----------------------------------------------------------------------------
