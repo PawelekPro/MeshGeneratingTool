@@ -22,7 +22,6 @@
 
 #include <functional>
 
-#include "STLPluginOperations.h"
 #include "./ui_MainWindow.h"
 #include "Configuration.h"
 #include "ProgressBar.h"

@@ -20,7 +20,6 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-#include "GeometryFunctions.h"
 #include "Geometry.h"
 
 #include <algorithm>
