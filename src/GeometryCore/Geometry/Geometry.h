@@ -1,9 +1,47 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include "GeometryFunctions.h"
-#include "GeometryImporter.h"
 #include "STEPImporter.h"
+#include "STLImporter.h"
+#include "GeometryImporter.h"
+
+
+#include "ProgressBar.h"
+#include "ProgressBarPlugin.hpp"
+
+#include <iostream>
+#include <map>
+#include <string>
+#include <filesystem>
+
+#include <QApplication>
+#include <QObject>
+#include <QProgressDialog>
+#include <QWidget>
+
+#include <vtkActor.h>
+#include <vtkLogger.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkSmartPointer.h>
+
+#include <BRep_Builder.hxx>
+#include <STEPCAFControl_Reader.hxx>
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Shape.hxx>
+#include <XCAFApp_Application.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_ColorType.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <IVtkOCC_Shape.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
+#include <Message_ProgressIndicator.hxx>
+#include <TDocStd_Document.hxx>
+
 
 namespace GeometryCore {
     using namespace std::string_literals;
@@ -20,7 +58,7 @@ namespace GeometryCore {
         const ActorsMap& getEdgesActorMap() const {return this->_edgesActorMap;};
 
         void importSTEP(const std::string& filePath, QWidget* progressBar);
-        void importSTL(const std::string& filePath);
+        void importSTL(const std::string& filePath, QWidget* progressBar);
         
     private:
         PartsMap _partsMap;
