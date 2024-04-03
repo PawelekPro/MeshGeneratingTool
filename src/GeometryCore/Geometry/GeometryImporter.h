@@ -44,12 +44,12 @@ namespace GeometryCore {
     class GeometryImporter{
         public:
             virtual ~GeometryImporter() {};
-            ActorsMap getPartsActorMap();
-            ActorsMap getFacesActorMap();
-            ActorsMap getEdgesActorMap();
-            PartsMap getPartsMap(){return this->_partsMap;};
-            PartsMap getFacesMap(){return this->_facesMap;};
-            PartsMap getEdgesMap(){return this->_edgesMap;};
+            const ActorsMap getPartsActorMap();
+            const ActorsMap getFacesActorMap();
+            const ActorsMap getEdgesActorMap();
+            const PartsMap getPartsMap(){return this->_partsMap;};
+            const PartsMap getFacesMap(){return this->_facesMap;};
+            const PartsMap getEdgesMap(){return this->_edgesMap;};
 
         protected:
             virtual void import(const std::string& filename, QWidget* parent) = 0;
@@ -63,7 +63,5 @@ namespace GeometryCore {
             vtkSmartPointer<vtkActor> createVTKActor(const TopoDS_Shape& shape);
     };
 }
-
-
 
 #endif

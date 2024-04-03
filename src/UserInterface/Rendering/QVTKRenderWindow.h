@@ -21,8 +21,10 @@
 #define QVTKRENDERWINDOW_H
 
 #include "GeometryFunctions.h"
+#include "Geometry.h"
 
-
+#include <algorithm>
+#include <numeric>
 #include <array>
 
 #include <QVTKOpenGLNativeWidget.h>
@@ -146,12 +148,19 @@ public:
 	 */
 	void setWaterMark();
 
+
+	/**
+	 * @brief  Clear all geometry actors from faces, edges and parts layers and
+	 * reload them from Geometry object
+	 *
+	 */
+	void updateGeometryActors(const GeometryCore::Geometry& geometry);
+
 	// Enumerator definition
 	enum class Renderers {
 		Main,
 		Edges,
 		Faces,
-		Solids,
 		Count // Count for definition of array size
 	};
 

@@ -25,12 +25,12 @@
 Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::initialize();
         gmsh::model::add(_modelName);
-    
+        this->geometry = GeometryCore::Geometry();
+        this->mesh = MeshCore::Mesh();
         };
 Model::~Model(){
     gmsh::finalize();
 }
-
 
 void Model::addParts(GeometryCore::PartsMap partsMap) { 
     this->_partsMap = partsMap;

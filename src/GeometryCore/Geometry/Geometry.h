@@ -12,14 +12,14 @@ namespace GeometryCore {
 
     class Geometry {
     public:
-        PartsMap getPartsMap(){return this->_partsMap;};
-        PartsMap getFacesMap(){return this->_facesMap;};
-        PartsMap getEdgesMap(){return this->_edgesMap;};
-        ActorsMap getPartsActorMap(){return this->_partsActorMap;};
-        ActorsMap getFacesActorMap(){return this->_facesActorMap;};
-        ActorsMap getEdgesActorMap(){return this->_edgesActorMap;};
+        const PartsMap& getPartsMap() const {return this->_partsMap;};
+        const PartsMap& getFacesMap() const {return this->_facesMap;};
+        const PartsMap& getEdgesMap() const {return this->_edgesMap;};
+        const ActorsMap& getPartsActorMap() const {return this->_partsActorMap;};
+        const ActorsMap& getFacesActorMap() const {return this->_facesActorMap;};
+        const ActorsMap& getEdgesActorMap() const {return this->_edgesActorMap;};
 
-        void importSTEP(const std::string& filePath);
+        void importSTEP(const std::string& filePath, QWidget* progressBar);
         void importSTL(const std::string& filePath);
         
     private:

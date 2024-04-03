@@ -97,14 +97,18 @@ void MainWindow::importSTEP(QString fileName) {
 	const std::string& filePath = fileName.toStdString();
 	try {
 		stepReader.load(filePath, this->progressBar);
+		this->model->geometry.importSTEP(filePath, this->progressBar);
+		this->QVTKRender->updateGeometryActors(this->model->geometry);
+
+
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
 		return;
-	}
-	this->model->addParts(stepReader.stepOperations.getPartsMap());
-	GeometryCore::ActorsMap actorsMap = stepReader.getVTKActorsMap();
-	QVTKRender->addActors(actorsMap, true);
+	} 
+	// this->model->addParts(stepReader.stepOperations.getPartsMap());
+	// GeometryCore::ActorsMap actorsMap = stepReader.getVTKActorsMap();
+	// QVTKRender->addActors(actorsMap, true);
 	QVTKRender->fitView();
 	// GeometryCore::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
 	// QVTKRender->addEdgesActors(edgesMap);

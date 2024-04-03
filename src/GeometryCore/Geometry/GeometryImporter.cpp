@@ -1,26 +1,23 @@
 #include "GeometryImporter.h"
 
 std::string GeometryCore::GeometryImporter::getUniqueObjectName(const std::string& prefix, const PartsMap& objectMap){
- 	int i = 0;
+ 	int i = 1;
     std::string uniqueName;
-    for (const auto& pair : objectMap) {
-        const std::string& stringObj = pair.first;
-
-        if (stringObj.find(prefix) != std::string::npos) {
-            std::stringstream stringStream;
-            stringStream << prefix << std::setfill('0') << std::setw(3) << i;
-            uniqueName = stringStream.str();
-            if (objectMap.find(uniqueName) == objectMap.end()) {
-                break;
-            }
-            i++;
+    while (true) {
+        std::stringstream stringStream;
+        stringStream << prefix << std::setfill('0') << std::setw(3) << i;
+        uniqueName = stringStream.str();
+        
+        if (objectMap.find(uniqueName) == objectMap.end()) {
+            break;
         }
+        i++; 
     }
-	return uniqueName;
+    return uniqueName;
 };
 
 
-GeometryCore::ActorsMap GeometryCore::GeometryImporter::getPartsActorMap(){
+const GeometryCore::ActorsMap GeometryCore::GeometryImporter::getPartsActorMap(){
 	Handle(XCAFDoc_ColorTool) colorTool = XCAFDoc_DocumentTool::ColorTool(this->_dataFrame->Main());
 	Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
@@ -48,7 +45,26 @@ GeometryCore::ActorsMap GeometryCore::GeometryImporter::getPartsActorMap(){
 	return actorsMap;
 };
 
-GeometryCore::ActorsMap GeometryCore::GeometryImporter::getFacesActorMap(){
+const GeometryCore::ActorsMap GeometryCore::GeometryImporter::getFacesActorMap(){
+	GeometryCore::ActorsMap facesMap {};
+	for (const auto& it : this->_facesMap) {
+		const auto& shape = it.second;
+
+		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
+
+		// actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
+		actor->GetProperty()->SetLineWidth(3);
+
+		// std::stringstream stringStream;
+		// stringStream << std::addressof(* actor.GetPointer());
+		// std::string actorKey = stringStream.str();
+
+		facesMap[it.first] = actor;
+	}
+	return facesMap;
+};
+
+const GeometryCore::ActorsMap GeometryCore::GeometryImporter::getEdgesActorMap(){
 	GeometryCore::ActorsMap edgesMap {};
 	for (const auto& it : this->_edgesMap) {
 		const auto& shape = it.second;
@@ -66,25 +82,6 @@ GeometryCore::ActorsMap GeometryCore::GeometryImporter::getFacesActorMap(){
 	}
 	return edgesMap;
 };
-
-GeometryCore::ActorsMap GeometryCore::GeometryImporter::getEdgesActorMap(){
-	GeometryCore::ActorsMap facesMap {};
-	for (const auto& it : this->_facesMap) {
-		const auto& shape = it.second;
-
-		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
-
-		// actor->GetProperty()->SetColor(0.0, 0.0, 1.0);
-		actor->GetProperty()->SetLineWidth(3);
-
-		// std::stringstream stringStream;
-		// stringStream << std::addressof(* actor.GetPointer());
-		// std::string actorKey = stringStream.str();
-
-		facesMap[it.first] = actor;
-	}
-};
-
 
 vtkSmartPointer<vtkActor> GeometryCore::GeometryImporter::createVTKActor(const TopoDS_Shape& shape){
 	IVtkOCC_Shape* vtkShapeAdapter = new IVtkOCC_Shape(shape);

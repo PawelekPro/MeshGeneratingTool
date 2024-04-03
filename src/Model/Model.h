@@ -19,9 +19,11 @@
 
 #ifndef MODEL_H
 #define MODEL_H
-#include "GeometryFunctions.h"
+
 #include "Geometry.h"
 #include "Mesh.h"
+
+
 #include <gmsh.h_cwrap>
 #include <TopoDS_Shape.hxx>
 
@@ -38,9 +40,8 @@ class Model
 {
     public:
         std::string _modelName;
-        std::unique_ptr<GeometryCore::Geometry> geometry;
-        std::unique_ptr<MeshCore::Mesh> mesh;
-
+        GeometryCore::Geometry geometry;
+        MeshCore::Mesh mesh;
 
         Model(std::string modelName);
         ~Model();

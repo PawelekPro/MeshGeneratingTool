@@ -63,8 +63,8 @@ set(PROJECT_SOURCES
     ${UI_PATH}/Rendering/QVTKRenderWindow.h
     ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
     ${UI_PATH}/Rendering/QVTKInteractorStyle.h
-#    ${UI_PATH}/Rendering/QVTKNavigationWidget.h
-#    ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
+   ${UI_PATH}/Rendering/QVTKNavigationWidget.h
+   ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
 #    ${UI_PATH}/Rendering/QVTKToolBar.h
 #    ${UI_PATH}/Rendering/QVTKToolBar.cpp
     ${GEOM_CORE_PATH}/Geometry/Geometry.h

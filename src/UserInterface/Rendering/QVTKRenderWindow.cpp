@@ -232,3 +232,30 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ProcessEventsOff();
 	this->_logoWidget->ManagesCursorOff();
 }
+
+
+void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry){
+
+	this->mRenderers.at(static_cast<int>(Renderers::Main))->Clear();
+	this->mRenderers.at(static_cast<int>(Renderers::Faces))->Clear();
+	this->mRenderers.at(static_cast<int>(Renderers::Edges))->Clear();
+
+	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
+	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
+	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
+
+    for(const auto& actor : parts) {
+		std::cout << "Added actor: " << actor.first << " to part layer" << std::endl;
+        this->mRenderers.at(static_cast<int>(Renderers::Main))->AddActor(actor.second);
+    }
+    for(const auto& actor : faces) {
+		std::cout << "Added actor: " << actor.first << " to face layer" << std::endl;
+        this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
+    }
+    for(const auto& actor : edges) {
+		std::cout << "Added actor: " << actor.first << " to edge layer" << std::endl;
+        this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
+    }
+
+	this->RenderScene();
+}
