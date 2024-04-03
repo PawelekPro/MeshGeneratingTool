@@ -78,14 +78,15 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/STLPlugin/STLImporter.h
     ${GEOM_CORE_PATH}/STLPlugin/STLImporter.cpp
 
-    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
-    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.cpp
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
-    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
-    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
+    # ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
+    # ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
+    # ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
+    # ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.cpp
+    # ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
+    # ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
+    # ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
+    # ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
+    
     ${MESH_CORE_PATH}/Mesh.h
     ${MESH_CORE_PATH}/Mesh.cpp
     ${MODEL_PATH}/Model.h
