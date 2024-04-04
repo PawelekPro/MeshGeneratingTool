@@ -43,6 +43,7 @@ set(UI_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface)
 set(UI_UTILS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/GraphicalUtils)
 set(FORMS_PATH ${UI_PATH}/Forms)
 set(GEOM_CORE_PATH ${CMAKE_SOURCE_DIR}/src/GeometryCore)
+set(MESH_CORE_PATH ${CMAKE_SOURCE_DIR}/src/MeshCore)
 set(MODEL_PATH ${CMAKE_SOURCE_DIR}/src/Model)
 
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
@@ -62,18 +63,23 @@ set(PROJECT_SOURCES
     ${UI_PATH}/Rendering/QVTKRenderWindow.h
     ${UI_PATH}/Rendering/QVTKInteractorStyle.cpp
     ${UI_PATH}/Rendering/QVTKInteractorStyle.h
-#    ${UI_PATH}/Rendering/QVTKNavigationWidget.h
-#    ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
+   ${UI_PATH}/Rendering/QVTKNavigationWidget.h
+   ${UI_PATH}/Rendering/QVTKNavigationWidget.cpp
 #    ${UI_PATH}/Rendering/QVTKToolBar.h
 #    ${UI_PATH}/Rendering/QVTKToolBar.cpp
-    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.cpp
-    ${GEOM_CORE_PATH}/Geometry/GeometryFunctions.h
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.h
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPlugin.cpp
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.cpp
-    ${GEOM_CORE_PATH}/STEPPlugin/STEPPluginOperations.h
-    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.cpp
-    ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
+    ${GEOM_CORE_PATH}/Geometry/Geometry.h
+    ${GEOM_CORE_PATH}/Geometry/Geometry.cpp
+    ${GEOM_CORE_PATH}/GeometryImporter/GeometryImporter.h
+    ${GEOM_CORE_PATH}/GeometryImporter/GeometryImporter.cpp
+    ${GEOM_CORE_PATH}/GeometryImporter/STEPImporter.h
+    ${GEOM_CORE_PATH}/GeometryImporter/STEPImporter.cpp
+    ${GEOM_CORE_PATH}/GeometryImporter/STEPImporter.h
+    ${GEOM_CORE_PATH}/GeometryImporter/STEPImporter.cpp
+    ${GEOM_CORE_PATH}/GeometryImporter/STLImporter.h
+    ${GEOM_CORE_PATH}/GeometryImporter/STLImporter.cpp
+    
+    ${MESH_CORE_PATH}/Mesh.h
+    ${MESH_CORE_PATH}/Mesh.cpp
     ${MODEL_PATH}/Model.h
     ${MODEL_PATH}/Model.cpp
 )
@@ -89,9 +95,8 @@ set(INCLUDE_DIRS
     ${GEOM_CORE_PATH}
     ${GEOM_CORE_PATH}/GUI
     ${GEOM_CORE_PATH}/Geometry
-    ${GEOM_CORE_PATH}/STLPlugin
-    ${GEOM_CORE_PATH}/STEPPlugin
-
+    ${GEOM_CORE_PATH}/GeometryImporter
+    ${MESH_CORE_PATH}
     ${MODEL_PATH}
 
     ${GMSH_INC}

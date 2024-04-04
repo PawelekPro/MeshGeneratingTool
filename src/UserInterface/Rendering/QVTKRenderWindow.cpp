@@ -117,7 +117,7 @@ void Rendering::QVTKRenderWindow::fitView() {
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap) {
+void Rendering::QVTKRenderWindow::addActors(const GeometryCore::ActorsMap& actorsMap) {
 	for (const auto& entry : actorsMap) {
 		vtkSmartPointer<vtkActor> actor = entry.second;
 		this->mRenderers.at(0)->AddActor(actor);
@@ -127,7 +127,7 @@ void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap, bool layered) {
+void Rendering::QVTKRenderWindow::addActors(const GeometryCore::ActorsMap& actorsMap, bool layered) {
 	for (const auto& entry : actorsMap) {
 		std::string label = entry.first;
 		vtkSmartPointer<vtkActor> actor = entry.second;
@@ -183,7 +183,7 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 };
 
 //----------------------------------------------------------------------------
-vtkRenderer* Rendering::QVTKRenderWindow::getRenderer() {
+vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getRenderer() {
 	return this->activeLayerRenderer;
 }
 
@@ -197,6 +197,8 @@ void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layer) {
 	if (layer == static_cast<int>(Renderers::Main)) {
 		this->activeLayerRenderer = this->mRenderers.at(layer);
 	} else if (layer == static_cast<int>(Renderers::Edges)) {
+		this->activeLayerRenderer = this->mRenderers.at(layer);
+	} else if (layer == static_cast<int>(Renderers::Faces)) {
 		this->activeLayerRenderer = this->mRenderers.at(layer);
 	}
 }
@@ -231,4 +233,28 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->SetRepresentation(logoRepresentation);
 	this->_logoWidget->ProcessEventsOff();
 	this->_logoWidget->ManagesCursorOff();
+}
+
+
+void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry){
+
+	this->mRenderers.at(static_cast<int>(Renderers::Main))->Clear();
+	this->mRenderers.at(static_cast<int>(Renderers::Faces))->Clear();
+	this->mRenderers.at(static_cast<int>(Renderers::Edges))->Clear();
+
+	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
+	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
+	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
+
+    for(const auto& actor : parts) {
+        this->mRenderers.at(static_cast<int>(Renderers::Main))->AddActor(actor.second);
+    }
+    for(const auto& actor : faces) {
+        this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
+    }
+    for(const auto& actor : edges) {
+        this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
+    }
+
+	this->RenderScene();
 }

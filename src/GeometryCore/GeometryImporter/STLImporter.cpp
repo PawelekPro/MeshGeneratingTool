@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2024 Paweł Gilewicz
- *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+#include "STLImporter.h"
 
-#include "STLPluginOperations.h"
-
-void STLPlugin::STLFileReader::load(const std::string& fileName, QWidget* parent) {
-
+void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* parent){
 	ProgressBar* progressBar = qobject_cast<ProgressBar*>(parent);
 	progressBar->initialize();
 	progressBar->setProgressMessage("Converting to faces...");
@@ -90,7 +70,8 @@ void STLPlugin::STLFileReader::load(const std::string& fileName, QWidget* parent
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
 		counter++;
-		std::string uniqueName = getUniqueObjectName("ShellPart");
+		std::string uniqueName = getUniqueObjectName("ShellPart", this->_partsMap);
+        // std::cout << "Added shell part: " << uniqueName << std::endl;
 		this->_partsMap[uniqueName] = shell;
 	}
 
@@ -105,20 +86,13 @@ void STLPlugin::STLFileReader::load(const std::string& fileName, QWidget* parent
 	progressBar->finish();
 }
 
-Geometry::ActorsMap STLPlugin::STLFileReader::getVTKActorsMap() {
-	Geometry::ActorsMap actorsMap {};
 
+const GeometryCore::ActorsMap GeometryCore::STLImporter::getPartsActorMap(){
+	GeometryCore::ActorsMap actorsMap {};
 	for (const auto& it : this->_partsMap) {
 		const auto& shape = it.second;
-
 		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
-
-		std::stringstream stringStream;
-		stringStream << std::addressof(*actor.GetPointer());
-		std::string actorKey = stringStream.str();
-
-		actorsMap[actorKey] = actor;
+		actorsMap[it.first] = actor;
 	}
-
 	return actorsMap;
 }

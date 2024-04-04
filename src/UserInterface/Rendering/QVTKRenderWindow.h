@@ -20,9 +20,10 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-#include "GeometryFunctions.h"
+#include "Geometry.h"
 
-
+#include <algorithm>
+#include <numeric>
 #include <array>
 
 #include <QVTKOpenGLNativeWidget.h>
@@ -75,18 +76,18 @@ public:
 	/**
 	 * @brief  Add vtkActors to the current renderer and display them.
 	 *
-	 * @param  {Geometry::ActorsMap} actorsMap : Container of vtkActors.
+	 * @param  {GeometryCore::ActorsMap} actorsMap : Container of vtkActors.
 	 */
-	void addActors(const Geometry::ActorsMap& actorsMap);
+	void addActors(const GeometryCore::ActorsMap& actorsMap);
 
 	/**
 	 * @brief  Add vtkActors to the current renderer and display them in separated layers.
 	 *
-	 * @param  {Geometry::ActorsMap} actorsMap : Container of vtkActors.
+	 * @param  {GeometryCore::ActorsMap} actorsMap : Container of vtkActors.
 	 * @param  {bool} layered                  : Bool indicator wheter actors
 	 * 	should be located into separated layers.
 	 */
-	void addActors(const Geometry::ActorsMap& actorsMap, bool layered);
+	void addActors(const GeometryCore::ActorsMap& actorsMap, bool layered);
 
 	/**
 	 * @brief  Add actor to the renderer.
@@ -119,7 +120,7 @@ public:
 	 *
 	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
 	 */
-	vtkRenderer* getRenderer();
+	vtkSmartPointer<vtkRenderer> getRenderer();
 
 	/**
 	 * @brief  Enable and start displaying the camera orientation widget.
@@ -146,12 +147,19 @@ public:
 	 */
 	void setWaterMark();
 
+
+	/**
+	 * @brief  Clear all geometry actors from faces, edges and parts layers and
+	 * reload them from Geometry object
+	 *
+	 */
+	void updateGeometryActors(const GeometryCore::Geometry& geometry);
+
 	// Enumerator definition
 	enum class Renderers {
 		Main,
 		Edges,
 		Faces,
-		Solids,
 		Count // Count for definition of array size
 	};
 
