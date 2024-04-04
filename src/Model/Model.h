@@ -61,7 +61,9 @@ class Model
         };
 
     vtkSmartPointer<vtkPolyData> polyData;
-
+    GeometryCore::PartsMap _partsMap;
+    GeometryCore::PartsMap _facesMap;
+    GeometryCore::PartsMap _edgesMap;
 };
 // some code
 
