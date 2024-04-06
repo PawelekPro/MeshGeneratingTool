@@ -72,27 +72,20 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 void Rendering::QVTKRenderWindow::initializeRenderers() {
 	// Background color
 	vtkNew<vtkNamedColors> colors;
-
+	const int nLayers = static_cast<int>(Renderers::Count);
+	this->_rendererWindow->SetNumberOfLayers(nLayers);
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		// Create new renderers
 		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
 		this->mRenderers.at(i)->SetLayer(i);
-		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData());
-
-		if (i > 0) {
-			this->mRenderers.at(i)->EraseOff();
-			this->mRenderers.at(i)->PreserveDepthBufferOff();
-		}
-	}
-	const int nLayers = static_cast<int>(Renderers::Count);
-	this->_rendererWindow->SetNumberOfLayers(nLayers);
-
-	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
-		// Add renderers to render window
+		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData()
+		);
 		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
-		if (i > 0) {
+		if (i != static_cast<int>(Renderers::Main)) {
 			this->mRenderers.at(i)->SetActiveCamera(
 				this->mRenderers.at(0)->GetActiveCamera());
+			this->mRenderers.at(i)->EraseOff();
+			this->mRenderers.at(i)->PreserveDepthBufferOff();
 		}
 	}
 }
@@ -255,6 +248,5 @@ void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geome
     for(const auto& actor : edges) {
         this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
     }
-
 	this->RenderScene();
 }

@@ -158,8 +158,8 @@ public:
 	// Enumerator definition
 	enum class Renderers {
 		Main,
-		Edges,
 		Faces,
+		Edges,
 		Count // Count for definition of array size
 	};
 

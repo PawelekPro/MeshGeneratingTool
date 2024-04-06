@@ -65,7 +65,6 @@ class Model
     GeometryCore::PartsMap _facesMap;
     GeometryCore::PartsMap _edgesMap;
 };
-// some code
 
 #endif //MODEL_H
 
