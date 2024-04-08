@@ -110,6 +110,13 @@ private slots:
 	 */
 	void handleSelectorButtonClicked(QAbstractButton* button);
 
+	/**
+	 * This function is called when an item selection of tree structure is changed.
+	 *
+	 * @param None
+	 *
+	 * @returns None
+	 */
 	void onItemSelectionChanged();
 };
 #endif // MAINWINDOW_H

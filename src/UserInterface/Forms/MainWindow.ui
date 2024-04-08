@@ -100,6 +100,9 @@
            <attribute name="headerDefaultSectionSize">
             <number>100</number>
            </attribute>
+           <attribute name="headerHighlightSections">
+            <bool>true</bool>
+           </attribute>
            <attribute name="headerShowSortIndicator" stdset="0">
             <bool>false</bool>
            </attribute>
@@ -126,6 +129,9 @@
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>
            </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>100</number>
+           </attribute>
           </widget>
          </widget>
         </item>

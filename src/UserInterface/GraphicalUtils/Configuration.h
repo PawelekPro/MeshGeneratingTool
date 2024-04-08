@@ -22,6 +22,9 @@
 
 #include <QString>
 
+/**
+ * Namespace containing filter constants for file types.
+ */
 namespace filters {
 const QString StepFilter = "STEP Physical File (*.stp *.step *.STP *.STEP)";
 const QString StlFilter = "STL file (*.stl *.STL)";

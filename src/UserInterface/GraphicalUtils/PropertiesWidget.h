@@ -25,6 +25,9 @@
 #include <QTableView>
 #include <QWidget>
 
+/**
+ * Custom widget for displaying properties using a table view.
+ */
 class PropertiesWidget : public QTableView {
 	Q_OBJECT
 public:
@@ -32,6 +35,13 @@ public:
 		: QTableView(parent) {};
 	~PropertiesWidget() = default;
 
+	/**
+	 * Sets the PropertiesModel for the object.
+	 *
+	 * @param model A pointer to the PropertiesModel to be set.
+	 *
+	 * @returns None
+	 */
 	void setModel(PropertiesModel*);
 };
 

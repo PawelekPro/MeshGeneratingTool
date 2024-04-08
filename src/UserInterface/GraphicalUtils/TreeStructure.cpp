@@ -129,7 +129,7 @@ void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* it
 
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
 	QVariant variantModel = QVariant::fromValue(model);
-	qDebug() << variantModel;
+
 	// ToDo: Model data changed detection
 	item->setData(0, role, variantModel);
 }

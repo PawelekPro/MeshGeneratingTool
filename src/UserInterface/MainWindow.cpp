@@ -140,20 +140,16 @@ void MainWindow::onItemSelectionChanged() {
 	if (!itemsList.isEmpty()) {
 		item = itemsList.takeFirst();
 	}
-	qDebug() << item->text(static_cast<int>(TreeStructure::Column::Label));
 
 	QVariant modelVariant = item->data(
 		0, TreeStructure::Role.value("Properties"));
 	QSharedPointer<PropertiesModel> sharedModel
 		= modelVariant.value<QSharedPointer<PropertiesModel>>();
-	qDebug() << sharedModel;
 
 	if (!sharedModel.isNull()) {
-		qDebug() << "Setting new model";
 		PropertiesModel* model = sharedModel.data();
 		// ToDo: Detect data changed event and make project unsaved
 
-		qDebug() << model;
 		this->ui->propertiesTable->setModel(model);
 		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
 		header->setSectionResizeMode(QHeaderView::ResizeToContents);
