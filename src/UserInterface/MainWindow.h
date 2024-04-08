@@ -109,5 +109,7 @@ private slots:
 	 * @param  {QAbstractButton*} button : Button that sends a signal
 	 */
 	void handleSelectorButtonClicked(QAbstractButton* button);
+
+	void onItemSelectionChanged();
 };
 #endif // MAINWINDOW_H

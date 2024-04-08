@@ -21,9 +21,9 @@
 
 //--------------------------------------------------------------------------------------
 void PropertiesWidget::setModel(PropertiesModel* model) {
-	ModelFilter* proxy = new ModelFilter(this);
-	proxy->setSourceModel(model);
-	QTableView::setModel(proxy);
+	// ModelFilter* proxy = new ModelFilter(this);
+	// proxy->setSourceModel(model);
+	QTableView::setModel(model);
 
 	// ToDo: Set widgets
 }

@@ -55,18 +55,14 @@ PropertiesModel::~PropertiesModel() { }
 
 //--------------------------------------------------------------------------------------
 int PropertiesModel::rowCount(const QModelIndex& parent) const {
-	if (parent.isValid()) {
-		return this->_properties.count();
-	}
-	return 0;
+	Q_UNUSED(parent);
+	return this->_properties.length();
 }
 
 //--------------------------------------------------------------------------------------
 int PropertiesModel::columnCount(const QModelIndex& parent) const {
-	if (parent.isValid()) {
-		return this->_header.size();
-	}
-	return 0;
+	Q_UNUSED(parent);
+	return 2;
 }
 
 //--------------------------------------------------------------------------------------
@@ -87,6 +83,31 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 	}
 
 	return ret;
+}
+
+//--------------------------------------------------------------------------------------
+bool PropertiesModel::setData(
+	const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
+	if (!index.isValid() || role != Qt::EditRole) {
+		return false;
+	}
+
+	QDomElement propNode = this->_properties.value(index.row());
+	if (index.column() == 1) {
+		QDomText textNode = propNode.firstChild().toText();
+		if (textNode.isNull()) {
+			QDomDocument doc = propNode.ownerDocument();
+			QDomText newText = doc.createTextNode(value.toString());
+			propNode.appendChild(newText);
+		} else {
+			textNode.setData(value.toString());
+		}
+
+		emit dataChanged(index, index);
+		return true;
+	}
+
+	return false;
 }
 
 //--------------------------------------------------------------------------------------

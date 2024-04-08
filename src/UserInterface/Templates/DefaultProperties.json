@@ -4,7 +4,14 @@
             {
                 "name": "test",
                 "label": "test",
-                "widget": "test"
+                "widget": "test",
+                "value": "0"
+            },
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "test",
+                "value": "0"
             }
         ]
     },
@@ -13,7 +20,8 @@
             {
                 "name": "test",
                 "label": "test",
-                "widget": "test"
+                "widget": "test",
+                "value": "0"
             }
         ]
     },
@@ -22,7 +30,8 @@
             {
                 "name": "test",
                 "label": "test",
-                "widget": "test"
+                "widget": "test",
+                "value": "0"
             }
         ]
     },
@@ -31,7 +40,8 @@
             {
                 "name": "test",
                 "label": "test",
-                "widget": "test"
+                "widget": "test",
+                "value": "0"
             }
         ]
     }

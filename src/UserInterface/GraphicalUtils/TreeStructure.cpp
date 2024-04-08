@@ -30,7 +30,8 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->docObjectModel = new QDomDocument();
 
 	this->buildBaseObjectsRepresentation();
-	this->parseDefaultProperties();
+
+	this->writeDataToXML("/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
 }
 
 //--------------------------------------------------------------------------------------
@@ -59,10 +60,15 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		}
 		QDomElement* rootElement = new QDomElement(this->docObjectModel->createElement(xmlTag));
 
+		PropertiesList propertiesList = this->parseDefaultProperties(xmlTag);
+		this->addProperties(rootElement, propertiesList);
+
 		QTreeWidgetItem* rootItem = this->createItem(rootElement);
 		rootItem->setText(static_cast<int>(Column::Label), rootName);
 
-		this->addPropertiesModel(rootElement, rootItem);
+		// This will parse only element with "Properties" tage name
+		auto propsChildElem = rootElement->childNodes().at(0).toElement();
+		this->addPropertiesModel(&propsChildElem, rootItem);
 		root.appendChild(*rootElement);
 	}
 }
@@ -121,46 +127,76 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& fileName)
 void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* item) {
 	int role = Role.value(element->tagName());
 
-	PropertiesModel model(element, this);
-	QVariant variantModel = QVariant::fromValue(&model);
-
+	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
+	QVariant variantModel = QVariant::fromValue(model);
+	qDebug() << variantModel;
 	// ToDo: Model data changed detection
-	// item->setData(0, role, variantModel);
+	item->setData(0, role, variantModel);
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::parseDefaultProperties() {
+void TreeStructure::addProperties(QDomElement* parentElement, PropertiesList propertiesList) {
+	QDomElement propsElement = this->docObjectModel->createElement("Properties");
+
+	for (const QMap<QString, QString>& propertyMap : propertiesList) {
+		QDomElement elem = this->docObjectModel->createElement("property");
+
+		// Iterate through QMap to set attributes
+		for (auto it = propertyMap.constBegin(); it != propertyMap.constEnd(); ++it) {
+			if (it.key() != "value") {
+				elem.setAttribute(it.key(), it.value());
+			}
+		}
+
+		// Set the value of node
+		QDomText textNode = this->docObjectModel->createTextNode(propertyMap.value("value"));
+		elem.appendChild(textNode);
+
+		propsElement.appendChild(elem);
+	}
+
+	parentElement->appendChild(propsElement);
+}
+
+//--------------------------------------------------------------------------------------
+PropertiesList TreeStructure::parseDefaultProperties(QString prop) {
 	rapidjson::Document document = this->readDefaultProperties();
 
-	// Iterate over all json objects
-	for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin();
-		 itr != document.MemberEnd();
-		 ++itr) {
-		const std::string& sectionName = itr->name.GetString();
-		const rapidjson::Value& sectionObject = itr->value;
+	// Initialize properties container
+	PropertiesList propertiesList;
+	std::string propName = prop.toStdString();
+	if (document.HasMember(propName.c_str()) && document[propName.c_str()].IsObject()) {
+		const rapidjson::Value& section = document[propName.c_str()];
 
-		// Print the section name
-		std::cout << "Section: " << sectionName << std::endl;
+		if (section.HasMember("Properties")) {
+			const rapidjson::Value& propertiesArray = section["Properties"];
 
-		if (sectionObject.IsObject()) {
-			// Access the "properties" array within the section object
-			const rapidjson::Value& propertiesArray = sectionObject["Properties"];
+			// Iterate through the elements of the "Properties" array
+			for (rapidjson::SizeType i = 0; i < propertiesArray.Size(); ++i) {
+				const rapidjson::Value& property = propertiesArray[i];
 
-			// Check if "properties" is an array
-			if (propertiesArray.IsArray()) {
-				// Iterate over each element in the "properties" array
-				for (rapidjson::SizeType i = 0; i < propertiesArray.Size(); ++i) {
-					const rapidjson::Value& property = propertiesArray[i];
+				if (property.IsObject()) {
+					// Each QMap instance represents one property
+					QMap<QString, QString> propertyMap;
 
-					// Access and print properties
-					if (property.HasMember("name") && property["name"].IsString()) {
-						std::string name = property["name"].GetString();
-						std::cout << "Name: " << name << std::endl;
+					for (rapidjson::Value::ConstMemberIterator itr
+						 = property.MemberBegin();
+						 itr != property.MemberEnd(); ++itr) {
+						// Get the key and value
+						const char* key = itr->name.GetString();
+						const rapidjson::Value& value = itr->value;
+
+						// Insert key-value pair into the QMap
+						propertyMap[QString::fromUtf8(key)]
+							= QString::fromUtf8(value.GetString());
 					}
+					// Add the QMap to the QList
+					propertiesList.append(propertyMap);
 				}
 			}
 		}
 	}
+	return propertiesList;
 }
 
 //--------------------------------------------------------------------------------------

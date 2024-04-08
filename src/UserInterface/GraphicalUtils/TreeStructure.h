@@ -48,6 +48,8 @@
 
 namespace fs = std::filesystem;
 
+using PropertiesList = QList<QMap<QString, QString>>;
+
 class TreeStructure : public QTreeWidget {
 	Q_OBJECT
 public:
@@ -65,7 +67,7 @@ public:
 		Actor
 	};
 
-	QMap<QString, int> Role = {
+	static const inline QMap<QString, int> Role = {
 		{ "Properties", Qt::UserRole + 1 },
 		{ "Advanced", Qt::UserRole + 2 },
 		{ "References", Qt::UserRole + 3 },
@@ -95,7 +97,9 @@ private:
 
 	void addPropertiesModel(QDomElement*, QTreeWidgetItem*);
 
-	void parseDefaultProperties();
+	void addProperties(QDomElement*, PropertiesList);
+
+	PropertiesList parseDefaultProperties(QString);
 
 	rapidjson::Document readDefaultProperties();
 
