@@ -156,6 +156,5 @@ void MainWindow::initializeActions(){
 
 void MainWindow::showMesh(){
 	this->model->updateMeshActor();
-	this->QVTKRender->addActor(this->model->meshActor);
 	this->QVTKRender->getRenderer()->Render();
 }

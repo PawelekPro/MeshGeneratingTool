@@ -77,15 +77,14 @@ void Rendering::QVTKRenderWindow::initializeRenderers() {
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		// Create new renderers
 		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
-		this->mRenderers.at(i)->SetLayer(i);
+		this->mRenderers.at(i)->SetLayer(nLayers - 1 - i);
 		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData()
 		);
 		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
 		if (i != static_cast<int>(Renderers::Main)) {
 			this->mRenderers.at(i)->SetActiveCamera(
 				this->mRenderers.at(0)->GetActiveCamera());
-			this->mRenderers.at(i)->EraseOff();
-			this->mRenderers.at(i)->PreserveDepthBufferOff();
+			this->mRenderers.at(i)->SetInteractive(false);;
 		}
 	}
 }
@@ -108,40 +107,6 @@ void Rendering::QVTKRenderWindow::fitView() {
 	this->activeLayerRenderer->ResetCamera();
 	this->_rendererWindow->Render();
 }
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const GeometryCore::ActorsMap& actorsMap) {
-	for (const auto& entry : actorsMap) {
-		vtkSmartPointer<vtkActor> actor = entry.second;
-		this->mRenderers.at(0)->AddActor(actor);
-	}
-	this->mRenderers.at(0)->ResetCamera();
-	this->_rendererWindow->Render();
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const GeometryCore::ActorsMap& actorsMap, bool layered) {
-	for (const auto& entry : actorsMap) {
-		std::string label = entry.first;
-		vtkSmartPointer<vtkActor> actor = entry.second;
-		Renderers renderer;
-		if (label.find("Face") != std::string::npos) {
-			renderer = Renderers::Main;
-		} else if (label.find("Edge") != std::string::npos) {
-			renderer = Renderers::Edges;
-		}
-
-		this->mRenderers.at(static_cast<int>(renderer))->AddActor(actor);
-	}
-	this->RenderScene();
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
-	this->mRenderers.at(0)->AddActor(actor);
-	this->_rendererWindow->Render();
-}
-
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
@@ -186,15 +151,21 @@ void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layer) {
-	if (layer == static_cast<int>(Renderers::Main)) {
-		this->activeLayerRenderer = this->mRenderers.at(layer);
-	} else if (layer == static_cast<int>(Renderers::Edges)) {
-		this->activeLayerRenderer = this->mRenderers.at(layer);
-	} else if (layer == static_cast<int>(Renderers::Faces)) {
-		this->activeLayerRenderer = this->mRenderers.at(layer);
-	}
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layerId) {
+
+	if (this->activeLayerRenderer != nullptr) {
+		if (layerId == this->activeLayerRenderer->GetLayer()) {
+        	return;
+    	}
+        this->activeLayerRenderer->SetInteractive(false);
+		this->activeLayerRenderer->SetLayer(0);
+    }
+	this->activeLayerRenderer = this->mRenderers.at(layerId);
+	this->activeLayerRenderer->SetInteractive(true);
+	this->activeLayerRenderer->SetLayer(3);
 }
+
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::enableWaterMark() {
@@ -246,7 +217,9 @@ void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geome
         this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
     }
     for(const auto& actor : edges) {
+		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
         this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
     }
+	this->setActiveLayerRenderer(static_cast<int>(Renderers::Main));
 	this->RenderScene();
 }
