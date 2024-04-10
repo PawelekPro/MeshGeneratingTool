@@ -72,19 +72,18 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 void Rendering::QVTKRenderWindow::initializeRenderers() {
 	// Background color
 	vtkNew<vtkNamedColors> colors;
-	const int nLayers = static_cast<int>(Renderers::Count);
-	this->_rendererWindow->SetNumberOfLayers(nLayers);
+	this->_rendererWindow->SetNumberOfLayers(2);
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		// Create new renderers
 		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
-		this->mRenderers.at(i)->SetLayer(nLayers - 1 - i);
+		this->mRenderers.at(i)->SetLayer(0);
 		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData()
 		);
 		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
 		if (i != static_cast<int>(Renderers::Main)) {
 			this->mRenderers.at(i)->SetActiveCamera(
 				this->mRenderers.at(0)->GetActiveCamera());
-			this->mRenderers.at(i)->SetInteractive(false);;
+			this->mRenderers.at(i)->SetInteractive(false);
 		}
 	}
 }
@@ -163,7 +162,7 @@ void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layerId) {
     }
 	this->activeLayerRenderer = this->mRenderers.at(layerId);
 	this->activeLayerRenderer->SetInteractive(true);
-	this->activeLayerRenderer->SetLayer(3);
+	this->activeLayerRenderer->SetLayer(1);
 }
 
 

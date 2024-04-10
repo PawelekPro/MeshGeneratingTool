@@ -138,6 +138,12 @@ public:
 		Edges,
 		Count // Count for definition of array size
 	};
+	enum class Layers {
+		Main,
+		Faces,
+		Edges,
+		Count // Count for definition of array size
+	};
 
 protected:
 	/**
