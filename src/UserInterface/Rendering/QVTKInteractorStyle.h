@@ -98,14 +98,16 @@ private:
 	QAction* _customAction;
 
 	// Container for storing picked actor and its properties.
-	vtkSmartPointer<vtkActor> lastPickedActor;
-	vtkSmartPointer<vtkProperty> lastPickedProperty;
-	vtkSmartPointer<vtkPropPicker> picker;
+	vtkSmartPointer<vtkPropPicker> LMBPicker;
+	vtkSmartPointer<vtkActor> LMBActor;
+	vtkSmartPointer<vtkActor> prevLMBActor;
+	vtkSmartPointer<vtkProperty> prevLMBProperty;
+
 
 	// Container for storing hovered actor and its properties.
 	vtkSmartPointer<vtkPropPicker> hoverPicker;
-	vtkSmartPointer<vtkActor> prevHoveredActor;
 	vtkSmartPointer<vtkActor> hoveredActor;
+	vtkSmartPointer<vtkActor> prevHoveredActor;
 	vtkSmartPointer<vtkProperty> prevHoveredProperty;
 };
 };
