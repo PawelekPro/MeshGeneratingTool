@@ -40,13 +40,13 @@ MainWindow::MainWindow(QWidget* parent)
 
 
 	this->buttonGroup.addButton(this->ui->volumeSelectorButton, 
-	static_cast<int>(Rendering::QVTKRenderWindow::Renderers::Main));
+	static_cast<int>(Rendering::Renderers::Main));
 
 	this->buttonGroup.addButton(this->ui->facesSelectorButton, 
-	static_cast<int>(Rendering::QVTKRenderWindow::Renderers::Faces));
+	static_cast<int>(Rendering::Renderers::Faces));
 
 	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 
-	static_cast<int>(Rendering::QVTKRenderWindow::Renderers::Edges));
+	static_cast<int>(Rendering::Renderers::Edges));
 	
 	this->setConnections();
 	this->initializeActions();
@@ -145,7 +145,8 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// std::cout<<"Button id: " << buttonGroup.id(button) << std::endl;
 	// Set active layer according to selected button
 	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
-	this->QVTKRender->setActiveLayerRenderer(buttonGroup.id(button));
+	this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
+										buttonGroup.id(button)));
 }
 
 void MainWindow::initializeActions(){
@@ -156,5 +157,5 @@ void MainWindow::initializeActions(){
 
 void MainWindow::showMesh(){
 	this->model->updateMeshActor();
-	this->QVTKRender->getRenderer()->Render();
+	this->QVTKRender->getActiveRenderer()->Render();
 }

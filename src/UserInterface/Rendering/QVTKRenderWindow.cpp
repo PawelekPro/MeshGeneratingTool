@@ -46,9 +46,6 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_camOrientManipulator->SetParentRenderer(this->mRenderers.at(0));
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
-
-	this->setActiveLayerRenderer(0);
-
 	vtkSmartPointer<Interactor::QVTKInteractorStyle>
 		interactorStyle
 		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New();
@@ -72,20 +69,21 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 void Rendering::QVTKRenderWindow::initializeRenderers() {
 	// Background color
 	vtkNew<vtkNamedColors> colors;
-	this->_rendererWindow->SetNumberOfLayers(2);
+	this->_rendererWindow->SetNumberOfLayers(static_cast<int>(Layers::Count));
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		// Create new renderers
 		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
-		this->mRenderers.at(i)->SetLayer(0);
+		this->mRenderers.at(i)->SetLayer(static_cast<int>(Layers::Bottom));
 		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData()
 		);
 		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
 		if (i != static_cast<int>(Renderers::Main)) {
 			this->mRenderers.at(i)->SetActiveCamera(
-				this->mRenderers.at(0)->GetActiveCamera());
+				this->mRenderers.at(static_cast<int>(Renderers::Main))->GetActiveCamera());
 			this->mRenderers.at(i)->SetInteractive(false);
 		}
 	}
+	this->setActiveRenderer(Renderers::Main);
 }
 
 //----------------------------------------------------------------------------
@@ -103,7 +101,7 @@ void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interac
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::fitView() {
-	this->activeLayerRenderer->ResetCamera();
+	this->activeRenderer->ResetCamera();
 	this->_rendererWindow->Render();
 }
 //----------------------------------------------------------------------------
@@ -140,8 +138,8 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 };
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getRenderer() {
-	return this->activeLayerRenderer;
+vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getActiveRenderer() {
+	return this->activeRenderer;
 }
 
 //----------------------------------------------------------------------------
@@ -151,18 +149,16 @@ void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layerId) {
-
-	if (this->activeLayerRenderer != nullptr) {
-		if (layerId == this->activeLayerRenderer->GetLayer()) {
-        	return;
-    	}
-        this->activeLayerRenderer->SetInteractive(false);
-		this->activeLayerRenderer->SetLayer(0);
-    }
-	this->activeLayerRenderer = this->mRenderers.at(layerId);
-	this->activeLayerRenderer->SetInteractive(true);
-	this->activeLayerRenderer->SetLayer(1);
+void Rendering::QVTKRenderWindow::setActiveRenderer(Rendering::Renderers rendererId) {
+	if (this->activeRenderer){
+	this->activeRenderer->SetInteractive(false);
+	this->activeRenderer->SetLayer(static_cast<int>(Rendering::Layers::Bottom));
+	}
+	this->activeRenderer = this->mRenderers.at(static_cast<int>(rendererId));
+	this->activeRenderer->SetInteractive(true);
+	this->activeRenderer->SetLayer(static_cast<int>(Rendering::Layers::Top));
+	this->activeRendererId = rendererId;
+	this->RenderScene();
 }
 
 
@@ -219,6 +215,6 @@ void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geome
 		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
         this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
     }
-	this->setActiveLayerRenderer(static_cast<int>(Renderers::Main));
+	this->setActiveRenderer(Renderers::Main);
 	this->RenderScene();
 }

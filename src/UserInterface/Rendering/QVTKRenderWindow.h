@@ -56,7 +56,17 @@
 #include <QPointer>
 
 namespace Rendering {
-
+enum class Renderers {
+	Main,
+	Faces,
+	Edges,
+	Count // Count for definition of array size
+};
+enum class Layers {
+	Bottom,
+	Top,
+	Count // Count for definition of array size
+};
 /**
  * @brief  The QVTKRenderWindow provides class for rendering VTK objects inside Qt application.
  *
@@ -91,12 +101,7 @@ public:
 	 */
 	void RenderScene();
 
-	/**
-	 * @brief  Get renderer representing currently active layer.
-	 *
-	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
-	 */
-	vtkSmartPointer<vtkRenderer> getRenderer();
+
 
 	/**
 	 * @brief  Enable and start displaying the camera orientation widget.
@@ -111,12 +116,17 @@ public:
 	void enableWaterMark();
 
 	/**
-	 * @brief  Set active renderer represented by layer ID.
+	 * @brief  Set active renderer
 	 *
-	 * @param  {int} layer : ID of layer to be activated.
+	 * @param  {Renderers} layer : ID of renderer to be activated.
 	 */
-	void setActiveLayerRenderer(const int layer);
-
+	void setActiveRenderer(Renderers rendererId);
+	/**
+	 * @brief  Get renderer representing currently active layer.
+	 *
+	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
+	 */
+	vtkSmartPointer<vtkRenderer> getActiveRenderer();
 	/**
 	 * @brief  Initialize and setup water mark widget.
 	 *
@@ -131,20 +141,6 @@ public:
 	 */
 	void updateGeometryActors(const GeometryCore::Geometry& geometry);
 
-	// Enumerator definition
-	enum class Renderers {
-		Main,
-		Faces,
-		Edges,
-		Count // Count for definition of array size
-	};
-	enum class Layers {
-		Main,
-		Faces,
-		Edges,
-		Count // Count for definition of array size
-	};
-
 protected:
 	/**
 	 * @brief  Construct and initialize renderes at each layer.
@@ -156,7 +152,8 @@ protected:
 	std::array<vtkSmartPointer<vtkRenderer>, static_cast<size_t>(Renderers::Count)> mRenderers;
 
 	// Attribute for storing the currently active renderer (layer)
-	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
+	vtkSmartPointer<vtkRenderer> activeRenderer;
+	Renderers activeRendererId;
 
 private:
 	QPointer<QWidget> _widget;

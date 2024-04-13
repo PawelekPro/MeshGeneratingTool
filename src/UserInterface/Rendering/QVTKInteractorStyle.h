@@ -103,8 +103,10 @@ private:
 	vtkSmartPointer<vtkPropPicker> picker;
 
 	// Container for storing hovered actor and its properties.
-	vtkSmartPointer<vtkActor> lastHoveredActor;
-	vtkSmartPointer<vtkProperty> lastHoveredProperty;
+	vtkSmartPointer<vtkPropPicker> hoverPicker;
+	vtkSmartPointer<vtkActor> prevHoveredActor;
+	vtkSmartPointer<vtkActor> hoveredActor;
+	vtkSmartPointer<vtkProperty> prevHoveredProperty;
 };
 };
 

@@ -36,8 +36,8 @@ Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
 
-	lastPickedProperty->Delete();
-	lastHoveredProperty->Delete();
+	// lastPickedProperty->Delete();
+	// lastHoveredProperty->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
 
 	// Pick from this location
 	vtkNew<vtkPropPicker> picker;
-	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getRenderer());
+	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
 
 	// If picked something before, reset its property.
 	if (this->lastPickedActor) {
@@ -105,27 +105,27 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 
 //----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnMouseMove() {
-	if (this->lastHoveredActor) {
-		this->lastHoveredActor->GetProperty()->DeepCopy(this->lastHoveredProperty);
-	}
-
-	this->lastHoveredActor = NULL;
-
-	int* clickPos = this->GetInteractor()->GetEventPosition();
-	vtkNew<vtkCellPicker> picker;
-	picker->SetTolerance(0.001);
-	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getRenderer());
-
-	this->lastHoveredActor = picker->GetActor();
-
-	// Check if something was picked
-	if (this->lastHoveredActor) {
-		this->lastHoveredProperty->DeepCopy(this->lastHoveredActor->GetProperty());
-		this->lastHoveredActor->GetProperty()->SetLineWidth(5);
-		this->lastHoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
-	}
-	// this->GetInteractor()->Render();
-	this->Superclass::OnMouseMove();
+    int* clickPos = this->GetInteractor()->GetEventPosition();
+    hoverPicker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
+    hoveredActor = this->hoverPicker->GetActor();
+    if (hoveredActor != prevHoveredActor) {
+        if (hoveredActor) {
+            if (prevHoveredActor) {
+                prevHoveredActor->SetProperty(prevHoveredProperty);
+                std::cout << "setting property!" << std::endl;
+            }
+            hoveredActor->GetProperty()->DeepCopy(prevHoveredProperty);
+            hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
+            hoveredActor->GetProperty()->SetLineWidth(5);
+        } else {
+            if (prevHoveredActor) {
+				prevHoveredActor->SetProperty(prevHoveredProperty);
+				prevHoveredProperty = nullptr;
+            }
+        }
+    }
+    this->prevHoveredActor = hoveredActor ? hoveredActor : nullptr; // Update prevHoveredActor
+    this->Superclass::OnMouseMove();
 }
 
 //----------------------------------------------------------------------------
@@ -136,6 +136,8 @@ void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qv
 	lastPickedActor = NULL;
 	lastPickedProperty = vtkProperty::New();
 
-	lastHoveredActor = NULL;
-	lastHoveredProperty = vtkProperty::New();
+	hoveredActor = NULL;
+	prevHoveredActor = NULL;
+	prevHoveredProperty = vtkProperty::New();
+	hoverPicker = vtkPropPicker::New();
 }
