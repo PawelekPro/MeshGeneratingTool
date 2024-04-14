@@ -96,8 +96,10 @@ private:
 	void createContextMenu();
 
 	Rendering::QVTKRenderWindow* _qvtkRenderWindow;
-	QMenu* _contextMenu;
-	QAction* _customAction;
+	QPointer<QMenu> _contextMenu;
+	QPointer<QAction> _fitViewAction;
+	QPointer<QAction> _faceSizingAction;
+	QPointer<QAction> _edgeSizingAction;
 
 	// Container for storing picked actor and its properties.
 	vtkSmartPointer<vtkPropPicker> LMBPicker;

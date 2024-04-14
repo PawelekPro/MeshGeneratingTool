@@ -157,3 +157,11 @@ void Model::updateMeshActor()
     this->meshActor = vtkSmartPointer<vtkActor>::New();
     this->meshActor->SetMapper(mapper);
 };
+
+void Model::addEdgeSizing(vtkSmartPointer<vtkActor> edgeActor){
+
+};
+
+void Model::addFaceSizing(vtkSmartPointer<vtkActor> faceActor){
+
+};

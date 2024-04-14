@@ -34,6 +34,7 @@
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+#include <vtkActor.h>
 
 
 class Model
@@ -50,6 +51,8 @@ class Model
         void meshParts();
         void updateMeshActor();
 
+        void addFaceSizing(vtkSmartPointer<vtkActor> edgeActor);
+        void addEdgeSizing(vtkSmartPointer<vtkActor> faceActor);
 
         vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
         vtkSmartPointer<vtkActor> meshActor;

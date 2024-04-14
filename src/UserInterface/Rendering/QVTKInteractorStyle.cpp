@@ -87,15 +87,21 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 		font.setPointSize(10);
 		_contextMenu->setFont(font);
 
-		_customAction = new QAction("Fit view", _contextMenu);
+		_fitViewAction = new QAction("Fit view", _contextMenu);
+		_faceSizingAction = new QAction("Add face sizing", _contextMenu);
+		_edgeSizingAction = new QAction("Add edge sizing", _contextMenu);
 
-		QObject::connect(_customAction, &QAction::triggered, [this]() {
+		QObject::connect(_fitViewAction, &QAction::triggered, [this]() {
 			this->_qvtkRenderWindow->fitView();
+			this->_qvtkRenderWindow->model->addFaceSizing(LMBActor);
+			this->_qvtkRenderWindow->model->addEdgeSizing(LMBActor);
 		});
 
 		// Add the custom QAction to the context menu
-		_contextMenu->addAction(_customAction);
-	}
+		_contextMenu->addAction(_fitViewAction);
+		_contextMenu->addAction(_faceSizingAction);
+		_contextMenu->addAction(_edgeSizingAction);				
+	}	
 }
 
 //----------------------------------------------------------------------------
@@ -149,7 +155,7 @@ void Interactor::QVTKInteractorStyle::OnKeyRelease() {
 void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
 	_qvtkRenderWindow = qvtkRenderWindow;
 	_contextMenu = nullptr;
-	_customAction = nullptr;
+	_fitViewAction = nullptr;
 
 
 	LMBActor = nullptr;

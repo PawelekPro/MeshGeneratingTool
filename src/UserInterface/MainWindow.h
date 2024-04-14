@@ -51,7 +51,7 @@ public:
 	MainWindow(QWidget* parent = nullptr);
 	~MainWindow();
 
-	std::unique_ptr<Model> model;
+	std::shared_ptr<Model> model;
 
 	/**
 	 * @brief  Open system dialog for selecting file and perform defined action with selected file.

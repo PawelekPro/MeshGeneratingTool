@@ -125,8 +125,8 @@ void MainWindow::importSTL(QString fileName) {
 //----------------------------------------------------------------------------
 void MainWindow::newModel() {
 	std::string  modelName = "Model_1";
-	this->model = std::make_unique<Model>(modelName);
-
+	this->model = std::make_shared<Model>(modelName);
+	this->QVTKRender->model = this->model;
 	// enable imports
 	ui->actionImportSTEP->setEnabled(true);
 	ui->actionImportSTL->setEnabled(true);

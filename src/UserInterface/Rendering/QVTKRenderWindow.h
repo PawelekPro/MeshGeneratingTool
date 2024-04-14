@@ -20,6 +20,8 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
+#include "Model.h"
+#include "Mesh.h"
 #include "Geometry.h"
 
 #include <algorithm>
@@ -76,7 +78,7 @@ class QVTKRenderWindow {
 public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
-
+	std::shared_ptr<Model> model;
 	/**
 	 * @brief Generate global coordinate system.
 	 *
