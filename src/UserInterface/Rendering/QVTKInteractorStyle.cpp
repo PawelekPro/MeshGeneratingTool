@@ -50,7 +50,7 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 	this->createContextMenu();
 	_contextMenu->exec(QCursor::pos());
 
-	this->Superclass::OnRightButtonDown();
+	// this->Superclass::OnRightButtonDown();
 }
 
 //----------------------------------------------------------------------------
