@@ -110,9 +110,11 @@ void Interactor::QVTKInteractorStyle::OnMouseMove() {
                 	prevHoveredActor->SetProperty(prevHoveredProperty);
 				}
             }
-            hoveredActor->GetProperty()->DeepCopy(prevHoveredProperty);
-            hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
-            hoveredActor->GetProperty()->SetLineWidth(5);
+			if (hoveredActor!= prevLMBActor){
+				hoveredActor->GetProperty()->DeepCopy(prevHoveredProperty);
+				hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
+				hoveredActor->GetProperty()->SetLineWidth(5);
+			}
         } else {
             if (prevHoveredActor) {
 				if(prevHoveredActor != prevLMBActor){
