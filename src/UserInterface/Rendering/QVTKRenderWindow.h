@@ -129,6 +129,7 @@ public:
 	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
 	 */
 	vtkSmartPointer<vtkRenderer> getActiveRenderer();
+	Renderers getActiveRendererId();
 	/**
 	 * @brief  Initialize and setup water mark widget.
 	 *

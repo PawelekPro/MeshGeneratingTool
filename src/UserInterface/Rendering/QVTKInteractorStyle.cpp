@@ -96,16 +96,31 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 			this->_qvtkRenderWindow->model->addFaceSizing(LMBActor);
 			this->_qvtkRenderWindow->model->addEdgeSizing(LMBActor);
 		});
-
-		// Add the custom QAction to the context menu
 		_contextMenu->addAction(_fitViewAction);
 		_contextMenu->addAction(_faceSizingAction);
 		_contextMenu->addAction(_edgeSizingAction);				
-	}	
+	}
+	_edgeSizingAction->setDisabled(true);
+	_faceSizingAction->setDisabled(true);
+	std::cout<<static_cast<int>(this->_qvtkRenderWindow->getActiveRendererId());
+	switch (this->_qvtkRenderWindow->getActiveRendererId()) {
+		case Rendering::Renderers::Edges: {
+			_edgeSizingAction->setDisabled(false);
+			break;
+		}
+		case Rendering::Renderers::Faces: {
+			_faceSizingAction->setDisabled(false);
+			break;
+		}
+		default: {
+			break;
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnMouseMove() {
+	this->hoverPicker->SetTolerance(0.001);
     int* clickPos = this->GetInteractor()->GetEventPosition();
     hoverPicker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
     hoveredActor = this->hoverPicker->GetActor();
@@ -167,5 +182,5 @@ void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qv
 	hoveredActor = nullptr;
 	prevHoveredActor = nullptr;
 	prevHoveredProperty = vtkProperty::New();
-	hoverPicker = vtkPropPicker::New();
+	hoverPicker = vtkCellPicker::New();
 }

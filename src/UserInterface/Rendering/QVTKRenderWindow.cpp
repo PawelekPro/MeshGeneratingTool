@@ -141,6 +141,9 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getActiveRenderer() {
 	return this->activeRenderer;
 }
+Rendering::Renderers Rendering::QVTKRenderWindow::getActiveRendererId(){
+	return this->activeRendererId;
+};
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {

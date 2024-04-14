@@ -111,7 +111,7 @@ private:
 
 	bool shiftPressed = false;
 	// Container for storing hovered actor and its properties.
-	vtkSmartPointer<vtkPropPicker> hoverPicker;
+	vtkSmartPointer<vtkCellPicker> hoverPicker;
 	vtkSmartPointer<vtkActor> hoveredActor;
 	vtkSmartPointer<vtkActor> prevHoveredActor;
 	vtkSmartPointer<vtkProperty> prevHoveredProperty;
