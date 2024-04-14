@@ -68,6 +68,8 @@ public:
 	 */
 	virtual void OnMouseMove() override;
 
+	virtual void OnKeyPress() override;
+	virtual void OnKeyRelease() override;
 	/**
 	 * @brief  Activate interactor style and set its default render window widget.
 	 *
@@ -100,10 +102,12 @@ private:
 	// Container for storing picked actor and its properties.
 	vtkSmartPointer<vtkPropPicker> LMBPicker;
 	vtkSmartPointer<vtkActor> LMBActor;
+	std::vector<vtkSmartPointer<vtkActor>> pickedActors;
+	std::vector<vtkSmartPointer<vtkProperty>> pickedProps;
 	vtkSmartPointer<vtkActor> prevLMBActor;
 	vtkSmartPointer<vtkProperty> prevLMBProperty;
 
-
+	bool shiftPressed = false;
 	// Container for storing hovered actor and its properties.
 	vtkSmartPointer<vtkPropPicker> hoverPicker;
 	vtkSmartPointer<vtkActor> hoveredActor;

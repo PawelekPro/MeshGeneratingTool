@@ -64,7 +64,7 @@ void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
             if (prevLMBActor) {
                 prevLMBActor->SetProperty(prevLMBProperty);
             }
-            prevLMBProperty->DeepCopy(prevHoveredActor->GetProperty());
+            prevLMBProperty->DeepCopy(prevHoveredProperty);
             LMBActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
             LMBActor->GetProperty()->SetLineWidth(5);
         } else {
@@ -74,7 +74,7 @@ void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
             }
         }
     }
-    // prevLMBActor = LMBActor ? LMBActor : nullptr;
+	prevLMBActor = LMBActor;
     this->Superclass::OnLeftButtonDown();
 }
 //----------------------------------------------------------------------------
@@ -106,15 +106,18 @@ void Interactor::QVTKInteractorStyle::OnMouseMove() {
     if (hoveredActor != prevHoveredActor) {
         if (hoveredActor) {
             if (prevHoveredActor) {
-                prevHoveredActor->SetProperty(prevHoveredProperty);
-                std::cout << "setting property!" << std::endl;
+				if(prevHoveredActor != prevLMBActor){
+                	prevHoveredActor->SetProperty(prevHoveredProperty);
+				}
             }
             hoveredActor->GetProperty()->DeepCopy(prevHoveredProperty);
             hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
             hoveredActor->GetProperty()->SetLineWidth(5);
         } else {
             if (prevHoveredActor) {
-				prevHoveredActor->SetProperty(prevHoveredProperty);
+				if(prevHoveredActor != prevLMBActor){
+					prevHoveredActor->SetProperty(prevHoveredProperty);
+				}
 				prevHoveredProperty = nullptr;
             }
         }
@@ -122,6 +125,23 @@ void Interactor::QVTKInteractorStyle::OnMouseMove() {
     this->prevHoveredActor = hoveredActor ? hoveredActor : nullptr;
     this->Superclass::OnMouseMove();
 }
+
+void Interactor::QVTKInteractorStyle::OnKeyPress() {
+    std::string key = this->GetInteractor()->GetKeySym();
+    if (key == "Shift_L" || key == "Shift_R") {
+        this->shiftPressed = true;
+    }
+    this->Superclass::OnKeyPress();
+}
+
+void Interactor::QVTKInteractorStyle::OnKeyRelease() {
+    std::string key = this->GetInteractor()->GetKeySym();
+    if (key == "Shift_L" || key == "Shift_R") {
+        this->shiftPressed = false;
+    }
+    this->Superclass::OnKeyRelease();
+}
+
 
 //----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
