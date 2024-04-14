@@ -47,7 +47,8 @@ class Model
         Model(std::string modelName);
         ~Model();
 
-        void addParts(GeometryCore::PartsMap partsMap);
+        void updateParts();
+
         void meshParts();
         void updateMeshActor();
 
@@ -64,9 +65,6 @@ class Model
         };
 
     vtkSmartPointer<vtkPolyData> polyData;
-    GeometryCore::PartsMap _partsMap;
-    GeometryCore::PartsMap _facesMap;
-    GeometryCore::PartsMap _edgesMap;
 };
 
 #endif //MODEL_H

@@ -62,6 +62,7 @@ enum class Renderers {
 	Main,
 	Faces,
 	Edges,
+	Mesh,
 	Count // Count for definition of array size
 };
 enum class Layers {

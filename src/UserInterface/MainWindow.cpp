@@ -103,6 +103,7 @@ void MainWindow::importSTEP(QString fileName) {
 	const std::string& filePath = fileName.toStdString();
 	try {
 		this->model->geometry.importSTEP(filePath, this->progressBar);
+		this->model->updateParts();
 		this->QVTKRender->updateGeometryActors(this->model->geometry);
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);

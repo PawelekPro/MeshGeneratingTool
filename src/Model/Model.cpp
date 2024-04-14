@@ -32,19 +32,18 @@ Model::~Model(){
     gmsh::finalize();
 }
 
-void Model::addParts(GeometryCore::PartsMap partsMap) { 
-    this->_partsMap = partsMap;
-            for (const auto& it : this->_partsMap) {
-                std::cout << it.first << std::endl;
-                const auto& shape = it.second;
-                const void *shape_ptr;
-                shape_ptr = &shape;
-                std::vector< std::pair<int, int>> outDimTags;
-                gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
-            }
-            std::cout << "Loaded " << _partsMap.size() << " parts into the model!" << std::endl;
-            gmsh::model::occ::synchronize();
-            meshParts();
+void Model::updateParts() { 
+    GeometryCore::PartsMap partsMap = this->geometry.getPartsMap();
+    for (const auto& it : partsMap) {
+        std::cout << it.first << std::endl;
+        const auto& shape = it.second;
+        const void *shape_ptr = &shape;
+        std::vector< std::pair<int, int>> outDimTags;
+        gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
+    }
+    std::cout << "Loaded " << partsMap.size() << " parts into the model!" << std::endl;
+    gmsh::model::occ::synchronize();
+    meshParts();
 }
 
 void Model::meshParts() {
@@ -108,7 +107,7 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
 
     vtkSmartPointer<vtkCellArray> vtkLines = vtkSmartPointer<vtkCellArray>::New();
     std::vector<vtkIdType> currentLineNodeTags;
-    currentLineNodeTags.reserve(2); // Assuming each line has two nodes
+    currentLineNodeTags.reserve(2);
 
     for(size_t i = 0; i < elementTypes.size(); ++i)
     {
@@ -124,11 +123,11 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
                     vtkElements->InsertNextCell(4, currentElementNodeTags.data());
                     currentElementNodeTags.clear();
                 }
-            }else if (elementTypes[i] == ElementType::LINE) // Assuming ElementType::LINE is the type for lines
+            }else if (elementTypes[i] == ElementType::LINE)
             {
                 for(size_t j = 0; j < elementTags[i].size(); ++j)
                 {
-                    auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 2); // Assuming each line has two nodes
+                    auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 2);
                     auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (j + 1) * 2);
 
                     std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentLineNodeTags),
