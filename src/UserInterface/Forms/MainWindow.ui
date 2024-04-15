@@ -361,7 +361,7 @@
   <customwidget>
    <class>TreeStructure</class>
    <extends>QTreeWidget</extends>
-   <header location="global">TreeStructure.h</header>
+   <header>TreeStructure.h</header>
   </customwidget>
   <customwidget>
    <class>PropertiesWidget</class>

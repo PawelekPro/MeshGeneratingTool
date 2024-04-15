@@ -69,7 +69,7 @@ public:
 		return getValue("ProjFileVersion");
 	}
 
-	const fs::path getTemplatesPath() {
+	const QString getTemplatesPath() {
 		return this->_templatesPath;
 	}
 
@@ -88,13 +88,13 @@ private:
 	}
 
 	void setupPaths() {
-		fs::path currentPath = fs::current_path();
-		this->_templatesPath = currentPath / "../src/UserInterface/Templates";
-	};
+		// fs::path currentPath = fs::current_path();
+		this->_templatesPath = ":/templates/templates/DefaultProperties.json";
+	}
 
 	// Container for application settings
 	QSettings settings;
 
 	// Templates path
-	fs::path _templatesPath;
+	QString _templatesPath;
 };

@@ -46,6 +46,7 @@ TreeStructure::~TreeStructure() {
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::buildBaseObjectsRepresentation() {
+	rapidjson::Document doc = this->readDefaultProperties();
 
 	QDomElement root = this->docObjectModel->createElement(this->appInfo.getAppName());
 	root.setAttribute("version", this->appInfo.getAppProjFileVersion());
@@ -60,7 +61,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		}
 		QDomElement* rootElement = new QDomElement(this->docObjectModel->createElement(xmlTag));
 
-		PropertiesList propertiesList = this->parseDefaultProperties(xmlTag);
+		PropertiesList propertiesList = this->parseDefaultProperties(doc, xmlTag);
 		this->addProperties(rootElement, propertiesList);
 
 		QTreeWidgetItem* rootItem = this->createItem(rootElement);
@@ -159,9 +160,7 @@ void TreeStructure::addProperties(QDomElement* parentElement, PropertiesList pro
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesList TreeStructure::parseDefaultProperties(QString prop) {
-	rapidjson::Document document = this->readDefaultProperties();
-
+PropertiesList TreeStructure::parseDefaultProperties(const rapidjson::Document& document, QString prop) {
 	// Initialize properties container
 	PropertiesList propertiesList;
 	std::string propName = prop.toStdString();
@@ -201,23 +200,24 @@ PropertiesList TreeStructure::parseDefaultProperties(QString prop) {
 
 //--------------------------------------------------------------------------------------
 rapidjson::Document TreeStructure::readDefaultProperties() {
-	fs::path templatesPath = this->appInfo.getTemplatesPath();
-	fs::path jsonPropsPath
-		= fs::path(templatesPath.string()) / "DefaultProperties.json";
+	QString defaultPropsPath = this->appInfo.getTemplatesPath();
+	QFile jsonFile(defaultPropsPath);
 
-	std::ifstream ifs(jsonPropsPath.string());
-	if (!ifs.is_open()) {
+	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		vtkLogF(ERROR, "Failed to open DefaultProperties.json file.");
 	}
 
-	// Read the content into a stringstream
-	std::stringstream ss;
-	ss << ifs.rdbuf();
-	std::string jsonContent = ss.str();
+	QByteArray jsonData = jsonFile.readAll();
+	jsonFile.close();
 
 	// Parse the JSON string
 	rapidjson::Document document;
-	document.Parse(jsonContent.c_str());
+	document.Parse(jsonData.constData());
+
+	if (document.HasParseError()) {
+		vtkLogF(ERROR, "Error parsing JSON file.");
+	}
+
 	return document;
 }
 

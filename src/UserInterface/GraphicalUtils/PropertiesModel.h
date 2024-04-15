@@ -22,13 +22,13 @@
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
-#include <QDomElement>
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
 #include <QTableView>
 #include <Qt>
+#include <QtXml/QDomElement>
 
 /**
  * Custom model filter class that filters rows based on a custom criteria.
