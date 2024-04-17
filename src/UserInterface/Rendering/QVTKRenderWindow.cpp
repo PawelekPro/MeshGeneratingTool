@@ -172,7 +172,7 @@ void Rendering::QVTKRenderWindow::enableWaterMark() {
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setWaterMark() {
-	QPixmap pixmap(":/uxSetup/icons/watermark.png");
+	QPixmap pixmap(":/uiSetup/icons/watermark.png");
 
 	if (pixmap.isNull()) {
 		qDebug() << "Failed to load image from resource";

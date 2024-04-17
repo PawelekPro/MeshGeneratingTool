@@ -20,37 +20,35 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-#include "Model.h"
-#include "Mesh.h"
 #include "Geometry.h"
+#include "Mesh.h"
+#include "Model.h"
 
 #include <algorithm>
-#include <numeric>
 #include <array>
+#include <numeric>
 
 #include <QVTKOpenGLNativeWidget.h>
+#include <vtkActor.h>
+#include <vtkAxesActor.h>
+#include <vtkCamera.h>
 #include <vtkCameraOrientationWidget.h>
+#include <vtkCaptionActor2D.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkInteractorStyle.h>
 #include <vtkLogger.h>
 #include <vtkLogoRepresentation.h>
 #include <vtkLogoWidget.h>
+#include <vtkNamedColors.h>
 #include <vtkNew.h>
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkPNGReader.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 #include <vtkQImageToImageSource.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
-#include <vtkInteractorStyle.h>
-#include <vtkActor.h>
-#include <vtkAxesActor.h>
-#include <vtkCamera.h>
-#include <vtkCaptionActor2D.h>
-#include <vtkNamedColors.h>
-#include <vtkOrientationMarkerWidget.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
 #include <vtkTextProperty.h>
 
 #include <QImage>
@@ -104,8 +102,6 @@ public:
 	 */
 	void RenderScene();
 
-
-
 	/**
 	 * @brief  Enable and start displaying the camera orientation widget.
 	 *
@@ -136,7 +132,6 @@ public:
 	 *
 	 */
 	void setWaterMark();
-
 
 	/**
 	 * @brief  Clear all geometry actors from faces, edges and parts layers and

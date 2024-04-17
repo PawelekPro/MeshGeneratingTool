@@ -24,12 +24,13 @@
 
 #include "./ui_MainWindow.h"
 #include "Configuration.h"
+#include "Model.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
-#include "Model.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
@@ -76,7 +77,6 @@ public:
 	 * @param  {QString} fileName : Path to the STL file.
 	 */
 	void importSTL(QString fileName);
-
 
 	/**
 	 * @brief  Create an empty model.
@@ -131,5 +131,14 @@ private slots:
 	 * @param  {QAbstractButton*} button : Button that sends a signal
 	 */
 	void handleSelectorButtonClicked(QAbstractButton* button);
+
+	/**
+	 * This function is called when an item selection of tree structure is changed.
+	 *
+	 * @param None
+	 *
+	 * @returns None
+	 */
+	void onItemSelectionChanged();
 };
 #endif // MAINWINDOW_H

@@ -37,22 +37,23 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
+	this->buttonGroup.addButton(this->ui->volumeSelectorButton,
+		static_cast<int>(Rendering::Renderers::Main));
 
+	this->buttonGroup.addButton(this->ui->facesSelectorButton,
+		static_cast<int>(Rendering::Renderers::Faces));
 
-	this->buttonGroup.addButton(this->ui->volumeSelectorButton, 
-	static_cast<int>(Rendering::Renderers::Main));
+	this->buttonGroup.addButton(this->ui->edgesSelectorButton,
+		static_cast<int>(Rendering::Renderers::Edges));
 
-	this->buttonGroup.addButton(this->ui->facesSelectorButton, 
-	static_cast<int>(Rendering::Renderers::Faces));
-
-	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 
-	static_cast<int>(Rendering::Renderers::Edges));
-	
 	this->setConnections();
 	this->initializeActions();
-	}
+}
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
+	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
+		this, &MainWindow::onItemSelectionChanged);
+
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -80,6 +81,9 @@ void MainWindow::setConnections() {
 	connect(ui->actionShowMesh, &QAction::triggered, [this]() {
 		showMesh();
 	});
+
+	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
+		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 }
 
 //----------------------------------------------------------------------------
@@ -120,19 +124,18 @@ void MainWindow::importSTL(QString fileName) {
 	const std::string& filePath = fileName.toStdString();
 	this->model->geometry.importSTL(filePath, this->progressBar);
 	this->QVTKRender->updateGeometryActors(this->model->geometry);
-	
+
 	QVTKRender->fitView();
 }
 //----------------------------------------------------------------------------
 void MainWindow::newModel() {
-	std::string  modelName = "Model_1";
+	std::string modelName = "Model_1";
 	this->model = std::make_shared<Model>(modelName);
 	this->QVTKRender->model = this->model;
 	// enable imports
 	ui->actionImportSTEP->setEnabled(true);
 	ui->actionImportSTL->setEnabled(true);
 	ui->actionGenerateMesh->setEnabled(true);
-
 }
 void MainWindow::generateMesh() {
 	this->model->meshParts();
@@ -147,16 +150,68 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// Set active layer according to selected button
 	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
 	this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
-										buttonGroup.id(button)));
+		buttonGroup.id(button)));
 }
 
-void MainWindow::initializeActions(){
+void MainWindow::initializeActions() {
 	ui->actionImportSTEP->setEnabled(false);
 	ui->actionImportSTL->setEnabled(false);
 	ui->actionGenerateMesh->setEnabled(false);
 }
 
-void MainWindow::showMesh(){
+void MainWindow::showMesh() {
 	this->model->updateMeshActor();
 	this->QVTKRender->getActiveRenderer()->Render();
+}
+
+//----------------------------------------------------------------------------
+void MainWindow::onItemSelectionChanged() {
+	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
+
+	QTreeWidgetItem* item;
+	if (!itemsList.isEmpty()) {
+		item = itemsList.takeFirst();
+	}
+
+	QVariant modelVariant = item->data(
+		0, TreeStructure::Role.value("Properties"));
+	QSharedPointer<PropertiesModel> sharedModel
+		= modelVariant.value<QSharedPointer<PropertiesModel>>();
+
+	if (!sharedModel.isNull()) {
+		PropertiesModel* model = sharedModel.data();
+		// ToDo: Detect data changed event and make project unsaved
+
+		this->ui->propertiesTable->setModel(model);
+		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
+		header->setSectionResizeMode(QHeaderView::ResizeToContents);
+		header->setStretchLastSection(true);
+		header->setSectionResizeMode(QHeaderView::Interactive);
+	}
+}
+
+//----------------------------------------------------------------------------
+void MainWindow::onItemSelectionChanged() {
+	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
+
+	QTreeWidgetItem* item;
+	if (!itemsList.isEmpty()) {
+		item = itemsList.takeFirst();
+	}
+
+	QVariant modelVariant = item->data(
+		0, TreeStructure::Role.value("Properties"));
+	QSharedPointer<PropertiesModel> sharedModel
+		= modelVariant.value<QSharedPointer<PropertiesModel>>();
+
+	if (!sharedModel.isNull()) {
+		PropertiesModel* model = sharedModel.data();
+		// ToDo: Detect data changed event and make project unsaved
+
+		this->ui->propertiesTable->setModel(model);
+		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
+		header->setSectionResizeMode(QHeaderView::ResizeToContents);
+		header->setStretchLastSection(true);
+		header->setSectionResizeMode(QHeaderView::Interactive);
+	}
 }
