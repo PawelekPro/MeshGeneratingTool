@@ -18,6 +18,7 @@ if(WIN32)
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     GeometryCore
+    Model
 )
 else()
   TARGET_LINK_LIBRARIES(Rendering PUBLIC 
@@ -28,6 +29,7 @@ else()
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     GeometryCore
+    Model
 )
 endif()
 

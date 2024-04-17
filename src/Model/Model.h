@@ -23,49 +23,45 @@
 #include "Geometry.h"
 #include "Mesh.h"
 
-
-#include <gmsh.h_cwrap>
 #include <TopoDS_Shape.hxx>
+#include <gmsh.h_cwrap>
 
 #include <algorithm>
 #include <vector>
 
-#include <vtkSmartPointer.h>
+#include <vtkActor.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
-#include <vtkActor.h>
+#include <vtkSmartPointer.h>
 
+class Model {
+public:
+	std::string _modelName;
+	GeometryCore::Geometry geometry;
+	MeshCore::Mesh mesh;
 
-class Model
-{
-    public:
-        std::string _modelName;
-        GeometryCore::Geometry geometry;
-        MeshCore::Mesh mesh;
+	Model(std::string modelName);
+	~Model();
 
-        Model(std::string modelName);
-        ~Model();
+	void updateParts();
 
-        void updateParts();
+	void meshParts();
+	void updateMeshActor();
 
-        void meshParts();
-        void updateMeshActor();
+	void addFaceSizing(vtkSmartPointer<vtkActor> edgeActor);
+	void addEdgeSizing(vtkSmartPointer<vtkActor> faceActor);
 
-        void addFaceSizing(vtkSmartPointer<vtkActor> edgeActor);
-        void addEdgeSizing(vtkSmartPointer<vtkActor> faceActor);
+	vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
+	vtkSmartPointer<vtkActor> meshActor;
 
-        vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
-        vtkSmartPointer<vtkActor> meshActor;
+private:
+	enum class ElementType : int {
+		TETRA = 4,
+		LINE = 1,
+	};
 
-    private:
-        enum class ElementType : int{
-        TETRA = 4,
-        LINE = 1,
-        };
-
-    vtkSmartPointer<vtkPolyData> polyData;
+	vtkSmartPointer<vtkPolyData> polyData;
 };
 
-#endif //MODEL_H
-
+#endif // MODEL_H
