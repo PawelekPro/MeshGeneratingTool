@@ -191,27 +191,3 @@ void MainWindow::onItemSelectionChanged() {
 }
 
 //----------------------------------------------------------------------------
-void MainWindow::onItemSelectionChanged() {
-	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
-
-	QTreeWidgetItem* item;
-	if (!itemsList.isEmpty()) {
-		item = itemsList.takeFirst();
-	}
-
-	QVariant modelVariant = item->data(
-		0, TreeStructure::Role.value("Properties"));
-	QSharedPointer<PropertiesModel> sharedModel
-		= modelVariant.value<QSharedPointer<PropertiesModel>>();
-
-	if (!sharedModel.isNull()) {
-		PropertiesModel* model = sharedModel.data();
-		// ToDo: Detect data changed event and make project unsaved
-
-		this->ui->propertiesTable->setModel(model);
-		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
-		header->setSectionResizeMode(QHeaderView::ResizeToContents);
-		header->setStretchLastSection(true);
-		header->setSectionResizeMode(QHeaderView::Interactive);
-	}
-}

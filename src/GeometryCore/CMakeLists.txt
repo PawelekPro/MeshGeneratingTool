@@ -7,15 +7,19 @@ ADD_LIBRARY(GeometryCore
 )
 
 if(WIN32)
-    TARGET_LINK_LIBRARIES(GeometryCore PUBLIC 
+    TARGET_LINK_LIBRARIES(GeometryCore PUBLIC
         ${OpenCASCADE_LIBRARIES}
         ${VTK_LIBRARIES}
-        GraphicalUtils)
+        Qt${QT_VERSION_MAJOR}::Widgets
+        GraphicalUtils
+        )
 else()
     TARGET_LINK_LIBRARIES(GeometryCore PUBLIC
         ${OCC_LIBRARIES}
         ${VTK_LIBRARIES}
-        GraphicalUtils)
+        Qt${QT_VERSION_MAJOR}::Widgets
+        GraphicalUtils
+        )
 endif()
 
 
