@@ -24,7 +24,15 @@
 #include "Mesh.h"
 
 #include <TopoDS_Shape.hxx>
+
+#ifdef _WIN32
 #include <gmsh.h_cwrap>
+#endif
+
+#ifdef linux
+#include <gmsh.h>
+#endif
+
 
 #include <algorithm>
 #include <vector>

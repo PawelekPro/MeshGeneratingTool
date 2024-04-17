@@ -43,7 +43,7 @@ void Model::updateParts() {
     }
     std::cout << "Loaded " << partsMap.size() << " parts into the model!" << std::endl;
     gmsh::model::occ::synchronize();
-    meshParts();
+    // meshParts();
 }
 
 void Model::meshParts() {
@@ -61,8 +61,12 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
     // extract nodes from gmsh model, and transfer them to vtkPoints container
     // nodeTags is a vector containing node numbering (tag - hence the name)
     // nodeCoords holds coordinates of each node [node_1_x, node_1_y, node_1_z, node_2_x, etc...]
-
+    #ifdef _WIN32
     std::vector<unsigned long long> nodeTags;
+    #endif
+    #ifdef linux
+    std::vector<unsigned long> nodeTags;
+    #endif
     std::vector<double> nodeCoords;
     std::vector<double> parametricCoord;
 
@@ -92,8 +96,16 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
 
     std::vector<int> _elementTypes;
     std::vector<ElementType> elementTypes;
+
+    #ifdef _WIN32
     std::vector<std::vector<unsigned long long>> elementTags;
     std::vector<std::vector<unsigned long long>> elementNodeTags;
+    #endif
+    #ifdef linux
+    std::vector<std::vector<unsigned long>> elementTags;
+    std::vector<std::vector<unsigned long>> elementNodeTags;
+    #endif
+
 
     gmsh::model::mesh::getElements(_elementTypes, elementTags, elementNodeTags, -1);
     vtkSmartPointer<vtkCellArray> vtkElements = vtkSmartPointer<vtkCellArray>::New();
