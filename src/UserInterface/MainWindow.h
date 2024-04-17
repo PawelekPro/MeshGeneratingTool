@@ -22,15 +22,16 @@
 
 #include <functional>
 
-#include "STLPluginOperations.h"
 #include "./ui_MainWindow.h"
 #include "Configuration.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
 #include "STEPPlugin.h"
+#include "STLPluginOperations.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
@@ -108,5 +109,14 @@ private slots:
 	 * @param  {QAbstractButton*} button : Button that sends a signal
 	 */
 	void handleSelectorButtonClicked(QAbstractButton* button);
+
+	/**
+	 * This function is called when an item selection of tree structure is changed.
+	 *
+	 * @param None
+	 *
+	 * @returns None
+	 */
+	void onItemSelectionChanged();
 };
 #endif // MAINWINDOW_H

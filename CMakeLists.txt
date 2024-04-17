@@ -48,12 +48,17 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
 
 set(PROJECT_SOURCES
     ${KERNEL_PATH}/AppQuickStart.cpp
+    ${KERNEL_PATH}/AppDefaults.hpp
     ${UI_PATH}/MainWindow.cpp
     ${UI_PATH}/MainWindow.h
     ${UI_UTILS_PATH}/ProgressBar.cpp
     ${UI_UTILS_PATH}/ProgressBar.h
     ${UI_UTILS_PATH}/TreeStructure.cpp
     ${UI_UTILS_PATH}/TreeStructure.h
+    ${UI_UTILS_PATH}/PropertiesModel.cpp
+    ${UI_UTILS_PATH}/PropertiesModel.h
+    ${UI_UTILS_PATH}/PropertiesWidget.cpp
+    ${UI_UTILS_PATH}/PropertiesWidget.h
     ${UI_UTILS_PATH}/Configuration.h
     ${UI_PATH}/Rendering/QVTKRenderWindow.cpp
     ${UI_PATH}/Rendering/QVTKRenderWindow.h
@@ -73,6 +78,9 @@ set(PROJECT_SOURCES
     ${GEOM_CORE_PATH}/STLPlugin/STLPluginOperations.h
 )
 
+# rapidjson library for parsing json files
+set(RAPIDJSON_PATH ${CMAKE_SOURCE_DIR}/src/ThirdParty/rapidjson)
+
 set(INCLUDE_DIRS
     ${KERNEL_PATH}
 
@@ -86,6 +94,8 @@ set(INCLUDE_DIRS
     ${GEOM_CORE_PATH}/Geometry
     ${GEOM_CORE_PATH}/STLPlugin
     ${GEOM_CORE_PATH}/STEPPlugin
+
+    ${RAPIDJSON_PATH}
     )
 
 include_directories(

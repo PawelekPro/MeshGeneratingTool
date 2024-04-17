@@ -17,17 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef PROPERTIESWIDGET_H
+#define PROPERTIESWIDGET_H
 
-#include <QString>
+#include "PropertiesModel.h"
+
+#include <QTableView>
+#include <QWidget>
 
 /**
- * Namespace containing filter constants for file types.
+ * Custom widget for displaying properties using a table view.
  */
-namespace filters {
-const QString StepFilter = "STEP Physical File (*.stp *.step *.STP *.STEP)";
-const QString StlFilter = "STL file (*.stl *.STL)";
-}
+class PropertiesWidget : public QTableView {
+	Q_OBJECT
+public:
+	explicit PropertiesWidget(QWidget* parent = nullptr)
+		: QTableView(parent) {};
+	~PropertiesWidget() = default;
+
+	/**
+	 * Sets the PropertiesModel for the object.
+	 *
+	 * @param model A pointer to the PropertiesModel to be set.
+	 *
+	 * @returns None
+	 */
+	void setModel(PropertiesModel*);
+};
 
 #endif

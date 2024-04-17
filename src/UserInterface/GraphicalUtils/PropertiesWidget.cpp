@@ -17,17 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#include "PropertiesWidget.h"
 
-#include <QString>
+//--------------------------------------------------------------------------------------
+void PropertiesWidget::setModel(PropertiesModel* model) {
+	ModelFilter* proxy = new ModelFilter(this);
+	proxy->setSourceModel(model);
+	QTableView::setModel(proxy);
 
-/**
- * Namespace containing filter constants for file types.
- */
-namespace filters {
-const QString StepFilter = "STEP Physical File (*.stp *.step *.STP *.STEP)";
-const QString StlFilter = "STL file (*.stl *.STL)";
+	// ToDo: Set widgets
 }
-
-#endif

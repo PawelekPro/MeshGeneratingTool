@@ -62,85 +62,78 @@
          <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="spacing">
-         <number>4</number>
+        <property name="verticalSpacing">
+         <number>6</number>
         </property>
         <item row="0" column="0">
-         <widget class="TreeStructure" name="treeWidget">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QSplitter" name="propertiesSplitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="midLineWidth">
-           <number>0</number>
-          </property>
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <attribute name="headerVisible">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="headerCascadingSectionResizes">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="headerMinimumSectionSize">
-           <number>100</number>
-          </attribute>
-          <attribute name="headerDefaultSectionSize">
-           <number>100</number>
-          </attribute>
-          <attribute name="headerShowSortIndicator" stdset="0">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="headerStretchLastSection">
-           <bool>true</bool>
-          </attribute>
-          <column>
-           <property name="text">
-            <string>Attribute</string>
+          <widget class="TreeStructure" name="treeWidget">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
            </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Visibility</string>
+           <property name="lineWidth">
+            <number>1</number>
            </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Actor</string>
+           <property name="midLineWidth">
+            <number>0</number>
            </property>
-          </column>
-          <item>
-           <property name="text">
-            <string>Geometry Imports</string>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
            </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Geometry Model</string>
+           <attribute name="headerVisible">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="headerCascadingSectionResizes">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="headerMinimumSectionSize">
+            <number>100</number>
+           </attribute>
+           <attribute name="headerDefaultSectionSize">
+            <number>100</number>
+           </attribute>
+           <attribute name="headerHighlightSections">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="headerShowSortIndicator" stdset="0">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="headerStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>Label</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Visibility</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Actor</string>
+            </property>
+           </column>
+          </widget>
+          <widget class="PropertiesWidget" name="propertiesTable">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::NoSelection</enum>
            </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Coordinate System</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mesh</string>
-           </property>
-          </item>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>100</number>
+           </attribute>
+          </widget>
          </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QTableWidget" name="tableWidget"/>
         </item>
        </layout>
       </widget>
@@ -369,6 +362,11 @@
    <class>TreeStructure</class>
    <extends>QTreeWidget</extends>
    <header location="global">TreeStructure.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PropertiesWidget</class>
+   <extends>QTableView</extends>
+   <header>PropertiesWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

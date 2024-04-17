@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
+	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
+		this, &MainWindow::onItemSelectionChanged);
+
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -62,6 +65,9 @@ void MainWindow::setConnections() {
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
+
+	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
+		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 }
 
 //----------------------------------------------------------------------------
@@ -96,9 +102,10 @@ void MainWindow::importSTEP(QString fileName) {
 	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
 	QVTKRender->addActors(actorsMap, true);
 
-	// Geometry::ActorsMap edgesMap = stepReader.getVTKEdgesMap();
-	// QVTKRender->addEdgesActors(edgesMap);
-	// QVTKRender->setActiveLayerRenderer(0);
+	QFileInfo fileInfo(fileName);
+	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
+	this->ui->treeWidget->writeDataToXML(
+		"/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
 }
 
 //----------------------------------------------------------------------------
@@ -123,4 +130,30 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// Set active layer according to selected button
 	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
 	this->QVTKRender->setActiveLayerRenderer(buttonGroup.id(button));
+}
+
+//----------------------------------------------------------------------------
+void MainWindow::onItemSelectionChanged() {
+	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
+
+	QTreeWidgetItem* item;
+	if (!itemsList.isEmpty()) {
+		item = itemsList.takeFirst();
+	}
+
+	QVariant modelVariant = item->data(
+		0, TreeStructure::Role.value("Properties"));
+	QSharedPointer<PropertiesModel> sharedModel
+		= modelVariant.value<QSharedPointer<PropertiesModel>>();
+
+	if (!sharedModel.isNull()) {
+		PropertiesModel* model = sharedModel.data();
+		// ToDo: Detect data changed event and make project unsaved
+
+		this->ui->propertiesTable->setModel(model);
+		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
+		header->setSectionResizeMode(QHeaderView::ResizeToContents);
+		header->setStretchLastSection(true);
+		header->setSectionResizeMode(QHeaderView::Interactive);
+	}
 }
