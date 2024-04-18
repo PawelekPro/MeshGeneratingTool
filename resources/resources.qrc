@@ -6,7 +6,7 @@
     <file>icons/volume_selector.svg</file>
   </qresource>
   <qresource prefix="templates">
-    <file>templates/DefaultProperties.json</file>
+    <file>templates/ProjectSetup.json</file>
   </qresource>
   <qresource prefix="uiSetup">
     <file>icons/watermark.png</file>

@@ -180,7 +180,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../../../resources/resources.qrc">
               <normaloff>:/icons/icons/edge_selector.svg</normaloff>:/icons/icons/edge_selector.svg</iconset>
             </property>
             <property name="iconSize">
@@ -234,7 +234,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../../../resources/resources.qrc">
               <normaloff>:/icons/icons/face_selector.svg</normaloff>:/icons/icons/face_selector.svg</iconset>
             </property>
             <property name="iconSize">
@@ -275,7 +275,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../../../resources/resources.qrc">
               <normaloff>:/icons/icons/volume_selector.svg</normaloff>:/icons/icons/volume_selector.svg</iconset>
             </property>
             <property name="iconSize">
@@ -335,7 +335,7 @@
      <x>0</x>
      <y>0</y>
      <width>1046</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">

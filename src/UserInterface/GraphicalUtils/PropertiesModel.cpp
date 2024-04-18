@@ -129,3 +129,11 @@ Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 	}
 	return _flags;
 }
+
+//--------------------------------------------------------------------------------------
+const QDomElement PropertiesModel::getProperty(int row) {
+	if (row < 0 || row >= _properties.size()) {
+		throw std::out_of_range("Invalid row index");
+	}
+	return this->_properties.value(row);
+}

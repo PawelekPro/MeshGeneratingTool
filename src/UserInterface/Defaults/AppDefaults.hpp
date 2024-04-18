@@ -89,7 +89,7 @@ private:
 
 	void setupPaths() {
 		// fs::path currentPath = fs::current_path();
-		this->_templatesPath = ":/templates/templates/DefaultProperties.json";
+		this->_templatesPath = ":/templates/templates/ProjectSetup.json";
 	}
 
 	// Container for application settings

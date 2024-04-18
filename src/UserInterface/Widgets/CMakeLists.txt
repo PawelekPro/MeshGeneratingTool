@@ -3,8 +3,11 @@ ADD_LIBRARY(Widgets
   AbstractLineEdit.h
 )
 
-TARGET_LINK_LIBRARIES(Widgets PRIVATE 
+TARGET_LINK_LIBRARIES(Widgets PUBLIC 
   Qt${QT_VERSION_MAJOR}::Widgets
+  Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Core5Compat
+  GraphicalUtils
 )
 
 TARGET_INCLUDE_DIRECTORIES(Widgets PUBLIC

@@ -123,6 +123,14 @@ public:
 	 */
 	Qt::ItemFlags flags(const QModelIndex& index) const Q_DECL_OVERRIDE;
 
+	/**
+	 * Returns the QDomElement corresponding to the property with the given integer identifier.
+	 *
+	 * @param id The integer identifier of the property.
+	 * @return The QDomElement representing the property.
+	 */
+	const QDomElement getProperty(int);
+
 private:
 	/**
 	 * Pointer to a QDomElement object.

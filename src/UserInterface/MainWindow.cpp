@@ -192,5 +192,3 @@ void MainWindow::onItemSelectionChanged() {
 		header->setSectionResizeMode(QHeaderView::Interactive);
 	}
 }
-
-//----------------------------------------------------------------------------

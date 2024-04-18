@@ -204,7 +204,7 @@ rapidjson::Document TreeStructure::readDefaultProperties() {
 	QFile jsonFile(defaultPropsPath);
 
 	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		vtkLogF(ERROR, "Failed to open DefaultProperties.json file.");
+		vtkLogF(ERROR, "Failed to open ProjectSetup.json file.");
 	}
 
 	QByteArray jsonData = jsonFile.readAll();
