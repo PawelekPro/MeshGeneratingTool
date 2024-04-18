@@ -114,6 +114,9 @@ void MainWindow::importSTEP(QString fileName) {
 		std::cout << "Display some message or dialog box..." << std::endl;
 		return;
 	}
+
+	QFileInfo fileInfo(fileName);
+	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
 	QVTKRender->fitView();
 }
 
