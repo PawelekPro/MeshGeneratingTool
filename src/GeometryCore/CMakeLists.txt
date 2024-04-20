@@ -1,5 +1,6 @@
 ADD_LIBRARY(GeometryCore 
     Geometry/Geometry.cpp
+    Geometry/TagMap.cpp
     QVTKProgressBar/ProgressBarPlugin.hpp
     GeometryImporter/GeometryImporter.cpp
     GeometryImporter/STEPImporter.cpp

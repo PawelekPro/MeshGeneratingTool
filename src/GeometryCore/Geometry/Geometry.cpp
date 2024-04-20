@@ -7,6 +7,7 @@ void GeometryCore::Geometry::importSTEP(const std::string& filePath, QWidget* pr
     this->_partsMap = std::move(importer.getPartsMap());
     this->_facesMap = std::move(importer.getFacesMap());
     this->_edgesMap = std::move(importer.getEdgesMap());
+    this->_vertexMap = std::move(importer.getVertexMap());
 
     this->_partsActorMap = std::move(importer.getPartsActorMap());
     this->_facesActorMap = std::move(importer.getFacesActorMap());

@@ -123,6 +123,12 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 				this->_facesMap[uniqueName] = _face;
 			}
 
+			for (explorer.Init(_shape, TopAbs_VERTEX); explorer.More(); explorer.Next()) {
+				auto _vertex = TopoDS::Vertex(explorer.Current());
+				auto uniqueName = getUniqueObjectName("Vertex", this->_facesMap);
+				this->_vertexMap[uniqueName] = _vertex;
+			}
+
 			// Put all other components into a single compound
 			Standard_Boolean emptyComp = Standard_True;
 			auto builder = BRep_Builder {};

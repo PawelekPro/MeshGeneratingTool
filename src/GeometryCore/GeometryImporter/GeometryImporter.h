@@ -35,10 +35,10 @@ namespace GeometryCore {
             virtual const ActorsMap getPartsActorMap();
             virtual const ActorsMap getFacesActorMap();
             virtual const ActorsMap getEdgesActorMap();
-            const PartsMap getPartsMap(){return this->_partsMap;};
-            const PartsMap getFacesMap(){return this->_facesMap;};
-            const PartsMap getEdgesMap(){return this->_edgesMap;};
-
+            const PartsMap& getPartsMap(){return this->_partsMap;};
+            const PartsMap& getFacesMap(){return this->_facesMap;};
+            const PartsMap& getEdgesMap(){return this->_edgesMap;};
+            const PartsMap& getVertexMap(){return this->_vertexMap;};
         protected:
             virtual void import(const std::string& filename, QWidget* parent) = 0;
             std::string getUniqueObjectName(const std::string& prefix, const PartsMap& objectMap);
@@ -48,6 +48,7 @@ namespace GeometryCore {
             PartsMap _partsMap;
             PartsMap _facesMap;
             PartsMap _edgesMap;
+            PartsMap _vertexMap;
         private:
 
     };
