@@ -25,5 +25,12 @@ void PropertiesWidget::setModel(PropertiesModel* model) {
 	proxy->setSourceModel(model);
 	QTableView::setModel(proxy);
 
-	// ToDo: Set widgets
+	if (proxy) {
+		for (int i = 0; i < proxy->rowCount(); ++i) {
+			QModelIndex index = proxy->index(i, 1);
+			QModelIndex indexSource = proxy->mapToSource(index);
+			QWidget* widget = model->getWidget(indexSource);
+			this->setIndexWidget(index, widget);
+		}
+	}
 }

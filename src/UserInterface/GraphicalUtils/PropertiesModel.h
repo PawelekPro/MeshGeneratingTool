@@ -20,6 +20,8 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
+#include "AbstractLineEdit.h"
+
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
 #include <QModelIndex>
@@ -29,6 +31,24 @@
 #include <QTableView>
 #include <Qt>
 #include <QtXml/QDomElement>
+
+// using WidgetCreatorFunction = QWidget* (*)();
+// using WidgetCreatorMap = QMap<QString, WidgetCreatorFunction>;
+
+// QWidget* createDoubleLineEdit() {
+// 	// return new DoubleLineEdit();
+// 	return new QWidget();
+// }
+
+// QWidget* createIntLineEdit() {
+// 	// return new IntLineEdit();
+// 	return new QWidget();
+// }
+
+// WidgetCreatorMap widgetCreatorMap = {
+// 	{ "DoubleLineEdit", &createDoubleLineEdit },
+// 	{ "IntLineEdit", &createIntLineEdit }
+// };
 
 /**
  * Custom model filter class that filters rows based on a custom criteria.
@@ -130,6 +150,8 @@ public:
 	 * @return The QDomElement representing the property.
 	 */
 	const QDomElement getProperty(int);
+
+	QWidget* getWidget(const QModelIndex&);
 
 private:
 	/**

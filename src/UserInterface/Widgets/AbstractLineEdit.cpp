@@ -45,7 +45,7 @@ AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator, QStri
 }
 
 //----------------------------------------------------------------------------
-void AbstractLineEdit::setIndex(QModelIndex index) {
+void AbstractLineEdit::setIndex(const QModelIndex& index) {
 	this->m_index = index;
 
 	const QAbstractItemModel* constModel = index.model();
@@ -60,7 +60,7 @@ void AbstractLineEdit::setIndex(QModelIndex index) {
 	QDomElement element = propsModel->getProperty(index.row());
 	QDomNamedNodeMap attrs = element.attributes();
 
-	// Conversio from QDomNamedNodeMap to QXmlAttributes
+	// Conversion from QDomNamedNodeMap to QXmlAttributes
 	QXmlStreamAttributes xmlAttrs;
 	for (int i = 0; i < attrs.count(); ++i) {
 		QDomAttr attr = attrs.item(i).toAttr();
@@ -74,4 +74,36 @@ void AbstractLineEdit::setIndex(QModelIndex index) {
 	this->m_suffixLabel->setText(suffix);
 	this->m_minVal = minVal;
 	this->m_maxVal = maxVal;
+}
+
+//----------------------------------------------------------------------------
+void AbstractLineEdit::setValue(const std::string& value) {
+	double val = 0.0;
+	try {
+		val = std::stod(value);
+	} catch (const std::invalid_argument&) {
+	}
+
+	if (m_castTo.isEmpty()) {
+		m_lineEdit->setText(QString::fromStdString(value));
+	} else {
+		m_lineEdit->setText(m_locale.toString(val));
+		emit m_lineEdit->editingFinished();
+	}
+}
+
+//----------------------------------------------------------------------------
+std::string AbstractLineEdit::getValue(const std::string& value) {
+	std::string text;
+	if (value.empty()) {
+		text = m_lineEdit->text().toStdString();
+	} else {
+		text = value;
+	}
+	if (m_castTo.isEmpty()) {
+		return text;
+	}
+
+	double val = m_locale.toDouble(QString::fromStdString(text));
+	return std::to_string(val);
 }

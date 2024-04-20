@@ -137,3 +137,24 @@ const QDomElement PropertiesModel::getProperty(int row) {
 	}
 	return this->_properties.value(row);
 }
+
+//--------------------------------------------------------------------------------------
+QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
+	if (!index.isValid()) {
+		return nullptr;
+	}
+
+	QWidget* widget = nullptr;
+	if (index.column() == 1) {
+		QDomNamedNodeMap attrs = this->_properties[index.row()].attributes();
+		QString name = attrs.namedItem("widget").toAttr().value();
+
+		AbstractLineEdit* widget = new AbstractLineEdit();
+		widget->setIndex(index);
+		qDebug() << "Widget created!";
+		// if (widgetCreatorMap.contains(name)) {
+
+		// }
+	}
+	return widget;
+}

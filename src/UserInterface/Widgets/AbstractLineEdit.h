@@ -29,6 +29,7 @@
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QValidator>
+#include <QWidget>
 #include <QXmlStreamAttributes>
 
 class AbstractLineEdit : public QWidget {
@@ -36,7 +37,9 @@ class AbstractLineEdit : public QWidget {
 
 public:
 	AbstractLineEdit(QWidget* parent = nullptr, QValidator* validator = nullptr, QString castTo = nullptr);
-	void setIndex(QModelIndex);
+	void setIndex(const QModelIndex& index);
+	void setValue(const std::string&);
+	std::string getValue(const std::string& value = "");
 
 private:
 	QLineEdit* m_lineEdit;
