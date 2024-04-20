@@ -34,7 +34,6 @@ void GeometryCore::TagMap::tagShape(const TopoDS_Solid& shape){
     this->_tagSolidMap.Bind(tag, shape);
     this->_solidTagMap.Bind(shape, tag);
 }
-
 const int& GeometryCore::TagMap::getTag(const TopoDS_Vertex& shape){
     return this->_vertexTagMap.Find(shape);
 }

@@ -46,7 +46,7 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 	vtkLogF(INFO, "STEPCAFControl_Reader transferred successfully.");
 
 	auto& reader = cafReader.Reader();
-	this->_partsMap = GeometryCore::PartsMap {};
+	this->_solidsMap = GeometryCore::PartsMap {};
 	auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_dataFrame->Main());
 
 	Standard_Integer numberOfShapes = reader.NbShapes();
@@ -66,7 +66,7 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 				// Get the shape
 				auto& solid = TopoDS::Solid(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("SolidPart", this->_partsMap);
+				auto uniqueName = getUniqueObjectName("SolidPart", this->_solidsMap);
 
 				// Do we need to collect labels? (Solid/Shell)
 				// std::stringstream stringStream;
@@ -84,7 +84,7 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 				// if (stringStream.str().size() == 0) {
 				// 	stringStream << "Solid";
 				// }
-				this->_partsMap[uniqueName] = solid;
+				this->_solidsMap[uniqueName] = solid;
 				// std::cout << uniqueName.c_str() << std::endl;
 			}
 
@@ -93,7 +93,7 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 				// Get the shape
 				auto _shell = TopoDS::Shell(explorer.Current());
 
-				auto uniqueName = getUniqueObjectName("ShellPart", this->_partsMap);
+				auto uniqueName = getUniqueObjectName("ShellPart", this->_solidsMap);
 
 				// Do we need to collect labels? (Solid/Shell)
 				// std::stringstream stringStream;
@@ -108,7 +108,7 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 				// if (stringStream.str().size() == 0) {
 				// 	stringStream << "Shell";
 				// }
-				this->_partsMap[uniqueName] = _shell;
+				this->_solidsMap[uniqueName] = _shell;
 			}
 
 			for (explorer.Init(_shape, TopAbs_EDGE); explorer.More(); explorer.Next()) {
@@ -162,8 +162,8 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 			if (!emptyComp) {
 				vtkLogF(INFO, "Loaded all other free-flying shapes into a single compound.");
 				// TODO: Do we need to collect labels? (Solid/Shell)
-				std::string uniqueName = getUniqueObjectName("CompoundPart", this->_partsMap);
-				this->_partsMap[uniqueName] = compound;
+				std::string uniqueName = getUniqueObjectName("CompoundPart", this->_solidsMap);
+				this->_solidsMap[uniqueName] = compound;
 			}
 		}
 	}

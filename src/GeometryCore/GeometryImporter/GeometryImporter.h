@@ -14,6 +14,7 @@
 #include <vtkPolyDataMapper.h>
 
 #include <TopoDS_Shape.hxx>
+
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <XCAFDoc_ColorType.hxx>
@@ -35,7 +36,7 @@ namespace GeometryCore {
             virtual const ActorsMap getPartsActorMap();
             virtual const ActorsMap getFacesActorMap();
             virtual const ActorsMap getEdgesActorMap();
-            const PartsMap& getPartsMap(){return this->_partsMap;};
+            const PartsMap& getSolidsMap(){return this->_solidsMap;};
             const PartsMap& getFacesMap(){return this->_facesMap;};
             const PartsMap& getEdgesMap(){return this->_edgesMap;};
             const PartsMap& getVertexMap(){return this->_vertexMap;};
@@ -45,7 +46,7 @@ namespace GeometryCore {
             vtkSmartPointer<vtkActor> createVTKActor(const TopoDS_Shape& shape);
 
             Handle(TDocStd_Document) _dataFrame;
-            PartsMap _partsMap;
+            PartsMap _solidsMap;
             PartsMap _facesMap;
             PartsMap _edgesMap;
             PartsMap _vertexMap;

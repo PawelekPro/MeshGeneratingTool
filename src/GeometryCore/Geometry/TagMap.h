@@ -27,11 +27,11 @@ namespace GeometryCore {
     class TagMap{
 
         public:
+            // void tagShape(EntityType type, const TopoDS_Shape& shape);
             void tagShape(const TopoDS_Solid& shape);
             void tagShape(const TopoDS_Face& shape);
             void tagShape(const TopoDS_Edge& shape);
             void tagShape(const TopoDS_Vertex& shape);
-
 
             TopoDS_Shape getShape(EntityType type, int tag);
 
@@ -56,7 +56,6 @@ namespace GeometryCore {
             TopTools_DataMapOfShapeInteger _edgeTagMap;
             TopTools_DataMapOfShapeInteger _faceTagMap;
             TopTools_DataMapOfShapeInteger _solidTagMap;
-
 };
 }
 #endif

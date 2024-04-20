@@ -23,7 +23,7 @@ const GeometryCore::ActorsMap GeometryCore::GeometryImporter::getPartsActorMap()
 
 	GeometryCore::ActorsMap actorsMap {};
 
-	for (const auto& it : this->_partsMap) {
+	for (const auto& it : this->_solidsMap) {
 		const auto& shape = it.second;
 
 		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);

@@ -7,6 +7,13 @@
 #include "GeometryImporter.h"
 #include "TagMap.h"
 
+
+#include <TopoDS.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Solid.hxx>
+
 namespace GeometryCore {
     using namespace std::string_literals;
     using ActorsMap = std::map<std::string, vtkSmartPointer<vtkActor>>;
@@ -14,7 +21,7 @@ namespace GeometryCore {
 
     class Geometry {
     public:
-        const PartsMap& getPartsMap() const {return this->_partsMap;};
+        const PartsMap& getSolidsMap() const {return this->_solidsMap;};
         const PartsMap& getFacesMap() const {return this->_facesMap;};
         const PartsMap& getEdgesMap() const {return this->_edgesMap;};
         const ActorsMap& getPartsActorMap() const {return this->_partsActorMap;};
@@ -24,12 +31,11 @@ namespace GeometryCore {
         void importSTEP(const std::string& filePath, QWidget* progressBar);
         void importSTL(const std::string& filePath, QWidget* progressBar);
 
-        void addShape(const TopoDS_Shape& shape, int dim);
         
     private:
-        TagMap tagMap;
+        TagMap _tagMap;
         
-        PartsMap _partsMap;
+        PartsMap _solidsMap;
         PartsMap _facesMap;
         PartsMap _edgesMap;
         PartsMap _vertexMap;
