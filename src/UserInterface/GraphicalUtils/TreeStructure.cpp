@@ -36,12 +36,24 @@ TreeStructure::TreeStructure(QWidget* parent)
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-	delete this->docObjectModel;
-
 	for (auto it = domElements.begin(); it != domElements.end(); ++it) {
-		delete it.key();
-		delete it.value();
+		QTreeWidgetItem* item = it.key();
+		QDomElement* element = it.value();
+
+		int role = Role.value(element->firstChildElement("Properties").tagName());
+
+		QVariant variantModel = item->data(0, role);
+		QSharedPointer<PropertiesModel> model
+			= variantModel.value<QSharedPointer<PropertiesModel>>();
+
+		if (!model.isNull()) {
+			model->deleteLater();
+		}
+
+		delete item;
+		delete element;
 	}
+	delete this->docObjectModel;
 }
 
 //--------------------------------------------------------------------------------------
@@ -126,11 +138,10 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& fileName)
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* item) {
-	int role = Role.value(element->tagName());
+	const int role = Role.value(element->tagName());
 
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
 	QVariant variantModel = QVariant::fromValue(model);
-
 	// ToDo: Model data changed detection
 	item->setData(0, role, variantModel);
 }

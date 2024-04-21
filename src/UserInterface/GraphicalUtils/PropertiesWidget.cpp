@@ -20,7 +20,26 @@
 #include "PropertiesWidget.h"
 
 //--------------------------------------------------------------------------------------
+PropertiesWidget::~PropertiesWidget() {
+	QAbstractItemModel* model = this->model();
+	if (model) {
+		ModelFilter* proxy = qobject_cast<ModelFilter*>(model);
+		;
+		if (proxy) {
+			for (int i = 0; i < proxy->rowCount(); ++i) {
+				QModelIndex index = proxy->index(i, 1);
+				QWidget* widget = indexWidget(index);
+				delete widget;
+			}
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------------
 void PropertiesWidget::setModel(PropertiesModel* model) {
+	qDeleteAll(m_createdWidgets);
+	m_createdWidgets.clear();
+
 	ModelFilter* proxy = new ModelFilter(this);
 	proxy->setSourceModel(model);
 	QTableView::setModel(proxy);
@@ -31,6 +50,9 @@ void PropertiesWidget::setModel(PropertiesModel* model) {
 			QModelIndex indexSource = proxy->mapToSource(index);
 			QWidget* widget = model->getWidget(indexSource);
 			this->setIndexWidget(index, widget);
+
+			// Add widget to list to handle its deleting on model change event
+			m_createdWidgets.append(widget);
 		}
 	}
 }

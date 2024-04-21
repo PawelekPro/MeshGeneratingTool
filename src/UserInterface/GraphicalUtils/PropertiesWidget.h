@@ -22,6 +22,7 @@
 
 #include "PropertiesModel.h"
 
+#include <QList>
 #include <QTableView>
 #include <QWidget>
 
@@ -33,7 +34,7 @@ class PropertiesWidget : public QTableView {
 public:
 	explicit PropertiesWidget(QWidget* parent = nullptr)
 		: QTableView(parent) {};
-	~PropertiesWidget() = default;
+	~PropertiesWidget();
 
 	/**
 	 * Sets the PropertiesModel for the object.
@@ -43,6 +44,10 @@ public:
 	 * @returns None
 	 */
 	void setModel(PropertiesModel*);
+
+private:
+	// Container for temporary widgets existing between model selection change event
+	QList<QWidget*> m_createdWidgets;
 };
 
 #endif
