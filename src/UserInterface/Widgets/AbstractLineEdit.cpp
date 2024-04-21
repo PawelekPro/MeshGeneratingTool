@@ -19,6 +19,15 @@
 #include "AbstractLineEdit.h"
 
 //----------------------------------------------------------------------------
+QString AbstractLineEdit::labelStyleSheet = R"(
+    padding-left: 1px;
+)";
+
+// Note: Defualt at the moment but may be changed in the future
+QString AbstractLineEdit::lineEditStyleSheet
+	= R"()";
+
+//----------------------------------------------------------------------------
 AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator, QString castTo)
 	: QWidget(parent)
 	, m_lineEdit(new QLineEdit(this))
@@ -33,15 +42,28 @@ AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator, QStri
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 
-	m_lineEdit->setFixedHeight(26);
-	m_suffixLabel->setFixedHeight(26);
+	m_lineEdit->setFixedHeight(this->lineHeight);
+	m_suffixLabel->setFixedHeight(this->lineHeight);
 	layout->addWidget(m_suffixLabel);
 
 	if (validator != nullptr) {
 		m_lineEdit->setValidator(validator);
 	}
 	layout->insertWidget(0, m_lineEdit);
+
+	// Plain/StylePanel style
+	m_suffixLabel->setFrameStyle(QFrame::StyledPanel);
+
+	this->m_lineEdit->setStyleSheet(this->lineEditStyleSheet);
+	this->m_suffixLabel->setStyleSheet(this->labelStyleSheet);
+
 	this->setLayout(layout);
+}
+
+//----------------------------------------------------------------------------
+AbstractLineEdit::~AbstractLineEdit() {
+	delete m_suffixLabel;
+	delete m_lineEdit;
 }
 
 //----------------------------------------------------------------------------
@@ -54,7 +76,8 @@ void AbstractLineEdit::setIndex(const QModelIndex& index) {
 
 	if (!propsModel) {
 		throw std::invalid_argument(
-			"The model assigned to the index must be of the 'PropertiesModel' type.");
+			"The model assigned to the index must be 
+			of the 'PropertiesModel' type.");
 	}
 
 	QDomElement element = propsModel->getProperty(index.row());

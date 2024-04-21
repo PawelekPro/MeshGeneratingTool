@@ -22,6 +22,7 @@
 
 #include "PropertiesModel.h"
 
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -37,6 +38,7 @@ class AbstractLineEdit : public QWidget {
 
 public:
 	AbstractLineEdit(QWidget* parent = nullptr, QValidator* validator = nullptr, QString castTo = nullptr);
+	~AbstractLineEdit();
 	void setIndex(const QModelIndex& index);
 	void setValue(const std::string&);
 	std::string getValue(const std::string& value = "");
@@ -50,6 +52,11 @@ private:
 
 	QModelIndex m_index;
 	QLocale m_locale;
+
+	static QString labelStyleSheet;
+	static QString lineEditStyleSheet;
+
+	static const int lineHeight = 20;
 };
 
 #endif

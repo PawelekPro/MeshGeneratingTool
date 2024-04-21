@@ -88,7 +88,7 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 //--------------------------------------------------------------------------------------
 bool PropertiesModel::setData(
 	const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
-	if (!index.isValid() || role != Qt::EditRole) {
+	if (!index.isValid() || role != Qt::DisplayRole && role != Qt::EditRole) {
 		return false;
 	}
 
@@ -151,8 +151,7 @@ QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 
 		AbstractLineEdit* widget = new AbstractLineEdit();
 		widget->setIndex(index);
-		qDebug() << widget;
-		qDebug() << "Widget created!";
+		return widget;
 		// if (widgetCreatorMap.contains(name)) {
 
 		// }
