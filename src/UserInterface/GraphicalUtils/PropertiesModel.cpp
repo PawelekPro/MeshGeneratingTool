@@ -26,12 +26,12 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 	QAbstractItemModel* model = this->sourceModel();
 	model->data(model->index(sourceRow, 0), Qt::DisplayRole);
 
-	QModelIndex propIndex = model->index(sourceRow, 0);
-	QVariant propVariant = model->data(propIndex, Qt::UserRole);
-	QVariantMap propMap = propVariant.toMap();
-	bool hidden = propMap.value("hidden").toBool();
+	PropertiesModel* propsModel = dynamic_cast<PropertiesModel*>(model);
 
-	return !hidden;
+	QDomElement propsNode = propsModel->getProperty(sourceRow);
+	QString hidden = propsNode.attributes().namedItem("hidden").toAttr().value();
+
+	return hidden == "no" || hidden.isEmpty();
 }
 
 //--------------------------------------------------------------------------------------
@@ -151,6 +151,7 @@ QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 
 		AbstractLineEdit* widget = new AbstractLineEdit();
 		widget->setIndex(index);
+		qDebug() << widget;
 		qDebug() << "Widget created!";
 		// if (widgetCreatorMap.contains(name)) {
 

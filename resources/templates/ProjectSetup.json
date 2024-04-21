@@ -4,14 +4,19 @@
             {
                 "name": "test",
                 "label": "test",
-                "widget": "test",
-                "value": "0"
+                "widget": "AbstractLineEdit",
+                "value": "0",
+                "minVal": "0",
+                "maxVal": "1",
+                "unit": "m",
+                "hidden": "no"
             },
             {
                 "name": "test",
                 "label": "test",
                 "widget": "test",
-                "value": "0"
+                "value": "0",
+                "hidden": "no"
             }
         ]
     },
