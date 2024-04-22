@@ -17,43 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROPERTIESWIDGET_H
-#define PROPERTIESWIDGET_H
+#ifndef INTLINEEDIT_H
+#define INTLINEEDIT_H
+#pragma once
 
-#include "PropertiesModel.h"
+#include "AbstractLineEdit.h"
 
-#include <QList>
-#include <QStyledItemDelegate>
-#include <QTableView>
+#include <QIntValidator>
+#include <QModelIndex>
+#include <QObject>
 #include <QWidget>
 
-/**
- * Custom widget for displaying properties using a table view.
- */
-class PropertiesWidget : public QTableView {
+class IntLineWidget : public AbstractLineEdit {
 	Q_OBJECT
 public:
-	explicit PropertiesWidget(QWidget* parent = nullptr)
-		: QTableView(parent) {};
-	~PropertiesWidget();
+	IntLineWidget(QWidget* parent = nullptr);
+	~IntLineWidget() {};
 
-	/**
-	 * Sets the PropertiesModel for the object.
-	 *
-	 * @param model A pointer to the PropertiesModel to be set.
-	 *
-	 * @returns None
-	 */
-	void setModel(PropertiesModel*);
+	void setIndex(const QModelIndex&) override;
 
 private:
-	// Container for temporary widgets existing between model selection change event
-	QList<QWidget*> m_createdWidgets;
+	QModelIndex m_index;
 
-	/**
-	 * The height of a row in a table.
-	 */
-	static const int rowHeight = 20;
+signals:
+	void valueChanged(int);
+
+public slots:
+	void onValueChanged(const int);
 };
 
 #endif

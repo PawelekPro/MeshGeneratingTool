@@ -46,6 +46,7 @@ void PropertiesWidget::setModel(PropertiesModel* model) {
 
 	if (proxy) {
 		for (int i = 0; i < proxy->rowCount(); ++i) {
+			this->setRowHeight(i, this->rowHeight);
 			QModelIndex index = proxy->index(i, 1);
 			QModelIndex indexSource = proxy->mapToSource(index);
 			QWidget* widget = model->getWidget(indexSource);

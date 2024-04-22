@@ -18,18 +18,21 @@
  */
 #include "AbstractLineEdit.h"
 
-//----------------------------------------------------------------------------
-QString AbstractLineEdit::labelStyleSheet = R"(
-    padding-left: 1px;
-)";
+// clang-format off
+QString AbstractLineEdit::labelStyleSheet = QString(R"(
+	padding-left: 1px;
+	font-size: %1pt;
+)").arg(AbstractLineEdit::fontSize);
 
-// Note: Defualt at the moment but may be changed in the future
-QString AbstractLineEdit::lineEditStyleSheet
-	= R"()";
+QString AbstractLineEdit::lineEditStyleSheet = QString(R"(
+	border: 0px;
+	font-size: %1pt;
+)").arg(AbstractLineEdit::fontSize);
+// clang-format on
 
 //----------------------------------------------------------------------------
 AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator, QString castTo)
-	: QWidget(parent)
+	: BaseWidget(parent)
 	, m_lineEdit(new QLineEdit(this))
 	, m_suffixLabel(new QLabel(this))
 	, m_castTo(castTo)
@@ -76,8 +79,7 @@ void AbstractLineEdit::setIndex(const QModelIndex& index) {
 
 	if (!propsModel) {
 		throw std::invalid_argument(
-			"The model assigned to the index must be 
-			of the 'PropertiesModel' type.");
+			"The model assigned to the index must be of the 'PropertiesModel' type.");
 	}
 
 	QDomElement element = propsModel->getProperty(index.row());

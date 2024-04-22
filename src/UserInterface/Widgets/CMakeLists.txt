@@ -1,6 +1,7 @@
 ADD_LIBRARY(Widgets 
   AbstractLineEdit.cpp
-  AbstractLineEdit.h
+  IntLineWidget.cpp
+  BaseWidget.h
 )
 
 TARGET_LINK_LIBRARIES(Widgets PUBLIC 

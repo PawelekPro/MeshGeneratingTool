@@ -20,6 +20,7 @@
 #ifndef ABSTRACTLINEEDIT_H
 #define ABSTRACTLINEEDIT_H
 
+#include "BaseWidget.h"
 #include "PropertiesModel.h"
 
 #include <QFrame>
@@ -33,15 +34,18 @@
 #include <QWidget>
 #include <QXmlStreamAttributes>
 
-class AbstractLineEdit : public QWidget {
+class AbstractLineEdit : public BaseWidget {
 	Q_OBJECT
 
 public:
 	AbstractLineEdit(QWidget* parent = nullptr, QValidator* validator = nullptr, QString castTo = nullptr);
 	~AbstractLineEdit();
-	void setIndex(const QModelIndex& index);
+	void setIndex(const QModelIndex& index) override;
 	void setValue(const std::string&);
 	std::string getValue(const std::string& value = "");
+
+	static const int lineHeight = 20;
+	static const int fontSize = 10;
 
 private:
 	QLineEdit* m_lineEdit;
@@ -55,8 +59,6 @@ private:
 
 	static QString labelStyleSheet;
 	static QString lineEditStyleSheet;
-
-	static const int lineHeight = 20;
 };
 
 #endif
