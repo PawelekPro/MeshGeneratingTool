@@ -27,7 +27,7 @@ IntLineWidget::IntLineWidget(QWidget* parent)
 
 //----------------------------------------------------------------------------
 void IntLineWidget::setIndex(const QModelIndex& index) {
-	AbstractLineEdit::setIndex(index);
+	AbstractLineEdit::initialize(index);
 	m_index = index;
 
 	QVariant val = index.model()->data(index);
@@ -35,17 +35,19 @@ void IntLineWidget::setIndex(const QModelIndex& index) {
 		this->setValue(std::to_string(val.toInt()));
 	}
 
-	if (QObject::receivers(SIGNAL(this->valueChanged(int))) > 0) {
+	if (QObject::receivers(SIGNAL(valueChanged(int))) > 0) {
 		QObject::disconnect(
-			this, SIGNAL(this->valueChanged(int)),
-			this, SLOT(this->onValueChanged(int)));
+			this, SIGNAL(valueChanged(int)),
+			this, SLOT(onValueChanged(int)));
 	}
-	QObject::connect(this, SIGNAL(this->valueChanged(int)),
-		this, SLOT(this->onValueChanged(int)));
+	QObject::connect(this, SIGNAL(valueChanged(int)),
+		this, SLOT(onValueChanged(int)));
 }
 
 //----------------------------------------------------------------------------
 void IntLineWidget::onValueChanged(const int value) {
+	qDebug() << "Halo halo";
+
 	QModelIndex mutableIndex = m_index; // Create a non-const copy
 	if (mutableIndex.model()) { // Check if the model is valid
 		QAbstractItemModel* mutableModel = const_cast<QAbstractItemModel*>(mutableIndex.model());

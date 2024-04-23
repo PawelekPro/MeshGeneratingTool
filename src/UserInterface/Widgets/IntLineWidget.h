@@ -17,9 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTLINEEDIT_H
-#define INTLINEEDIT_H
-#pragma once
+#ifndef INTLINEWIDGET_H
+#define INTLINEWIDGET_H
 
 #include "AbstractLineEdit.h"
 
@@ -34,7 +33,7 @@ public:
 	IntLineWidget(QWidget* parent = nullptr);
 	~IntLineWidget() {};
 
-	void setIndex(const QModelIndex&) override;
+	void setIndex(const QModelIndex& index) override;
 
 private:
 	QModelIndex m_index;

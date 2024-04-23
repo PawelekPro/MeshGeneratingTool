@@ -21,7 +21,6 @@
 #define ABSTRACTLINEEDIT_H
 
 #include "BaseWidget.h"
-#include "PropertiesModel.h"
 
 #include <QFrame>
 #include <QHBoxLayout>
@@ -40,7 +39,7 @@ class AbstractLineEdit : public BaseWidget {
 public:
 	AbstractLineEdit(QWidget* parent = nullptr, QValidator* validator = nullptr, QString castTo = nullptr);
 	~AbstractLineEdit();
-	void setIndex(const QModelIndex& index) override;
+	void initialize(const QModelIndex& index);
 	void setValue(const std::string&);
 	std::string getValue(const std::string& value = "");
 

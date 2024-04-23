@@ -2,10 +2,10 @@
     "GeometryImports": {
         "Properties": [
             {
+                "value": "420",
                 "name": "test",
                 "label": "test",
                 "widget": "AbstractLineEdit",
-                "value": "0",
                 "minVal": "0",
                 "maxVal": "1",
                 "unit": "m",

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "AbstractLineEdit.h"
+#include "PropertiesModel.h"
 
 // clang-format off
 QString AbstractLineEdit::labelStyleSheet = QString(R"(
@@ -70,7 +71,7 @@ AbstractLineEdit::~AbstractLineEdit() {
 }
 
 //----------------------------------------------------------------------------
-void AbstractLineEdit::setIndex(const QModelIndex& index) {
+void AbstractLineEdit::initialize(const QModelIndex& index) {
 	this->m_index = index;
 
 	const QAbstractItemModel* constModel = index.model();

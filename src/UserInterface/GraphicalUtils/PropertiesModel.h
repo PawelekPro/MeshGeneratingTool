@@ -21,6 +21,7 @@
 #define PROPERTIESMODEL_H
 
 #include "AbstractLineEdit.h"
+#include "IntLineWidget.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
