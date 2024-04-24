@@ -1,6 +1,7 @@
 ADD_LIBRARY(Widgets 
   AbstractLineEdit.cpp
   IntLineWidget.cpp
+  DoubleLineWidget.cpp
   BaseWidget.h
 )
 

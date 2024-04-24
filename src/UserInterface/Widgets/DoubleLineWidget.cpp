@@ -17,22 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "IntLineWidget.h"
+#include "DoubleLineWidget.h"
 
 //----------------------------------------------------------------------------
-IntLineWidget::IntLineWidget(QWidget* parent)
-	: AbstractLineEdit(parent, new QIntValidator()) {
+DoubleLineWidget::DoubleLineWidget(QWidget* parent)
+	: AbstractLineEdit(parent, new QDoubleValidator()) {
 	m_index = QModelIndex();
 }
 
 //----------------------------------------------------------------------------
-void IntLineWidget::setIndex(const QModelIndex& index) {
+void DoubleLineWidget::setIndex(const QModelIndex& index) {
 	AbstractLineEdit::initialize(index);
 	m_index = index;
 
 	QVariant val = index.model()->data(index);
 	if (val.isValid()) {
-		this->setValue(std::to_string(val.toInt()));
+		this->setValue(std::to_string(val.toDouble()));
 	}
 
 	if (QObject::receivers(SIGNAL(valueChanged(QString))) > 0) {
@@ -45,14 +45,15 @@ void IntLineWidget::setIndex(const QModelIndex& index) {
 }
 
 //----------------------------------------------------------------------------
-void IntLineWidget::onValueChanged(QString value) {
-	// qDebug() << value.toInt();
+void DoubleLineWidget::onValueChanged(QString value) {
+	// qDebug() << value.toDouble();
 
 	QModelIndex mutableIndex = m_index; // Create a non-const copy
 	if (mutableIndex.model()) { // Check if the model is valid
 		QAbstractItemModel* mutableModel
 			= const_cast<QAbstractItemModel*>(mutableIndex.model());
 		mutableModel->setData(mutableIndex, value);
+
 	} else {
 		qWarning() << "Invalid model in QModelIndex.";
 	}
