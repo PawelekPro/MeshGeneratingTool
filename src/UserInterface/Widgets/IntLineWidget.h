@@ -38,11 +38,8 @@ public:
 private:
 	QModelIndex m_index;
 
-signals:
-	void valueChanged(int);
-
 public slots:
-	void onValueChanged(const int);
+	void onValueChanged(QString);
 };
 
 #endif

@@ -32,11 +32,10 @@ QString AbstractLineEdit::lineEditStyleSheet = QString(R"(
 // clang-format on
 
 //----------------------------------------------------------------------------
-AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator, QString castTo)
+AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator)
 	: BaseWidget(parent)
 	, m_lineEdit(new QLineEdit(this))
 	, m_suffixLabel(new QLabel(this))
-	, m_castTo(castTo)
 	, m_lastValidValue(0)
 	, m_minVal(-INFINITY)
 	, m_maxVal(INFINITY)
@@ -60,6 +59,9 @@ AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator, QStri
 
 	this->m_lineEdit->setStyleSheet(this->lineEditStyleSheet);
 	this->m_suffixLabel->setStyleSheet(this->labelStyleSheet);
+
+	QObject::connect(m_lineEdit, SIGNAL(editingFinished()),
+		this, SLOT(onEditingFinished()));
 
 	this->setLayout(layout);
 }
@@ -104,32 +106,19 @@ void AbstractLineEdit::initialize(const QModelIndex& index) {
 
 //----------------------------------------------------------------------------
 void AbstractLineEdit::setValue(const std::string& value) {
-	double val = 0.0;
-	try {
-		val = std::stod(value);
-	} catch (const std::invalid_argument&) {
-	}
-
-	if (m_castTo.isEmpty()) {
-		m_lineEdit->setText(QString::fromStdString(value));
-	} else {
-		m_lineEdit->setText(m_locale.toString(val));
-		emit m_lineEdit->editingFinished();
-	}
+	m_lineEdit->setText(QString::fromStdString(value));
 }
 
 //----------------------------------------------------------------------------
-std::string AbstractLineEdit::getValue(const std::string& value) {
-	std::string text;
-	if (value.empty()) {
-		text = m_lineEdit->text().toStdString();
-	} else {
-		text = value;
-	}
-	if (m_castTo.isEmpty()) {
-		return text;
-	}
+std::string AbstractLineEdit::getValue() {
+	std::string text = m_lineEdit->text().toStdString();
+	return text;
+}
 
-	double val = m_locale.toDouble(QString::fromStdString(text));
-	return std::to_string(val);
+//----------------------------------------------------------------------------
+void AbstractLineEdit::onEditingFinished() {
+	const QString value = m_lineEdit->text();
+
+	// ToDo: check if given value is valid
+	emit this->valueChanged(value);
 }

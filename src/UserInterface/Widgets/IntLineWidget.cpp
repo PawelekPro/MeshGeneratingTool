@@ -21,7 +21,7 @@
 
 //----------------------------------------------------------------------------
 IntLineWidget::IntLineWidget(QWidget* parent)
-	: AbstractLineEdit(parent, new QIntValidator(), "toLongLong") {
+	: AbstractLineEdit(parent, new QIntValidator()) {
 	m_index = QModelIndex();
 }
 
@@ -37,16 +37,16 @@ void IntLineWidget::setIndex(const QModelIndex& index) {
 
 	if (QObject::receivers(SIGNAL(valueChanged(int))) > 0) {
 		QObject::disconnect(
-			this, SIGNAL(valueChanged(int)),
-			this, SLOT(onValueChanged(int)));
+			this, SIGNAL(valueChanged(QString)),
+			this, SLOT(onValueChanged(QString)));
 	}
-	QObject::connect(this, SIGNAL(valueChanged(int)),
-		this, SLOT(onValueChanged(int)));
+	QObject::connect(this, SIGNAL(valueChanged(QString)),
+		this, SLOT(onValueChanged(QString)));
 }
 
 //----------------------------------------------------------------------------
-void IntLineWidget::onValueChanged(const int value) {
-	qDebug() << "Halo halo";
+void IntLineWidget::onValueChanged(QString value) {
+	// qDebug() << value.toInt();
 
 	QModelIndex mutableIndex = m_index; // Create a non-const copy
 	if (mutableIndex.model()) { // Check if the model is valid

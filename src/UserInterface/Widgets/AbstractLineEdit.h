@@ -37,27 +37,32 @@ class AbstractLineEdit : public BaseWidget {
 	Q_OBJECT
 
 public:
-	AbstractLineEdit(QWidget* parent = nullptr, QValidator* validator = nullptr, QString castTo = nullptr);
+	AbstractLineEdit(QWidget* parent = nullptr, QValidator* validator = nullptr);
 	~AbstractLineEdit();
 	void initialize(const QModelIndex& index);
 	void setValue(const std::string&);
-	std::string getValue(const std::string& value = "");
+	std::string getValue();
 
 	static const int lineHeight = 20;
 	static const int fontSize = 10;
 
-private:
+protected:
 	QLineEdit* m_lineEdit;
 	QLabel* m_suffixLabel;
 	double m_lastValidValue;
 	double m_minVal, m_maxVal;
-	QString m_castTo;
 
 	QModelIndex m_index;
 	QLocale m_locale;
 
 	static QString labelStyleSheet;
 	static QString lineEditStyleSheet;
+
+signals:
+	void valueChanged(QString);
+
+public slots:
+	void onEditingFinished();
 };
 
 #endif
