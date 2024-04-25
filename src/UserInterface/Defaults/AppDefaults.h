@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef APPDEFAULTS_H
+#define APPDEFAULTS_H
+
 #include <QSettings>
 
 #include <filesystem>
@@ -30,16 +33,7 @@ namespace fs = std::filesystem;
  */
 class AppDefaults {
 public:
-	AppDefaults() {
-		settings.beginGroup("ApplicationDefaults");
-		settings.setValue("Version", "1.0.0");
-		settings.setValue("ProjFileVersion", "1.0");
-		settings.setValue("Name", "MeshGeneratingTool");
-		// Space for more settings
-		settings.endGroup();
-
-		this->setupPaths();
-	}
+	AppDefaults();
 	~AppDefaults() = default;
 
 	/**
@@ -73,6 +67,10 @@ public:
 		return this->_templatesPath;
 	}
 
+	const QString getComboBoxModelsPath() {
+		return this->_comboBoxModelsPath;
+	}
+
 private:
 	/**
 	 * @brief  Get application default setting for key with given name.
@@ -87,14 +85,12 @@ private:
 		return value;
 	}
 
-	void setupPaths() {
-		// fs::path currentPath = fs::current_path();
-		this->_templatesPath = ":/templates/templates/ProjectSetup.json";
-	}
-
 	// Container for application settings
 	QSettings settings;
 
 	// Templates path
-	QString _templatesPath;
+	static const QString _templatesPath;
+	static const QString _comboBoxModelsPath;
 };
+
+#endif

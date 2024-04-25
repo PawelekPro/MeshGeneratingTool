@@ -20,7 +20,7 @@
 #ifndef TREESTRUCTURE_H
 #define TREESTRUCTURE_H
 
-#include "AppDefaults.hpp"
+#include "AppDefaults.h"
 #include "PropertiesModel.h"
 
 #include "document.h"

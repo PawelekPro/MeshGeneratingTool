@@ -21,6 +21,7 @@
 #define PROPERTIESMODEL_H
 
 #include "AbstractLineEdit.h"
+#include "ComboBoxWidget.h"
 #include "DoubleLineWidget.h"
 #include "IntLineWidget.h"
 

@@ -6,6 +6,7 @@
     <file>icons/volume_selector.svg</file>
   </qresource>
   <qresource prefix="templates">
+    <file>templates/ComboboxModels.json</file>
     <file>templates/ProjectSetup.json</file>
   </qresource>
   <qresource prefix="uiSetup">

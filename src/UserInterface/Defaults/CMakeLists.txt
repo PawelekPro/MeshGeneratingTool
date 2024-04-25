@@ -1,5 +1,5 @@
 ADD_LIBRARY(Defaults 
-  AppDefaults.hpp
+  AppDefaults.cpp
 )
 
 TARGET_LINK_LIBRARIES(Defaults PRIVATE 

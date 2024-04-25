@@ -149,7 +149,7 @@ QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 		QDomNamedNodeMap attrs = this->_properties[index.row()].attributes();
 		QString name = attrs.namedItem("widget").toAttr().value();
 
-		IntLineWidget* widget = new IntLineWidget();
+		ComboBoxWidget* widget = new ComboBoxWidget();
 		widget->setIndex(index);
 		return widget;
 		// if (widgetCreatorMap.contains(name)) {

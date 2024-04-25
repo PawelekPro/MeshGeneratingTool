@@ -2,21 +2,23 @@
     "GeometryImports": {
         "Properties": [
             {
-                "value": "420",
+                "value": "0",
                 "name": "test",
                 "label": "test",
                 "widget": "AbstractLineEdit",
                 "minVal": "0",
                 "maxVal": "1",
                 "unit": "m",
-                "hidden": "no"
+                "hidden": "no",
+                "model": "SizeSelection"
             },
             {
                 "name": "test",
                 "label": "test",
                 "widget": "test",
                 "value": "0",
-                "hidden": "no"
+                "hidden": "no",
+                "model": "SizeSelection"
             }
         ]
     },

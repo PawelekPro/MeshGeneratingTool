@@ -1,0 +1,32 @@
+{
+    "SizeSelection": {
+        "0": {
+            "name": "geometrySelection",
+            "label": "Geometry selection"
+        },
+        "1": {
+            "name": "namedSelection",
+            "label": "Named selection"
+        }
+    },
+    "CosInnego": {
+        "0": {
+            "name": "test",
+            "label": "test"
+        },
+        "1": {
+            "name": "test",
+            "label": "test"
+        }
+    },
+    "CosJeszczeInnego": {
+        "0": {
+            "name": "test",
+            "label": "test"
+        },
+        "1": {
+            "name": "test",
+            "label": "test"
+        }
+    }
+}
