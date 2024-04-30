@@ -30,4 +30,28 @@ AppDefaults::AppDefaults() {
 	settings.setValue("Name", "MeshGeneratingTool");
 	// Space for more settings
 	settings.endGroup();
+
+	// Read JSON file representing combobox models
+	QString filePath = this->appInfo.getComboBoxModelsPath();
+	this->readJSONFile(filePath);
+}
+
+//--------------------------------------------------------------------------------------
+void AppDefaults::readJSONFile(QString filePath){
+	// QString filePath = this->appInfo.getComboBoxModelsPath();
+	QFile jsonFile(filePath);
+
+	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		vtkLogF(ERROR, "Failed to open ComboboxModels.json file.");
+	}
+
+	QByteArray jsonData = jsonFile.readAll();
+	jsonFile.close();
+
+	// Parse the JSON string
+	this->m_document.Parse(jsonData.constData());
+
+	if (this->m_document.HasParseError()) {
+		vtkLogF(ERROR, "Error parsing JSON file.");
+	}
 }

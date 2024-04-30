@@ -51,10 +51,7 @@ private:
 	QModelIndex m_index;
 
 	// rapidjson document
-	rapidjson::Document document;
-
-	// Handy-dandy container for application defaults
-	AppDefaults appInfo;
+	rapidjson::Document& m_document;
 };
 
 #endif

@@ -33,23 +33,8 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(m_comboBox);
 
-	QString filePath = this->appInfo.getComboBoxModelsPath();
-	QFile jsonFile(filePath);
-
-	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		vtkLogF(ERROR, "Failed to open ComboboxModels.json file.");
-	}
-
-	QByteArray jsonData = jsonFile.readAll();
-	jsonFile.close();
-
-	// Parse the JSON string
-	this->document.Parse(jsonData.constData());
-
-	if (this->document.HasParseError()) {
-		vtkLogF(ERROR, "Error parsing JSON file.");
-	}
-
+	m_document = AppDefaults::getInstance().getDocument();
+	
 	this->setLayout(layout);
 }
 

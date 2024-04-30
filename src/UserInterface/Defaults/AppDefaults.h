@@ -71,7 +71,21 @@ public:
 		return this->_comboBoxModelsPath;
 	}
 
+	void readJSONFile(QString);
+
+	static AppDefaults& getInstance() {
+        static AppDefaults instance;
+        return instance;
+    }
+
+	rapidjson::Document& getDocument() {
+        return m_document;
+    }
+
 private:
+	AppDefaults(AppDefaults const&) = delete;
+    void operator=(AppDefaults const&) = delete;
+
 	/**
 	 * @brief  Get application default setting for key with given name.
 	 *
@@ -91,6 +105,9 @@ private:
 	// Templates path
 	static const QString _templatesPath;
 	static const QString _comboBoxModelsPath;
+
+	// rapidjson document
+	rapidjson::Document m_document;
 };
 
 #endif
