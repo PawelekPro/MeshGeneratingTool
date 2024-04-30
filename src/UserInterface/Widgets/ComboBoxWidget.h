@@ -51,7 +51,7 @@ private:
 	QModelIndex m_index;
 
 	// rapidjson document
-	rapidjson::Document& m_document;
+	rapidjson::Document* document;
 };
 
 #endif

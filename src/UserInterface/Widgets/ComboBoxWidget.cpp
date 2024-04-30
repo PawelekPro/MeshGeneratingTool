@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	: BaseWidget(parent)
-	, appInfo()
+	, document(new rapidjson::Document())
 	, m_comboBox(new QComboBox(this)) {
 
 	m_index = QModelIndex();
@@ -33,14 +33,15 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(m_comboBox);
 
-	m_document = AppDefaults::getInstance().getDocument();
-	
+	this->document = AppDefaults::getInstance().getDocument();
+
 	this->setLayout(layout);
 }
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::~ComboBoxWidget() {
 	delete m_comboBox;
+	// 'document' member is being deleted in AppDefaults class
 }
 
 //----------------------------------------------------------------------------
@@ -67,13 +68,14 @@ void ComboBoxWidget::setIndex(const QModelIndex& index) {
 //----------------------------------------------------------------------------
 QStringListModel* ComboBoxWidget::createQStringListModel(const QString& name) {
 
-	if (!this->document.HasMember(name.toStdString().c_str())
-		|| !this->document[name.toStdString().c_str()].IsObject()) {
-		throw std::invalid_argument(
-			"No such model: " + name.toStdString());
+	if (!this->document->HasMember(name.toStdString().c_str())
+		|| !(*this->document)[name.toStdString().c_str()].IsObject()) {
+
+		vtkLogF(ERROR, ("No such model: " + name.toStdString()).c_str());
+		return new QStringListModel();
 	}
 
-	const rapidjson::Value& model = this->document[name.toStdString().c_str()];
+	const rapidjson::Value& model = (*this->document)[name.toStdString().c_str()];
 
 	std::vector<int> ids;
 	std::vector<QString> m_list;

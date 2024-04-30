@@ -20,10 +20,16 @@
 #ifndef APPDEFAULTS_H
 #define APPDEFAULTS_H
 
+#include <QFile>
 #include <QSettings>
 
 #include <filesystem>
 #include <iostream>
+
+#include <vtkLogger.h>
+
+#include "document.h"
+#include "filereadstream.h"
 
 namespace fs = std::filesystem;
 
@@ -74,17 +80,17 @@ public:
 	void readJSONFile(QString);
 
 	static AppDefaults& getInstance() {
-        static AppDefaults instance;
-        return instance;
-    }
+		static AppDefaults instance;
+		return instance;
+	}
 
-	rapidjson::Document& getDocument() {
-        return m_document;
-    }
+	rapidjson::Document* getDocument() {
+		return &m_document;
+	}
 
 private:
 	AppDefaults(AppDefaults const&) = delete;
-    void operator=(AppDefaults const&) = delete;
+	void operator=(AppDefaults const&) = delete;
 
 	/**
 	 * @brief  Get application default setting for key with given name.

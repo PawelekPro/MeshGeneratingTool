@@ -1,5 +1,5 @@
 {
-    "SizeSelection": {
+    "SizeModelSelection": {
         "0": {
             "name": "geometrySelection",
             "label": "Geometry selection"

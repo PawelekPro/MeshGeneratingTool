@@ -32,12 +32,12 @@ AppDefaults::AppDefaults() {
 	settings.endGroup();
 
 	// Read JSON file representing combobox models
-	QString filePath = this->appInfo.getComboBoxModelsPath();
+	QString filePath = this->getComboBoxModelsPath();
 	this->readJSONFile(filePath);
 }
 
 //--------------------------------------------------------------------------------------
-void AppDefaults::readJSONFile(QString filePath){
+void AppDefaults::readJSONFile(QString filePath) {
 	// QString filePath = this->appInfo.getComboBoxModelsPath();
 	QFile jsonFile(filePath);
 

@@ -10,7 +10,7 @@
                 "maxVal": "1",
                 "unit": "m",
                 "hidden": "no",
-                "model": "SizeSelection"
+                "model": "SizeModelSelection"
             },
             {
                 "name": "test",
@@ -18,7 +18,7 @@
                 "widget": "test",
                 "value": "0",
                 "hidden": "no",
-                "model": "SizeSelection"
+                "model": "CosInnego"
             }
         ]
     },
