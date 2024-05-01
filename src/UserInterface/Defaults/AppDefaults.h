@@ -43,9 +43,6 @@ namespace fs = std::filesystem;
  */
 class AppDefaults {
 public:
-	AppDefaults();
-	~AppDefaults() = default;
-
 	/**
 	 * @brief Provides a global point of access to the singleton instance of the AppDefaults class.
 	 *
@@ -104,6 +101,8 @@ public:
 
 private:
 	AppDefaults(AppDefaults const&) = delete;
+	AppDefaults();
+	~AppDefaults() = default;
 	void operator=(AppDefaults const&) = delete;
 
 	/**
