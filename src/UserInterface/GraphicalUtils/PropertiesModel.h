@@ -20,7 +20,6 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
-#include "AbstractLineEdit.h"
 #include "ComboBoxWidget.h"
 #include "DoubleLineWidget.h"
 #include "EntityPickWidget.h"
@@ -36,22 +35,35 @@
 #include <Qt>
 #include <QtXml/QDomElement>
 
+template<typename className>
+className* createInstance() {
+    return new className();
+}
+
 // using WidgetCreatorFunction = QWidget* (*)();
 // using WidgetCreatorMap = QMap<QString, WidgetCreatorFunction>;
 
-// QWidget* createDoubleLineEdit() {
-// 	// return new DoubleLineEdit();
-// 	return new QWidget();
+// DoubleLineWidget* createDoubleLineWidget() {
+// 	return new DoubleLineWidget();
 // }
 
-// QWidget* createIntLineEdit() {
-// 	// return new IntLineEdit();
-// 	return new QWidget();
+// IntLineEdit* createIntLineWidget() {
+// 	return new IntLineWidget();
+// }
+
+// ComboBoxWidget* createComboBoxWidget() {
+// 	return new ComboBoxWidget();
+// }
+
+// EntityPickWidget* createEntityPickWidget() {
+// 	return new EntityPickWidget();
 // }
 
 // WidgetCreatorMap widgetCreatorMap = {
-// 	{ "DoubleLineEdit", &createDoubleLineEdit },
-// 	{ "IntLineEdit", &createIntLineEdit }
+// 	{ "DoubleLineWidget", &createDoubleLineWidget },
+// 	{ "IntLineWidget", &createIntLineWidget },
+// 	{ "ComboBoxWidget", &createComboBoxWidget },
+// 	{ "EntityPickWidget", &createEntityPickWidget }
 // };
 
 /**
@@ -172,6 +184,8 @@ private:
 	 * A list of header strings.
 	 */
 	QStringList _header;
+
+	static QMap<QString, std::function<void*()>> factoryMap;
 };
 
 #endif

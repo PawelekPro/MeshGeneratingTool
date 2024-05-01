@@ -19,6 +19,13 @@
 
 #include "PropertiesModel.h"
 
+QMap<QString, std::function<void*()>> PropertiesModel::factoryMap = {
+    { "IntLineWidget", &createInstance<IntLineWidget> },
+    { "DoubleLineWidget", &createInstance<DoubleLineWidget> },
+	{ "ComboBoxWidget", &createInstance<ComboBoxWidget> },
+	{ "EntityPickWidget", &createInstance<EntityPickWidget> }
+};
+
 //--------------------------------------------------------------------------------------
 bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
 	Q_UNUSED(sourceParent);
@@ -149,12 +156,17 @@ QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 		QDomNamedNodeMap attrs = this->_properties[index.row()].attributes();
 		QString name = attrs.namedItem("widget").toAttr().value();
 
-		EntityPickWidget* widget = new EntityPickWidget();
-		widget->setIndex(index);
-		return widget;
-		// if (widgetCreatorMap.contains(name)) {
-
-		// }
+		// EntityPickWidget* widget = new EntityPickWidget();
+		// widget->setIndex(index);
+		// return widget;
+		auto classType = this->factoryMap.find(name);
+		if (classType != this->factoryMap.end()) {
+			void* widget = classType->second();
+			widget->setIndex(index);
+			return widget;
+		} else {
+			vtkLogF(ERROR, ("Class not found in factory map: " + name.toStdString()).c_str());
+		}
 	}
 	return widget;
 }
