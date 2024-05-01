@@ -23,6 +23,7 @@
 #include "AbstractLineEdit.h"
 #include "ComboBoxWidget.h"
 #include "DoubleLineWidget.h"
+#include "EntityPickWidget.h"
 #include "IntLineWidget.h"
 
 #include <QAbstractItemModel>

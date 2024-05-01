@@ -40,3 +40,6 @@ build
 
 # XML test file
 test.xml
+
+# Action list
+action_list.md

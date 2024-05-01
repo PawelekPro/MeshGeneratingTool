@@ -4,6 +4,7 @@ ADD_LIBRARY(Widgets
   DoubleLineWidget.cpp
   ComboBoxWidget.cpp
   BaseWidget.h
+  EntityPickWidget.cpp
 )
 
 TARGET_LINK_LIBRARIES(Widgets PUBLIC 
