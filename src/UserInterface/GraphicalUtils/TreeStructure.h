@@ -217,9 +217,6 @@ private:
 		{ TreeRoot::CSYS, "Coordinate System" },
 		{ TreeRoot::Mesh, "Mesh" }
 	};
-
-	// Handy-dandy container for application defaults
-	AppDefaults appInfo;
 };
 
 #endif

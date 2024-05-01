@@ -21,8 +21,7 @@
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
-	: QTreeWidget(parent)
-	, appInfo() {
+	: QTreeWidget(parent) {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
@@ -60,8 +59,11 @@ TreeStructure::~TreeStructure() {
 void TreeStructure::buildBaseObjectsRepresentation() {
 	rapidjson::Document doc = this->readDefaultProperties();
 
-	QDomElement root = this->docObjectModel->createElement(this->appInfo.getAppName());
-	root.setAttribute("version", this->appInfo.getAppProjFileVersion());
+	QDomElement root = this->docObjectModel->createElement(
+		AppDefaults::getInstance().getAppName());
+	root.setAttribute(
+		"version", AppDefaults::getInstance().getAppProjFileVersion());
+
 	this->docObjectModel->appendChild(root);
 
 	for (auto it = TreeRoots.begin(); it != TreeRoots.end(); ++it) {
@@ -211,7 +213,7 @@ PropertiesList TreeStructure::parseDefaultProperties(const rapidjson::Document& 
 
 //--------------------------------------------------------------------------------------
 rapidjson::Document TreeStructure::readDefaultProperties() {
-	QString defaultPropsPath = this->appInfo.getTemplatesPath();
+	QString defaultPropsPath = AppDefaults::getInstance().getTemplatesPath();
 	QFile jsonFile(defaultPropsPath);
 
 	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
