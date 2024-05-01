@@ -23,7 +23,6 @@
 //----------------------------------------------------------------------------
 ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	: BaseWidget(parent)
-	, document(new rapidjson::Document())
 	, m_comboBox(new QComboBox(this)) {
 
 	m_index = QModelIndex();
