@@ -20,6 +20,7 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
+#include "BaseWidget.h"
 #include "ComboBoxWidget.h"
 #include "DoubleLineWidget.h"
 #include "EntityPickWidget.h"
@@ -35,36 +36,10 @@
 #include <Qt>
 #include <QtXml/QDomElement>
 
-template<typename className>
+template <typename className>
 className* createInstance() {
-    return new className();
-}
-
-// using WidgetCreatorFunction = QWidget* (*)();
-// using WidgetCreatorMap = QMap<QString, WidgetCreatorFunction>;
-
-// DoubleLineWidget* createDoubleLineWidget() {
-// 	return new DoubleLineWidget();
-// }
-
-// IntLineEdit* createIntLineWidget() {
-// 	return new IntLineWidget();
-// }
-
-// ComboBoxWidget* createComboBoxWidget() {
-// 	return new ComboBoxWidget();
-// }
-
-// EntityPickWidget* createEntityPickWidget() {
-// 	return new EntityPickWidget();
-// }
-
-// WidgetCreatorMap widgetCreatorMap = {
-// 	{ "DoubleLineWidget", &createDoubleLineWidget },
-// 	{ "IntLineWidget", &createIntLineWidget },
-// 	{ "ComboBoxWidget", &createComboBoxWidget },
-// 	{ "EntityPickWidget", &createEntityPickWidget }
-// };
+	return new className();
+};
 
 /**
  * Custom model filter class that filters rows based on a custom criteria.
@@ -185,7 +160,7 @@ private:
 	 */
 	QStringList _header;
 
-	static QMap<QString, std::function<void*()>> factoryMap;
+	static QMap<QString, std::function<BaseWidget*()>> factoryMap;
 };
 
 #endif

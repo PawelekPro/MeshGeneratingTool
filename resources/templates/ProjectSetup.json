@@ -5,7 +5,7 @@
                 "value": "0",
                 "name": "test",
                 "label": "test",
-                "widget": "AbstractLineEdit",
+                "widget": "ComboBoxWidget",
                 "minVal": "0",
                 "maxVal": "1",
                 "unit": "m",
@@ -15,10 +15,22 @@
             {
                 "name": "test",
                 "label": "test",
-                "widget": "test",
+                "widget": "IntLineWidget",
                 "value": "0",
                 "hidden": "no",
                 "model": "CosInnego"
+            },
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "DoubleLineWidget",
+                "value": "0"
+            },
+            {
+                "name": "test",
+                "label": "test",
+                "widget": "EntityPickWidget",
+                "value": "0"
             }
         ]
     },

@@ -28,8 +28,6 @@ public:
 	BaseWidget(QWidget* parent = nullptr)
 		: QWidget(parent) {};
 	virtual ~BaseWidget() {};
-
-protected:
 	virtual void setIndex(const QModelIndex& index) = 0;
 };
 

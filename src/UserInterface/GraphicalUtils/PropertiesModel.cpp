@@ -19,11 +19,11 @@
 
 #include "PropertiesModel.h"
 
-QMap<QString, std::function<void*()>> PropertiesModel::factoryMap = {
-    { "IntLineWidget", &createInstance<IntLineWidget> },
-    { "DoubleLineWidget", &createInstance<DoubleLineWidget> },
-	{ "ComboBoxWidget", &createInstance<ComboBoxWidget> },
-	{ "EntityPickWidget", &createInstance<EntityPickWidget> }
+QMap<QString, std::function<BaseWidget*()>> PropertiesModel::factoryMap = {
+	{ "IntLineWidget", createInstance<IntLineWidget> },
+	{ "DoubleLineWidget", createInstance<DoubleLineWidget> },
+	{ "ComboBoxWidget", createInstance<ComboBoxWidget> },
+	{ "EntityPickWidget", createInstance<EntityPickWidget> }
 };
 
 //--------------------------------------------------------------------------------------
@@ -156,16 +156,17 @@ QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 		QDomNamedNodeMap attrs = this->_properties[index.row()].attributes();
 		QString name = attrs.namedItem("widget").toAttr().value();
 
-		// EntityPickWidget* widget = new EntityPickWidget();
-		// widget->setIndex(index);
-		// return widget;
 		auto classType = this->factoryMap.find(name);
 		if (classType != this->factoryMap.end()) {
-			void* widget = classType->second();
+			auto createFunction = classType.value();
+			auto widget = createFunction(); // Call the std::function to create the widget
+
 			widget->setIndex(index);
 			return widget;
 		} else {
-			vtkLogF(ERROR, ("Class not found in factory map: " + name.toStdString()).c_str());
+			vtkLogF(
+				ERROR,
+				("Class not found in widgets factory map: " + name.toStdString()).c_str());
 		}
 	}
 	return widget;
