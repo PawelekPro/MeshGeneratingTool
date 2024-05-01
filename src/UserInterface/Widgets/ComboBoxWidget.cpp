@@ -39,7 +39,7 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::~ComboBoxWidget() {
-	delete m_comboBox;
+	m_comboBox->deleteLater();
 	// 'document' member is being deleted in AppDefaults class
 }
 
