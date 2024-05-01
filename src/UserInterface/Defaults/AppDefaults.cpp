@@ -33,12 +33,11 @@ AppDefaults::AppDefaults() {
 
 	// Read JSON file representing combobox models
 	QString filePath = this->getComboBoxModelsPath();
-	this->readJSONFile(filePath);
+	this->readJSONFile(m_comboBoxModels, filePath);
 }
 
 //--------------------------------------------------------------------------------------
-void AppDefaults::readJSONFile(QString filePath) {
-	// QString filePath = this->appInfo.getComboBoxModelsPath();
+void AppDefaults::readJSONFile(rapidjson::Document& doc, QString filePath) {
 	QFile jsonFile(filePath);
 
 	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -49,9 +48,47 @@ void AppDefaults::readJSONFile(QString filePath) {
 	jsonFile.close();
 
 	// Parse the JSON string
-	this->m_document.Parse(jsonData.constData());
+	doc.Parse(jsonData.constData());
 
-	if (this->m_document.HasParseError()) {
-		vtkLogF(ERROR, "Error parsing JSON file.");
+	if (doc.HasParseError()) {
+		vtkLogF(ERROR, ("Error parsing JSON file: " + filePath.toStdString()).c_str());
 	}
+}
+
+//--------------------------------------------------------------------------------------
+rapidjson::Document* AppDefaults::getComboBoxModels() {
+	return &m_comboBoxModels;
+}
+
+//--------------------------------------------------------------------------------------
+QString AppDefaults::getValue(const QString& key) {
+	this->settings.beginGroup("ApplicationDefaults");
+	QString value = this->settings.value(key).toString();
+	this->settings.endGroup();
+	return value;
+}
+
+//--------------------------------------------------------------------------------------
+QString AppDefaults::getAppVersion() {
+	return this->getValue("Version");
+}
+
+//--------------------------------------------------------------------------------------
+QString AppDefaults::getAppName() {
+	return this->getValue("Name");
+}
+
+//--------------------------------------------------------------------------------------
+QString AppDefaults::getAppProjFileVersion() {
+	return this->getValue("ProjFileVersion");
+}
+
+//--------------------------------------------------------------------------------------
+const QString AppDefaults::getTemplatesPath() {
+	return this->_templatesPath;
+}
+
+//--------------------------------------------------------------------------------------
+const QString AppDefaults::getComboBoxModelsPath() {
+	return this->_comboBoxModelsPath;
 }

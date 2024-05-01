@@ -33,7 +33,7 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(m_comboBox);
 
-	this->document = AppDefaults::getInstance().getDocument();
+	this->document = AppDefaults::getInstance().getComboBoxModels();
 
 	this->setLayout(layout);
 }

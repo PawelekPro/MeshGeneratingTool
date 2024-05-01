@@ -47,46 +47,32 @@ public:
 	 *
 	 * @return {QString}  : Name of application
 	 */
-	QString getAppName() {
-		return getValue("Name");
-	}
+	QString getAppName();
 
 	/**
 	 * @brief  Get version of application as a QString.
 	 *
 	 * @return {QString}  : Version of application.
 	 */
-	QString getAppVersion() {
-		return getValue("Version");
-	}
+	QString getAppVersion();
 
 	/**
-	 * @brief  Get version of application proejct file as a QString.
+	 * @brief  Get version of application project file as a QString.
 	 *
 	 * @return {QString}  : Version of application project file.
 	 */
-	QString getAppProjFileVersion() {
-		return getValue("ProjFileVersion");
-	}
+	QString getAppProjFileVersion();
 
-	const QString getTemplatesPath() {
-		return this->_templatesPath;
-	}
+	const QString getTemplatesPath();
 
-	const QString getComboBoxModelsPath() {
-		return this->_comboBoxModelsPath;
-	}
-
-	void readJSONFile(QString);
+	const QString getComboBoxModelsPath();
 
 	static AppDefaults& getInstance() {
 		static AppDefaults instance;
 		return instance;
-	}
+	};
 
-	rapidjson::Document* getDocument() {
-		return &m_document;
-	}
+	rapidjson::Document* getComboBoxModels();
 
 private:
 	AppDefaults(AppDefaults const&) = delete;
@@ -98,12 +84,9 @@ private:
 	 * @param  {QString} key : Key representing default setting.
 	 * @return {QString}     : Corresponding value for given settings key.
 	 */
-	QString getValue(const QString& key) {
-		settings.beginGroup("ApplicationDefaults");
-		QString value = settings.value(key).toString();
-		settings.endGroup();
-		return value;
-	}
+	QString getValue(const QString& key);
+
+	void readJSONFile(rapidjson::Document&, QString);
 
 	// Container for application settings
 	QSettings settings;
@@ -112,8 +95,8 @@ private:
 	static const QString _templatesPath;
 	static const QString _comboBoxModelsPath;
 
-	// rapidjson document
-	rapidjson::Document m_document;
+	// rapidjson document for ComboBoxModels JSON file
+	rapidjson::Document m_comboBoxModels;
 };
 
 #endif
