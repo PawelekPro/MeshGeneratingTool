@@ -27,18 +27,64 @@
 #include <QObject>
 #include <QWidget>
 
+/**
+ * @brief A custom widget for representing integer values with a single QLineEdit field.
+ *
+ * The IntLineWidget class extends the functionality of the AbstractLineEdit widget
+ * to provide a specialized widget for representing integer values with a single QLineEdit field.
+ *
+ * This class is intended to be used for displaying and editing integer values in a graphical user interface.
+ *
+ * @note This class inherits from AbstractLineEdit and adds functionality specific to representing integer values.
+ *
+ * @see AbstractLineEdit
+ */
 class IntLineWidget : public AbstractLineEdit {
 	Q_OBJECT
 public:
+	/**
+	 * @brief Constructs an IntLineWidget object.
+	 *
+	 * @param parent The parent widget to which this widget belongs.
+	 */
 	IntLineWidget(QWidget* parent = nullptr);
+
+	/**
+	 * @brief Destroys the IntLineWidget object.
+	 */
 	~IntLineWidget() {};
 
+	/**
+	 * @brief Sets the QModelIndex associated with the IntLineWidget and initializes its data.
+	 *
+	 * This function sets the QModelIndex associated with the IntLineWidget and initializes its data
+	 * based on the data retrieved from the specified QModelIndex. It also establishes connections
+	 * for value change signals and slots.
+	 *
+	 * @param index The QModelIndex from which to initialize the widget and its data.
+	 *
+	 * @note This function assumes that the AbstractLineEdit contains necessary initialization logic
+	 *       and that the model associated with the index provides valid data.
+	 *       If the data is missing or malformed, the behavior is undefined.
+	 */
 	void setIndex(const QModelIndex& index) override;
 
 private:
-	QModelIndex m_index;
+	QModelIndex m_index; /**< The QModelIndex associated with the IntLineWidget. */
 
 public slots:
+	/**
+	 * @brief Slot function invoked when the value of the IntLineWidget changes.
+	 *
+	 * This function is called when the value of the IntLineWidget changes.
+	 * It updates the data in the model associated with the widget's QModelIndex with the new value.
+	 *
+	 * @param value The new value of the IntLineWidget as a QString.
+	 *
+	 * @note This function assumes that the model associated with the index allows modifying data
+	 *       and that the index itself is valid.
+	 *       If the model or index is invalid, the behavior is undefined.
+	 */
 	void onValueChanged(QString);
 };
 
