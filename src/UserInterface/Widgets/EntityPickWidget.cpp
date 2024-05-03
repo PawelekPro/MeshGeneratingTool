@@ -34,6 +34,7 @@ EntityPickWidget::EntityPickWidget(QWidget* parent)
 	layout->addWidget(m_selectionButton);
 
 	m_selectionButton->setFixedWidth(this->buttonWidth);
+	m_selectionButton->hide();
 
 	connect(m_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
 	this->setLayout(layout);

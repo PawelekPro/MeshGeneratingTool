@@ -32,7 +32,7 @@ void DoubleLineWidget::setIndex(const QModelIndex& index) {
 
 	QVariant val = index.model()->data(index);
 	if (val.isValid()) {
-		this->setValue(std::to_string(val.toDouble()));
+		this->setValue(val.toString().toStdString());
 	}
 
 	if (QObject::receivers(SIGNAL(valueChanged(QString))) > 0) {

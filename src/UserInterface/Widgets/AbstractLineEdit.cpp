@@ -55,7 +55,7 @@ AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator)
 	layout->insertWidget(0, m_lineEdit);
 
 	// Plain/StylePanel style
-	m_suffixLabel->setFrameStyle(QFrame::StyledPanel);
+	// m_suffixLabel->setFrameStyle(QFrame::StyledPanel);
 
 	this->m_lineEdit->setStyleSheet(this->lineEditStyleSheet);
 	this->m_suffixLabel->setStyleSheet(this->labelStyleSheet);

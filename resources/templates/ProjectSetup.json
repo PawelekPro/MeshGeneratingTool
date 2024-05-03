@@ -4,7 +4,7 @@
             {
                 "value": "0",
                 "name": "test",
-                "label": "test",
+                "label": "Selection scope",
                 "widget": "ComboBoxWidget",
                 "minVal": "0",
                 "maxVal": "1",
@@ -14,23 +14,25 @@
             },
             {
                 "name": "test",
-                "label": "test",
+                "label": "Integer-type input",
                 "widget": "IntLineWidget",
                 "value": "0",
                 "hidden": "no",
-                "model": "CosInnego"
+                "model": "CosInnego",
+                "unit": "unit"
             },
             {
                 "name": "test",
-                "label": "test",
+                "label": "Double-type input",
                 "widget": "DoubleLineWidget",
-                "value": "0"
+                "value": "0",
+                "unit": "unit"
             },
             {
                 "name": "test",
-                "label": "test",
+                "label": "Entity selection",
                 "widget": "EntityPickWidget",
-                "value": "0"
+                "value": ""
             }
         ]
     },

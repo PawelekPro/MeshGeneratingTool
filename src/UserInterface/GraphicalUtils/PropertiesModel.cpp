@@ -165,8 +165,7 @@ QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 			return widget;
 		} else {
 			vtkLogF(
-				ERROR,
-				("Class not found in widgets factory map: " + name.toStdString()).c_str());
+				ERROR, ("Class not found in widgets factory map: " + name.toStdString()).c_str());
 		}
 	}
 	return widget;
