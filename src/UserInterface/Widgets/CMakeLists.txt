@@ -5,6 +5,7 @@ ADD_LIBRARY(Widgets
   ComboBoxWidget.cpp
   BaseWidget.h
   EntityPickWidget.cpp
+  TreeContextMenu.cpp
 )
 
 TARGET_LINK_LIBRARIES(Widgets PUBLIC 

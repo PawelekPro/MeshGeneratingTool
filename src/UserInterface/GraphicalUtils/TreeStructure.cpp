@@ -30,6 +30,9 @@ TreeStructure::TreeStructure(QWidget* parent)
 
 	this->buildBaseObjectsRepresentation();
 
+	this->setContextMenuPolicy(Qt::CustomContextMenu);
+	this->contextMenu = new TreeContextMenu(this);
+
 	this->writeDataToXML("/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
 }
 
@@ -53,6 +56,7 @@ TreeStructure::~TreeStructure() {
 		delete element;
 	}
 	delete this->docObjectModel;
+	delete this->contextMenu;
 }
 
 //--------------------------------------------------------------------------------------
