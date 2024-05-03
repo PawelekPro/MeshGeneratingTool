@@ -36,10 +36,32 @@
 
 #include <vtkLogger.h>
 
+/**
+ * @brief A custom widget for displaying and selecting options from a ComboBox.
+ *
+ * The ComboBoxWidget class extends the functionality of the BaseWidget to provide a specialized widget
+ * for displaying and selecting options from a ComboBox. It initializes the model of the ComboBox based on
+ * the data retrieved from a specified QModelIndex, expecting the model associated with the index to be of type PropertiesModel.
+ *
+ * This class is intended to be used for presenting selectable options to users in a graphical user interface.
+ *
+ * @note This class inherits from BaseWidget and adds functionality specific to ComboBox interaction.
+ *
+ * @see BaseWidget
+ */
 class ComboBoxWidget : public BaseWidget {
 	Q_OBJECT
 public:
+	/**
+	 * @brief Constructs a ComboBoxWidget object.
+	 *
+	 * @param parent The parent widget to which this widget belongs.
+	 */
 	ComboBoxWidget(QWidget* parent = nullptr);
+
+	/**
+	 * @brief Destroys the ComboBoxWidget object.
+	 */
 	~ComboBoxWidget();
 
 	/**
@@ -84,8 +106,8 @@ private:
 	 */
 	QStringListModel* createQStringListModel(const QString&);
 
-	QComboBox* m_comboBox;
-	QModelIndex m_index;
+	QComboBox* m_comboBox; /**< Pointer to the ComboBox widget. */
+	QModelIndex m_index; /**< The QModelIndex associated with the ComboBoxWidget. */
 
 	// rapidjson document
 	rapidjson::Document* document;
