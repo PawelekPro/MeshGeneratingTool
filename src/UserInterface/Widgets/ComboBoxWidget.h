@@ -42,9 +42,46 @@ public:
 	ComboBoxWidget(QWidget* parent = nullptr);
 	~ComboBoxWidget();
 
+	/**
+	 * @brief Sets the QModelIndex associated with the ComboBoxWidget and initializes its model.
+	 *
+	 * This function sets the QModelIndex associated with the ComboBoxWidget and initializes its model
+	 * based on the data retrieved from the specified QModelIndex. It expects the model associated with
+	 * the index to be of type PropertiesModel.
+	 *
+	 * @param index The QModelIndex from which to initialize the widget and its model.
+	 * @throws std::invalid_argument if the model assigned to the index is not of the 'PropertiesModel' type.
+	 *
+	 * The function retrieves the QDomElement associated with the given index from the PropertiesModel.
+	 * It then extracts attributes such as 'model' from the QDomElement to determine the model name.
+	 *
+	 * A QStringListModel is created based on the model name, and the ComboBoxWidget is set to use this model.
+	 *
+	 * @note This function assumes that the model contains properties such as 'model' associated with the QModelIndex.
+	 *       If the model or the properties are missing or malformed, the behavior is undefined.
+	 */
 	void setIndex(const QModelIndex& index) override;
 
 private:
+	/**
+	 * @brief Creates a QStringListModel based on the specified model name.
+	 *
+	 * This function creates a QStringListModel based on the model name provided.
+	 * It retrieves model data from a JSON document and constructs the QStringListModel
+	 * using the data found in the document. If the model name is not found in the document,
+	 * an error is logged, and an empty QStringListModel is returned.
+	 *
+	 * @param name The name of the model to create.
+	 * @return A QStringListModel representing the data of the specified model name.
+	 *
+	 * The function retrieves the model data from a JSON document based on the provided model name.
+	 * It constructs the QStringListModel by iterating over the model data, sorting it by IDs,
+	 * and populating a QStringList with corresponding labels.
+	 *
+	 * @note This function assumes that the document member variable contains a valid JSON document
+	 *       and that the model data is structured according to the expected format.
+	 *       If the model data is missing or malformed, the behavior is undefined.
+	 */
 	QStringListModel* createQStringListModel(const QString&);
 
 	QComboBox* m_comboBox;
