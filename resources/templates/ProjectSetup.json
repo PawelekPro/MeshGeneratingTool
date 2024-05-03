@@ -3,33 +3,30 @@
         "Properties": [
             {
                 "value": "0",
-                "name": "test",
+                "name": "id0",
                 "label": "Selection scope",
                 "widget": "ComboBoxWidget",
-                "minVal": "0",
-                "maxVal": "1",
-                "unit": "m",
                 "hidden": "no",
                 "model": "SizeModelSelection"
             },
             {
-                "name": "test",
+                "name": "id1",
                 "label": "Integer-type input",
                 "widget": "IntLineWidget",
-                "value": "0",
+                "value": "420",
                 "hidden": "no",
-                "model": "CosInnego",
                 "unit": "unit"
             },
             {
-                "name": "test",
+                "name": "id2",
                 "label": "Double-type input",
                 "widget": "DoubleLineWidget",
-                "value": "0",
+                "value": "2137.69",
+                "hidden": "no",
                 "unit": "unit"
             },
             {
-                "name": "test",
+                "name": "id3",
                 "label": "Entity selection",
                 "widget": "EntityPickWidget",
                 "value": ""
