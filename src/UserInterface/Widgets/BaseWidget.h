@@ -22,6 +22,17 @@
 
 #include <QWidget>
 
+/**
+ * @brief A base class for custom QWidget-based widgets.
+ *
+ * The BaseWidget class serves as a base class for custom widgets and defines a common interface
+ * for setting the QModelIndex associated with the widget.
+ *
+ * This class is intended to be subclassed to create specialized widgets with specific functionality.
+ *
+ * @note This class inherits from QWidget and defines a pure virtual function setIndex(),
+ *       which must be implemented by subclasses to set the QModelIndex associated with the widget.
+ */
 class BaseWidget : public QWidget {
 	Q_OBJECT
 public:
