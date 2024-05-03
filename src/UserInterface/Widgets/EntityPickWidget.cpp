@@ -49,6 +49,7 @@ EntityPickWidget::~EntityPickWidget() {
 //----------------------------------------------------------------------------
 void EntityPickWidget::setIndex(const QModelIndex& index) {
 	m_index = index;
+	// ToDo: To be developed...
 }
 
 //----------------------------------------------------------------------------
