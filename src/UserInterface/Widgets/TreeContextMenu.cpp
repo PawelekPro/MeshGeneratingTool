@@ -21,15 +21,15 @@
 
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
 	: QObject(parent)
-	, treeWidget(treeWidget) {
+	, _treeWidget(treeWidget) {
 
 	connect(
-		this->treeWidget, &TreeStructure::customContextMenuRequested,
+		this->_treeWidget, &TreeStructure::customContextMenuRequested,
 		this, &TreeContextMenu::showContextMenu);
 }
 
 void TreeContextMenu::showContextMenu(const QPoint& pos) {
-	QTreeWidgetItem* item = this->treeWidget->itemAt(pos);
+	QTreeWidgetItem* item = this->_treeWidget->itemAt(pos);
 	if (!item)
 		return;
 
@@ -37,14 +37,14 @@ void TreeContextMenu::showContextMenu(const QPoint& pos) {
 	QMenu* contextMenu = createContextMenu(item);
 
 	// Execute the context menu at the given position
-	contextMenu->exec(this->treeWidget->mapToGlobal(pos));
+	contextMenu->exec(this->_treeWidget->mapToGlobal(pos));
 
 	// Cleanup
 	contextMenu->deleteLater();
 }
 
 QMenu* TreeContextMenu::createContextMenu(QTreeWidgetItem* item) {
-	QMenu* contextMenu = new QMenu(this->treeWidget);
+	QMenu* contextMenu = new QMenu(this->_treeWidget);
 
 	QFont font;
 	font.setPointSize(this->fontSize);
@@ -52,12 +52,36 @@ QMenu* TreeContextMenu::createContextMenu(QTreeWidgetItem* item) {
 	int column = static_cast<int>(TreeStructure::Column::Label);
 
 	if (item->text(column) == "Geometry Imports") {
-		contextMenu->addAction("Action");
+		this->buildGeometryImportsMenu(contextMenu);
+
 	} else if (item->text(column) == "Mesh") {
-		contextMenu->addAction("Action");
+		this->buildMeshMenu(contextMenu);
+
+	} else if (item->text(column) == "Geometry Model") {
+		this->buildGeometryModelMenu(contextMenu);
+
 	} else {
-		contextMenu->addAction("Costam");
+		this->buildCoordinateSystemMenu(contextMenu);
 	}
 
 	return contextMenu;
+}
+
+void TreeContextMenu::buildGeometryImportsMenu(QMenu* menu) {
+	menu->addAction("Import STEP");
+}
+
+void TreeContextMenu::buildGeometryModelMenu(QMenu* menu) {
+	menu->addAction("New model");
+}
+
+void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu) {
+	menu->addAction("Add coordiante system");
+}
+
+void TreeContextMenu::buildMeshMenu(QMenu* menu) {
+	menu->addAction("Update mesh");
+	menu->addAction("Generate mesh");
+
+	menu->addAction("Add sizing");
 }

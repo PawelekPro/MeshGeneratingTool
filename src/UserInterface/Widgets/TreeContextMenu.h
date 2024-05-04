@@ -38,10 +38,15 @@ private slots:
 	void showContextMenu(const QPoint& pos);
 
 private:
-	TreeStructure* treeWidget;
+	TreeStructure* _treeWidget;
 
 	// Method to create context menu based on clicked item
 	QMenu* createContextMenu(QTreeWidgetItem* item);
+
+	void buildGeometryImportsMenu(QMenu*);
+	void buildGeometryModelMenu(QMenu*);
+	void buildCoordinateSystemMenu(QMenu*);
+	void buildMeshMenu(QMenu*);
 
 	static const int fontSize = 10;
 };
