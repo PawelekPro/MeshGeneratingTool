@@ -79,16 +79,12 @@ QStringListModel* ComboBoxWidget::createQStringListModel(const QString& name) {
 	std::vector<int> ids;
 	std::vector<QString> m_list;
 
-	for (rapidjson::Value::ConstMemberIterator itr = model.MemberBegin();
-		 itr != model.MemberEnd(); ++itr) {
-		const QString key = QString::fromStdString(
-			itr->name.GetString());
-
+	for (const auto& pair : model.GetObject()) {
+		const QString key = QString::fromStdString(pair.name.GetString());
 		int id = key.toInt();
 		ids.push_back(id);
 
-		const QString label = QString::fromStdString(
-			itr->value["label"].GetString());
+		const QString label = QString::fromStdString(pair.value["label"].GetString());
 		m_list.push_back(label);
 	}
 

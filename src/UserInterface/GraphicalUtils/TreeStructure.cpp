@@ -35,9 +35,9 @@ TreeStructure::TreeStructure(QWidget* parent)
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-	for (auto it = domElements.begin(); it != domElements.end(); ++it) {
-		QTreeWidgetItem* item = it.key();
-		QDomElement* element = it.value();
+	for (auto& treeItem : domElements.keys()) {
+		QTreeWidgetItem* item = treeItem;
+		QDomElement* element = domElements.value(treeItem);
 
 		int role = Role.value(element->firstChildElement("Properties").tagName());
 
@@ -66,10 +66,8 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 
 	this->docObjectModel->appendChild(root);
 
-	for (auto it = TreeRoots.begin(); it != TreeRoots.end(); ++it) {
-		QString rootName = it.value();
-
-		QString xmlTag(rootName);
+	for (const auto& rootName : TreeRoots) {
+		QString xmlTag = rootName;
 		if (xmlTag.contains(" ")) {
 			xmlTag.remove(" ");
 		}
@@ -156,9 +154,9 @@ void TreeStructure::addProperties(QDomElement* parentElement, PropertiesList pro
 		QDomElement elem = this->docObjectModel->createElement("property");
 
 		// Iterate through QMap to set attributes
-		for (auto it = propertyMap.constBegin(); it != propertyMap.constEnd(); ++it) {
-			if (it.key() != "value") {
-				elem.setAttribute(it.key(), it.value());
+		for (const auto& key : propertyMap.keys()) {
+			if (key != "value") {
+				elem.setAttribute(key, propertyMap.value(key));
 			}
 		}
 
