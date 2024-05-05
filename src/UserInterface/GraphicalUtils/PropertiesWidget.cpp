@@ -37,8 +37,8 @@ PropertiesWidget::~PropertiesWidget() {
 
 //--------------------------------------------------------------------------------------
 void PropertiesWidget::setModel(PropertiesModel* model) {
-	qDeleteAll(m_createdWidgets);
-	m_createdWidgets.clear();
+	qDeleteAll(_createdWidgets);
+	_createdWidgets.clear();
 
 	ModelFilter* proxy = new ModelFilter(this);
 	proxy->setSourceModel(model);
@@ -53,7 +53,7 @@ void PropertiesWidget::setModel(PropertiesModel* model) {
 			this->setIndexWidget(index, widget);
 
 			// Add widget to list to handle its deleting on model change event
-			m_createdWidgets.append(widget);
+			_createdWidgets.append(widget);
 		}
 	}
 }
