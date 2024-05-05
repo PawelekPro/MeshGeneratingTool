@@ -106,8 +106,8 @@ private:
 	 */
 	QStringListModel* createQStringListModel(const QString&);
 
-	QComboBox* m_comboBox; /**< Pointer to the ComboBox widget. */
-	QModelIndex m_index; /**< The QModelIndex associated with the ComboBoxWidget. */
+	QComboBox* _comboBox; /**< Pointer to the ComboBox widget. */
+	QModelIndex _index; /**< The QModelIndex associated with the ComboBoxWidget. */
 
 	// rapidjson document
 	rapidjson::Document* document;

@@ -34,33 +34,33 @@ QString AbstractLineEdit::lineEditStyleSheet = QString(R"(
 //----------------------------------------------------------------------------
 AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator)
 	: BaseWidget(parent)
-	, m_lineEdit(new QLineEdit(this))
-	, m_suffixLabel(new QLabel(this))
-	, m_lastValidValue(0)
-	, m_minVal(-INFINITY)
-	, m_maxVal(INFINITY)
-	, m_locale(QLocale()) {
+	, _lineEdit(new QLineEdit(this))
+	, _suffixLabel(new QLabel(this))
+	, _lastValidValue(0)
+	, _minVal(-INFINITY)
+	, _maxVal(INFINITY)
+	, _locale(QLocale()) {
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 
-	m_lineEdit->setFixedHeight(this->lineHeight);
-	m_suffixLabel->setFixedHeight(this->lineHeight);
-	layout->addWidget(m_suffixLabel);
+	_lineEdit->setFixedHeight(this->lineHeight);
+	_suffixLabel->setFixedHeight(this->lineHeight);
+	layout->addWidget(_suffixLabel);
 
 	if (validator != nullptr) {
-		m_lineEdit->setValidator(validator);
+		_lineEdit->setValidator(validator);
 	}
-	layout->insertWidget(0, m_lineEdit);
+	layout->insertWidget(0, _lineEdit);
 
 	// Plain/StylePanel style
-	// m_suffixLabel->setFrameStyle(QFrame::StyledPanel);
+	// _suffixLabel->setFrameStyle(QFrame::StyledPanel);
 
-	this->m_lineEdit->setStyleSheet(this->lineEditStyleSheet);
-	this->m_suffixLabel->setStyleSheet(this->labelStyleSheet);
+	this->_lineEdit->setStyleSheet(this->lineEditStyleSheet);
+	this->_suffixLabel->setStyleSheet(this->labelStyleSheet);
 
-	QObject::connect(m_lineEdit, SIGNAL(editingFinished()),
+	QObject::connect(_lineEdit, SIGNAL(editingFinished()),
 		this, SLOT(onEditingFinished()));
 
 	this->setLayout(layout);
@@ -68,13 +68,13 @@ AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator)
 
 //----------------------------------------------------------------------------
 AbstractLineEdit::~AbstractLineEdit() {
-	delete m_suffixLabel;
-	delete m_lineEdit;
+	delete _suffixLabel;
+	delete _lineEdit;
 }
 
 //----------------------------------------------------------------------------
 void AbstractLineEdit::initialize(const QModelIndex& index) {
-	this->m_index = index;
+	this->_index = index;
 
 	const QAbstractItemModel* constModel = index.model();
 	QAbstractItemModel* model = const_cast<QAbstractItemModel*>(constModel);
@@ -99,25 +99,25 @@ void AbstractLineEdit::initialize(const QModelIndex& index) {
 	double minVal = xmlAttrs.value("minVal").toString().toDouble();
 	double maxVal = xmlAttrs.value("maxVal").toString().toDouble();
 
-	this->m_suffixLabel->setText(suffix);
-	this->m_minVal = minVal;
-	this->m_maxVal = maxVal;
+	this->_suffixLabel->setText(suffix);
+	this->_minVal = minVal;
+	this->_maxVal = maxVal;
 }
 
 //----------------------------------------------------------------------------
 void AbstractLineEdit::setValue(const std::string& value) {
-	m_lineEdit->setText(QString::fromStdString(value));
+	_lineEdit->setText(QString::fromStdString(value));
 }
 
 //----------------------------------------------------------------------------
 std::string AbstractLineEdit::getValue() {
-	std::string text = m_lineEdit->text().toStdString();
+	std::string text = _lineEdit->text().toStdString();
 	return text;
 }
 
 //----------------------------------------------------------------------------
 void AbstractLineEdit::onEditingFinished() {
-	const QString value = m_lineEdit->text();
+	const QString value = _lineEdit->text();
 
 	// ToDo: check if given value is valid
 	emit this->valueChanged(value);

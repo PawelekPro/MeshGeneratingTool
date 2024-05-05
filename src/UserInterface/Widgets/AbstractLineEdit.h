@@ -108,13 +108,13 @@ public:
 	static const int fontSize = 10;
 
 protected:
-	QLineEdit* m_lineEdit;
-	QLabel* m_suffixLabel;
-	double m_lastValidValue;
-	double m_minVal, m_maxVal;
+	QLineEdit* _lineEdit;
+	QLabel* _suffixLabel;
+	double _lastValidValue;
+	double _minVal, _maxVal;
 
-	QModelIndex m_index;
-	QLocale m_locale;
+	QModelIndex _index;
+	QLocale _locale;
 
 	static QString labelStyleSheet;
 	static QString lineEditStyleSheet;

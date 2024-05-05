@@ -22,13 +22,13 @@
 //----------------------------------------------------------------------------
 IntLineWidget::IntLineWidget(QWidget* parent)
 	: AbstractLineEdit(parent, new QIntValidator()) {
-	m_index = QModelIndex();
+	_index = QModelIndex();
 }
 
 //----------------------------------------------------------------------------
 void IntLineWidget::setIndex(const QModelIndex& index) {
 	AbstractLineEdit::initialize(index);
-	m_index = index;
+	_index = index;
 
 	QVariant val = index.model()->data(index);
 	if (val.isValid()) {
@@ -48,7 +48,7 @@ void IntLineWidget::setIndex(const QModelIndex& index) {
 void IntLineWidget::onValueChanged(QString value) {
 	// qDebug() << value.toInt();
 
-	QModelIndex mutableIndex = m_index; // Create a non-const copy
+	QModelIndex mutableIndex = _index; // Create a non-const copy
 	if (mutableIndex.model()) { // Check if the model is valid
 		QAbstractItemModel* mutableModel
 			= const_cast<QAbstractItemModel*>(mutableIndex.model());
