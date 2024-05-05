@@ -7,11 +7,8 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 	this->setupUi();
 
 	_ribbonBar = new SARibbonBar(parent);
-
 	_ribbonBar->setTitleVisible(false);
-
 	_ribbonBar->setRibbonStyle(SARibbonBar::RibbonStyleCompactThreeRow);
-
 	_ribbonBar->setApplicationButton(nullptr);
 
 #ifdef _WIN32
