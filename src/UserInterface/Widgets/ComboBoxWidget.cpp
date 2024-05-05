@@ -23,14 +23,14 @@
 //----------------------------------------------------------------------------
 ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	: BaseWidget(parent)
-	, m_comboBox(new QComboBox(this)) {
+	, _comboBox(new QComboBox(this)) {
 
-	m_index = QModelIndex();
+	_index = QModelIndex();
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(m_comboBox);
+	layout->addWidget(_comboBox);
 
 	this->document = AppDefaults::getInstance().getComboBoxModels();
 
@@ -39,13 +39,13 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::~ComboBoxWidget() {
-	m_comboBox->deleteLater();
+	_comboBox->deleteLater();
 	// 'document' member is being deleted in AppDefaults class
 }
 
 //----------------------------------------------------------------------------
 void ComboBoxWidget::setIndex(const QModelIndex& index) {
-	m_index = index;
+	_index = index;
 
 	const QAbstractItemModel* constModel = index.model();
 	QAbstractItemModel* model = const_cast<QAbstractItemModel*>(constModel);
@@ -61,7 +61,7 @@ void ComboBoxWidget::setIndex(const QModelIndex& index) {
 	QString modelName = attrs.namedItem("model").toAttr().value();
 
 	QStringListModel* listModel = this->createQStringListModel(modelName);
-	m_comboBox->setModel(listModel);
+	_comboBox->setModel(listModel);
 }
 
 //----------------------------------------------------------------------------

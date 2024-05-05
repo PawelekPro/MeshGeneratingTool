@@ -22,13 +22,13 @@
 //----------------------------------------------------------------------------
 DoubleLineWidget::DoubleLineWidget(QWidget* parent)
 	: AbstractLineEdit(parent, new QDoubleValidator()) {
-	m_index = QModelIndex();
+	_index = QModelIndex();
 }
 
 //----------------------------------------------------------------------------
 void DoubleLineWidget::setIndex(const QModelIndex& index) {
 	AbstractLineEdit::initialize(index);
-	m_index = index;
+	_index = index;
 
 	QVariant val = index.model()->data(index);
 	if (val.isValid()) {
@@ -48,7 +48,7 @@ void DoubleLineWidget::setIndex(const QModelIndex& index) {
 void DoubleLineWidget::onValueChanged(QString value) {
 	// qDebug() << value.toDouble();
 
-	QModelIndex mutableIndex = m_index; // Create a non-const copy
+	QModelIndex mutableIndex = _index; // Create a non-const copy
 	if (mutableIndex.model()) { // Check if the model is valid
 		QAbstractItemModel* mutableModel
 			= const_cast<QAbstractItemModel*>(mutableIndex.model());

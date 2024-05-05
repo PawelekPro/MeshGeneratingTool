@@ -41,10 +41,10 @@ public:
 private:
 	void updateAppearance();
 
-	QLabel* m_selectionLabel;
-	QPushButton* m_selectionButton;
-	QModelIndex m_index;
-	bool m_selected;
+	QLabel* _selectionLabel;
+	QPushButton* _selectionButton;
+	QModelIndex _index;
+	bool _selected;
 
 	// button width in pixels
 	static const int buttonWidth = 60;

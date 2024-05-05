@@ -70,7 +70,7 @@ public:
 	void setIndex(const QModelIndex& index) override;
 
 private:
-	QModelIndex m_index; /**< The QModelIndex associated with the IntLineWidget. */
+	QModelIndex _index; /**< The QModelIndex associated with the IntLineWidget. */
 
 public slots:
 	/**

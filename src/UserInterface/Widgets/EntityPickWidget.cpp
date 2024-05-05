@@ -21,66 +21,66 @@
 
 //----------------------------------------------------------------------------
 EntityPickWidget::EntityPickWidget(QWidget* parent)
-	: m_selectionLabel(new QLabel(this))
-	, m_selectionButton(new QPushButton("Select", this))
-	, m_selected(false) {
+	: _selectionLabel(new QLabel(this))
+	, _selectionButton(new QPushButton("Select", this))
+	, _selected(false) {
 
-	m_index = QModelIndex();
+	_index = QModelIndex();
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(m_selectionLabel);
-	layout->addWidget(m_selectionButton);
+	layout->addWidget(_selectionLabel);
+	layout->addWidget(_selectionButton);
 
-	m_selectionButton->setFixedWidth(this->buttonWidth);
-	m_selectionButton->hide();
+	_selectionButton->setFixedWidth(this->buttonWidth);
+	_selectionButton->hide();
 
-	connect(m_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
+	connect(_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
 	this->setLayout(layout);
 }
 
 //----------------------------------------------------------------------------
 EntityPickWidget::~EntityPickWidget() {
-	m_selectionButton->deleteLater();
-	m_selectionLabel->deleteLater();
+	_selectionButton->deleteLater();
+	_selectionLabel->deleteLater();
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::setIndex(const QModelIndex& index) {
-	m_index = index;
+	_index = index;
 	// ToDo: To be developed...
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::updateAppearance() {
-	if (m_selected) {
-		m_selectionLabel->setText("Selected");
-		m_selectionButton->show();
+	if (_selected) {
+		_selectionLabel->setText("Selected");
+		_selectionButton->show();
 	} else {
-		m_selectionLabel->setText("");
-		m_selectionButton->hide();
+		_selectionLabel->setText("");
+		_selectionButton->hide();
 	}
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::confirmSelection() {
-	if (m_selected) {
+	if (_selected) {
 		this->updateAppearance();
 	}
-	m_selectionButton->hide();
+	_selectionButton->hide();
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
 	// ToDo: Accept or reject entity selection
-	if (!m_selected) {
+	if (!_selected) {
 		this->setSelected(true);
 	}
-	m_selectionButton->show();
+	_selectionButton->show();
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::setSelected(bool selected) {
-	m_selected = selected;
+	_selected = selected;
 }
