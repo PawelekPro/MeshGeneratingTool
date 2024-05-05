@@ -6,24 +6,30 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 
 	this->setupUi();
 
-	mRibbonBar = new SARibbonBar(parent);
+	_ribbonBar = new SARibbonBar(parent);
 
-	mRibbonBar->setTitleVisible(false);
+	_ribbonBar->setTitleVisible(false);
 
-	mRibbonBar->setRibbonStyle(SARibbonBar::RibbonStyleCompactThreeRow);
+	_ribbonBar->setRibbonStyle(SARibbonBar::RibbonStyleCompactThreeRow);
 
-	mRibbonBar->setApplicationButton(nullptr);
+	_ribbonBar->setApplicationButton(nullptr);
 
-	sa_set_ribbon_theme(mRibbonBar, SARibbonTheme::RibbonThemeOffice2021Blue);
+#ifdef _WIN32
+	sa_set_ribbon_theme(_ribbonBar, SARibbonTheme::RibbonThemeOffice2021Blue);
+#endif
 
-	this->verticalLayout->setMenuBar(mRibbonBar);
+#ifdef linux
+	sa_set_ribbon_theme(_ribbonBar, SARibbonTheme::RibbonThemeDark2);
+#endif
 
-	buildRibbon(mRibbonBar);
+	this->verticalLayout->setMenuBar(_ribbonBar);
+
+	buildRibbon(_ribbonBar);
 }
 
 RibbonBarWidget::~RibbonBarWidget() {
 	delete verticalLayout;
-	delete mRibbonBar;
+	delete _ribbonBar;
 }
 
 void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
@@ -63,7 +69,7 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel2->addSeparator();
 	pannel2->addSmallWidget(mComboTheme);
 
-	SARibbonQuickAccessBar* qbar = mRibbonBar->quickAccessBar();
+	SARibbonQuickAccessBar* qbar = _ribbonBar->quickAccessBar();
 	qbar->addAction(createAction("undo", ":/icons/icons/undo.svg"));
 	qbar->addAction(createAction("redo", ":/icons/icons/redo.svg"));
 }
@@ -78,8 +84,8 @@ QAction* RibbonBarWidget::createAction(const QString& text, const QString& iconu
 
 void RibbonBarWidget::onRibbonThemeComboBoxCurrentIndexChanged(int index) {
 	SARibbonTheme t = static_cast<SARibbonTheme>(mComboTheme->itemData(index).toInt());
-	sa_set_ribbon_theme(mRibbonBar, t);
-	mRibbonBar->updateRibbonGeometry();
+	sa_set_ribbon_theme(_ribbonBar, t);
+	_ribbonBar->updateRibbonGeometry();
 }
 
 void RibbonBarWidget::setupUi() {

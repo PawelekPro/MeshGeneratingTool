@@ -28,7 +28,7 @@ private slots:
 	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
 
 private:
-	SARibbonBar* mRibbonBar { nullptr };
+	SARibbonBar* _ribbonBar { nullptr };
 	QComboBox* mComboTheme { nullptr };
 };
 
