@@ -20,7 +20,7 @@
 #ifndef TREESTRUCTURE_H
 #define TREESTRUCTURE_H
 
-#include "AppDefaults.hpp"
+#include "AppDefaults.h"
 #include "PropertiesModel.h"
 
 #include "document.h"
@@ -32,8 +32,6 @@
 #include <string>
 
 #include <QDebug>
-#include <QDomDocument>
-#include <QDomElement>
 #include <QFile>
 #include <QHeaderView>
 #include <QMap>
@@ -43,6 +41,8 @@
 #include <QTextStream>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 
 #include <vtkLogger.h>
 
@@ -162,13 +162,14 @@ private:
 	void addProperties(QDomElement*, PropertiesList);
 
 	/**
-	 * Parses the default properties from a given QString.
+	 * Parses the default properties from a RapidJSON document and a QString.
 	 *
-	 * @param input The QString containing the default properties.
+	 * @param document The RapidJSON document containing the properties.
+	 * @param str The QString containing additional properties.
 	 *
 	 * @returns A PropertiesList object containing the parsed default properties.
 	 */
-	PropertiesList parseDefaultProperties(QString);
+	PropertiesList parseDefaultProperties(const rapidjson::Document&, QString);
 
 	/**
 	 * Reads and returns the default properties from a JSON document using RapidJSON.
@@ -216,9 +217,6 @@ private:
 		{ TreeRoot::CSYS, "Coordinate System" },
 		{ TreeRoot::Mesh, "Mesh" }
 	};
-
-	// Handy-dandy container for application defaults
-	AppDefaults appInfo;
 };
 
 #endif

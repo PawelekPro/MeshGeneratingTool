@@ -37,12 +37,18 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
-	this->buttonGroup.addButton(this->ui->facesSelectorButton, 0);
-	this->buttonGroup.addButton(this->ui->edgesSelectorButton, 1);
+	this->buttonGroup.addButton(this->ui->volumeSelectorButton,
+		static_cast<int>(Rendering::Renderers::Main));
+
+	this->buttonGroup.addButton(this->ui->facesSelectorButton,
+		static_cast<int>(Rendering::Renderers::Faces));
+
+	this->buttonGroup.addButton(this->ui->edgesSelectorButton,
+		static_cast<int>(Rendering::Renderers::Edges));
 
 	this->setConnections();
+	this->initializeActions();
 }
-
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
@@ -66,6 +72,16 @@ void MainWindow::setConnections() {
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
 
+	connect(ui->actionNewModel, &QAction::triggered, [this]() {
+		newModel();
+	});
+	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
+		generateMesh();
+	});
+	connect(ui->actionShowMesh, &QAction::triggered, [this]() {
+		showMesh();
+	});
+
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 }
@@ -87,49 +103,68 @@ int MainWindow::openFileDialog(Callable action, QString actionName, QString filt
 
 //----------------------------------------------------------------------------
 void MainWindow::importSTEP(QString fileName) {
-	ProgressBar* progressBar = this->getProgressBar();
-	STEPGeometryPlugin stepReader {};
-
+	QPointer<ProgressBar> progressBar = this->getProgressBar();
 	const std::string& filePath = fileName.toStdString();
 	try {
-		stepReader.load(filePath, this->progressBar);
+		this->model->geometry.importSTEP(filePath, this->progressBar);
+		this->model->updateParts();
+		this->QVTKRender->updateGeometryActors(this->model->geometry);
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
 		return;
 	}
 
-	Geometry::ActorsMap actorsMap = stepReader.getVTKActorsMap();
-	QVTKRender->addActors(actorsMap, true);
-
 	QFileInfo fileInfo(fileName);
 	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
-	this->ui->treeWidget->writeDataToXML(
-		"/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
+	QVTKRender->fitView();
 }
 
 //----------------------------------------------------------------------------
 void MainWindow::importSTL(QString fileName) {
 	ProgressBar* progressBar = this->getProgressBar();
-	STLPlugin::STLFileReader stlReader {};
 
 	const std::string& filePath = fileName.toStdString();
-	stlReader.load(filePath, progressBar);
+	this->model->geometry.importSTL(filePath, this->progressBar);
+	this->QVTKRender->updateGeometryActors(this->model->geometry);
 
-	Geometry::ActorsMap actorsMap = stlReader.getVTKActorsMap();
-	QVTKRender->addActors(actorsMap);
+	QVTKRender->fitView();
 }
-
+//----------------------------------------------------------------------------
+void MainWindow::newModel() {
+	std::string modelName = "Model_1";
+	this->model = std::make_shared<Model>(modelName);
+	this->QVTKRender->model = this->model;
+	// enable imports
+	ui->actionImportSTEP->setEnabled(true);
+	ui->actionImportSTL->setEnabled(true);
+	ui->actionGenerateMesh->setEnabled(true);
+}
+void MainWindow::generateMesh() {
+	this->model->meshParts();
+}
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
 		if (btn != button)
 			btn->setChecked(false);
 	}
-
+	// std::cout<<"Button id: " << buttonGroup.id(button) << std::endl;
 	// Set active layer according to selected button
 	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
-	this->QVTKRender->setActiveLayerRenderer(buttonGroup.id(button));
+	this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
+		buttonGroup.id(button)));
+}
+
+void MainWindow::initializeActions() {
+	ui->actionImportSTEP->setEnabled(false);
+	ui->actionImportSTL->setEnabled(false);
+	ui->actionGenerateMesh->setEnabled(false);
+}
+
+void MainWindow::showMesh() {
+	this->model->updateMeshActor();
+	this->QVTKRender->getActiveRenderer()->Render();
 }
 
 //----------------------------------------------------------------------------

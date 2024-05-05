@@ -20,15 +20,26 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
+#include "BaseWidget.h"
+#include "ComboBoxWidget.h"
+#include "DoubleLineWidget.h"
+#include "EntityPickWidget.h"
+#include "IntLineWidget.h"
+
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
-#include <QDomElement>
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
 #include <QTableView>
 #include <Qt>
+#include <QtXml/QDomElement>
+
+template <typename className>
+className* createInstance() {
+	return new className();
+};
 
 /**
  * Custom model filter class that filters rows based on a custom criteria.
@@ -123,6 +134,16 @@ public:
 	 */
 	Qt::ItemFlags flags(const QModelIndex& index) const Q_DECL_OVERRIDE;
 
+	/**
+	 * Returns the QDomElement corresponding to the property with the given integer identifier.
+	 *
+	 * @param id The integer identifier of the property.
+	 * @return The QDomElement representing the property.
+	 */
+	const QDomElement getProperty(int);
+
+	QWidget* getWidget(const QModelIndex&);
+
 private:
 	/**
 	 * Pointer to a QDomElement object.
@@ -138,6 +159,8 @@ private:
 	 * A list of header strings.
 	 */
 	QStringList _header;
+
+	static QMap<QString, std::function<BaseWidget*()>> factoryMap;
 };
 
 #endif

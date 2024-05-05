@@ -24,10 +24,9 @@
 
 #include "./ui_MainWindow.h"
 #include "Configuration.h"
+#include "Model.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
-#include "STEPPlugin.h"
-#include "STLPluginOperations.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
@@ -52,6 +51,8 @@ class MainWindow : public QMainWindow {
 public:
 	MainWindow(QWidget* parent = nullptr);
 	~MainWindow();
+
+	std::shared_ptr<Model> model;
 
 	/**
 	 * @brief  Open system dialog for selecting file and perform defined action with selected file.
@@ -78,6 +79,21 @@ public:
 	void importSTL(QString fileName);
 
 	/**
+	 * @brief  Create an empty model.
+	 */
+	void newModel();
+
+	/**
+	 * @brief  Generate mesh based on current settings.
+	 */
+	void generateMesh();
+
+	/**
+	 * @brief  Toggle mesh view on -> add Model mesh actor to renderer
+	 */
+	void showMesh();
+
+	/**
 	 * @brief  Get access to progress bar.
 	 *
 	 * @return {ProgressBar*}  : Progress bar instance.
@@ -101,6 +117,12 @@ private:
 
 	// Push button group of the switch type
 	QButtonGroup buttonGroup;
+
+	/**
+	 * @brief  Set the initial state of the actions, ex. grey out imports unitl
+	 * model is created
+	 */
+	void initializeActions();
 
 private slots:
 	/**

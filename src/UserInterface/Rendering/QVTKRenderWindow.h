@@ -20,34 +20,35 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-#include "GeometryFunctions.h"
+#include "Geometry.h"
+#include "Mesh.h"
+#include "Model.h"
 
-
+#include <algorithm>
 #include <array>
+#include <numeric>
 
 #include <QVTKOpenGLNativeWidget.h>
+#include <vtkActor.h>
+#include <vtkAxesActor.h>
+#include <vtkCamera.h>
 #include <vtkCameraOrientationWidget.h>
+#include <vtkCaptionActor2D.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkInteractorStyle.h>
 #include <vtkLogger.h>
 #include <vtkLogoRepresentation.h>
 #include <vtkLogoWidget.h>
+#include <vtkNamedColors.h>
 #include <vtkNew.h>
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkPNGReader.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 #include <vtkQImageToImageSource.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
-#include <vtkInteractorStyle.h>
-#include <vtkActor.h>
-#include <vtkAxesActor.h>
-#include <vtkCamera.h>
-#include <vtkCaptionActor2D.h>
-#include <vtkNamedColors.h>
-#include <vtkOrientationMarkerWidget.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
 #include <vtkTextProperty.h>
 
 #include <QImage>
@@ -55,7 +56,18 @@
 #include <QPointer>
 
 namespace Rendering {
-
+enum class Renderers {
+	Main,
+	Faces,
+	Edges,
+	Mesh,
+	Count // Count for definition of array size
+};
+enum class Layers {
+	Bottom,
+	Top,
+	Count // Count for definition of array size
+};
 /**
  * @brief  The QVTKRenderWindow provides class for rendering VTK objects inside Qt application.
  *
@@ -65,36 +77,12 @@ class QVTKRenderWindow {
 public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
-
+	std::shared_ptr<Model> model;
 	/**
 	 * @brief Generate global coordinate system.
 	 *
 	 */
 	void generateCoordinateSystemAxes();
-
-	/**
-	 * @brief  Add vtkActors to the current renderer and display them.
-	 *
-	 * @param  {Geometry::ActorsMap} actorsMap : Container of vtkActors.
-	 */
-	void addActors(const Geometry::ActorsMap& actorsMap);
-
-	/**
-	 * @brief  Add vtkActors to the current renderer and display them in separated layers.
-	 *
-	 * @param  {Geometry::ActorsMap} actorsMap : Container of vtkActors.
-	 * @param  {bool} layered                  : Bool indicator wheter actors
-	 * 	should be located into separated layers.
-	 */
-	void addActors(const Geometry::ActorsMap& actorsMap, bool layered);
-
-	/**
-	 * @brief  Add actor to the renderer.
-	 *
-	 * @param  {vtkActor*} actor : vtkActor object.
-	 */
-	void addActor(vtkActor* actor);
-
 	/**
 	 * @brief  Set interator style to customize interaction.
 	 *
@@ -115,13 +103,6 @@ public:
 	void RenderScene();
 
 	/**
-	 * @brief  Get renderer representing currently active layer.
-	 *
-	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
-	 */
-	vtkRenderer* getRenderer();
-
-	/**
 	 * @brief  Enable and start displaying the camera orientation widget.
 	 *
 	 */
@@ -134,24 +115,30 @@ public:
 	void enableWaterMark();
 
 	/**
-	 * @brief  Set active renderer represented by layer ID.
+	 * @brief  Set active renderer
 	 *
-	 * @param  {int} layer : ID of layer to be activated.
+	 * @param  {Renderers} layer : ID of renderer to be activated.
 	 */
-	void setActiveLayerRenderer(const int layer);
-
+	void setActiveRenderer(Renderers rendererId);
+	/**
+	 * @brief  Get renderer representing currently active layer.
+	 *
+	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
+	 */
+	vtkSmartPointer<vtkRenderer> getActiveRenderer();
+	Renderers getActiveRendererId();
 	/**
 	 * @brief  Initialize and setup water mark widget.
 	 *
 	 */
 	void setWaterMark();
 
-	// Enumerator definition
-	enum class Renderers {
-		Main,
-		Edges,
-		Count // Count for definition of array size
-	};
+	/**
+	 * @brief  Clear all geometry actors from faces, edges and parts layers and
+	 * reload them from Geometry object
+	 *
+	 */
+	void updateGeometryActors(const GeometryCore::Geometry& geometry);
 
 protected:
 	/**
@@ -161,10 +148,11 @@ protected:
 	void initializeRenderers();
 
 	// Definition of array of pointers to VTK renderers
-	std::array<vtkSmartPointer<vtkRenderer>, static_cast<int>(Renderers::Count)> mRenderers;
+	std::array<vtkSmartPointer<vtkRenderer>, static_cast<size_t>(Renderers::Count)> mRenderers;
 
 	// Attribute for storing the currently active renderer (layer)
-	vtkSmartPointer<vtkRenderer> activeLayerRenderer;
+	vtkSmartPointer<vtkRenderer> activeRenderer;
+	Renderers activeRendererId;
 
 private:
 	QPointer<QWidget> _widget;

@@ -1,0 +1,16 @@
+ADD_LIBRARY(MeshCore 
+    Mesh.cpp
+)
+
+if(WIN32)
+    TARGET_LINK_LIBRARIES(MeshCore PUBLIC 
+)
+else()
+    TARGET_LINK_LIBRARIES(MeshCore PUBLIC
+)
+endif()
+
+
+TARGET_INCLUDE_DIRECTORIES(MeshCore PUBLIC
+    ${PRJ_SOURCE_DIR}/src/MeshCore
+)

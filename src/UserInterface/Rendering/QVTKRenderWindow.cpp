@@ -46,13 +46,10 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_camOrientManipulator->SetParentRenderer(this->mRenderers.at(0));
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
-
-	this->setActiveLayerRenderer(0);
-
 	vtkSmartPointer<Interactor::QVTKInteractorStyle>
 		interactorStyle
 		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New();
-	interactorStyle->Activate(this);
+	interactorStyle->Initialize(this);
 	this->setInteractorStyle(interactorStyle);
 
 	this->RenderScene();
@@ -72,29 +69,21 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 void Rendering::QVTKRenderWindow::initializeRenderers() {
 	// Background color
 	vtkNew<vtkNamedColors> colors;
-
+	this->_rendererWindow->SetNumberOfLayers(static_cast<int>(Layers::Count));
 	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
 		// Create new renderers
 		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
-		this->mRenderers.at(i)->SetLayer(i);
-		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData());
-
-		if (i > 0) {
-			this->mRenderers.at(i)->EraseOff();
-			this->mRenderers.at(i)->PreserveDepthBufferOff();
-		}
-	}
-	const int nLayers = static_cast<int>(Renderers::Count);
-	this->_rendererWindow->SetNumberOfLayers(nLayers);
-
-	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
-		// Add renderers to render window
+		this->mRenderers.at(i)->SetLayer(static_cast<int>(Layers::Bottom));
+		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData()
+		);
 		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
-		if (i > 0) {
+		if (i != static_cast<int>(Renderers::Main)) {
 			this->mRenderers.at(i)->SetActiveCamera(
-				this->mRenderers.at(0)->GetActiveCamera());
+				this->mRenderers.at(static_cast<int>(Renderers::Main))->GetActiveCamera());
+			this->mRenderers.at(i)->SetInteractive(false);
 		}
 	}
+	this->setActiveRenderer(Renderers::Main);
 }
 
 //----------------------------------------------------------------------------
@@ -112,43 +101,9 @@ void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interac
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::fitView() {
-	this->activeLayerRenderer->ResetCamera();
+	this->activeRenderer->ResetCamera();
 	this->_rendererWindow->Render();
 }
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap) {
-	for (const auto& entry : actorsMap) {
-		vtkSmartPointer<vtkActor> actor = entry.second;
-		this->mRenderers.at(0)->AddActor(actor);
-	}
-	this->mRenderers.at(0)->ResetCamera();
-	this->_rendererWindow->Render();
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActors(const Geometry::ActorsMap& actorsMap, bool layered) {
-	for (const auto& entry : actorsMap) {
-		std::string label = entry.first;
-		vtkSmartPointer<vtkActor> actor = entry.second;
-		Renderers renderer;
-		if (label.find("Face") != std::string::npos) {
-			renderer = Renderers::Main;
-		} else if (label.find("Edge") != std::string::npos) {
-			renderer = Renderers::Edges;
-		}
-
-		this->mRenderers.at(static_cast<int>(renderer))->AddActor(actor);
-	}
-	this->RenderScene();
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
-	this->mRenderers.at(0)->AddActor(actor);
-	this->_rendererWindow->Render();
-}
-
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
@@ -183,9 +138,12 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 };
 
 //----------------------------------------------------------------------------
-vtkRenderer* Rendering::QVTKRenderWindow::getRenderer() {
-	return this->activeLayerRenderer;
+vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getActiveRenderer() {
+	return this->activeRenderer;
 }
+Rendering::Renderers Rendering::QVTKRenderWindow::getActiveRendererId(){
+	return this->activeRendererId;
+};
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
@@ -193,13 +151,19 @@ void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::setActiveLayerRenderer(const int layer) {
-	if (layer == static_cast<int>(Renderers::Main)) {
-		this->activeLayerRenderer = this->mRenderers.at(layer);
-	} else if (layer == static_cast<int>(Renderers::Edges)) {
-		this->activeLayerRenderer = this->mRenderers.at(layer);
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setActiveRenderer(Rendering::Renderers rendererId) {
+	if (this->activeRenderer){
+	this->activeRenderer->SetInteractive(false);
+	this->activeRenderer->SetLayer(static_cast<int>(Rendering::Layers::Bottom));
 	}
+	this->activeRenderer = this->mRenderers.at(static_cast<int>(rendererId));
+	this->activeRenderer->SetInteractive(true);
+	this->activeRenderer->SetLayer(static_cast<int>(Rendering::Layers::Top));
+	this->activeRendererId = rendererId;
+	this->RenderScene();
 }
+
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::enableWaterMark() {
@@ -208,7 +172,7 @@ void Rendering::QVTKRenderWindow::enableWaterMark() {
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setWaterMark() {
-	QPixmap pixmap(":/uxSetup/icons/watermark.png");
+	QPixmap pixmap(":/uiSetup/icons/watermark.png");
 
 	if (pixmap.isNull()) {
 		qDebug() << "Failed to load image from resource";
@@ -231,4 +195,29 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->SetRepresentation(logoRepresentation);
 	this->_logoWidget->ProcessEventsOff();
 	this->_logoWidget->ManagesCursorOff();
+}
+
+
+void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry){
+
+	this->mRenderers.at(static_cast<int>(Renderers::Main))->Clear();
+	this->mRenderers.at(static_cast<int>(Renderers::Faces))->Clear();
+	this->mRenderers.at(static_cast<int>(Renderers::Edges))->Clear();
+
+	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
+	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
+	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
+
+    for(const auto& actor : parts) {
+        this->mRenderers.at(static_cast<int>(Renderers::Main))->AddActor(actor.second);
+    }
+    for(const auto& actor : faces) {
+        this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
+    }
+    for(const auto& actor : edges) {
+		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
+        this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
+    }
+	this->setActiveRenderer(Renderers::Main);
+	this->RenderScene();
 }

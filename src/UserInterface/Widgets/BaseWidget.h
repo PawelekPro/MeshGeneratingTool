@@ -17,43 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROPERTIESWIDGET_H
-#define PROPERTIESWIDGET_H
+#ifndef BASEWIDGET_H
+#define BASEWIDGET_H
 
-#include "PropertiesModel.h"
-
-#include <QList>
-#include <QStyledItemDelegate>
-#include <QTableView>
 #include <QWidget>
 
 /**
- * Custom widget for displaying properties using a table view.
+ * @brief A base class for custom QWidget-based widgets.
+ *
+ * The BaseWidget class serves as a base class for custom widgets and defines a common interface
+ * for setting the QModelIndex associated with the widget.
+ *
+ * This class is intended to be subclassed to create specialized widgets with specific functionality.
+ *
+ * @note This class inherits from QWidget and defines a pure virtual function setIndex(),
+ *       which must be implemented by subclasses to set the QModelIndex associated with the widget.
  */
-class PropertiesWidget : public QTableView {
+class BaseWidget : public QWidget {
 	Q_OBJECT
 public:
-	explicit PropertiesWidget(QWidget* parent = nullptr)
-		: QTableView(parent) {};
-	~PropertiesWidget();
-
-	/**
-	 * Sets the PropertiesModel for the object.
-	 *
-	 * @param model A pointer to the PropertiesModel to be set.
-	 *
-	 * @returns None
-	 */
-	void setModel(PropertiesModel*);
-
-private:
-	// Container for temporary widgets existing between model selection change event
-	QList<QWidget*> _createdWidgets;
-
-	/**
-	 * The height of a row in a table.
-	 */
-	static const int rowHeight = 20;
+	BaseWidget(QWidget* parent = nullptr)
+		: QWidget(parent) {};
+	virtual ~BaseWidget() {};
+	virtual void setIndex(const QModelIndex& index) = 0;
 };
 
 #endif

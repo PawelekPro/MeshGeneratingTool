@@ -21,8 +21,7 @@
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
-	: QTreeWidget(parent)
-	, appInfo() {
+	: QTreeWidget(parent) {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
@@ -36,31 +35,45 @@ TreeStructure::TreeStructure(QWidget* parent)
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-	delete this->docObjectModel;
+	for (auto& treeItem : domElements.keys()) {
+		QTreeWidgetItem* item = treeItem;
+		QDomElement* element = domElements.value(treeItem);
 
-	for (auto it = domElements.begin(); it != domElements.end(); ++it) {
-		delete it.key();
-		delete it.value();
+		int role = Role.value(element->firstChildElement("Properties").tagName());
+
+		QVariant variantModel = item->data(0, role);
+		QSharedPointer<PropertiesModel> model
+			= variantModel.value<QSharedPointer<PropertiesModel>>();
+
+		if (!model.isNull()) {
+			model->deleteLater();
+		}
+
+		delete item;
+		delete element;
 	}
+	delete this->docObjectModel;
 }
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::buildBaseObjectsRepresentation() {
+	rapidjson::Document doc = this->readDefaultProperties();
 
-	QDomElement root = this->docObjectModel->createElement(this->appInfo.getAppName());
-	root.setAttribute("version", this->appInfo.getAppProjFileVersion());
+	QDomElement root = this->docObjectModel->createElement(
+		AppDefaults::getInstance().getAppName());
+	root.setAttribute(
+		"version", AppDefaults::getInstance().getAppProjFileVersion());
+
 	this->docObjectModel->appendChild(root);
 
-	for (auto it = TreeRoots.begin(); it != TreeRoots.end(); ++it) {
-		QString rootName = it.value();
-
-		QString xmlTag(rootName);
+	for (const auto& rootName : TreeRoots) {
+		QString xmlTag = rootName;
 		if (xmlTag.contains(" ")) {
 			xmlTag.remove(" ");
 		}
 		QDomElement* rootElement = new QDomElement(this->docObjectModel->createElement(xmlTag));
 
-		PropertiesList propertiesList = this->parseDefaultProperties(xmlTag);
+		PropertiesList propertiesList = this->parseDefaultProperties(doc, xmlTag);
 		this->addProperties(rootElement, propertiesList);
 
 		QTreeWidgetItem* rootItem = this->createItem(rootElement);
@@ -125,11 +138,10 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& fileName)
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* item) {
-	int role = Role.value(element->tagName());
+	const int role = Role.value(element->tagName());
 
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
 	QVariant variantModel = QVariant::fromValue(model);
-
 	// ToDo: Model data changed detection
 	item->setData(0, role, variantModel);
 }
@@ -142,9 +154,9 @@ void TreeStructure::addProperties(QDomElement* parentElement, PropertiesList pro
 		QDomElement elem = this->docObjectModel->createElement("property");
 
 		// Iterate through QMap to set attributes
-		for (auto it = propertyMap.constBegin(); it != propertyMap.constEnd(); ++it) {
-			if (it.key() != "value") {
-				elem.setAttribute(it.key(), it.value());
+		for (const auto& key : propertyMap.keys()) {
+			if (key != "value") {
+				elem.setAttribute(key, propertyMap.value(key));
 			}
 		}
 
@@ -159,9 +171,7 @@ void TreeStructure::addProperties(QDomElement* parentElement, PropertiesList pro
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesList TreeStructure::parseDefaultProperties(QString prop) {
-	rapidjson::Document document = this->readDefaultProperties();
-
+PropertiesList TreeStructure::parseDefaultProperties(const rapidjson::Document& document, QString prop) {
 	// Initialize properties container
 	PropertiesList propertiesList;
 	std::string propName = prop.toStdString();
@@ -201,23 +211,24 @@ PropertiesList TreeStructure::parseDefaultProperties(QString prop) {
 
 //--------------------------------------------------------------------------------------
 rapidjson::Document TreeStructure::readDefaultProperties() {
-	fs::path templatesPath = this->appInfo.getTemplatesPath();
-	fs::path jsonPropsPath
-		= fs::path(templatesPath.string()) / "DefaultProperties.json";
+	QString defaultPropsPath = AppDefaults::getInstance().getTemplatesPath();
+	QFile jsonFile(defaultPropsPath);
 
-	std::ifstream ifs(jsonPropsPath.string());
-	if (!ifs.is_open()) {
-		vtkLogF(ERROR, "Failed to open DefaultProperties.json file.");
+	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		vtkLogF(ERROR, "Failed to open ProjectSetup.json file.");
 	}
 
-	// Read the content into a stringstream
-	std::stringstream ss;
-	ss << ifs.rdbuf();
-	std::string jsonContent = ss.str();
+	QByteArray jsonData = jsonFile.readAll();
+	jsonFile.close();
 
 	// Parse the JSON string
 	rapidjson::Document document;
-	document.Parse(jsonContent.c_str());
+	document.Parse(jsonData.constData());
+
+	if (document.HasParseError()) {
+		vtkLogF(ERROR, "Error parsing JSON file.");
+	}
+
 	return document;
 }
 

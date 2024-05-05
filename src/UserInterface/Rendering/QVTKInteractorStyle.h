@@ -68,12 +68,14 @@ public:
 	 */
 	virtual void OnMouseMove() override;
 
+	virtual void OnKeyPress() override;
+	virtual void OnKeyRelease() override;
 	/**
 	 * @brief  Activate interactor style and set its default render window widget.
 	 *
 	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window to set interactor style
 	 */
-	void Activate(Rendering::QVTKRenderWindow* renWin);
+	void Initialize(Rendering::QVTKRenderWindow* renWin);
 
 	/**
 	 * @brief  Get rendering window instance.
@@ -94,16 +96,25 @@ private:
 	void createContextMenu();
 
 	Rendering::QVTKRenderWindow* _qvtkRenderWindow;
-	QMenu* _contextMenu;
-	QAction* _customAction;
+	QPointer<QMenu> _contextMenu;
+	QPointer<QAction> _fitViewAction;
+	QPointer<QAction> _faceSizingAction;
+	QPointer<QAction> _edgeSizingAction;
 
 	// Container for storing picked actor and its properties.
-	vtkActor* lastPickedActor;
-	vtkProperty* lastPickedProperty;
+	vtkSmartPointer<vtkPropPicker> LMBPicker;
+	vtkSmartPointer<vtkActor> LMBActor;
+	std::vector<vtkSmartPointer<vtkActor>> pickedActors;
+	std::vector<vtkSmartPointer<vtkProperty>> pickedProps;
+	vtkSmartPointer<vtkActor> prevLMBActor;
+	vtkSmartPointer<vtkProperty> prevLMBProperty;
 
+	bool shiftPressed = false;
 	// Container for storing hovered actor and its properties.
-	vtkActor* lastHoveredActor;
-	vtkProperty* lastHoveredProperty;
+	vtkSmartPointer<vtkCellPicker> hoverPicker;
+	vtkSmartPointer<vtkActor> hoveredActor;
+	vtkSmartPointer<vtkActor> prevHoveredActor;
+	vtkSmartPointer<vtkProperty> prevHoveredProperty;
 };
 };
 

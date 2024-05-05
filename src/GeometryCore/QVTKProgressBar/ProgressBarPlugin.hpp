@@ -1,3 +1,6 @@
+#ifndef PROGRESSBARPLUGIN_H
+#define PROGRESSBARPLUGIN_H
+
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
@@ -127,3 +130,5 @@ public:
 		return myProgress->getTerminateIndicator();
 	}
 };
+
+#endif

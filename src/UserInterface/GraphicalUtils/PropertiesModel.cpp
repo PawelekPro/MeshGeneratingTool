@@ -19,6 +19,13 @@
 
 #include "PropertiesModel.h"
 
+QMap<QString, std::function<BaseWidget*()>> PropertiesModel::factoryMap = {
+	{ "IntLineWidget", createInstance<IntLineWidget> },
+	{ "DoubleLineWidget", createInstance<DoubleLineWidget> },
+	{ "ComboBoxWidget", createInstance<ComboBoxWidget> },
+	{ "EntityPickWidget", createInstance<EntityPickWidget> }
+};
+
 //--------------------------------------------------------------------------------------
 bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
 	Q_UNUSED(sourceParent);
@@ -26,12 +33,12 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 	QAbstractItemModel* model = this->sourceModel();
 	model->data(model->index(sourceRow, 0), Qt::DisplayRole);
 
-	QModelIndex propIndex = model->index(sourceRow, 0);
-	QVariant propVariant = model->data(propIndex, Qt::UserRole);
-	QVariantMap propMap = propVariant.toMap();
-	bool hidden = propMap.value("hidden").toBool();
+	PropertiesModel* propsModel = dynamic_cast<PropertiesModel*>(model);
 
-	return !hidden;
+	QDomElement propsNode = propsModel->getProperty(sourceRow);
+	QString hidden = propsNode.attributes().namedItem("hidden").toAttr().value();
+
+	return hidden == "no" || hidden.isEmpty();
 }
 
 //--------------------------------------------------------------------------------------
@@ -88,7 +95,7 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 //--------------------------------------------------------------------------------------
 bool PropertiesModel::setData(
 	const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
-	if (!index.isValid() || role != Qt::EditRole) {
+	if (!index.isValid() || role != Qt::DisplayRole && role != Qt::EditRole) {
 		return false;
 	}
 
@@ -128,4 +135,38 @@ Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 		_flags |= Qt::ItemIsEditable;
 	}
 	return _flags;
+}
+
+//--------------------------------------------------------------------------------------
+const QDomElement PropertiesModel::getProperty(int row) {
+	if (row < 0 || row >= _properties.size()) {
+		throw std::out_of_range("Invalid row index");
+	}
+	return this->_properties.value(row);
+}
+
+//--------------------------------------------------------------------------------------
+QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
+	if (!index.isValid()) {
+		return nullptr;
+	}
+
+	QWidget* widget = nullptr;
+	if (index.column() == 1) {
+		QDomNamedNodeMap attrs = this->_properties[index.row()].attributes();
+		QString name = attrs.namedItem("widget").toAttr().value();
+
+		auto classType = this->factoryMap.find(name);
+		if (classType != this->factoryMap.end()) {
+			auto createFunction = classType.value();
+			auto widget = createFunction(); // Call the std::function to create the widget
+
+			widget->setIndex(index);
+			return widget;
+		} else {
+			vtkLogF(
+				ERROR, ("Class not found in widgets factory map: " + name.toStdString()).c_str());
+		}
+	}
+	return widget;
 }

@@ -36,8 +36,8 @@ Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
 
-	lastPickedProperty->Delete();
-	lastHoveredProperty->Delete();
+	// lastPickedProperty->Delete();
+	// lastHoveredProperty->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -50,38 +50,33 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 	this->createContextMenu();
 	_contextMenu->exec(QCursor::pos());
 
-	this->Superclass::OnRightButtonDown();
+	// this->Superclass::OnRightButtonDown();
 }
 
 //----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
-	vtkNew<vtkNamedColors> colors;
+
 	int* clickPos = this->GetInteractor()->GetEventPosition();
-
-	// Pick from this location
-	vtkNew<vtkPropPicker> picker;
-	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getRenderer());
-
-	// If picked something before, reset its property.
-	if (this->lastPickedActor) {
-		this->lastPickedActor->GetProperty()->DeepCopy(this->lastPickedProperty);
-	}
-	this->lastPickedActor = picker->GetActor();
-	if (this->lastPickedActor) {
-		// Save the property of the pciked actor so that it can be restored next time.
-		this->lastPickedProperty->DeepCopy(this->lastPickedActor->GetProperty());
-
-		// Highlight the picked actor
-		this->lastPickedActor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
-		this->lastPickedActor->GetProperty()->SetDiffuse(1.0);
-		this->lastPickedActor->GetProperty()->SetSpecular(0.0);
-		// this->LastPickedActor->GetProperty()->EdgeVisibilityOn();
-	}
-
-	// Forward events
-	this->Superclass::OnLeftButtonDown();
+	LMBPicker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
+	LMBActor = this->LMBPicker->GetActor();
+    if (LMBActor != prevLMBActor) {
+        if (LMBActor) {
+            if (prevLMBActor) {
+                prevLMBActor->SetProperty(prevLMBProperty);
+            }
+            prevLMBProperty->DeepCopy(prevHoveredProperty);
+            LMBActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
+            LMBActor->GetProperty()->SetLineWidth(5);
+        } else {
+            if (prevLMBActor) {
+                prevLMBActor->SetProperty(prevLMBProperty);
+                prevLMBProperty = nullptr;
+            }
+        }
+    }
+	prevLMBActor = LMBActor;
+    this->Superclass::OnLeftButtonDown();
 }
-
 //----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::createContextMenu() {
 	if (!_contextMenu) {
@@ -92,50 +87,100 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 		font.setPointSize(10);
 		_contextMenu->setFont(font);
 
-		_customAction = new QAction("Fit view", _contextMenu);
+		_fitViewAction = new QAction("Fit view", _contextMenu);
+		_faceSizingAction = new QAction("Add face sizing", _contextMenu);
+		_edgeSizingAction = new QAction("Add edge sizing", _contextMenu);
 
-		QObject::connect(_customAction, &QAction::triggered, [this]() {
+		QObject::connect(_fitViewAction, &QAction::triggered, [this]() {
 			this->_qvtkRenderWindow->fitView();
+			this->_qvtkRenderWindow->model->addFaceSizing(LMBActor);
+			this->_qvtkRenderWindow->model->addEdgeSizing(LMBActor);
 		});
-
-		// Add the custom QAction to the context menu
-		_contextMenu->addAction(_customAction);
+		_contextMenu->addAction(_fitViewAction);
+		_contextMenu->addAction(_faceSizingAction);
+		_contextMenu->addAction(_edgeSizingAction);				
+	}
+	_edgeSizingAction->setDisabled(true);
+	_faceSizingAction->setDisabled(true);
+	std::cout<<static_cast<int>(this->_qvtkRenderWindow->getActiveRendererId());
+	switch (this->_qvtkRenderWindow->getActiveRendererId()) {
+		case Rendering::Renderers::Edges: {
+			_edgeSizingAction->setDisabled(false);
+			break;
+		}
+		case Rendering::Renderers::Faces: {
+			_faceSizingAction->setDisabled(false);
+			break;
+		}
+		default: {
+			break;
+		}
 	}
 }
 
 //----------------------------------------------------------------------------
 void Interactor::QVTKInteractorStyle::OnMouseMove() {
-	if (this->lastHoveredActor) {
-		this->lastHoveredActor->GetProperty()->DeepCopy(this->lastHoveredProperty);
-	}
-
-	this->lastHoveredActor = NULL;
-
-	int* clickPos = this->GetInteractor()->GetEventPosition();
-	vtkNew<vtkCellPicker> picker;
-	picker->SetTolerance(0.001);
-	picker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getRenderer());
-
-	this->lastHoveredActor = picker->GetActor();
-
-	// Check if something was picked
-	if (this->lastHoveredActor) {
-		this->lastHoveredProperty->DeepCopy(this->lastHoveredActor->GetProperty());
-		this->lastHoveredActor->GetProperty()->SetLineWidth(5);
-		this->lastHoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
-	}
-	// this->GetInteractor()->Render();
-	this->Superclass::OnMouseMove();
+	this->hoverPicker->SetTolerance(0.001);
+    int* clickPos = this->GetInteractor()->GetEventPosition();
+    hoverPicker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
+    hoveredActor = this->hoverPicker->GetActor();
+    if (hoveredActor != prevHoveredActor) {
+        if (hoveredActor) {
+            if (prevHoveredActor) {
+				if(prevHoveredActor != prevLMBActor){
+                	prevHoveredActor->SetProperty(prevHoveredProperty);
+				}
+            }
+			if (hoveredActor!= prevLMBActor){
+				hoveredActor->GetProperty()->DeepCopy(prevHoveredProperty);
+				hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
+				hoveredActor->GetProperty()->SetLineWidth(5);
+			}
+        } else {
+            if (prevHoveredActor) {
+				if(prevHoveredActor != prevLMBActor){
+					prevHoveredActor->SetProperty(prevHoveredProperty);
+				}
+				prevHoveredProperty = nullptr;
+            }
+        }
+    }
+    this->prevHoveredActor = hoveredActor ? hoveredActor : nullptr;
+    this->Superclass::OnMouseMove();
 }
 
+void Interactor::QVTKInteractorStyle::OnKeyPress() {
+    std::string key = this->GetInteractor()->GetKeySym();
+    if (key == "Shift_L" || key == "Shift_R") {
+        this->shiftPressed = true;
+    }
+    this->Superclass::OnKeyPress();
+}
+
+void Interactor::QVTKInteractorStyle::OnKeyRelease() {
+    std::string key = this->GetInteractor()->GetKeySym();
+    if (key == "Shift_L" || key == "Shift_R") {
+        this->shiftPressed = false;
+    }
+    this->Superclass::OnKeyRelease();
+}
+
+
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::Activate(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
+void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
 	_qvtkRenderWindow = qvtkRenderWindow;
 	_contextMenu = nullptr;
-	_customAction = nullptr;
-	lastPickedActor = NULL;
-	lastPickedProperty = vtkProperty::New();
+	_fitViewAction = nullptr;
 
-	lastHoveredActor = NULL;
-	lastHoveredProperty = vtkProperty::New();
+
+	LMBActor = nullptr;
+	prevLMBActor = nullptr;
+	prevLMBProperty  = vtkProperty::New();
+	LMBPicker = vtkPropPicker::New();;
+
+
+	hoveredActor = nullptr;
+	prevHoveredActor = nullptr;
+	prevHoveredProperty = vtkProperty::New();
+	hoverPicker = vtkCellPicker::New();
 }

@@ -17,43 +17,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROPERTIESWIDGET_H
-#define PROPERTIESWIDGET_H
+#ifndef ENTITYPICKWIDHET_H
+#define ENTITYPICKWIDHET_H
 
-#include "PropertiesModel.h"
+#include "BaseWidget.h"
 
-#include <QList>
-#include <QStyledItemDelegate>
-#include <QTableView>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QModelIndex>
+#include <QPushButton>
+#include <QString>
 #include <QWidget>
 
-/**
- * Custom widget for displaying properties using a table view.
- */
-class PropertiesWidget : public QTableView {
+class EntityPickWidget : public BaseWidget {
 	Q_OBJECT
 public:
-	explicit PropertiesWidget(QWidget* parent = nullptr)
-		: QTableView(parent) {};
-	~PropertiesWidget();
+	explicit EntityPickWidget(QWidget* parent = nullptr);
+	~EntityPickWidget();
 
-	/**
-	 * Sets the PropertiesModel for the object.
-	 *
-	 * @param model A pointer to the PropertiesModel to be set.
-	 *
-	 * @returns None
-	 */
-	void setModel(PropertiesModel*);
+	void setIndex(const QModelIndex& index) override;
+	void setSelected(bool selected);
 
 private:
-	// Container for temporary widgets existing between model selection change event
-	QList<QWidget*> _createdWidgets;
+	void updateAppearance();
 
-	/**
-	 * The height of a row in a table.
-	 */
-	static const int rowHeight = 20;
+	QLabel* _selectionLabel;
+	QPushButton* _selectionButton;
+	QModelIndex _index;
+	bool _selected;
+
+	// button width in pixels
+	static const int buttonWidth = 60;
+
+protected:
+	void mousePressEvent(QMouseEvent* event) override;
+
+signals:
+	void confirmed(const QString& selection);
+
+private slots:
+	void confirmSelection();
 };
 
 #endif
