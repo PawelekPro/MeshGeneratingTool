@@ -1,13 +1,12 @@
 #ifndef RIBBONBARWIDGET_H
 #define RIBBONBARWIDGET_H
 
-#include <QComboBox>
-#include <QWidget>
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class RibbonBarWidget;
-}
-QT_END_NAMESPACE
+#include "SARibbon.h"
+
+#include <QtCore/QVariant>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 class SARibbonBar;
 class RibbonBarWidget : public QWidget {
@@ -17,14 +16,18 @@ public:
 	RibbonBarWidget(QWidget* parent = nullptr);
 	~RibbonBarWidget();
 
+public:
+	QVBoxLayout* verticalLayout;
+
 private:
 	void buildRibbon(SARibbonBar* bar);
 	QAction* createAction(const QString& text, const QString& iconurl);
+	void setupUi();
+
 private slots:
 	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
 
 private:
-	Ui::RibbonBarWidget* ui;
 	SARibbonBar* mRibbonBar { nullptr };
 	QComboBox* mComboTheme { nullptr };
 };

@@ -309,7 +309,7 @@ SARibbonComboBox::drop-down:hover {
 }
 
 SARibbonComboBox::down-arrow {
-  image: url(:/image/resource/ArrowDown.png);
+  image: url(:/images/images/ArrowDown.png);
 }
 
 /*SARibbonSeparatorWidget*/
@@ -348,15 +348,15 @@ SAWindowToolButton:focus {
 }
 
 SAWindowToolButton#SAMinimizeWindowButton {
-  image: url(:/image/resource/Titlebar_Min.png);
+  image: url(:/images/images/Titlebar_Min.png);
 }
 
 SAWindowToolButton#SAMaximizeWindowButton:checked {
-  image:url(:/image/resource/Titlebar_Normal.png);
+  image:url(:/images/images/Titlebar_Normal.png);
 }
 
 SAWindowToolButton#SAMaximizeWindowButton {
-  image:url(:/image/resource/Titlebar_Max.png);
+  image:url(:/images/images/Titlebar_Max.png);
 }
 
 SAWindowToolButton#SAMinimizeWindowButton:hover,#SAMaximizeWindowButton:hover {
@@ -368,20 +368,20 @@ SAWindowToolButton#SAMinimizeWindowButton:pressed,#SAMaximizeWindowButton:presse
 }
 
 SAWindowToolButton#SACloseWindowButton {
-  image: url(:/image/resource/Titlebar_Close.png);
+  image: url(:/images/images/Titlebar_Close.png);
 }
 
 SAWindowToolButton#SACloseWindowButton:hover {
   background-color: #e81123;
-  image: url(:/image/resource/Titlebar_Close_Hover.png);
+  image: url(:/images/images/Titlebar_Close_Hover.png);
 }
 
 SAWindowToolButton#SACloseWindowButton:pressed {
   background-color: #f1707a;
-  image: url(:/image/resource/Titlebar_Close_Hover.png);
+  image: url(:/images/images/Titlebar_Close_Hover.png);
 }
 
 SAWindowToolButton#SARibbonBarHidePannelButton {
-  titlebar-shade-icon: url(:/image/resource/Titlebar_Shade.png);
-  titlebar-unshade-icon: url(:/image/resource/Titlebar_Unshade.png);
+  titlebar-shade-icon: url(:/images/images/Titlebar_Shade.png);
+  titlebar-unshade-icon: url(:/images/images/Titlebar_Unshade.png);
 }

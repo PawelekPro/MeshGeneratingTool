@@ -1,17 +1,12 @@
 
 #include "RibbonBarWidget.h"
 
-#include "ui_RibbonBarWidget.h"
-
-#include "SARibbon.h"
-
 RibbonBarWidget::RibbonBarWidget(QWidget* parent)
-	: QWidget(parent)
-	, ui(new Ui::RibbonBarWidget) {
+	: QWidget(parent) {
 
-	ui->setupUi(this);
+	this->setupUi();
 
-	mRibbonBar = new SARibbonBar(this);
+	mRibbonBar = new SARibbonBar(parent);
 
 	mRibbonBar->setTitleVisible(false);
 
@@ -19,15 +14,16 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 
 	mRibbonBar->setApplicationButton(nullptr);
 
-	sa_set_ribbon_theme(mRibbonBar, SARibbonTheme::RibbonThemeOffice2013);
+	sa_set_ribbon_theme(mRibbonBar, SARibbonTheme::RibbonThemeOffice2021Blue);
 
-	ui->verticalLayout->setMenuBar(mRibbonBar);
+	this->verticalLayout->setMenuBar(mRibbonBar);
 
 	buildRibbon(mRibbonBar);
 }
 
 RibbonBarWidget::~RibbonBarWidget() {
-	delete ui;
+	delete verticalLayout;
+	delete mRibbonBar;
 }
 
 void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
@@ -35,17 +31,17 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	page1->setCategoryName("page1");
 	SARibbonPannel* pannel1 = new SARibbonPannel("pannel1", page1);
 	page1->addPannel(pannel1);
-	QAction* act = createAction("  save  ", ":/icon/icon/save.svg");
+	QAction* act = createAction("  save  ", ":/icons/icons/save.svg");
 	act->setIconText("  save  ");
 	pannel1->addLargeAction(act);
 
-	pannel1->addLargeAction(createAction("open", ":/icon/icon/folder-star.svg"));
-	pannel1->addSmallAction(createAction("action1", ":/icon/icon/action.svg"));
-	pannel1->addSmallAction(createAction("action2", ":/icon/icon/action2.svg"));
+	pannel1->addLargeAction(createAction("open", ":/icons/icons/folder-star.svg"));
+	pannel1->addSmallAction(createAction("action1", ":/icons/icons/action.svg"));
+	pannel1->addSmallAction(createAction("action2", ":/icons/icons/action2.svg"));
 	SARibbonPannel* pannel2 = new SARibbonPannel("pannel2", page1);
 	page1->addPannel(pannel2);
-	pannel2->addLargeAction(createAction("setting", ":/icon/icon/customize0.svg"));
-	pannel2->addLargeAction(createAction("windowsflag", ":/icon/icon/windowsflag-normal.svg"));
+	pannel2->addLargeAction(createAction("setting", ":/icons/icons/customize0.svg"));
+	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
 
 	SARibbonCategory* page2 = new SARibbonCategory();
@@ -68,8 +64,8 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel2->addSmallWidget(mComboTheme);
 
 	SARibbonQuickAccessBar* qbar = mRibbonBar->quickAccessBar();
-	qbar->addAction(createAction("undo", ":/icon/icon/undo.svg"));
-	qbar->addAction(createAction("redo", ":/icon/icon/redo.svg"));
+	qbar->addAction(createAction("undo", ":/icons/icons/undo.svg"));
+	qbar->addAction(createAction("redo", ":/icons/icons/redo.svg"));
 }
 
 QAction* RibbonBarWidget::createAction(const QString& text, const QString& iconurl) {
@@ -84,4 +80,14 @@ void RibbonBarWidget::onRibbonThemeComboBoxCurrentIndexChanged(int index) {
 	SARibbonTheme t = static_cast<SARibbonTheme>(mComboTheme->itemData(index).toInt());
 	sa_set_ribbon_theme(mRibbonBar, t);
 	mRibbonBar->updateRibbonGeometry();
+}
+
+void RibbonBarWidget::setupUi() {
+
+	this->verticalLayout = new QVBoxLayout(this);
+	this->verticalLayout->setSpacing(1);
+	this->verticalLayout->setObjectName("verticalLayout");
+	this->verticalLayout->setContentsMargins(0, 0, 0, 0);
+
+	QMetaObject::connectSlotsByName(this);
 }

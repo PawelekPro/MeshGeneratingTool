@@ -1,12 +1,11 @@
-//定义此宏，将SA_RIBBON_EXPORT定义为空
+// 定义此宏，将SA_RIBBON_EXPORT定义为空
 #ifndef SA_RIBBON_BAR_NO_EXPORT
 #define SA_RIBBON_BAR_NO_EXPORT
 #endif
-//定义此宏，将SA_COLOR_WIDGETS_API定义为空
+// 定义此宏，将SA_COLOR_WIDGETS_API定义为空
 #ifndef SA_COLOR_WIDGETS_NO_DLL
 #define SA_COLOR_WIDGETS_NO_DLL
 #endif
-
 
 /*** Start of inlined file: SARibbonAmalgamTemplateHeaderGlue.h ***/
 // This file provides an extra level of indirection for the @remap in the template
@@ -16,54 +15,51 @@
 
 // disable warnings about unsafe standard library calls
 #ifdef _MSC_VER
-#pragma push_macro ("_CRT_SECURE_NO_WARNINGS")
+#pragma push_macro("_CRT_SECURE_NO_WARNINGS")
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
-#pragma warning (push)
-#pragma warning (disable: 4996) // deprecated POSIX names
+#pragma warning(push)
+#pragma warning(disable : 4996) // deprecated POSIX names
 #endif
 
-
 /*** Start of inlined file: SAColorMenu.cpp ***/
-#include <QWidgetAction>
 #include <QColorDialog>
 #include <QDebug>
-#include <QLabel>
 #include <QGridLayout>
+#include <QLabel>
 #include <QPainter>
+#include <QWidgetAction>
 
-class SAColorMenu::PrivateData
-{
+class SAColorMenu::PrivateData {
 	SA_COLOR_WIDGETS_DECLARE_PUBLIC(SAColorMenu)
 public:
 	PrivateData(SAColorMenu* p);
 	QColor getColorByDialog();
 	void recordCustomColor(const QColor& c);
 	QWidgetAction* addWidget(QWidget* w);
-	//创建一个无颜色的icon
+	// 创建一个无颜色的icon
 	QIcon createNoneColorIcon(QSize baseSize = QSize(32, 32));
 
 public:
-	QLabel* mTitleLabel { nullptr };  ///< 主题颜色标题
+	QLabel* mTitleLabel { nullptr }; ///< 主题颜色标题
 	QWidgetAction* mTitleLabelAction { nullptr };
-	SAColorPaletteGridWidget* mThemeColorsWidget { nullptr };  ///< 主题颜色
-	QWidgetAction* mThemeColorPaletteAction { nullptr };       ///< ThemeColorsPalette对应的action
-	QAction* mCustomColorAction { nullptr };                   ///< 自定义颜色action
-	SAColorGridWidget* mCustomColorsWidget { nullptr };        ///< 自定义颜色记录
-	QWidgetAction* mCustomColorsWidgetAction { nullptr };      ///< 自定义颜色窗口对应的action
-	QAction* mNoneColorAction { nullptr };                     ///< 无颜色action
-	QList< QColor > mCustomColors;
-	int mMaxCustomColorSize { 10 };                        ///< 记录最多的自定义颜色数量
-	QScopedPointer< QColorDialog > mColorDlg { nullptr };  ///<颜色对话框
+	SAColorPaletteGridWidget* mThemeColorsWidget { nullptr }; ///< 主题颜色
+	QWidgetAction* mThemeColorPaletteAction { nullptr }; ///< ThemeColorsPalette对应的action
+	QAction* mCustomColorAction { nullptr }; ///< 自定义颜色action
+	SAColorGridWidget* mCustomColorsWidget { nullptr }; ///< 自定义颜色记录
+	QWidgetAction* mCustomColorsWidgetAction { nullptr }; ///< 自定义颜色窗口对应的action
+	QAction* mNoneColorAction { nullptr }; ///< 无颜色action
+	QList<QColor> mCustomColors;
+	int mMaxCustomColorSize { 10 }; ///< 记录最多的自定义颜色数量
+	QScopedPointer<QColorDialog> mColorDlg { nullptr }; ///< 颜色对话框
 };
 
-SAColorMenu::PrivateData::PrivateData(SAColorMenu* p) : q_ptr(p)
-{
+SAColorMenu::PrivateData::PrivateData(SAColorMenu* p)
+	: q_ptr(p) {
 }
 
-QColor SAColorMenu::PrivateData::getColorByDialog()
-{
+QColor SAColorMenu::PrivateData::getColorByDialog() {
 	if (nullptr == mColorDlg) {
 		mColorDlg.reset(new QColorDialog());
 	}
@@ -73,29 +69,26 @@ QColor SAColorMenu::PrivateData::getColorByDialog()
 	return QColor();
 }
 
-void SAColorMenu::PrivateData::recordCustomColor(const QColor& c)
-{
+void SAColorMenu::PrivateData::recordCustomColor(const QColor& c) {
 	if (mCustomColors.size() < mMaxCustomColorSize) {
 		mCustomColors.push_back(c);
 	} else {
-		//超过数量，就左移动
+		// 超过数量，就左移动
 		for (int i = 1; i < mCustomColors.size(); ++i) {
-			mCustomColors[ i - 1 ] = mCustomColors[ i ];
+			mCustomColors[i - 1] = mCustomColors[i];
 		}
 		mCustomColors.back() = c;
 	}
 }
 
-QWidgetAction* SAColorMenu::PrivateData::addWidget(QWidget* w)
-{
+QWidgetAction* SAColorMenu::PrivateData::addWidget(QWidget* w) {
 	QWidgetAction* wa = new QWidgetAction(q_ptr);
 	wa->setDefaultWidget(w);
 	q_ptr->addAction(wa);
 	return wa;
 }
 
-QIcon SAColorMenu::PrivateData::createNoneColorIcon(QSize baseSize)
-{
+QIcon SAColorMenu::PrivateData::createNoneColorIcon(QSize baseSize) {
 	QPixmap pixmap(baseSize);
 	pixmap.fill(Qt::transparent);
 	QPainter p(&pixmap);
@@ -106,27 +99,26 @@ QIcon SAColorMenu::PrivateData::createNoneColorIcon(QSize baseSize)
 // SAColorMenu
 //===================================================
 
-SAColorMenu::SAColorMenu(QWidget* parent) : QMenu(parent), d_ptr(new SAColorMenu::PrivateData(this))
-{
+SAColorMenu::SAColorMenu(QWidget* parent)
+	: QMenu(parent)
+	, d_ptr(new SAColorMenu::PrivateData(this)) {
 	init(SA::getStandardColorList());
 }
 
 SAColorMenu::SAColorMenu(const QString& title, QWidget* parent)
-	: QMenu(title, parent), d_ptr(new SAColorMenu::PrivateData(this))
-{
+	: QMenu(title, parent)
+	, d_ptr(new SAColorMenu::PrivateData(this)) {
 	init(SA::getStandardColorList());
 }
 
-SAColorMenu::~SAColorMenu()
-{
+SAColorMenu::~SAColorMenu() {
 }
 
 /**
  * @brief 快速绑定ColorToolButton
  * @param btn
  */
-void SAColorMenu::bindToColorToolButton(SAColorToolButton* btn)
-{
+void SAColorMenu::bindToColorToolButton(SAColorToolButton* btn) {
 	if (!btn) {
 		return;
 	}
@@ -140,8 +132,7 @@ void SAColorMenu::bindToColorToolButton(SAColorToolButton* btn)
  * @brief ThemeColorsPalette对应的action
  * @return
  */
-QWidgetAction* SAColorMenu::themeColorsPaletteAction() const
-{
+QWidgetAction* SAColorMenu::themeColorsPaletteAction() const {
 	return d_ptr->mThemeColorPaletteAction;
 }
 
@@ -149,8 +140,7 @@ QWidgetAction* SAColorMenu::themeColorsPaletteAction() const
  * @brief CustomColorsWidget对应的action
  * @return
  */
-QWidgetAction* SAColorMenu::getCustomColorsWidgetAction() const
-{
+QWidgetAction* SAColorMenu::getCustomColorsWidgetAction() const {
 	return d_ptr->mCustomColorsWidgetAction;
 }
 
@@ -158,8 +148,7 @@ QWidgetAction* SAColorMenu::getCustomColorsWidgetAction() const
  * @brief 自定义颜色action
  * @return
  */
-QAction* SAColorMenu::customColorAction() const
-{
+QAction* SAColorMenu::customColorAction() const {
 	return d_ptr->mCustomColorAction;
 }
 
@@ -167,8 +156,7 @@ QAction* SAColorMenu::customColorAction() const
  * @brief 获取ThemeColorsPalette
  * @return
  */
-SAColorPaletteGridWidget* SAColorMenu::colorPaletteGridWidget() const
-{
+SAColorPaletteGridWidget* SAColorMenu::colorPaletteGridWidget() const {
 	return d_ptr->mThemeColorsWidget;
 }
 
@@ -176,8 +164,7 @@ SAColorPaletteGridWidget* SAColorMenu::colorPaletteGridWidget() const
  * @brief 获取自定义颜色grid
  * @return
  */
-SAColorGridWidget* SAColorMenu::customColorsWidget() const
-{
+SAColorGridWidget* SAColorMenu::customColorsWidget() const {
 	return d_ptr->mCustomColorsWidget;
 }
 
@@ -187,19 +174,18 @@ SAColorGridWidget* SAColorMenu::customColorsWidget() const
  * 无颜色选中会发射selectedColor(QColor())
  * @param on
  */
-void SAColorMenu::enableNoneColorAction(bool on)
-{
-	//无颜色默认是在自定义颜色的上方
+void SAColorMenu::enableNoneColorAction(bool on) {
+	// 无颜色默认是在自定义颜色的上方
 	if (on) {
 		if (d_ptr->mNoneColorAction) {
 			if (actions().contains(d_ptr->mNoneColorAction)) {
-				//已经包含了NoneColorAction,退出
+				// 已经包含了NoneColorAction,退出
 				return;
 			} else {
 				insertAction(d_ptr->mCustomColorAction, d_ptr->mNoneColorAction);
 			}
 		} else {
-			QIcon ic                = d_ptr->createNoneColorIcon();
+			QIcon ic = d_ptr->createNoneColorIcon();
 			d_ptr->mNoneColorAction = new QAction(ic, tr("None"), this);
 			connect(d_ptr->mNoneColorAction, &QAction::triggered, this, &SAColorMenu::onNoneColorActionTriggered);
 			insertAction(d_ptr->mCustomColorAction, d_ptr->mNoneColorAction);
@@ -216,8 +202,7 @@ void SAColorMenu::enableNoneColorAction(bool on)
  * @note 注意，enableNoneColorAction(true),之后才不是nullptr
  * @return 如果没有建立NoneColorAction，会返回nullptr
  */
-QAction* SAColorMenu::noneColorAction() const
-{
+QAction* SAColorMenu::noneColorAction() const {
 	return d_ptr->mNoneColorAction;
 }
 
@@ -225,14 +210,12 @@ QAction* SAColorMenu::noneColorAction() const
  * @brief 这是一个辅助槽函数，为了让用户自定义的其他action也能关联menu，可以调用此槽函数，实现selectedColor信号以及menu的隐藏
  * @param c
  */
-void SAColorMenu::emitSelectedColor(const QColor& c)
-{
+void SAColorMenu::emitSelectedColor(const QColor& c) {
 	emit selectedColor(c);
 	hide();
 }
 
-void SAColorMenu::init(const QList< QColor >& themeCls)
-{
+void SAColorMenu::init(const QList<QColor>& themeCls) {
 	d_ptr->mTitleLabel = new QLabel(this);
 	d_ptr->mTitleLabel->setText(tr("Theme Colors"));
 	d_ptr->mTitleLabelAction = d_ptr->addWidget(d_ptr->mTitleLabel);
@@ -241,10 +224,10 @@ void SAColorMenu::init(const QList< QColor >& themeCls)
 	d_ptr->mThemeColorsWidget->setColorCheckable(false);
 	d_ptr->mThemeColorPaletteAction = d_ptr->addWidget(d_ptr->mThemeColorsWidget);
 
-	d_ptr->mCustomColorAction = new QAction(tr("Custom Color"), this);  // cn:自定义颜色
+	d_ptr->mCustomColorAction = new QAction(tr("Custom Color"), this); // cn:自定义颜色
 	addAction(d_ptr->mCustomColorAction);
 
-	QSize clrSize              = d_ptr->mThemeColorsWidget->colorIconSize();
+	QSize clrSize = d_ptr->mThemeColorsWidget->colorIconSize();
 	d_ptr->mCustomColorsWidget = new SAColorGridWidget(this);
 	d_ptr->mCustomColorsWidget->setRowMinimumHeight(0, clrSize.height());
 	d_ptr->mCustomColorsWidget->setHorizontalSpacerToRight();
@@ -262,8 +245,7 @@ void SAColorMenu::init(const QList< QColor >& themeCls)
  * @brief 自定义颜色
  * @param on
  */
-void SAColorMenu::onCustomColorActionTriggered(bool on)
-{
+void SAColorMenu::onCustomColorActionTriggered(bool on) {
 	Q_UNUSED(on);
 	QColor c = d_ptr->getColorByDialog();
 	if (c.isValid()) {
@@ -278,22 +260,19 @@ void SAColorMenu::onCustomColorActionTriggered(bool on)
  * @brief 无颜色
  * @param on
  */
-void SAColorMenu::onNoneColorActionTriggered(bool on)
-{
+void SAColorMenu::onNoneColorActionTriggered(bool on) {
 	Q_UNUSED(on);
 	emitSelectedColor(QColor());
 }
 
 /*** End of inlined file: SAColorMenu.cpp ***/
 
-
 /*** Start of inlined file: SAColorGridWidget.cpp ***/
+#include <QButtonGroup>
 #include <QGridLayout>
 #include <cmath>
-#include <QButtonGroup>
 
-class SAColorGridWidget::PrivateData
-{
+class SAColorGridWidget::PrivateData {
 	SA_COLOR_WIDGETS_DECLARE_PUBLIC(SAColorGridWidget)
 public:
 	PrivateData(SAColorGridWidget* p);
@@ -310,17 +289,17 @@ public:
 	bool isSpacer(int r, int c) const;
 
 public:
-	QList< QColor > mColors;
+	QList<QColor> mColors;
 	QGridLayout* mGridLayout { nullptr };
 	QButtonGroup* mButtonGroup { nullptr };
 	QSize mIconSize { 16, 16 };
-	int mColumnCount { 8 };  ///< 列数，行数量会根据列数量来匹配,如果设置-1或者0，说明不限定列数量，这样会只有一行
-	bool mColorCheckable;    ///< 设置颜色是否是checkable
-	bool mHorizontalSpacerToRight { false };  ///< 最右边是否有弹簧
+	int mColumnCount { 8 }; ///< 列数，行数量会根据列数量来匹配,如果设置-1或者0，说明不限定列数量，这样会只有一行
+	bool mColorCheckable; ///< 设置颜色是否是checkable
+	bool mHorizontalSpacerToRight { false }; ///< 最右边是否有弹簧
 };
 
-SAColorGridWidget::PrivateData::PrivateData(SAColorGridWidget* p) : q_ptr(p)
-{
+SAColorGridWidget::PrivateData::PrivateData(SAColorGridWidget* p)
+	: q_ptr(p) {
 	mGridLayout = new QGridLayout(p);
 	p->setLayout(mGridLayout);
 	mGridLayout->setSpacing(0);
@@ -331,34 +310,30 @@ SAColorGridWidget::PrivateData::PrivateData(SAColorGridWidget* p) : q_ptr(p)
 	p->setMinimumWidth(mIconSize.width());
 }
 
-SAColorToolButton* SAColorGridWidget::PrivateData::getColorToolButtonAt(int index)
-{
+SAColorToolButton* SAColorGridWidget::PrivateData::getColorToolButtonAt(int index) {
 	QLayoutItem* item = mGridLayout->itemAt(index);
 	if (nullptr == item) {
 		return nullptr;
 	}
-	return qobject_cast< SAColorToolButton* >(item->widget());
+	return qobject_cast<SAColorToolButton*>(item->widget());
 }
 
-SAColorToolButton* SAColorGridWidget::PrivateData::getColorToolButtonAt(int r, int c)
-{
+SAColorToolButton* SAColorGridWidget::PrivateData::getColorToolButtonAt(int r, int c) {
 	QLayoutItem* item = mGridLayout->itemAtPosition(r, c);
 	if (nullptr == item) {
 		return nullptr;
 	}
-	return qobject_cast< SAColorToolButton* >(item->widget());
+	return qobject_cast<SAColorToolButton*>(item->widget());
 }
 
-SAColorToolButton* SAColorGridWidget::PrivateData::getCheckedButton() const
-{
-	return qobject_cast< SAColorToolButton* >(mButtonGroup->checkedButton());
+SAColorToolButton* SAColorGridWidget::PrivateData::getCheckedButton() const {
+	return qobject_cast<SAColorToolButton*>(mButtonGroup->checkedButton());
 }
 
 /**
  * @brief 根据mColors更新布局
  */
-void SAColorGridWidget::PrivateData::updateGridColor(bool isRemoveSpacer)
-{
+void SAColorGridWidget::PrivateData::updateGridColor(bool isRemoveSpacer) {
 	int row = 1;
 	int col = mColumnCount;
 	if (col <= 0) {
@@ -370,7 +345,7 @@ void SAColorGridWidget::PrivateData::updateGridColor(bool isRemoveSpacer)
 	for (int r = 0; r < row; ++r) {
 		for (int c = 0; c < col; ++c) {
 			if (index < mColors.size()) {
-				setColorAt(mColors[ index ], r, c);
+				setColorAt(mColors[index], r, c);
 				++index;
 			} else {
 				removeAt(r, c);
@@ -407,20 +382,18 @@ void SAColorGridWidget::PrivateData::updateGridColor(bool isRemoveSpacer)
 /**
  * @brief 更新colorsize
  */
-void SAColorGridWidget::PrivateData::updateGridColorSize()
-{
+void SAColorGridWidget::PrivateData::updateGridColorSize() {
 	QSize s = mIconSize;
-	iterationColorBtns([ s ](SAColorToolButton* btn) {
+	iterationColorBtns([s](SAColorToolButton* btn) {
 		if (btn) {
 			btn->setIconSize(s);
 		}
 	});
 }
 
-void SAColorGridWidget::PrivateData::updateGridColorCheckable()
-{
+void SAColorGridWidget::PrivateData::updateGridColorCheckable() {
 	bool v = mColorCheckable;
-	iterationColorBtns([ v ](SAColorToolButton* btn) {
+	iterationColorBtns([v](SAColorToolButton* btn) {
 		if (btn) {
 			btn->setCheckable(v);
 		}
@@ -431,8 +404,7 @@ void SAColorGridWidget::PrivateData::updateGridColorCheckable()
  * @brief 遍历所有的button
  * @param fn
  */
-void SAColorGridWidget::PrivateData::iterationColorBtns(FunColorBtn fn)
-{
+void SAColorGridWidget::PrivateData::iterationColorBtns(FunColorBtn fn) {
 	int cnt = mGridLayout->count();
 	for (int i = 0; i < cnt; ++i) {
 		SAColorToolButton* tl = getColorToolButtonAt(i);
@@ -445,8 +417,7 @@ void SAColorGridWidget::PrivateData::iterationColorBtns(FunColorBtn fn)
  * @param r
  * @param c
  */
-void SAColorGridWidget::PrivateData::removeAt(int r, int c)
-{
+void SAColorGridWidget::PrivateData::removeAt(int r, int c) {
 	QLayoutItem* item = mGridLayout->itemAtPosition(r, c);
 	if (item) {
 		QWidget* w = item->widget();
@@ -458,11 +429,10 @@ void SAColorGridWidget::PrivateData::removeAt(int r, int c)
 	}
 }
 
-void SAColorGridWidget::PrivateData::setColorAt(const QColor& clr, int r, int c)
-{
+void SAColorGridWidget::PrivateData::setColorAt(const QColor& clr, int r, int c) {
 	QLayoutItem* item = mGridLayout->itemAtPosition(r, c);
 	if (item) {
-		SAColorToolButton* tl = qobject_cast< SAColorToolButton* >(item->widget());
+		SAColorToolButton* tl = qobject_cast<SAColorToolButton*>(item->widget());
 		if (tl) {
 			tl->setColor(clr);
 		}
@@ -479,11 +449,10 @@ void SAColorGridWidget::PrivateData::setColorAt(const QColor& clr, int r, int c)
 	}
 }
 
-bool SAColorGridWidget::PrivateData::isSpacer(int r, int c) const
-{
+bool SAColorGridWidget::PrivateData::isSpacer(int r, int c) const {
 	QLayoutItem* item = mGridLayout->itemAtPosition(r, c);
 	if (item) {
-		if (QSpacerItem* si = dynamic_cast< QSpacerItem* >(item)) {
+		if (QSpacerItem* si = dynamic_cast<QSpacerItem*>(item)) {
 			return true;
 		}
 	}
@@ -494,36 +463,35 @@ bool SAColorGridWidget::PrivateData::isSpacer(int r, int c) const
 // SAColorGridWidget
 //==============================================================
 
-SAColorGridWidget::SAColorGridWidget(QWidget* par) : QWidget(par), d_ptr(new SAColorGridWidget::PrivateData(this))
-{
+SAColorGridWidget::SAColorGridWidget(QWidget* par)
+	: QWidget(par)
+	, d_ptr(new SAColorGridWidget::PrivateData(this)) {
 	connect(d_ptr->mButtonGroup,
-			QOverload< QAbstractButton* >::of(&QButtonGroup::buttonClicked),
-			this,
-			&SAColorGridWidget::onButtonClicked);
+		QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
+		this,
+		&SAColorGridWidget::onButtonClicked);
 	connect(d_ptr->mButtonGroup,
-			QOverload< QAbstractButton* >::of(&QButtonGroup::buttonPressed),
-			this,
-			&SAColorGridWidget::onButtonPressed);
+		QOverload<QAbstractButton*>::of(&QButtonGroup::buttonPressed),
+		this,
+		&SAColorGridWidget::onButtonPressed);
 	connect(d_ptr->mButtonGroup,
-			QOverload< QAbstractButton* >::of(&QButtonGroup::buttonReleased),
-			this,
-			&SAColorGridWidget::onButtonReleased);
+		QOverload<QAbstractButton*>::of(&QButtonGroup::buttonReleased),
+		this,
+		&SAColorGridWidget::onButtonReleased);
 	connect(d_ptr->mButtonGroup,
-			QOverload< QAbstractButton*, bool >::of(&QButtonGroup::buttonToggled),
-			this,
-			&SAColorGridWidget::onButtonToggled);
+		QOverload<QAbstractButton*, bool>::of(&QButtonGroup::buttonToggled),
+		this,
+		&SAColorGridWidget::onButtonToggled);
 }
 
-SAColorGridWidget::~SAColorGridWidget()
-{
+SAColorGridWidget::~SAColorGridWidget() {
 }
 
 /**
  * @brief 设置列数，行数量会根据列数量来匹配,如果设置-1或者0，说明不限定列数量，这样会只有一行
  * @param c
  */
-void SAColorGridWidget::setColumnCount(int c)
-{
+void SAColorGridWidget::setColumnCount(int c) {
 	d_ptr->mColumnCount = c;
 	d_ptr->updateGridColor(true);
 	if (d_ptr->mHorizontalSpacerToRight) {
@@ -536,8 +504,7 @@ void SAColorGridWidget::setColumnCount(int c)
  * @brief 设置颜色列表
  * @param c
  */
-void SAColorGridWidget::setColorList(const QList< QColor >& cls)
-{
+void SAColorGridWidget::setColorList(const QList<QColor>& cls) {
 	d_ptr->mColors = cls;
 	d_ptr->updateGridColor();
 	updateGeometry();
@@ -547,8 +514,7 @@ void SAColorGridWidget::setColorList(const QList< QColor >& cls)
  * @brief 获取颜色列表
  * @return
  */
-QList< QColor > SAColorGridWidget::getColorList() const
-{
+QList<QColor> SAColorGridWidget::getColorList() const {
 	return d_ptr->mColors;
 }
 
@@ -556,8 +522,7 @@ QList< QColor > SAColorGridWidget::getColorList() const
  * @brief 获取间隔
  * @return
  */
-int SAColorGridWidget::spacing() const
-{
+int SAColorGridWidget::spacing() const {
 	return d_ptr->mGridLayout->spacing();
 }
 
@@ -565,8 +530,7 @@ int SAColorGridWidget::spacing() const
  * @brief 设置间隔
  * @param v
  */
-void SAColorGridWidget::setSpacing(int v)
-{
+void SAColorGridWidget::setSpacing(int v) {
 	d_ptr->mGridLayout->setSpacing(v);
 }
 
@@ -574,8 +538,7 @@ void SAColorGridWidget::setSpacing(int v)
  * @brief 获取颜色的数量
  * @return
  */
-int SAColorGridWidget::colorCount() const
-{
+int SAColorGridWidget::colorCount() const {
 	return d_ptr->mColors.size();
 }
 
@@ -583,8 +546,7 @@ int SAColorGridWidget::colorCount() const
  * @brief 设置图标 size
  * @return
  */
-void SAColorGridWidget::setColorIconSize(const QSize& s)
-{
+void SAColorGridWidget::setColorIconSize(const QSize& s) {
 	d_ptr->mIconSize = s;
 	setMinimumHeight(s.height());
 	setMinimumWidth(s.width());
@@ -595,8 +557,7 @@ void SAColorGridWidget::setColorIconSize(const QSize& s)
  * @brief 获取图标 size
  * @return
  */
-QSize SAColorGridWidget::colorIconSize() const
-{
+QSize SAColorGridWidget::colorIconSize() const {
 	return d_ptr->mIconSize;
 }
 
@@ -606,8 +567,7 @@ QSize SAColorGridWidget::colorIconSize() const
  * checkable的颜色按钮是可checked的
  * @param on
  */
-void SAColorGridWidget::setColorCheckable(bool on)
-{
+void SAColorGridWidget::setColorCheckable(bool on) {
 	d_ptr->mColorCheckable = on;
 	d_ptr->updateGridColorCheckable();
 }
@@ -616,8 +576,7 @@ void SAColorGridWidget::setColorCheckable(bool on)
  * @brief 颜色是否是checkable
  * @return
  */
-bool SAColorGridWidget::isColorCheckable() const
-{
+bool SAColorGridWidget::isColorCheckable() const {
 	return d_ptr->mColorCheckable;
 }
 
@@ -625,13 +584,12 @@ bool SAColorGridWidget::isColorCheckable() const
  * @brief 获取当前选中的颜色
  * @return
  */
-QColor SAColorGridWidget::currentCheckedColor() const
-{
+QColor SAColorGridWidget::currentCheckedColor() const {
 	QAbstractButton* btn = d_ptr->mButtonGroup->checkedButton();
 	if (nullptr == btn) {
 		return QColor();
 	}
-	SAColorToolButton* t = qobject_cast< SAColorToolButton* >(btn);
+	SAColorToolButton* t = qobject_cast<SAColorToolButton*>(btn);
 	if (nullptr == t) {
 		return QColor();
 	}
@@ -643,8 +601,7 @@ QColor SAColorGridWidget::currentCheckedColor() const
  * @param index
  * @return 如果没有返回nullptr
  */
-SAColorToolButton* SAColorGridWidget::colorButton(int index) const
-{
+SAColorToolButton* SAColorGridWidget::colorButton(int index) const {
 	return d_ptr->getColorToolButtonAt(index);
 }
 
@@ -652,40 +609,35 @@ SAColorToolButton* SAColorGridWidget::colorButton(int index) const
  * @brief 等同GridLayout的VerticalSpacing属性
  * @param v
  */
-void SAColorGridWidget::setVerticalSpacing(int v)
-{
+void SAColorGridWidget::setVerticalSpacing(int v) {
 	d_ptr->mGridLayout->setVerticalSpacing(v);
 }
 /**
  * @brief 等同GridLayout的VerticalSpacing属性
  * @return
  */
-int SAColorGridWidget::verticalSpacing() const
-{
+int SAColorGridWidget::verticalSpacing() const {
 	return d_ptr->mGridLayout->verticalSpacing();
 }
 /**
  * @brief 等同GridLayout的HorizontalSpacing属性
  * @param v
  */
-void SAColorGridWidget::setHorizontalSpacing(int v)
-{
+void SAColorGridWidget::setHorizontalSpacing(int v) {
 	d_ptr->mGridLayout->setHorizontalSpacing(v);
 }
 /**
  * @brief 等同GridLayout的HorizontalSpacing属性
  * @return
  */
-int SAColorGridWidget::horizontalSpacing() const
-{
+int SAColorGridWidget::horizontalSpacing() const {
 	return d_ptr->mGridLayout->horizontalSpacing();
 }
 
 /**
  * @brief 清除选中状态，这时没有颜色是选中的
  */
-void SAColorGridWidget::clearCheckedState()
-{
+void SAColorGridWidget::clearCheckedState() {
 	if (d_ptr->mButtonGroup->exclusive()) {
 		SAColorToolButton* btn = d_ptr->getCheckedButton();
 		if (btn) {
@@ -702,18 +654,15 @@ void SAColorGridWidget::clearCheckedState()
 	}
 }
 
-void SAColorGridWidget::iterationColorBtns(SAColorGridWidget::FunColorBtn fn)
-{
+void SAColorGridWidget::iterationColorBtns(SAColorGridWidget::FunColorBtn fn) {
 	d_ptr->iterationColorBtns(fn);
 }
 
-void SAColorGridWidget::setRowMinimumHeight(int row, int minSize)
-{
+void SAColorGridWidget::setRowMinimumHeight(int row, int minSize) {
 	d_ptr->mGridLayout->setRowMinimumHeight(row, minSize);
 }
 
-void SAColorGridWidget::setHorizontalSpacerToRight(bool on)
-{
+void SAColorGridWidget::setHorizontalSpacerToRight(bool on) {
 	if (on) {
 		QSpacerItem* horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 		d_ptr->mGridLayout->addItem(horizontalSpacer, 0, d_ptr->mColumnCount, 1, 1);
@@ -723,32 +672,28 @@ void SAColorGridWidget::setHorizontalSpacerToRight(bool on)
 	d_ptr->mHorizontalSpacerToRight = on;
 }
 
-void SAColorGridWidget::onButtonClicked(QAbstractButton* btn)
-{
-	SAColorToolButton* t = qobject_cast< SAColorToolButton* >(btn);
+void SAColorGridWidget::onButtonClicked(QAbstractButton* btn) {
+	SAColorToolButton* t = qobject_cast<SAColorToolButton*>(btn);
 	if (t) {
 		emit colorClicked(t->color());
 	}
 }
 
-void SAColorGridWidget::onButtonPressed(QAbstractButton* btn)
-{
-	SAColorToolButton* t = qobject_cast< SAColorToolButton* >(btn);
+void SAColorGridWidget::onButtonPressed(QAbstractButton* btn) {
+	SAColorToolButton* t = qobject_cast<SAColorToolButton*>(btn);
 	if (t) {
 		emit colorPressed(t->color());
 	}
 }
 
-void SAColorGridWidget::onButtonToggled(QAbstractButton* btn, bool on)
-{
-	SAColorToolButton* t = qobject_cast< SAColorToolButton* >(btn);
+void SAColorGridWidget::onButtonToggled(QAbstractButton* btn, bool on) {
+	SAColorToolButton* t = qobject_cast<SAColorToolButton*>(btn);
 	if (t) {
 		emit colorToggled(t->color(), on);
 	}
 }
 
-QSize SAColorGridWidget::sizeHint() const
-{
+QSize SAColorGridWidget::sizeHint() const {
 	return d_ptr->mGridLayout->sizeHint();
 	//    int w = d_ptr->mIconSize.width() + d_ptr->mGridLayout->verticalSpacing();
 	//    int h = d_ptr->mIconSize.height();
@@ -764,64 +709,59 @@ QSize SAColorGridWidget::sizeHint() const
 	//    return QSize(w, h);
 }
 
-void SAColorGridWidget::onButtonReleased(QAbstractButton* btn)
-{
-	SAColorToolButton* t = qobject_cast< SAColorToolButton* >(btn);
+void SAColorGridWidget::onButtonReleased(QAbstractButton* btn) {
+	SAColorToolButton* t = qobject_cast<SAColorToolButton*>(btn);
 	if (t) {
 		emit colorReleased(t->color());
 	}
 }
 
-namespace SA
-{
+namespace SA {
 
-QList< QColor > getStandardColorList()
-{
-	static QList< QColor > s_standardColorList({ QColor(192, 0, 0),
-												 QColor(255, 0, 0),
-												 QColor(255, 192, 0),
-												 QColor(255, 255, 0),
-												 QColor(146, 208, 80),
-												 QColor(0, 176, 80),
-												 QColor(0, 176, 240),
-												 QColor(0, 112, 192),
-												 QColor(0, 32, 96),
-												 QColor(112, 48, 160) });
+QList<QColor> getStandardColorList() {
+	static QList<QColor> s_standardColorList({ QColor(192, 0, 0),
+		QColor(255, 0, 0),
+		QColor(255, 192, 0),
+		QColor(255, 255, 0),
+		QColor(146, 208, 80),
+		QColor(0, 176, 80),
+		QColor(0, 176, 240),
+		QColor(0, 112, 192),
+		QColor(0, 32, 96),
+		QColor(112, 48, 160) });
 	return s_standardColorList;
 }
 }
 
 /*** End of inlined file: SAColorGridWidget.cpp ***/
 
-
 /*** Start of inlined file: SAColorPaletteGridWidget.cpp ***/
 // Qt
-#include <QMenu>
-#include <QWidgetAction>
-#include <QVBoxLayout>
 #include <QColorDialog>
+#include <QMenu>
+#include <QVBoxLayout>
+#include <QWidgetAction>
 // SA
 
-class SAColorPaletteGridWidget::PrivateData
-{
+class SAColorPaletteGridWidget::PrivateData {
 	SA_COLOR_WIDGETS_DECLARE_PUBLIC(SAColorPaletteGridWidget)
 public:
 	PrivateData(SAColorPaletteGridWidget* p);
-	//生成color palette
-	QList< QColor > makeColorPalette(const QList< QColor >& clrList) const;
+	// 生成color palette
+	QList<QColor> makeColorPalette(const QList<QColor>& clrList) const;
 
 public:
-	QList< int > mFactor { 180, 160, 140, 75, 50 };  ///< palette的比例因子，将调用QColor的lighter函数执行
-	QVBoxLayout* mLayout { nullptr };                ///< 垂直布局
-	SAColorGridWidget* mMainColorList { nullptr };   ///< 这个用于显示标准颜色
-	SAColorGridWidget* mPaletteColorGrid { nullptr };  ///< 这个用于生成3行亮色，2行暗色的palette
+	QList<int> mFactor { 180, 160, 140, 75, 50 }; ///< palette的比例因子，将调用QColor的lighter函数执行
+	QVBoxLayout* mLayout { nullptr }; ///< 垂直布局
+	SAColorGridWidget* mMainColorList { nullptr }; ///< 这个用于显示标准颜色
+	SAColorGridWidget* mPaletteColorGrid { nullptr }; ///< 这个用于生成3行亮色，2行暗色的palette
 };
 
-SAColorPaletteGridWidget::PrivateData::PrivateData(SAColorPaletteGridWidget* p) : q_ptr(p)
-{
+SAColorPaletteGridWidget::PrivateData::PrivateData(SAColorPaletteGridWidget* p)
+	: q_ptr(p) {
 	mLayout = new QVBoxLayout(p);
 	p->setLayout(mLayout);
-	mMainColorList    = new SAColorGridWidget(p);
+	mMainColorList = new SAColorGridWidget(p);
 	mPaletteColorGrid = new SAColorGridWidget(p);
 	mLayout->addWidget(mMainColorList);
 	mLayout->addWidget(mPaletteColorGrid);
@@ -834,9 +774,8 @@ SAColorPaletteGridWidget::PrivateData::PrivateData(SAColorPaletteGridWidget* p) 
 	mPaletteColorGrid->setVerticalSpacing(0);
 }
 
-QList< QColor > SAColorPaletteGridWidget::PrivateData::makeColorPalette(const QList< QColor >& clrList) const
-{
-	QList< QColor > res;
+QList<QColor> SAColorPaletteGridWidget::PrivateData::makeColorPalette(const QList<QColor>& clrList) const {
+	QList<QColor> res;
 	for (int f : qAsConst(mFactor)) {
 		for (const QColor& c : qAsConst(clrList)) {
 			res.append(c.lighter(f));
@@ -852,8 +791,9 @@ QList< QColor > SAColorPaletteGridWidget::PrivateData::makeColorPalette(const QL
  * @brief 使用默认的标准颜色生成一个color palette
  * @param par
  */
-SAColorPaletteGridWidget::SAColorPaletteGridWidget(QWidget* par) : QWidget(par), d_ptr(new PrivateData(this))
-{
+SAColorPaletteGridWidget::SAColorPaletteGridWidget(QWidget* par)
+	: QWidget(par)
+	, d_ptr(new PrivateData(this)) {
 	init();
 	setColorList(SA::getStandardColorList());
 }
@@ -863,18 +803,16 @@ SAColorPaletteGridWidget::SAColorPaletteGridWidget(QWidget* par) : QWidget(par),
  * @param cls
  * @param par
  */
-SAColorPaletteGridWidget::SAColorPaletteGridWidget(const QList< QColor >& cls, QWidget* par)
-	: QWidget(par), d_ptr(new PrivateData(this))
-{
+SAColorPaletteGridWidget::SAColorPaletteGridWidget(const QList<QColor>& cls, QWidget* par)
+	: QWidget(par)
+	, d_ptr(new PrivateData(this)) {
 	init();
 	setColorList(cls);
 }
 
-SAColorPaletteGridWidget::~SAColorPaletteGridWidget()
-{
+SAColorPaletteGridWidget::~SAColorPaletteGridWidget() {
 }
-void SAColorPaletteGridWidget::init()
-{
+void SAColorPaletteGridWidget::init() {
 	connect(d_ptr->mMainColorList, &SAColorGridWidget::colorClicked, this, &SAColorPaletteGridWidget::onMainColorClicked);
 	connect(d_ptr->mPaletteColorGrid, &SAColorGridWidget::colorClicked, this, &SAColorPaletteGridWidget::onPaletteColorClicked);
 	QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
@@ -886,8 +824,7 @@ void SAColorPaletteGridWidget::init()
  * @brief 设置颜色系列，颜色系列的个数决定了主色卡的数量，palette色卡会根据factor进行生成
  * @param cls
  */
-void SAColorPaletteGridWidget::setColorList(const QList< QColor >& cls)
-{
+void SAColorPaletteGridWidget::setColorList(const QList<QColor>& cls) {
 	d_ptr->mMainColorList->setColumnCount(0);
 	d_ptr->mMainColorList->setColorList(cls);
 	d_ptr->mPaletteColorGrid->setColumnCount(cls.size());
@@ -898,8 +835,7 @@ void SAColorPaletteGridWidget::setColorList(const QList< QColor >& cls)
  * @brief 获取颜色系列
  * @return
  */
-QList< QColor > SAColorPaletteGridWidget::colorList() const
-{
+QList<QColor> SAColorPaletteGridWidget::colorList() const {
 	return d_ptr->mMainColorList->getColorList();
 }
 
@@ -909,8 +845,7 @@ QList< QColor > SAColorPaletteGridWidget::colorList() const
  * 默认为{ 180, 160, 140, 75, 50 },相当于会有5行，每个系数会对标准颜色执行QColor::lighter操作
  * @param factor
  */
-void SAColorPaletteGridWidget::setFactor(const QList< int >& factor)
-{
+void SAColorPaletteGridWidget::setFactor(const QList<int>& factor) {
 	d_ptr->mFactor = factor;
 	d_ptr->mPaletteColorGrid->setColorList(d_ptr->makeColorPalette(d_ptr->mMainColorList->getColorList()));
 }
@@ -919,8 +854,7 @@ void SAColorPaletteGridWidget::setFactor(const QList< int >& factor)
  * @brief 获取色卡
  * @return
  */
-QList< int > SAColorPaletteGridWidget::factor() const
-{
+QList<int> SAColorPaletteGridWidget::factor() const {
 	return d_ptr->mFactor;
 }
 
@@ -928,14 +862,12 @@ QList< int > SAColorPaletteGridWidget::factor() const
  * @brief 设置颜色块的尺寸，默认为10*10
  * @param s
  */
-void SAColorPaletteGridWidget::setColorIconSize(const QSize& s)
-{
+void SAColorPaletteGridWidget::setColorIconSize(const QSize& s) {
 	d_ptr->mMainColorList->setColorIconSize(s);
 	d_ptr->mPaletteColorGrid->setColorIconSize(s);
 }
 
-QSize SAColorPaletteGridWidget::colorIconSize() const
-{
+QSize SAColorPaletteGridWidget::colorIconSize() const {
 	return d_ptr->mMainColorList->colorIconSize();
 }
 
@@ -943,44 +875,38 @@ QSize SAColorPaletteGridWidget::colorIconSize() const
  * @brief 设置颜色块是否能被checked
  * @param on
  */
-void SAColorPaletteGridWidget::setColorCheckable(bool on)
-{
+void SAColorPaletteGridWidget::setColorCheckable(bool on) {
 	d_ptr->mMainColorList->setColorCheckable(on);
 	d_ptr->mPaletteColorGrid->setColorCheckable(on);
 }
 
-bool SAColorPaletteGridWidget::isColorCheckable() const
-{
+bool SAColorPaletteGridWidget::isColorCheckable() const {
 	return d_ptr->mMainColorList->isColorCheckable();
 }
 
-void SAColorPaletteGridWidget::onMainColorClicked(const QColor& c)
-{
+void SAColorPaletteGridWidget::onMainColorClicked(const QColor& c) {
 	d_ptr->mPaletteColorGrid->clearCheckedState();
 	emit colorClicked(c);
 }
 
-void SAColorPaletteGridWidget::onPaletteColorClicked(const QColor& c)
-{
+void SAColorPaletteGridWidget::onPaletteColorClicked(const QColor& c) {
 	d_ptr->mMainColorList->clearCheckedState();
 	emit colorClicked(c);
 }
 
 /*** End of inlined file: SAColorPaletteGridWidget.cpp ***/
 
-
 /*** Start of inlined file: SAColorToolButton.cpp ***/
 #include <QApplication>
+#include <QDebug>
 #include <QPaintEvent>
-#include <QStylePainter>
+#include <QResizeEvent>
 #include <QStyleOption>
 #include <QStyleOptionToolButton>
-#include <QResizeEvent>
-#include <QDebug>
+#include <QStylePainter>
 
 #define SAColorToolButton_DEBUG_PRINT 0
-class SAColorToolButton::PrivateData
-{
+class SAColorToolButton::PrivateData {
 	SA_COLOR_WIDGETS_DECLARE_PUBLIC(SAColorToolButton)
 public:
 	PrivateData(SAColorToolButton* p);
@@ -997,35 +923,34 @@ public:
 
 public:
 	QColor mColor { Qt::white };
-	int mSpacing { 2 };                                        ///< 间隔
-	QMargins mMargins { 3, 3, 3, 3 };                          ///< box
-	ColorToolButtonStyle mColorButtonStyle { WithColorMenu };  ///< 样式
-	static int s_indicatorArrorWidth;                          ///< 菜单宽度
+	int mSpacing { 2 }; ///< 间隔
+	QMargins mMargins { 3, 3, 3, 3 }; ///< box
+	ColorToolButtonStyle mColorButtonStyle { WithColorMenu }; ///< 样式
+	static int s_indicatorArrorWidth; ///< 菜单宽度
 };
 
 int SAColorToolButton::PrivateData::s_indicatorArrorWidth = 8;
 
-SAColorToolButton::PrivateData::PrivateData(SAColorToolButton* p) : q_ptr(p)
-{
+SAColorToolButton::PrivateData::PrivateData(SAColorToolButton* p)
+	: q_ptr(p) {
 }
 
 void SAColorToolButton::PrivateData::calcSizeOfToolButtonIconOnly(const QStyleOptionToolButton& opt,
-																  QRect& iconRect,
-																  QRect& textRect,
-																  QRect& colorRect)
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& colorRect) {
 	// 确定文本区域
-	textRect         = QRect();
+	textRect = QRect();
 	QRect buttonRect = getButtonRect(opt);
 	if (opt.icon.isNull()) {
 		colorRect = buttonRect;
-		iconRect  = QRect();
+		iconRect = QRect();
 	} else {
 		QSize tmpSize = opt.iconSize;
 		if (tmpSize.isNull()) {
 			tmpSize = QSize(16, 16);
 		}
-		tmpSize         = buttonRect.size().boundedTo(tmpSize);
+		tmpSize = buttonRect.size().boundedTo(tmpSize);
 		int colorHeight = tmpSize.height() / 4;
 		int totalHeight = colorHeight + tmpSize.height() + mSpacing;
 		if (totalHeight > buttonRect.height()) {
@@ -1033,14 +958,14 @@ void SAColorToolButton::PrivateData::calcSizeOfToolButtonIconOnly(const QStyleOp
 			colorHeight = (buttonRect.height() - mSpacing) / 5;
 			tmpSize.setHeight(colorHeight * 4);
 			if (opt.iconSize.height() > 0) {
-				tmpSize.setWidth(tmpSize.height() * opt.iconSize.width() / opt.iconSize.height());  // 等比例
+				tmpSize.setWidth(tmpSize.height() * opt.iconSize.width() / opt.iconSize.height()); // 等比例
 			}
 			tmpSize = buttonRect.size().boundedTo(tmpSize);
 		}
 		// 有icon，颜色位于图标下面
-		int y = (buttonRect.height() - colorHeight - mSpacing - tmpSize.height()) / 2;  //(ButtonHeight-TotalHeight)/2
+		int y = (buttonRect.height() - colorHeight - mSpacing - tmpSize.height()) / 2; //(ButtonHeight-TotalHeight)/2
 		int x = (buttonRect.width() - tmpSize.width()) / 2;
-		iconRect  = QRect(buttonRect.left() + x, buttonRect.top() + y, tmpSize.width(), tmpSize.height());
+		iconRect = QRect(buttonRect.left() + x, buttonRect.top() + y, tmpSize.width(), tmpSize.height());
 		colorRect = QRect(iconRect.x(), iconRect.bottom() + mSpacing, iconRect.width(), colorHeight);
 	}
 }
@@ -1053,29 +978,27 @@ void SAColorToolButton::PrivateData::calcSizeOfToolButtonIconOnly(const QStyleOp
  * @param colorRect 左边有5像素显示颜色
  */
 void SAColorToolButton::PrivateData::calcSizeOfToolButtonTextOnly(const QStyleOptionToolButton& opt,
-																  QRect& iconRect,
-																  QRect& textRect,
-																  QRect& colorRect)
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& colorRect) {
 	QRect buttonRect = getButtonRect(opt);
-	iconRect         = QRect();
-	QSize colorSize  = opt.iconSize;
+	iconRect = QRect();
+	QSize colorSize = opt.iconSize;
 	if (colorSize.isNull()) {
 		colorSize = QSize(16, 16);
 	}
 	colorSize = buttonRect.size().boundedTo(colorSize);
 	colorRect = QRect(buttonRect.left(),
-					  buttonRect.top() + (buttonRect.height() - colorSize.height()) / 2,
-					  colorSize.width(),
-					  colorSize.height());
-	textRect  = buttonRect.adjusted(colorRect.right() + mSpacing, 0, 0, 0);
+		buttonRect.top() + (buttonRect.height() - colorSize.height()) / 2,
+		colorSize.width(),
+		colorSize.height());
+	textRect = buttonRect.adjusted(colorRect.right() + mSpacing, 0, 0, 0);
 }
 
 void SAColorToolButton::PrivateData::calcSizeOfToolButtonTextBesideIcon(const QStyleOptionToolButton& opt,
-																		QRect& iconRect,
-																		QRect& textRect,
-																		QRect& colorRect)
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& colorRect) {
 	QRect buttonRect = getButtonRect(opt);
 	if (opt.icon.isNull()) {
 		QSize colorSize = opt.iconSize;
@@ -1086,61 +1009,60 @@ void SAColorToolButton::PrivateData::calcSizeOfToolButtonTextBesideIcon(const QS
 		// 这时所有都是color
 		// iconRect=Null
 		colorSize = buttonRect.size().boundedTo(colorSize);
-		iconRect  = QRect();
+		iconRect = QRect();
 		colorRect = QRect(buttonRect.left(),
-						  buttonRect.top() + (buttonRect.height() - colorSize.height()) / 2,
-						  colorSize.width(),
-						  colorSize.height());
-		textRect  = buttonRect.adjusted(colorRect.width() + mSpacing, 0, 0, 0);
-	} else {  // 有图标
+			buttonRect.top() + (buttonRect.height() - colorSize.height()) / 2,
+			colorSize.width(),
+			colorSize.height());
+		textRect = buttonRect.adjusted(colorRect.width() + mSpacing, 0, 0, 0);
+	} else { // 有图标
 		QSize tmpSize = opt.iconSize;
 		if (tmpSize.isNull()) {
 			tmpSize = QSize(16, 16);
 		}
-		tmpSize         = buttonRect.size().boundedTo(tmpSize);
+		tmpSize = buttonRect.size().boundedTo(tmpSize);
 		int colorHeight = tmpSize.height() / 4;
 		int totalHeight = colorHeight + tmpSize.height() + mSpacing;
 		if (totalHeight > buttonRect.height()) {
 			// 过高，这时要通过高度反推tmpSize和colorHeight
 			colorHeight = (buttonRect.height() - mSpacing) / 5;
 			tmpSize.setHeight(colorHeight * 4);
-			tmpSize.setWidth(tmpSize.height());  // 对于异形也设置为正方行
+			tmpSize.setWidth(tmpSize.height()); // 对于异形也设置为正方行
 		}
 		// 有icon，颜色位于图标下面
-		int y = (buttonRect.height() - colorHeight - mSpacing - tmpSize.height()) / 2;  //(ButtonHeight-TotalHeight)/2
-		iconRect  = QRect(buttonRect.left(), buttonRect.top() + y, tmpSize.width(), tmpSize.height());
+		int y = (buttonRect.height() - colorHeight - mSpacing - tmpSize.height()) / 2; //(ButtonHeight-TotalHeight)/2
+		iconRect = QRect(buttonRect.left(), buttonRect.top() + y, tmpSize.width(), tmpSize.height());
 		colorRect = QRect(iconRect.x(), iconRect.bottom() + mSpacing, iconRect.width(), colorHeight);
-		textRect  = buttonRect.adjusted(iconRect.right() + mSpacing, 0, 0, 0);
+		textRect = buttonRect.adjusted(iconRect.right() + mSpacing, 0, 0, 0);
 	}
 }
 
 void SAColorToolButton::PrivateData::calcSizeOfToolButtonTextUnderIcon(const QStyleOptionToolButton& opt,
-																	   QRect& iconRect,
-																	   QRect& textRect,
-																	   QRect& colorRect)
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& colorRect) {
 	QRect buttonRect = getButtonRect(opt);
-	QSize tmpSize    = opt.iconSize;
+	QSize tmpSize = opt.iconSize;
 	if (tmpSize.isNull()) {
 		tmpSize = QSize(16, 16);
 	}
 	// 获取字体高度
 	int textHeight = opt.fontMetrics.height();
-	tmpSize        = buttonRect.size().boundedTo(tmpSize);
+	tmpSize = buttonRect.size().boundedTo(tmpSize);
 	if (opt.icon.isNull()) {
 		int totalHeight = textHeight + opt.iconSize.height() + mSpacing;
 		if (totalHeight < buttonRect.height()) {
 			// 足够高
 			colorRect = QRect(buttonRect.left() + (buttonRect.width() - tmpSize.width()) / 2,
-							  buttonRect.top() + (buttonRect.height() - totalHeight) / 2,
-							  tmpSize.width(),
-							  opt.iconSize.height());
+				buttonRect.top() + (buttonRect.height() - totalHeight) / 2,
+				tmpSize.width(),
+				opt.iconSize.height());
 		} else {
 			// 空间不足
 			colorRect = QRect(buttonRect.left() + (buttonRect.width() - tmpSize.width()) / 2,
-							  buttonRect.top() + mSpacing,
-							  tmpSize.width(),
-							  opt.iconSize.height());
+				buttonRect.top() + mSpacing,
+				tmpSize.width(),
+				opt.iconSize.height());
 		}
 		iconRect = QRect();
 		textRect = QRect(buttonRect.left(), colorRect.bottom() + mSpacing, buttonRect.width(), textHeight);
@@ -1153,24 +1075,23 @@ void SAColorToolButton::PrivateData::calcSizeOfToolButtonTextUnderIcon(const QSt
 			// 高度空间足够
 			// 先布置icon
 			iconRect = QRect(buttonRect.left() + (buttonRect.width() - tmpSize.width()) / 2,
-							 buttonRect.top() + (buttonRect.height() - totalHeight) / 2,
-							 tmpSize.width(),
-							 opt.iconSize.height());
+				buttonRect.top() + (buttonRect.height() - totalHeight) / 2,
+				tmpSize.width(),
+				opt.iconSize.height());
 
 		} else {
 			// 空间不足
 			iconRect = QRect(buttonRect.left() + (buttonRect.width() - tmpSize.width()) / 2,
-							 buttonRect.top() + mSpacing,
-							 tmpSize.width(),
-							 opt.iconSize.height());
+				buttonRect.top() + mSpacing,
+				tmpSize.width(),
+				opt.iconSize.height());
 		}
 		colorRect = QRect(iconRect.x(), iconRect.bottom() + mSpacing, iconRect.width(), colorHeight);
-		textRect  = QRect(buttonRect.left(), colorRect.bottom() + mSpacing, buttonRect.width(), textHeight);
+		textRect = QRect(buttonRect.left(), colorRect.bottom() + mSpacing, buttonRect.width(), textHeight);
 	}
 }
 
-QPixmap SAColorToolButton::PrivateData::createIconPixmap(const QStyleOptionToolButton& opt, const QRect& iconRect)
-{
+QPixmap SAColorToolButton::PrivateData::createIconPixmap(const QStyleOptionToolButton& opt, const QRect& iconRect) {
 	if (opt.icon.isNull()) {
 		return (QPixmap());
 	}
@@ -1193,8 +1114,7 @@ QPixmap SAColorToolButton::PrivateData::createIconPixmap(const QStyleOptionToolB
  * @param opt
  * @return
  */
-QRect SAColorToolButton::PrivateData::getButtonRect(const QStyleOptionToolButton& opt)
-{
+QRect SAColorToolButton::PrivateData::getButtonRect(const QStyleOptionToolButton& opt) {
 	QRect btnRect = q_ptr->style()->subControlRect(QStyle::CC_ToolButton, &opt, QStyle::SC_ToolButton, q_ptr);
 	return btnRect.marginsRemoved(mMargins);
 }
@@ -1205,8 +1125,7 @@ QRect SAColorToolButton::PrivateData::getButtonRect(const QStyleOptionToolButton
  * @param opt
  * @return
  */
-QRect SAColorToolButton::PrivateData::getIndicatorRect(const QStyleOptionToolButton& opt)
-{
+QRect SAColorToolButton::PrivateData::getIndicatorRect(const QStyleOptionToolButton& opt) {
 	if (opt.features & QStyleOptionToolButton::MenuButtonPopup || opt.features & QStyleOptionToolButton::HasMenu) {
 		return q_ptr->style()->subControlRect(QStyle::CC_ToolButton, &opt, QStyle::SC_ToolButtonMenu, q_ptr);
 	}
@@ -1218,8 +1137,7 @@ QRect SAColorToolButton::PrivateData::getIndicatorRect(const QStyleOptionToolBut
  * @param opt
  * @return
  */
-QStyle::State SAColorToolButton::PrivateData::getButtonStyleState(const QStyleOptionToolButton& opt)
-{
+QStyle::State SAColorToolButton::PrivateData::getButtonStyleState(const QStyleOptionToolButton& opt) {
 	QStyle::State bflags = opt.state & ~QStyle::State_Sunken;
 	if (bflags & QStyle::State_AutoRaise) {
 		if (!(bflags & QStyle::State_MouseOver) || !(bflags & QStyle::State_Enabled)) {
@@ -1239,8 +1157,7 @@ QStyle::State SAColorToolButton::PrivateData::getButtonStyleState(const QStyleOp
  * @param opt
  * @return
  */
-QStyle::State SAColorToolButton::PrivateData::getButtonMenuStyleState(const QStyleOptionToolButton& opt)
-{
+QStyle::State SAColorToolButton::PrivateData::getButtonMenuStyleState(const QStyleOptionToolButton& opt) {
 	QStyle::State mflags = opt.state & ~QStyle::State_Sunken;
 	if (mflags & QStyle::State_AutoRaise) {
 		if (!(mflags & QStyle::State_MouseOver) || !(mflags & QStyle::State_Enabled)) {
@@ -1253,8 +1170,7 @@ QStyle::State SAColorToolButton::PrivateData::getButtonMenuStyleState(const QSty
 	return mflags;
 }
 
-void SAColorToolButton::PrivateData::removeMenu()
-{
+void SAColorToolButton::PrivateData::removeMenu() {
 	QMenu* m = q_ptr->menu();
 	if (m) {
 		q_ptr->setMenu(nullptr);
@@ -1266,29 +1182,28 @@ void SAColorToolButton::PrivateData::removeMenu()
 // SAColorToolButton
 //==============================================================
 
-SAColorToolButton::SAColorToolButton(QWidget* parent) : QToolButton(parent), d_ptr(new PrivateData(this))
-{
+SAColorToolButton::SAColorToolButton(QWidget* parent)
+	: QToolButton(parent)
+	, d_ptr(new PrivateData(this)) {
 	setColorToolButtonStyle(WithColorMenu);
 	connect(this, &QToolButton::clicked, this, &SAColorToolButton::onButtonClicked);
 }
 
 SAColorToolButton::SAColorToolButton(ColorToolButtonStyle style, QWidget* parent)
-	: QToolButton(parent), d_ptr(new PrivateData(this))
-{
+	: QToolButton(parent)
+	, d_ptr(new PrivateData(this)) {
 	setColorToolButtonStyle(style);
 	connect(this, &QToolButton::clicked, this, &SAColorToolButton::onButtonClicked);
 }
 
-SAColorToolButton::~SAColorToolButton()
-{
+SAColorToolButton::~SAColorToolButton() {
 }
 
 /**
  * @brief 获取颜色
  * @return
  */
-QColor SAColorToolButton::color() const
-{
+QColor SAColorToolButton::color() const {
 	return d_ptr->mColor;
 }
 
@@ -1296,14 +1211,12 @@ QColor SAColorToolButton::color() const
  * @brief 设置Margins
  * @param mg
  */
-void SAColorToolButton::setMargins(const QMargins& mg)
-{
+void SAColorToolButton::setMargins(const QMargins& mg) {
 	d_ptr->mMargins = mg;
 	repaint();
 }
 
-QMargins SAColorToolButton::margins() const
-{
+QMargins SAColorToolButton::margins() const {
 	return d_ptr->mMargins;
 }
 
@@ -1312,8 +1225,7 @@ QMargins SAColorToolButton::margins() const
  * @param p
  * @param colorRect 绘制的区域
  */
-void SAColorToolButton::paintNoneColor(QPainter* p, const QRect& colorRect)
-{
+void SAColorToolButton::paintNoneColor(QPainter* p, const QRect& colorRect) {
 	p->save();
 	QPen pen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap);
 	p->setPen(pen);
@@ -1331,8 +1243,7 @@ void SAColorToolButton::paintNoneColor(QPainter* p, const QRect& colorRect)
  * @brief 设置颜色按钮的样式
  * @param s
  */
-void SAColorToolButton::setColorToolButtonStyle(ColorToolButtonStyle s)
-{
+void SAColorToolButton::setColorToolButtonStyle(ColorToolButtonStyle s) {
 	if (NoColorMenu == s) {
 		d_ptr->removeMenu();
 	} else {
@@ -1345,8 +1256,7 @@ void SAColorToolButton::setColorToolButtonStyle(ColorToolButtonStyle s)
  * @brief 颜色按钮的样式
  * @return
  */
-SAColorToolButton::ColorToolButtonStyle SAColorToolButton::colorToolButtonStyle() const
-{
+SAColorToolButton::ColorToolButtonStyle SAColorToolButton::colorToolButtonStyle() const {
 	return d_ptr->mColorButtonStyle;
 }
 
@@ -1356,23 +1266,21 @@ SAColorToolButton::ColorToolButtonStyle SAColorToolButton::colorToolButtonStyle(
  * @note 注意，这个函数很有可能会返回nullptr，如果ColorToolButtonStyle设置为NoColorMenu或者自己设置了菜单，此函数返回nullptr
  * @return SAColorMenu指针，如果没有，返回nullptr
  */
-SAColorMenu* SAColorToolButton::colorMenu() const
-{
-	return qobject_cast< SAColorMenu* >(menu());
+SAColorMenu* SAColorToolButton::colorMenu() const {
+	return qobject_cast<SAColorMenu*>(menu());
 }
 
 /**
  * @brief 建立标准的颜色菜单
  * @return
  */
-SAColorMenu* SAColorToolButton::createColorMenu()
-{
+SAColorMenu* SAColorToolButton::createColorMenu() {
 	setPopupMode(QToolButton::InstantPopup);
 	SAColorMenu* m = new SAColorMenu(this);
 	m->enableNoneColorAction(true);
 	QAction* customColor = m->customColorAction();
 	if (customColor) {
-		customColor->setIcon(QIcon(":/image/resource/define-color.svg"));
+		customColor->setIcon(QIcon(":/images/images/define-color.svg"));
 	}
 	connect(m, &SAColorMenu::selectedColor, this, &SAColorToolButton::setColor);
 	setMenu(m);
@@ -1384,8 +1292,7 @@ SAColorMenu* SAColorToolButton::createColorMenu()
  * @note 会发射@sa colorChanged 信号
  * @param c
  */
-void SAColorToolButton::setColor(const QColor& c)
-{
+void SAColorToolButton::setColor(const QColor& c) {
 	if (d_ptr->mColor != c) {
 		d_ptr->mColor = c;
 		repaint();
@@ -1400,8 +1307,7 @@ void SAColorToolButton::setColor(const QColor& c)
  * @param textRect 文本区域
  * @param colorRect 颜色区域
  */
-void SAColorToolButton::calcRect(const QStyleOptionToolButton& opt, QRect& iconRect, QRect& textRect, QRect& colorRect)
-{
+void SAColorToolButton::calcRect(const QStyleOptionToolButton& opt, QRect& iconRect, QRect& textRect, QRect& colorRect) {
 	switch (opt.toolButtonStyle) {
 	case Qt::ToolButtonTextOnly:
 		d_ptr->calcSizeOfToolButtonTextOnly(opt, iconRect, textRect, colorRect);
@@ -1422,8 +1328,7 @@ void SAColorToolButton::calcRect(const QStyleOptionToolButton& opt, QRect& iconR
 	}
 }
 
-void SAColorToolButton::paintEvent(QPaintEvent* e)
-{
+void SAColorToolButton::paintEvent(QPaintEvent* e) {
 	Q_UNUSED(e);
 	QStylePainter p(this);
 
@@ -1441,8 +1346,7 @@ void SAColorToolButton::paintEvent(QPaintEvent* e)
 	paintColor(&p, colorRect, d_ptr->mColor, opt);
 }
 
-void SAColorToolButton::resizeEvent(QResizeEvent* e)
-{
+void SAColorToolButton::resizeEvent(QResizeEvent* e) {
 	// 在resizeevent计算绘图所需的尺寸，避免在绘图过程中实时绘制提高效率
 	QToolButton::resizeEvent(e);
 }
@@ -1451,8 +1355,7 @@ void SAColorToolButton::resizeEvent(QResizeEvent* e)
  * @brief sizeHint重载
  * @return
  */
-QSize SAColorToolButton::sizeHint() const
-{
+QSize SAColorToolButton::sizeHint() const {
 	ensurePolished();
 	QStyleOptionToolButton opt;
 	initStyleOption(&opt);
@@ -1482,7 +1385,7 @@ QSize SAColorToolButton::sizeHint() const
 		w = qMax(textSize.width(), iconSize.width()) + d_ptr->mMargins.left() + d_ptr->mMargins.right();
 		h = textSize.height() + iconSize.height() + d_ptr->mSpacing + d_ptr->mMargins.top() + d_ptr->mMargins.bottom();
 	}
-	opt.rect.setSize(QSize(w, h));  // PM_MenuButtonIndicator depends on the height
+	opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
 	if (opt.features & QStyleOptionToolButton::MenuButtonPopup || opt.features & QStyleOptionToolButton::HasMenu) {
 		w += style()->pixelMetric(QStyle::PM_MenuButtonIndicator, &opt, this);
 	}
@@ -1490,8 +1393,7 @@ QSize SAColorToolButton::sizeHint() const
 	return style()->sizeFromContents(QStyle::CT_ToolButton, &opt, QSize(w, h), this).expandedTo(QSize(2, 2));
 }
 
-void SAColorToolButton::onButtonClicked(bool checked)
-{
+void SAColorToolButton::onButtonClicked(bool checked) {
 	emit colorClicked(color(), checked);
 }
 
@@ -1500,8 +1402,7 @@ void SAColorToolButton::onButtonClicked(bool checked)
  * @param p
  * @param opt
  */
-void SAColorToolButton::paintButton(QStylePainter* p, const QStyleOptionToolButton& opt)
-{
+void SAColorToolButton::paintButton(QStylePainter* p, const QStyleOptionToolButton& opt) {
 	bool autoRaise = opt.state & QStyle::State_AutoRaise;
 	// 绘制按钮
 	if (autoRaise) {
@@ -1511,8 +1412,8 @@ void SAColorToolButton::paintButton(QStylePainter* p, const QStyleOptionToolButt
 	}
 	if (opt.features & QStyleOptionToolButton::MenuButtonPopup) {
 		QStyleOption tool = opt;
-		tool.state        = d_ptr->getButtonMenuStyleState(opt);
-		tool.rect         = d_ptr->getIndicatorRect(opt);
+		tool.state = d_ptr->getButtonMenuStyleState(opt);
+		tool.rect = d_ptr->getIndicatorRect(opt);
 		//        if (tool.state & (QStyle::State_Sunken | QStyle::State_On | QStyle::State_Raised)) {
 		//            style()->drawPrimitive(QStyle::PE_IndicatorButtonDropDown, &tool, &p, this);
 		//        }
@@ -1537,8 +1438,7 @@ void SAColorToolButton::paintButton(QStylePainter* p, const QStyleOptionToolButt
  * @param iconRect
  * @param opt icon信息从QStyleOptionToolButton获取
  */
-void SAColorToolButton::paintIcon(QStylePainter* p, const QRect& iconRect, const QStyleOptionToolButton& opt)
-{
+void SAColorToolButton::paintIcon(QStylePainter* p, const QRect& iconRect, const QStyleOptionToolButton& opt) {
 	if (!iconRect.isNull()) {
 		QPixmap pm = d_ptr->createIconPixmap(opt, iconRect);
 		style()->drawItemPixmap(p, iconRect, Qt::AlignCenter, pm);
@@ -1551,8 +1451,7 @@ void SAColorToolButton::paintIcon(QStylePainter* p, const QRect& iconRect, const
  * @param textRect
  * @param opt
  */
-void SAColorToolButton::paintText(QStylePainter* p, const QRect& textRect, const QStyleOptionToolButton& opt)
-{
+void SAColorToolButton::paintText(QStylePainter* p, const QRect& textRect, const QStyleOptionToolButton& opt) {
 	if (opt.text.isEmpty()) {
 		return;
 	}
@@ -1568,12 +1467,12 @@ void SAColorToolButton::paintText(QStylePainter* p, const QRect& textRect, const
 	}
 	alignment |= Qt::AlignHCenter | Qt::AlignVCenter;
 	style()->drawItemText(p,
-						  QStyle::visualRect(opt.direction, opt.rect, textRect),
-						  alignment,
-						  opt.palette,
-						  opt.state & QStyle::State_Enabled,
-						  opt.text,
-						  QPalette::ButtonText);
+		QStyle::visualRect(opt.direction, opt.rect, textRect),
+		alignment,
+		opt.palette,
+		opt.state & QStyle::State_Enabled,
+		opt.text,
+		QPalette::ButtonText);
 	p->restore();
 }
 
@@ -1584,10 +1483,9 @@ void SAColorToolButton::paintText(QStylePainter* p, const QRect& textRect, const
  * @param opt
  */
 void SAColorToolButton::paintColor(QStylePainter* p,
-								   const QRect& colorRect,
-								   const QColor& color,
-								   const QStyleOptionToolButton& opt)
-{
+	const QRect& colorRect,
+	const QColor& color,
+	const QStyleOptionToolButton& opt) {
 	Q_UNUSED(opt);
 	if (colorRect.isNull()) {
 		return;
@@ -1602,15 +1500,15 @@ void SAColorToolButton::paintColor(QStylePainter* p,
 
 /*** End of inlined file: SAColorToolButton.cpp ***/
 
-//sa ribbon
+// sa ribbon
 
 /*** Start of inlined file: SAFramelessHelper.cpp ***/
-#include <QRect>
-#include <QRubberBand>
-#include <QMouseEvent>
-#include <QHoverEvent>
 #include <QApplication>
 #include <QDebug>
+#include <QHoverEvent>
+#include <QMouseEvent>
+#include <QRect>
+#include <QRubberBand>
 
 class SAPrivateFramelessWidgetData;
 
@@ -1618,30 +1516,28 @@ class SAPrivateFramelessWidgetData;
  * FramelessHelperPrivate
  * 存储界面对应的数据集合，以及是否可移动、可缩放属性
  *****/
-class SAFramelessHelper::PrivateData
-{
+class SAFramelessHelper::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SAFramelessHelper)
 	friend class SAPrivateFramelessWidgetData;
 
 public:
 	PrivateData(SAFramelessHelper* p);
-	QHash< QWidget*, SAPrivateFramelessWidgetData* > m_widgetDataHash;
+	QHash<QWidget*, SAPrivateFramelessWidgetData*> m_widgetDataHash;
 	bool m_bWidgetMovable { true };
 	bool m_bWidgetResizable { true };
 	bool m_bRubberBandOnResize { true };
 	bool m_bRubberBandOnMove { true };
 };
 
-SAFramelessHelper::PrivateData::PrivateData(SAFramelessHelper* p) : q_ptr(p)
-{
+SAFramelessHelper::PrivateData::PrivateData(SAFramelessHelper* p)
+	: q_ptr(p) {
 }
 
 /*****
  * CursorPosCalculator
  * 计算鼠标是否位于左、上、右、下、左上角、左下角、右上角、右下角
  *****/
-class SAPrivateFramelessCursorPosCalculator
-{
+class SAPrivateFramelessCursorPosCalculator {
 public:
 	explicit SAPrivateFramelessCursorPosCalculator();
 	void reset();
@@ -1666,33 +1562,30 @@ int SAPrivateFramelessCursorPosCalculator::m_nBorderWidth = 5;
 int SAPrivateFramelessCursorPosCalculator::m_nTitleHeight = 30;
 
 /***** CursorPosCalculator *****/
-SAPrivateFramelessCursorPosCalculator::SAPrivateFramelessCursorPosCalculator()
-{
+SAPrivateFramelessCursorPosCalculator::SAPrivateFramelessCursorPosCalculator() {
 	reset();
 }
 
-void SAPrivateFramelessCursorPosCalculator::reset()
-{
-	m_bOnEdges           = false;
-	m_bOnLeftEdge        = false;
-	m_bOnRightEdge       = false;
-	m_bOnTopEdge         = false;
-	m_bOnBottomEdge      = false;
-	m_bOnTopLeftEdge     = false;
-	m_bOnBottomLeftEdge  = false;
-	m_bOnTopRightEdge    = false;
+void SAPrivateFramelessCursorPosCalculator::reset() {
+	m_bOnEdges = false;
+	m_bOnLeftEdge = false;
+	m_bOnRightEdge = false;
+	m_bOnTopEdge = false;
+	m_bOnBottomEdge = false;
+	m_bOnTopLeftEdge = false;
+	m_bOnBottomLeftEdge = false;
+	m_bOnTopRightEdge = false;
 	m_bOnBottomRightEdge = false;
 }
 
-void SAPrivateFramelessCursorPosCalculator::recalculate(const QPoint& gMousePos, const QRect& frameRect)
-{
+void SAPrivateFramelessCursorPosCalculator::recalculate(const QPoint& gMousePos, const QRect& frameRect) {
 	int globalMouseX = gMousePos.x();
 	int globalMouseY = gMousePos.y();
 
 	int frameX = frameRect.x();
 	int frameY = frameRect.y();
 
-	int frameWidth  = frameRect.width();
+	int frameWidth = frameRect.width();
 	int frameHeight = frameRect.height();
 
 	m_bOnLeftEdge = (globalMouseX >= frameX && globalMouseX <= frameX + m_nBorderWidth);
@@ -1703,9 +1596,9 @@ void SAPrivateFramelessCursorPosCalculator::recalculate(const QPoint& gMousePos,
 
 	m_bOnBottomEdge = (globalMouseY >= frameY + frameHeight - m_nBorderWidth && globalMouseY <= frameY + frameHeight);
 
-	m_bOnTopLeftEdge     = m_bOnTopEdge && m_bOnLeftEdge;
-	m_bOnBottomLeftEdge  = m_bOnBottomEdge && m_bOnLeftEdge;
-	m_bOnTopRightEdge    = m_bOnTopEdge && m_bOnRightEdge;
+	m_bOnTopLeftEdge = m_bOnTopEdge && m_bOnLeftEdge;
+	m_bOnBottomLeftEdge = m_bOnBottomEdge && m_bOnLeftEdge;
+	m_bOnTopRightEdge = m_bOnTopEdge && m_bOnRightEdge;
 	m_bOnBottomRightEdge = m_bOnBottomEdge && m_bOnRightEdge;
 
 	m_bOnEdges = m_bOnLeftEdge || m_bOnRightEdge || m_bOnTopEdge || m_bOnBottomEdge;
@@ -1715,8 +1608,7 @@ void SAPrivateFramelessCursorPosCalculator::recalculate(const QPoint& gMousePos,
  * WidgetData
  * 更新鼠标样式、移动窗体、缩放窗体
  *****/
-class SAPrivateFramelessWidgetData
-{
+class SAPrivateFramelessWidgetData {
 public:
 	explicit SAPrivateFramelessWidgetData(SAFramelessHelper::PrivateData* pd, QWidget* pTopLevelWidget);
 	~SAPrivateFramelessWidgetData();
@@ -1770,14 +1662,13 @@ private:
 };
 
 /***** WidgetData *****/
-SAPrivateFramelessWidgetData::SAPrivateFramelessWidgetData(SAFramelessHelper::PrivateData* pd, QWidget* pTopLevelWidget)
-{
-	d                         = pd;
-	m_pWidget                 = pTopLevelWidget;
-	m_bLeftButtonPressed      = false;
-	m_bCursorShapeChanged     = false;
+SAPrivateFramelessWidgetData::SAPrivateFramelessWidgetData(SAFramelessHelper::PrivateData* pd, QWidget* pTopLevelWidget) {
+	d = pd;
+	m_pWidget = pTopLevelWidget;
+	m_bLeftButtonPressed = false;
+	m_bCursorShapeChanged = false;
 	m_bLeftButtonTitlePressed = false;
-	m_pRubberBand             = NULL;
+	m_pRubberBand = NULL;
 
 	m_windowFlags = m_pWidget->windowFlags();
 	m_pWidget->setMouseTracking(true);
@@ -1786,8 +1677,7 @@ SAPrivateFramelessWidgetData::SAPrivateFramelessWidgetData(SAFramelessHelper::Pr
 	updateRubberBandStatus();
 }
 
-SAPrivateFramelessWidgetData::~SAPrivateFramelessWidgetData()
-{
+SAPrivateFramelessWidgetData::~SAPrivateFramelessWidgetData() {
 	m_pWidget->setMouseTracking(false);
 	m_pWidget->setWindowFlags(m_windowFlags);
 	m_pWidget->setAttribute(Qt::WA_Hover, false);
@@ -1796,31 +1686,29 @@ SAPrivateFramelessWidgetData::~SAPrivateFramelessWidgetData()
 	m_pRubberBand = NULL;
 }
 
-QWidget* SAPrivateFramelessWidgetData::widget()
-{
+QWidget* SAPrivateFramelessWidgetData::widget() {
 	return (m_pWidget);
 }
 
-bool SAPrivateFramelessWidgetData::handleWidgetEvent(QEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleWidgetEvent(QEvent* event) {
 	switch (event->type()) {
 	case QEvent::MouseButtonPress:
-		return (handleMousePressEvent(static_cast< QMouseEvent* >(event)));
+		return (handleMousePressEvent(static_cast<QMouseEvent*>(event)));
 
 	case QEvent::MouseButtonRelease:
-		return (handleMouseReleaseEvent(static_cast< QMouseEvent* >(event)));
+		return (handleMouseReleaseEvent(static_cast<QMouseEvent*>(event)));
 
 	case QEvent::MouseMove:
-		return (handleMouseMoveEvent(static_cast< QMouseEvent* >(event)));
+		return (handleMouseMoveEvent(static_cast<QMouseEvent*>(event)));
 
 	case QEvent::Leave:
-		return (handleLeaveEvent(static_cast< QMouseEvent* >(event)));
+		return (handleLeaveEvent(static_cast<QMouseEvent*>(event)));
 
 	case QEvent::HoverMove:
-		return (handleHoverMoveEvent(static_cast< QHoverEvent* >(event)));
+		return (handleHoverMoveEvent(static_cast<QHoverEvent*>(event)));
 
 	case QEvent::MouseButtonDblClick:
-		return (handleDoubleClickedMouseEvent(static_cast< QMouseEvent* >(event)));
+		return (handleDoubleClickedMouseEvent(static_cast<QMouseEvent*>(event)));
 
 	default:
 		break;
@@ -1828,8 +1716,7 @@ bool SAPrivateFramelessWidgetData::handleWidgetEvent(QEvent* event)
 	return (false);
 }
 
-void SAPrivateFramelessWidgetData::updateRubberBandStatus()
-{
+void SAPrivateFramelessWidgetData::updateRubberBandStatus() {
 	if (d->m_bRubberBandOnMove || d->m_bRubberBandOnResize) {
 		if (NULL == m_pRubberBand) {
 			m_pRubberBand = new QRubberBand(QRubberBand::Rectangle);
@@ -1840,8 +1727,7 @@ void SAPrivateFramelessWidgetData::updateRubberBandStatus()
 	}
 }
 
-void SAPrivateFramelessWidgetData::updateCursorShape(const QPoint& gMousePos)
-{
+void SAPrivateFramelessWidgetData::updateCursorShape(const QPoint& gMousePos) {
 	if (m_pWidget->isFullScreen() || m_pWidget->isMaximized()) {
 		if (m_bCursorShapeChanged) {
 			m_pWidget->unsetCursor();
@@ -1871,8 +1757,7 @@ void SAPrivateFramelessWidgetData::updateCursorShape(const QPoint& gMousePos)
 	}
 }
 
-void SAPrivateFramelessWidgetData::resizeWidget(const QPoint& gMousePos)
-{
+void SAPrivateFramelessWidgetData::resizeWidget(const QPoint& gMousePos) {
 	QRect origRect;
 
 	if (d->m_bRubberBandOnResize) {
@@ -1881,27 +1766,27 @@ void SAPrivateFramelessWidgetData::resizeWidget(const QPoint& gMousePos)
 		origRect = m_pWidget->frameGeometry();
 	}
 
-	int left   = origRect.left();
-	int top    = origRect.top();
-	int right  = origRect.right();
+	int left = origRect.left();
+	int top = origRect.top();
+	int right = origRect.right();
 	int bottom = origRect.bottom();
 
 	origRect.getCoords(&left, &top, &right, &bottom);
 
-	int minWidth  = m_pWidget->minimumWidth();
+	int minWidth = m_pWidget->minimumWidth();
 	int minHeight = m_pWidget->minimumHeight();
 
 	if (m_pressedMousePos.m_bOnTopLeftEdge) {
 		left = gMousePos.x();
-		top  = gMousePos.y();
+		top = gMousePos.y();
 	} else if (m_pressedMousePos.m_bOnBottomLeftEdge) {
-		left   = gMousePos.x();
+		left = gMousePos.x();
 		bottom = gMousePos.y();
 	} else if (m_pressedMousePos.m_bOnTopRightEdge) {
 		right = gMousePos.x();
-		top   = gMousePos.y();
+		top = gMousePos.y();
 	} else if (m_pressedMousePos.m_bOnBottomRightEdge) {
-		right  = gMousePos.x();
+		right = gMousePos.x();
 		bottom = gMousePos.y();
 	} else if (m_pressedMousePos.m_bOnLeftEdge) {
 		left = gMousePos.x();
@@ -1939,8 +1824,7 @@ void SAPrivateFramelessWidgetData::resizeWidget(const QPoint& gMousePos)
 	}
 }
 
-void SAPrivateFramelessWidgetData::moveWidget(const QPoint& gMousePos)
-{
+void SAPrivateFramelessWidgetData::moveWidget(const QPoint& gMousePos) {
 	if (d->m_bRubberBandOnMove) {
 		m_pRubberBand->move(gMousePos - m_ptDragPos);
 	} else {
@@ -1948,10 +1832,9 @@ void SAPrivateFramelessWidgetData::moveWidget(const QPoint& gMousePos)
 	}
 }
 
-bool SAPrivateFramelessWidgetData::handleMousePressEvent(QMouseEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleMousePressEvent(QMouseEvent* event) {
 	if (event->button() == Qt::LeftButton) {
-		m_bLeftButtonPressed      = true;
+		m_bLeftButtonPressed = true;
 		m_bLeftButtonTitlePressed = event->pos().y() < m_moveMousePos.m_nTitleHeight;
 
 		QRect frameRect = m_pWidget->frameGeometry();
@@ -1983,10 +1866,9 @@ bool SAPrivateFramelessWidgetData::handleMousePressEvent(QMouseEvent* event)
 	return (false);
 }
 
-bool SAPrivateFramelessWidgetData::handleMouseReleaseEvent(QMouseEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleMouseReleaseEvent(QMouseEvent* event) {
 	if (event->button() == Qt::LeftButton) {
-		m_bLeftButtonPressed      = false;
+		m_bLeftButtonPressed = false;
 		m_bLeftButtonTitlePressed = false;
 		m_pressedMousePos.reset();
 		if (m_pRubberBand && m_pRubberBand->isVisible()) {
@@ -1998,8 +1880,7 @@ bool SAPrivateFramelessWidgetData::handleMouseReleaseEvent(QMouseEvent* event)
 	return (false);
 }
 
-bool SAPrivateFramelessWidgetData::handleMouseMoveEvent(QMouseEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleMouseMoveEvent(QMouseEvent* event) {
 	QPoint p = SA_MOUSEEVENT_GLOBALPOS_POINT(event);
 	if (m_bLeftButtonPressed) {
 		if (d->m_bWidgetResizable && m_pressedMousePos.m_bOnEdges) {
@@ -2031,8 +1912,7 @@ bool SAPrivateFramelessWidgetData::handleMouseMoveEvent(QMouseEvent* event)
 	return (false);
 }
 
-bool SAPrivateFramelessWidgetData::handleLeaveEvent(QEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleLeaveEvent(QEvent* event) {
 	Q_UNUSED(event)
 	if (!m_bLeftButtonPressed) {
 		m_pWidget->unsetCursor();
@@ -2041,19 +1921,17 @@ bool SAPrivateFramelessWidgetData::handleLeaveEvent(QEvent* event)
 	return (false);
 }
 
-bool SAPrivateFramelessWidgetData::handleHoverMoveEvent(QHoverEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleHoverMoveEvent(QHoverEvent* event) {
 	if (d->m_bWidgetResizable) {
 		updateCursorShape(m_pWidget->mapToGlobal(SA_HOVEREVENT_POS_POINT(event)));
 	}
 	return (false);
 }
 
-bool SAPrivateFramelessWidgetData::handleDoubleClickedMouseEvent(QMouseEvent* event)
-{
+bool SAPrivateFramelessWidgetData::handleDoubleClickedMouseEvent(QMouseEvent* event) {
 	if (event->button() == Qt::LeftButton) {
 		if (m_pWidget) {
-			SARibbonMainWindow* mainwindow = qobject_cast< SARibbonMainWindow* >(m_pWidget);
+			SARibbonMainWindow* mainwindow = qobject_cast<SARibbonMainWindow*>(m_pWidget);
 			if (mainwindow) {
 				if (mainwindow->windowFlags() & Qt::WindowMaximizeButtonHint) {
 					// 在最大化按钮显示时才进行shownormal处理
@@ -2076,37 +1954,36 @@ bool SAPrivateFramelessWidgetData::handleDoubleClickedMouseEvent(QMouseEvent* ev
 //===================================================
 // SAFramelessHelper
 //===================================================
-SAFramelessHelper::SAFramelessHelper(QObject* parent) : QObject(parent), d_ptr(new SAFramelessHelper::PrivateData(this))
-{
-	d_ptr->m_bWidgetMovable      = true;
-	d_ptr->m_bWidgetResizable    = true;
+SAFramelessHelper::SAFramelessHelper(QObject* parent)
+	: QObject(parent)
+	, d_ptr(new SAFramelessHelper::PrivateData(this)) {
+	d_ptr->m_bWidgetMovable = true;
+	d_ptr->m_bWidgetResizable = true;
 	d_ptr->m_bRubberBandOnResize = false;
-	d_ptr->m_bRubberBandOnMove   = false;
+	d_ptr->m_bRubberBandOnMove = false;
 	if (parent) {
-		QWidget* w = qobject_cast< QWidget* >(parent);
+		QWidget* w = qobject_cast<QWidget*>(parent);
 		if (w) {
 			w->setWindowFlags(w->windowFlags() | Qt::FramelessWindowHint);
-			setWidgetMovable(true);       // 设置窗体可移动
-			setWidgetResizable(true);     // 设置窗体可缩放
-			setRubberBandOnMove(false);   // 设置橡皮筋效果-可移动
-			setRubberBandOnResize(true);  // 设置橡皮筋效果-可缩放
-			activateOn(w);                // 激活当前窗体
+			setWidgetMovable(true); // 设置窗体可移动
+			setWidgetResizable(true); // 设置窗体可缩放
+			setRubberBandOnMove(false); // 设置橡皮筋效果-可移动
+			setRubberBandOnResize(true); // 设置橡皮筋效果-可缩放
+			activateOn(w); // 激活当前窗体
 		}
 	}
 }
 
-SAFramelessHelper::~SAFramelessHelper()
-{
-	QList< QWidget* > keys = d_ptr->m_widgetDataHash.keys();
-	int size               = keys.size();
+SAFramelessHelper::~SAFramelessHelper() {
+	QList<QWidget*> keys = d_ptr->m_widgetDataHash.keys();
+	int size = keys.size();
 
 	for (int i = 0; i < size; ++i) {
-		delete d_ptr->m_widgetDataHash.take(keys[ i ]);
+		delete d_ptr->m_widgetDataHash.take(keys[i]);
 	}
 }
 
-bool SAFramelessHelper::eventFilter(QObject* obj, QEvent* event)
-{
+bool SAFramelessHelper::eventFilter(QObject* obj, QEvent* event) {
 	switch (event->type()) {
 	case QEvent::MouseMove:
 	case QEvent::HoverMove:
@@ -2114,7 +1991,7 @@ bool SAFramelessHelper::eventFilter(QObject* obj, QEvent* event)
 	case QEvent::MouseButtonRelease:
 	case QEvent::MouseButtonDblClick:
 	case QEvent::Leave: {
-		SAPrivateFramelessWidgetData* data = d_ptr->m_widgetDataHash.value(static_cast< QWidget* >(obj));
+		SAPrivateFramelessWidgetData* data = d_ptr->m_widgetDataHash.value(static_cast<QWidget*>(obj));
 		if (data) {
 			return (data->handleWidgetEvent(event));
 		}
@@ -2127,8 +2004,7 @@ bool SAFramelessHelper::eventFilter(QObject* obj, QEvent* event)
 	return (QObject::eventFilter(obj, event));
 }
 
-void SAFramelessHelper::activateOn(QWidget* topLevelWidget)
-{
+void SAFramelessHelper::activateOn(QWidget* topLevelWidget) {
 	if (!d_ptr->m_widgetDataHash.contains(topLevelWidget)) {
 		SAPrivateFramelessWidgetData* data = new SAPrivateFramelessWidgetData(d_ptr.get(), topLevelWidget);
 		d_ptr->m_widgetDataHash.insert(topLevelWidget, data);
@@ -2137,8 +2013,7 @@ void SAFramelessHelper::activateOn(QWidget* topLevelWidget)
 	}
 }
 
-void SAFramelessHelper::removeFrom(QWidget* topLevelWidget)
-{
+void SAFramelessHelper::removeFrom(QWidget* topLevelWidget) {
 	SAPrivateFramelessWidgetData* data = d_ptr->m_widgetDataHash.take(topLevelWidget);
 
 	if (data) {
@@ -2147,95 +2022,81 @@ void SAFramelessHelper::removeFrom(QWidget* topLevelWidget)
 	}
 }
 
-void SAFramelessHelper::setRubberBandOnMove(bool movable)
-{
-	d_ptr->m_bRubberBandOnMove                  = movable;
-	QList< SAPrivateFramelessWidgetData* > list = d_ptr->m_widgetDataHash.values();
+void SAFramelessHelper::setRubberBandOnMove(bool movable) {
+	d_ptr->m_bRubberBandOnMove = movable;
+	QList<SAPrivateFramelessWidgetData*> list = d_ptr->m_widgetDataHash.values();
 
 	foreach (SAPrivateFramelessWidgetData* data, list) {
 		data->updateRubberBandStatus();
 	}
 }
 
-void SAFramelessHelper::setWidgetMovable(bool movable)
-{
+void SAFramelessHelper::setWidgetMovable(bool movable) {
 	d_ptr->m_bWidgetMovable = movable;
 }
 
-void SAFramelessHelper::setWidgetResizable(bool resizable)
-{
+void SAFramelessHelper::setWidgetResizable(bool resizable) {
 	d_ptr->m_bWidgetResizable = resizable;
 }
 
-void SAFramelessHelper::setRubberBandOnResize(bool resizable)
-{
-	d_ptr->m_bRubberBandOnResize                = resizable;
-	QList< SAPrivateFramelessWidgetData* > list = d_ptr->m_widgetDataHash.values();
+void SAFramelessHelper::setRubberBandOnResize(bool resizable) {
+	d_ptr->m_bRubberBandOnResize = resizable;
+	QList<SAPrivateFramelessWidgetData*> list = d_ptr->m_widgetDataHash.values();
 
 	foreach (SAPrivateFramelessWidgetData* data, list) {
 		data->updateRubberBandStatus();
 	}
 }
 
-void SAFramelessHelper::setBorderWidth(int width)
-{
+void SAFramelessHelper::setBorderWidth(int width) {
 	if (width > 0) {
 		SAPrivateFramelessCursorPosCalculator::m_nBorderWidth = width;
 	}
 }
 
-void SAFramelessHelper::setTitleHeight(int height)
-{
+void SAFramelessHelper::setTitleHeight(int height) {
 	if (height > 0) {
 		SAPrivateFramelessCursorPosCalculator::m_nTitleHeight = height;
 	}
 }
 
-bool SAFramelessHelper::widgetMovable()
-{
+bool SAFramelessHelper::widgetMovable() {
 	return (d_ptr->m_bWidgetMovable);
 }
 
-bool SAFramelessHelper::widgetResizable()
-{
+bool SAFramelessHelper::widgetResizable() {
 	return (d_ptr->m_bWidgetResizable);
 }
 
-bool SAFramelessHelper::rubberBandOnMove()
-{
+bool SAFramelessHelper::rubberBandOnMove() {
 	return (d_ptr->m_bRubberBandOnMove);
 }
 
-bool SAFramelessHelper::rubberBandOnResisze()
-{
+bool SAFramelessHelper::rubberBandOnResisze() {
 	return (d_ptr->m_bRubberBandOnResize);
 }
 
-uint SAFramelessHelper::borderWidth()
-{
+uint SAFramelessHelper::borderWidth() {
 	return (SAPrivateFramelessCursorPosCalculator::m_nBorderWidth);
 }
 
-uint SAFramelessHelper::titleHeight()
-{
+uint SAFramelessHelper::titleHeight() {
 	return (SAPrivateFramelessCursorPosCalculator::m_nTitleHeight);
 }
 
 /*** End of inlined file: SAFramelessHelper.cpp ***/
 
-
-
 /*** Start of inlined file: SARibbonApplicationButton.cpp ***/
-SARibbonApplicationButton::SARibbonApplicationButton(QWidget* parent) : QToolButton(parent)
-{
+SARibbonApplicationButton::SARibbonApplicationButton(QWidget* parent)
+	: QToolButton(parent) {
 	setFocusPolicy(Qt::NoFocus);
 	setAutoRaise(true);
 	setPopupMode(QToolButton::InstantPopup);
 	setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 
-SARibbonApplicationButton::SARibbonApplicationButton(const QString& text, QWidget* parent) : QToolButton(parent)
-{
+SARibbonApplicationButton::SARibbonApplicationButton(const QString& text, QWidget* parent)
+	: QToolButton(parent) {
 	setFocusPolicy(Qt::NoFocus);
 	setAutoRaise(true);
 	setPopupMode(QToolButton::InstantPopup);
@@ -2244,8 +2105,7 @@ SARibbonApplicationButton::SARibbonApplicationButton(const QString& text, QWidge
 }
 
 SARibbonApplicationButton::SARibbonApplicationButton(const QIcon& icon, const QString& text, QWidget* parent)
-	: QToolButton(parent)
-{
+	: QToolButton(parent) {
 	setFocusPolicy(Qt::NoFocus);
 	setAutoRaise(true);
 	setPopupMode(QToolButton::InstantPopup);
@@ -2256,21 +2116,19 @@ SARibbonApplicationButton::SARibbonApplicationButton(const QIcon& icon, const QS
 
 /*** End of inlined file: SARibbonApplicationButton.cpp ***/
 
-
 /*** Start of inlined file: SARibbonSystemButtonBar.cpp ***/
-#include <QToolButton>
-#include <QResizeEvent>
-#include <QStyle>
 #include <QDebug>
+#include <QResizeEvent>
 #include <QScopedPointer>
+#include <QStyle>
+#include <QToolButton>
 
 // 为了避免使用此框架的app设置了全局的qpushbutton 的 qss样式影响此按钮，定义了一个类
 
 /**
  * @brief The SARibbonSystemButtonBar class
  */
-class SARibbonSystemButtonBar::PrivateData
-{
+class SARibbonSystemButtonBar::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonSystemButtonBar)
 public:
 	SARibbonSystemToolButton* buttonClose { nullptr };
@@ -2285,14 +2143,13 @@ public:
 	SARibbonButtonGroupWidget* mButtonGroup;
 
 public:
-	PrivateData(SARibbonSystemButtonBar* p) : q_ptr(p)
-	{
+	PrivateData(SARibbonSystemButtonBar* p)
+		: q_ptr(p) {
 		mButtonGroup = new SARibbonButtonGroupWidget(p);
 		mButtonGroup->setObjectName("SASystemButtonGroup");
 	}
 
-	void setupMinimizeButton(bool on)
-	{
+	void setupMinimizeButton(bool on) {
 		SARibbonSystemButtonBar* par = q_ptr;
 
 		if (on) {
@@ -2302,7 +2159,7 @@ public:
 			}
 			buttonMinimize = new SARibbonSystemToolButton(par);
 			buttonMinimize->setObjectName(QStringLiteral("SAMinimizeWindowButton"));
-			buttonMinimize->setFocusPolicy(Qt::NoFocus);  // 避免铺抓到
+			buttonMinimize->setFocusPolicy(Qt::NoFocus); // 避免铺抓到
 			buttonMinimize->show();
 			par->connect(buttonMinimize, &QAbstractButton::clicked, par, &SARibbonSystemButtonBar::minimizeWindow);
 		} else {
@@ -2314,8 +2171,7 @@ public:
 		updateSize();
 	}
 
-	void setupMaximizeButton(bool on)
-	{
+	void setupMaximizeButton(bool on) {
 		SARibbonSystemButtonBar* par = q_ptr;
 
 		if (on) {
@@ -2326,7 +2182,7 @@ public:
 			buttonMaximize = new SARibbonSystemToolButton(par);
 			buttonMaximize->setObjectName(QStringLiteral("SAMaximizeWindowButton"));
 			buttonMaximize->setCheckable(true);
-			buttonMaximize->setFocusPolicy(Qt::NoFocus);  // 避免铺抓到
+			buttonMaximize->setFocusPolicy(Qt::NoFocus); // 避免铺抓到
 			//            buttonMaximize->setIconSize(buttonMaximize->size() * mIconscale);
 			buttonMaximize->show();
 			par->connect(buttonMaximize, &QAbstractButton::clicked, par, &SARibbonSystemButtonBar::maximizeWindow);
@@ -2339,8 +2195,7 @@ public:
 		updateSize();
 	}
 
-	void setupCloseButton(bool on)
-	{
+	void setupCloseButton(bool on) {
 		SARibbonSystemButtonBar* par = q_ptr;
 
 		if (on) {
@@ -2350,7 +2205,7 @@ public:
 			}
 			buttonClose = new SARibbonSystemToolButton(par);
 			buttonClose->setObjectName(QStringLiteral("SACloseWindowButton"));
-			buttonClose->setFocusPolicy(Qt::NoFocus);  // 避免铺抓到
+			buttonClose->setFocusPolicy(Qt::NoFocus); // 避免铺抓到
 			// buttonClose->setFlat(true);
 			par->connect(buttonClose, &QAbstractButton::clicked, par, &SARibbonSystemButtonBar::closeWindow);
 			//            buttonClose->setIconSize(buttonClose->size() * mIconscale);
@@ -2364,13 +2219,11 @@ public:
 		updateSize();
 	}
 
-	void updateSize()
-	{
+	void updateSize() {
 		resizeElement(q_ptr->size());
 	}
 
-	void resizeElement(QSize size)
-	{
+	void resizeElement(QSize size) {
 		int x = size.width();
 		if (buttonClose) {
 			int w = closeButtonWidthHint();
@@ -2392,26 +2245,22 @@ public:
 		}
 	}
 
-	int closeButtonWidthHint() const
-	{
+	int closeButtonWidthHint() const {
 		qreal t = mCloseStretch + mMaxStretch + mMinStretch;
 		return (mCloseStretch * (3 * mWindowButtonWidth)) / t;
 	}
 
-	int maxButtonWidthHint() const
-	{
+	int maxButtonWidthHint() const {
 		qreal t = mCloseStretch + mMaxStretch + mMinStretch;
 		return (mMaxStretch * (3 * mWindowButtonWidth)) / t;
 	}
 
-	int minButtonWidthHint() const
-	{
+	int minButtonWidthHint() const {
 		qreal t = mCloseStretch + mMaxStretch + mMinStretch;
 		return (mMinStretch * (3 * mWindowButtonWidth)) / t;
 	}
 
-	QSize sizeHint() const
-	{
+	QSize sizeHint() const {
 		int height = mTitleBarHeight;
 		if (height < 20) {
 			height = 20;
@@ -2437,16 +2286,16 @@ public:
 //===================================================
 // SARibbonSystemToolButton
 //===================================================
-SARibbonSystemToolButton::SARibbonSystemToolButton(QWidget* p) : QToolButton(p)
-{
+SARibbonSystemToolButton::SARibbonSystemToolButton(QWidget* p)
+	: QToolButton(p) {
 	setAutoRaise(true);
 }
 //===================================================
 // SARibbonSystemButtonBar
 //===================================================
 SARibbonSystemButtonBar::SARibbonSystemButtonBar(QWidget* parent)
-	: QFrame(parent), d_ptr(new SARibbonSystemButtonBar::PrivateData(this))
-{
+	: QFrame(parent)
+	, d_ptr(new SARibbonSystemButtonBar::PrivateData(this)) {
 	updateWindowFlag();
 }
 
@@ -2456,33 +2305,28 @@ SARibbonSystemButtonBar::SARibbonSystemButtonBar(QWidget* parent)
  * @param flags
  */
 SARibbonSystemButtonBar::SARibbonSystemButtonBar(QWidget* parent, Qt::WindowFlags flags)
-	: QFrame(parent), d_ptr(new SARibbonSystemButtonBar::PrivateData(this))
-{
+	: QFrame(parent)
+	, d_ptr(new SARibbonSystemButtonBar::PrivateData(this)) {
 	d_ptr->mFlags = flags;
 	updateWindowFlag();
 }
 
-SARibbonSystemButtonBar::~SARibbonSystemButtonBar()
-{
+SARibbonSystemButtonBar::~SARibbonSystemButtonBar() {
 }
 
-void SARibbonSystemButtonBar::setupMinimizeButton(bool on)
-{
+void SARibbonSystemButtonBar::setupMinimizeButton(bool on) {
 	d_ptr->setupMinimizeButton(on);
 }
 
-void SARibbonSystemButtonBar::setupMaximizeButton(bool on)
-{
+void SARibbonSystemButtonBar::setupMaximizeButton(bool on) {
 	d_ptr->setupMaximizeButton(on);
 }
 
-void SARibbonSystemButtonBar::setupCloseButton(bool on)
-{
+void SARibbonSystemButtonBar::setupCloseButton(bool on) {
 	d_ptr->setupCloseButton(on);
 }
 
-void SARibbonSystemButtonBar::updateWindowFlag()
-{
+void SARibbonSystemButtonBar::updateWindowFlag() {
 	QWidget* topedWidget = this;
 	// 找到最顶层窗口
 	while (topedWidget->parentWidget()) {
@@ -2496,8 +2340,7 @@ void SARibbonSystemButtonBar::updateWindowFlag()
  * @brief 此函数仅用于控制最小最大化和关闭按钮的显示
  * @param flags
  */
-void SARibbonSystemButtonBar::updateWindowFlag(Qt::WindowFlags flags)
-{
+void SARibbonSystemButtonBar::updateWindowFlag(Qt::WindowFlags flags) {
 	d_ptr->mFlags = flags;
 	setupMinimizeButton(flags & Qt::WindowMinimizeButtonHint);
 	setupMaximizeButton(flags & Qt::WindowMaximizeButtonHint);
@@ -2510,10 +2353,9 @@ void SARibbonSystemButtonBar::updateWindowFlag(Qt::WindowFlags flags)
  * @param max 最大化按钮比例
  * @param min 最小化按钮比例
  */
-void SARibbonSystemButtonBar::setButtonWidthStretch(int close, int max, int min)
-{
-	d_ptr->mMaxStretch   = max;
-	d_ptr->mMinStretch   = min;
+void SARibbonSystemButtonBar::setButtonWidthStretch(int close, int max, int min) {
+	d_ptr->mMaxStretch = max;
+	d_ptr->mMinStretch = min;
 	d_ptr->mCloseStretch = close;
 }
 
@@ -2523,8 +2365,7 @@ void SARibbonSystemButtonBar::setButtonWidthStretch(int close, int max, int min)
  * 标题栏高度会影响sizeHint
  * @param h
  */
-void SARibbonSystemButtonBar::setWindowTitleHeight(int h)
-{
+void SARibbonSystemButtonBar::setWindowTitleHeight(int h) {
 	d_ptr->mTitleBarHeight = h;
 }
 
@@ -2532,8 +2373,7 @@ void SARibbonSystemButtonBar::setWindowTitleHeight(int h)
  * @brief 标题栏高度
  * @return
  */
-int SARibbonSystemButtonBar::windowTitleHeight() const
-{
+int SARibbonSystemButtonBar::windowTitleHeight() const {
 	return d_ptr->mTitleBarHeight;
 }
 
@@ -2541,8 +2381,7 @@ int SARibbonSystemButtonBar::windowTitleHeight() const
  * @brief 系统按钮的宽度
  * @param w
  */
-void SARibbonSystemButtonBar::setWindowButtonWidth(int w)
-{
+void SARibbonSystemButtonBar::setWindowButtonWidth(int w) {
 	d_ptr->mWindowButtonWidth = w;
 }
 
@@ -2550,8 +2389,7 @@ void SARibbonSystemButtonBar::setWindowButtonWidth(int w)
  * @brief 系统按钮的宽度
  * @param w
  */
-int SARibbonSystemButtonBar::windowButtonWidth() const
-{
+int SARibbonSystemButtonBar::windowButtonWidth() const {
 	return d_ptr->mWindowButtonWidth;
 }
 
@@ -2559,8 +2397,7 @@ int SARibbonSystemButtonBar::windowButtonWidth() const
  * @brief 设置窗口状态（最大最小化按钮状态）
  * @param s
  */
-void SARibbonSystemButtonBar::setWindowStates(Qt::WindowStates s)
-{
+void SARibbonSystemButtonBar::setWindowStates(Qt::WindowStates s) {
 	if (d_ptr->buttonMaximize) {
 		bool on = s.testFlag(Qt::WindowMaximized);
 		d_ptr->buttonMaximize->setChecked(on);
@@ -2574,9 +2411,8 @@ void SARibbonSystemButtonBar::setWindowStates(Qt::WindowStates s)
  *
  * @return
  */
-Qt::WindowFlags SARibbonSystemButtonBar::windowButtonFlags() const
-{
-	Qt::WindowFlags f = Qt::Widget;  // widget是000
+Qt::WindowFlags SARibbonSystemButtonBar::windowButtonFlags() const {
+	Qt::WindowFlags f = Qt::Widget; // widget是000
 
 	if (d_ptr->mFlags & Qt::WindowCloseButtonHint) {
 		f |= Qt::WindowCloseButtonHint;
@@ -2591,86 +2427,71 @@ Qt::WindowFlags SARibbonSystemButtonBar::windowButtonFlags() const
 	return (f);
 }
 
-QSize SARibbonSystemButtonBar::sizeHint() const
-{
+QSize SARibbonSystemButtonBar::sizeHint() const {
 	return (d_ptr->sizeHint());
 }
 
-QAbstractButton* SARibbonSystemButtonBar::minimizeButton() const
-{
+QAbstractButton* SARibbonSystemButtonBar::minimizeButton() const {
 	return d_ptr->buttonMinimize;
 }
 
-QAbstractButton* SARibbonSystemButtonBar::maximizeButton() const
-{
+QAbstractButton* SARibbonSystemButtonBar::maximizeButton() const {
 	return d_ptr->buttonMaximize;
 }
 
-QAbstractButton* SARibbonSystemButtonBar::closeButton() const
-{
+QAbstractButton* SARibbonSystemButtonBar::closeButton() const {
 	return d_ptr->buttonClose;
 }
 
-void SARibbonSystemButtonBar::setIconSize(const QSize& ic)
-{
+void SARibbonSystemButtonBar::setIconSize(const QSize& ic) {
 	d_ptr->mButtonGroup->setIconSize(ic);
 }
 
-QSize SARibbonSystemButtonBar::iconSize() const
-{
+QSize SARibbonSystemButtonBar::iconSize() const {
 	return d_ptr->mButtonGroup->iconSize();
 }
 
-QAction* SARibbonSystemButtonBar::addAction(QAction* a, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+QAction* SARibbonSystemButtonBar::addAction(QAction* a, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	return d_ptr->mButtonGroup->addAction(a, buttonStyle, popMode);
 }
 
 QAction* SARibbonSystemButtonBar::addAction(const QString& text,
-											const QIcon& icon,
-											Qt::ToolButtonStyle buttonStyle,
-											QToolButton::ToolButtonPopupMode popMode)
-{
+	const QIcon& icon,
+	Qt::ToolButtonStyle buttonStyle,
+	QToolButton::ToolButtonPopupMode popMode) {
 	return d_ptr->mButtonGroup->addAction(text, icon, buttonStyle, popMode);
 }
 
-QAction* SARibbonSystemButtonBar::addMenu(QMenu* menu, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+QAction* SARibbonSystemButtonBar::addMenu(QMenu* menu, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	return d_ptr->mButtonGroup->addMenu(menu, buttonStyle, popMode);
 }
 
-QAction* SARibbonSystemButtonBar::addSeparator()
-{
+QAction* SARibbonSystemButtonBar::addSeparator() {
 	return d_ptr->mButtonGroup->addSeparator();
 }
 
-QAction* SARibbonSystemButtonBar::addWidget(QWidget* w)
-{
+QAction* SARibbonSystemButtonBar::addWidget(QWidget* w) {
 	return d_ptr->mButtonGroup->addWidget(w);
 }
 
-void SARibbonSystemButtonBar::resizeEvent(QResizeEvent* e)
-{
+void SARibbonSystemButtonBar::resizeEvent(QResizeEvent* e) {
 	Q_UNUSED(e);
 	d_ptr->resizeElement(size());
 }
 
-void SARibbonSystemButtonBar::closeWindow()
-{
+void SARibbonSystemButtonBar::closeWindow() {
 	if (parentWidget()) {
 		parentWidget()->close();
 	}
 }
 
-void SARibbonSystemButtonBar::minimizeWindow()
-{
+void SARibbonSystemButtonBar::minimizeWindow() {
 	if (parentWidget()) {
 		parentWidget()->showMinimized();
 	}
 }
 
-void SARibbonSystemButtonBar::maximizeWindow()
-{
+void SARibbonSystemButtonBar::maximizeWindow() {
 	QWidget* par = parentWidget();
 
 	if (par) {
@@ -2684,21 +2505,19 @@ void SARibbonSystemButtonBar::maximizeWindow()
 
 /*** End of inlined file: SARibbonSystemButtonBar.cpp ***/
 
-
 /*** Start of inlined file: SARibbonToolButton.cpp ***/
 #include <QAction>
 #include <QApplication>
 #include <QCursor>
 #include <QMouseEvent>
 #include <QPaintEvent>
+#include <QProxyStyle>
+#include <QScreen>
 #include <QStyleOption>
 #include <QStyleOptionFocusRect>
 #include <QStyleOptionToolButton>
 #include <QStylePainter>
 #include <QTextOption>
-#include <QApplication>
-#include <QScreen>
-#include <QProxyStyle>
 
 /**
  * @def 定义文字换行时2行文本的矩形高度系数，此系数决定文字区域的高度
@@ -2736,23 +2555,21 @@ void SARibbonSystemButtonBar::maximizeWindow()
 #define SARIBBONTOOLBUTTON_DEBUG_DRAW 0
 
 #if SARIBBONTOOLBUTTON_DEBUG_DRAW
-#define SARIBBONTOOLBUTTON_DEBUG_DRAW_RECT(p, rect)                                                                    \
-	do {                                                                                                               \
-		p.save();                                                                                                      \
-		p.setPen(Qt::red);                                                                                             \
-		p.setBrush(QBrush());                                                                                          \
-		p.drawRect(rect);                                                                                              \
-		p.restore();                                                                                                   \
+#define SARIBBONTOOLBUTTON_DEBUG_DRAW_RECT(p, rect) \
+	do {                                            \
+		p.save();                                   \
+		p.setPen(Qt::red);                          \
+		p.setBrush(QBrush());                       \
+		p.drawRect(rect);                           \
+		p.restore();                                \
 	} while (0)
 
 #else
 #define SARIBBONTOOLBUTTON_DEBUG_DRAW_RECT(p, rect)
 #endif
-namespace SA
-{
+namespace SA {
 
-QDebug operator<<(QDebug debug, const QStyleOptionToolButton& opt)
-{
+QDebug operator<<(QDebug debug, const QStyleOptionToolButton& opt) {
 	debug << "=============="
 		  << "\nQStyleOption(" << (QStyleOption)opt << ")"
 		  << "\n  QStyleOptionComplex:"
@@ -2776,13 +2593,10 @@ QDebug operator<<(QDebug debug, const QStyleOptionToolButton& opt)
 // SARibbonToolButtonProxyStyle
 //===================================================
 
-class SARibbonToolButtonProxyStyle : public QProxyStyle
-{
+class SARibbonToolButtonProxyStyle : public QProxyStyle {
 public:
-	void drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *widget = nullptr) const override
-	{
-		if(pe == PE_IndicatorArrowUp || pe == PE_IndicatorArrowDown || pe == PE_IndicatorArrowRight || pe == PE_IndicatorArrowLeft)
-		{
+	void drawPrimitive(PrimitiveElement pe, const QStyleOption* opt, QPainter* p, const QWidget* widget = nullptr) const override {
+		if (pe == PE_IndicatorArrowUp || pe == PE_IndicatorArrowDown || pe == PE_IndicatorArrowRight || pe == PE_IndicatorArrowLeft) {
 			if (opt->rect.width() <= 1 || opt->rect.height() <= 1)
 				return;
 
@@ -2790,8 +2604,8 @@ public:
 			int size = qMin(r.height(), r.width());
 			QPixmap pixmap;
 			qreal pixelRatio = p->device()->devicePixelRatio();
-			int border = qRound(pixelRatio*(size/4));
-			int sqsize = qRound(pixelRatio*(2*(size/2)));
+			int border = qRound(pixelRatio * (size / 4));
+			int sqsize = qRound(pixelRatio * (2 * (size / 2)));
 			QImage image(sqsize, sqsize, QImage::Format_ARGB32_Premultiplied);
 			image.fill(Qt::transparent);
 			QPainter imagePainter(&image);
@@ -2799,16 +2613,16 @@ public:
 			QPolygon a;
 			switch (pe) {
 			case PE_IndicatorArrowUp:
-				a.setPoints(3, border, sqsize/2,  sqsize/2, border,  sqsize - border, sqsize/2);
+				a.setPoints(3, border, sqsize / 2, sqsize / 2, border, sqsize - border, sqsize / 2);
 				break;
 			case PE_IndicatorArrowDown:
-				a.setPoints(3, border, sqsize/2,  sqsize/2, sqsize - border,  sqsize - border, sqsize/2);
+				a.setPoints(3, border, sqsize / 2, sqsize / 2, sqsize - border, sqsize - border, sqsize / 2);
 				break;
 			case PE_IndicatorArrowRight:
-				a.setPoints(3, sqsize - border, sqsize/2,  sqsize/2, border,  sqsize/2, sqsize - border);
+				a.setPoints(3, sqsize - border, sqsize / 2, sqsize / 2, border, sqsize / 2, sqsize - border);
 				break;
 			case PE_IndicatorArrowLeft:
-				a.setPoints(3, border, sqsize/2,  sqsize/2, border,  sqsize/2, sqsize - border);
+				a.setPoints(3, border, sqsize / 2, sqsize / 2, border, sqsize / 2, sqsize - border);
 				break;
 			default:
 				break;
@@ -2842,12 +2656,10 @@ public:
 			pixmap = QPixmap::fromImage(image);
 			pixmap.setDevicePixelRatio(pixelRatio);
 
-			int xOffset = r.x() + (r.width() - size)/2;
-			int yOffset = r.y() + (r.height() - size)/2;
+			int xOffset = r.x() + (r.width() - size) / 2;
+			int yOffset = r.y() + (r.height() - size) / 2;
 			p->drawPixmap(xOffset, yOffset, pixmap);
-		}
-		else
-		{
+		} else {
 			QProxyStyle::drawPrimitive(pe, opt, p, widget);
 		}
 	}
@@ -2857,8 +2669,7 @@ public:
 // SARibbonToolButton::PrivateData
 //===================================================
 
-class SARibbonToolButton::PrivateData
-{
+class SARibbonToolButton::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonToolButton)
 public:
 	PrivateData(SARibbonToolButton* p);
@@ -2870,25 +2681,25 @@ public:
 	void updateSizeHint(const QStyleOptionToolButton& opt);
 	// 计算涉及到的rect尺寸
 	void calcDrawRects(const QStyleOptionToolButton& opt,
-					   QRect& iconRect,
-					   QRect& textRect,
-					   QRect& indicatorArrowRect,
-					   int spacing,
-					   int indicatorLen) const;
+		QRect& iconRect,
+		QRect& textRect,
+		QRect& indicatorArrowRect,
+		int spacing,
+		int indicatorLen) const;
 	// 计算小按钮模式下的尺寸
 	void calcSmallButtonDrawRects(const QStyleOptionToolButton& opt,
-								  QRect& iconRect,
-								  QRect& textRect,
-								  QRect& indicatorArrowRect,
-								  int spacing,
-								  int indicatorLen) const;
+		QRect& iconRect,
+		QRect& textRect,
+		QRect& indicatorArrowRect,
+		int spacing,
+		int indicatorLen) const;
 	// 计算大按钮模式下的尺寸
 	void calcLargeButtonDrawRects(const QStyleOptionToolButton& opt,
-								  QRect& iconRect,
-								  QRect& textRect,
-								  QRect& indicatorArrowRect,
-								  int spacing,
-								  int indicatorLen) const;
+		QRect& iconRect,
+		QRect& textRect,
+		QRect& indicatorArrowRect,
+		int spacing,
+		int indicatorLen) const;
 	// 根据按钮的尺寸调节iconsize(注意这里的buttonRect是已经减去mSpacing的情况)
 	QSize adjustIconSize(const QRect& buttonRect, const QSize& originIconSize) const;
 	// 判断是否有Indicator
@@ -2902,11 +2713,11 @@ public:
 	int calcTextDrawRectHeight(const QStyleOptionToolButton& opt) const;
 	// 估算一个最优的文本宽度
 	int estimateLargeButtonTextWidth(int buttonHeight,
-									 int textDrawRectHeight,
-									 const QString& text,
-									 const QFontMetrics& fm,
-									 float widthHeightRatio = SARIBBONTOOLBUTTON_WORDWRAP_WIDTH_PER_HEIGHT_RATIO,
-									 int maxTrycount        = 3);
+		int textDrawRectHeight,
+		const QString& text,
+		const QFontMetrics& fm,
+		float widthHeightRatio = SARIBBONTOOLBUTTON_WORDWRAP_WIDTH_PER_HEIGHT_RATIO,
+		int maxTrycount = 3);
 	QPixmap createIconPixmap(const QStyleOptionToolButton& opt, const QSize& iconsize) const;
 	// 获取文字的对其方式
 	int getTextAlignment() const;
@@ -2916,28 +2727,28 @@ public:
 	static QString simplified(const QString& str);
 
 public:
-	bool mMouseOnSubControl { false };  ///< 这个用于标记MenuButtonPopup模式下，鼠标在文本区域
-	bool mMenuButtonPressed { false };  ///< 由于Indicator改变，因此hitButton不能用QToolButton的hitButton
-	bool mWordWrap { false };           ///< 标记是否文字换行 @default false
+	bool mMouseOnSubControl { false }; ///< 这个用于标记MenuButtonPopup模式下，鼠标在文本区域
+	bool mMenuButtonPressed { false }; ///< 由于Indicator改变，因此hitButton不能用QToolButton的hitButton
+	bool mWordWrap { false }; ///< 标记是否文字换行 @default false
 	SARibbonToolButton::RibbonButtonType mButtonType { SARibbonToolButton::LargeButton };
-	int mSpacing { 1 };              ///< 按钮和边框的距离
-	int mIndicatorLen { 8 };         ///< Indicator的长度
-	QRect mDrawIconRect;             ///< 记录icon的绘制位置
-	QRect mDrawTextRect;             ///< 记录text的绘制位置
-	QRect mDrawIndicatorArrowRect;   ///< 记录IndicatorArrow的绘制位置
-	QSize mSizeHint;                 ///< 保存计算好的sizehint
-	bool mIsTextNeedWrap { false };  ///< 标记文字是否需要换行显示
+	int mSpacing { 1 }; ///< 按钮和边框的距离
+	int mIndicatorLen { 8 }; ///< Indicator的长度
+	QRect mDrawIconRect; ///< 记录icon的绘制位置
+	QRect mDrawTextRect; ///< 记录text的绘制位置
+	QRect mDrawIndicatorArrowRect; ///< 记录IndicatorArrow的绘制位置
+	QSize mSizeHint; ///< 保存计算好的sizehint
+	bool mIsTextNeedWrap { false }; ///< 标记文字是否需要换行显示
 public:
-	static bool s_enableWordWrap;  ///< 在lite模式下是否允许文字换行，如果允许，则图标相对比较小，默认不允许
+	static bool s_enableWordWrap; ///< 在lite模式下是否允许文字换行，如果允许，则图标相对比较小，默认不允许
 };
 
 // 静态参数初始化
 bool SARibbonToolButton::PrivateData::s_enableWordWrap = false;
 
-SARibbonToolButton::PrivateData::PrivateData(SARibbonToolButton* p) : q_ptr(p)
-{
+SARibbonToolButton::PrivateData::PrivateData(SARibbonToolButton* p)
+	: q_ptr(p) {
 	auto proxy = new SARibbonToolButtonProxyStyle();
-	proxy->setParent(p);   // take ownership to avoid memleak
+	proxy->setParent(p); // take ownership to avoid memleak
 	p->setStyle(proxy);
 }
 
@@ -2947,8 +2758,7 @@ SARibbonToolButton::PrivateData::PrivateData(SARibbonToolButton* p) : q_ptr(p)
  * 此函数主要应用在action menu模式下
  * @param pos
  */
-void SARibbonToolButton::PrivateData::updateStatusByMousePosition(const QPoint& pos)
-{
+void SARibbonToolButton::PrivateData::updateStatusByMousePosition(const QPoint& pos) {
 	bool isMouseOnSubControl(false);
 	if (SARibbonToolButton::LargeButton == mButtonType) {
 		isMouseOnSubControl = mDrawTextRect.united(mDrawIndicatorArrowRect).contains(pos);
@@ -2977,8 +2787,7 @@ void SARibbonToolButton::PrivateData::updateStatusByMousePosition(const QPoint& 
  *
  * @param opt
  */
-void SARibbonToolButton::PrivateData::updateDrawRect(const QStyleOptionToolButton& opt)
-{
+void SARibbonToolButton::PrivateData::updateDrawRect(const QStyleOptionToolButton& opt) {
 	if (!mSizeHint.isValid()) {
 		updateSizeHint(opt);
 	}
@@ -2988,7 +2797,7 @@ void SARibbonToolButton::PrivateData::updateDrawRect(const QStyleOptionToolButto
 		if (SARibbonToolButton::LargeButton == mButtonType) {
 			mIndicatorLen = 8;
 		} else {
-			mIndicatorLen = 12;  // 小按钮模式下设置为10
+			mIndicatorLen = 12; // 小按钮模式下设置为10
 		}
 	}
 	calcDrawRects(opt, mDrawIconRect, mDrawTextRect, mDrawIndicatorArrowRect, mSpacing, mIndicatorLen);
@@ -2998,8 +2807,7 @@ void SARibbonToolButton::PrivateData::updateDrawRect(const QStyleOptionToolButto
  * @brief 更新sizehint
  * @param opt
  */
-void SARibbonToolButton::PrivateData::updateSizeHint(const QStyleOptionToolButton& opt)
-{
+void SARibbonToolButton::PrivateData::updateSizeHint(const QStyleOptionToolButton& opt) {
 	mSizeHint = calcSizeHint(opt);
 }
 
@@ -3013,12 +2821,11 @@ void SARibbonToolButton::PrivateData::updateSizeHint(const QStyleOptionToolButto
  * @param indicatorLen
  */
 void SARibbonToolButton::PrivateData::calcDrawRects(const QStyleOptionToolButton& opt,
-													QRect& iconRect,
-													QRect& textRect,
-													QRect& indicatorArrowRect,
-													int spacing,
-													int indicatorLen) const
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& indicatorArrowRect,
+	int spacing,
+	int indicatorLen) const {
 	if (SARibbonToolButton::LargeButton == mButtonType) {
 		calcLargeButtonDrawRects(opt, iconRect, textRect, indicatorArrowRect, spacing, indicatorLen);
 
@@ -3037,23 +2844,22 @@ void SARibbonToolButton::PrivateData::calcDrawRects(const QStyleOptionToolButton
  * @param indicatorLen
  */
 void SARibbonToolButton::PrivateData::calcSmallButtonDrawRects(const QStyleOptionToolButton& opt,
-															   QRect& iconRect,
-															   QRect& textRect,
-															   QRect& indicatorArrowRect,
-															   int spacing,
-															   int indicatorLen) const
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& indicatorArrowRect,
+	int spacing,
+	int indicatorLen) const {
 	switch (opt.toolButtonStyle) {
 	case Qt::ToolButtonIconOnly: {
 		if (hasIndicator(opt)) {
 			// 在仅有图标的小模式显示时，预留一个下拉箭头位置
-			iconRect           = opt.rect.adjusted(spacing, spacing, -indicatorLen - spacing, -spacing);
+			iconRect = opt.rect.adjusted(spacing, spacing, -indicatorLen - spacing, -spacing);
 			indicatorArrowRect = QRect(opt.rect.right() - indicatorLen - spacing,
-									   iconRect.y(),
-									   indicatorLen,
-									   iconRect.height());
+				iconRect.y(),
+				indicatorLen,
+				iconRect.height());
 		} else {
-			iconRect           = opt.rect.adjusted(spacing, spacing, -spacing, -spacing);
+			iconRect = opt.rect.adjusted(spacing, spacing, -spacing, -spacing);
 			indicatorArrowRect = QRect();
 		}
 		// 文本区域为空
@@ -3065,7 +2871,7 @@ void SARibbonToolButton::PrivateData::calcSmallButtonDrawRects(const QStyleOptio
 			textRect = opt.rect.adjusted(spacing, spacing, -indicatorLen - spacing, -spacing);
 			indicatorArrowRect = QRect(opt.rect.right() - indicatorLen - spacing, spacing, indicatorLen, textRect.height());
 		} else {
-			textRect           = opt.rect.adjusted(spacing, spacing, -spacing, -spacing);
+			textRect = opt.rect.adjusted(spacing, spacing, -spacing, -spacing);
 			indicatorArrowRect = QRect();
 		}
 		// 绘图区域为空
@@ -3090,25 +2896,25 @@ void SARibbonToolButton::PrivateData::calcSmallButtonDrawRects(const QStyleOptio
 		} else {
 			// 分有菜单和没菜单两种情况
 			int adjx = iconRect.isValid() ? (iconRect.width() + spacing)
-										  : 0;  // 在buttonRect上变换，因此如果没有图标是不用偏移spacing
+										  : 0; // 在buttonRect上变换，因此如果没有图标是不用偏移spacing
 			if (hasInd) {
 				textRect = buttonRect.adjusted(adjx, 0, -indicatorLen, 0);
 			} else {
-				textRect = buttonRect.adjusted(adjx, 0, 0, 0);  // 在buttonRect上变换，因此如果没有图标是不用偏移spacing
+				textRect = buttonRect.adjusted(adjx, 0, 0, 0); // 在buttonRect上变换，因此如果没有图标是不用偏移spacing
 			}
 		}
 		// 最后设置Indicator
 		if (hasInd) {
 			if (textRect.isValid()) {
 				indicatorArrowRect = QRect(buttonRect.right() - indicatorLen + 1,
-										   textRect.y(),
-										   indicatorLen,
-										   textRect.height());
+					textRect.y(),
+					indicatorLen,
+					textRect.height());
 			} else if (iconRect.isValid()) {
 				indicatorArrowRect = QRect(buttonRect.right() - indicatorLen + 1,
-										   iconRect.y(),
-										   indicatorLen,
-										   iconRect.height());
+					iconRect.y(),
+					indicatorLen,
+					iconRect.height());
 			} else {
 				indicatorArrowRect = buttonRect;
 			}
@@ -3129,19 +2935,18 @@ void SARibbonToolButton::PrivateData::calcSmallButtonDrawRects(const QStyleOptio
  * @param indicatorLen
  */
 void SARibbonToolButton::PrivateData::calcLargeButtonDrawRects(const QStyleOptionToolButton& opt,
-															   QRect& iconRect,
-															   QRect& textRect,
-															   QRect& indicatorArrowRect,
-															   int spacing,
-															   int indicatorLen) const
-{
+	QRect& iconRect,
+	QRect& textRect,
+	QRect& indicatorArrowRect,
+	int spacing,
+	int indicatorLen) const {
 	//! 3行模式的图标比较大，文字换行情况下，indicator会动态调整
 	// 先获取文字矩形的高度
-	int textHeight  = calcTextDrawRectHeight(opt);
+	int textHeight = calcTextDrawRectHeight(opt);
 	bool hIndicator = hasIndicator(opt);
 	if (!hIndicator) {
 		// 没有菜单，把len设置为0
-		indicatorLen       = 0;
+		indicatorLen = 0;
 		indicatorArrowRect = QRect();
 	}
 	// 这里要判断文字是否要换行显示，换行显示的文字的indicatorArrowRect所处的位置不一样
@@ -3151,9 +2956,9 @@ void SARibbonToolButton::PrivateData::calcLargeButtonDrawRects(const QStyleOptio
 		if (isTextNeedWrap()) {
 			// 如果文字的确换行，indicator放在最右边
 			textRect = QRect(spacing,
-							 opt.rect.bottom() - spacing - textHeight,
-							 opt.rect.width() - 2 * spacing - indicatorLen,
-							 textHeight);
+				opt.rect.bottom() - spacing - textHeight,
+				opt.rect.width() - 2 * spacing - indicatorLen,
+				textHeight);
 			if (hIndicator) {
 				indicatorArrowRect = QRect(textRect.right(), textRect.y() + textRect.height() / 2, indicatorLen, textHeight / 2);
 			}
@@ -3172,7 +2977,7 @@ void SARibbonToolButton::PrivateData::calcLargeButtonDrawRects(const QStyleOptio
 		if (hIndicator) {
 			// 先布置indicator
 			indicatorArrowRect = QRect(opt.rect.right() - indicatorLen - spacing, y, indicatorLen, textHeight);
-			textRect           = QRect(spacing, y, indicatorArrowRect.x() - spacing, textHeight);
+			textRect = QRect(spacing, y, indicatorArrowRect.x() - spacing, textHeight);
 		} else {
 			textRect = QRect(spacing, y, opt.rect.width() - 2 * spacing, textHeight);
 		}
@@ -3187,8 +2992,7 @@ void SARibbonToolButton::PrivateData::calcLargeButtonDrawRects(const QStyleOptio
  * @param originIconSize
  * @return
  */
-QSize SARibbonToolButton::PrivateData::adjustIconSize(const QRect& buttonRect, const QSize& originIconSize) const
-{
+QSize SARibbonToolButton::PrivateData::adjustIconSize(const QRect& buttonRect, const QSize& originIconSize) const {
 	QSize iconSize = originIconSize;
 	if (iconSize.height() > buttonRect.height()) {
 		// 说明图标的icon过大，要匹配到buttonRect
@@ -3204,8 +3008,7 @@ QSize SARibbonToolButton::PrivateData::adjustIconSize(const QRect& buttonRect, c
  * @param opt
  * @return
  */
-bool SARibbonToolButton::PrivateData::hasIndicator(const QStyleOptionToolButton& opt) const
-{
+bool SARibbonToolButton::PrivateData::hasIndicator(const QStyleOptionToolButton& opt) const {
 	return ((opt.features & QStyleOptionToolButton::MenuButtonPopup) || (opt.features & QStyleOptionToolButton::HasMenu));
 }
 
@@ -3216,16 +3019,14 @@ bool SARibbonToolButton::PrivateData::hasIndicator(const QStyleOptionToolButton&
  * @param opt
  * @return
  */
-QSize SARibbonToolButton::PrivateData::calcSizeHint(const QStyleOptionToolButton& opt)
-{
+QSize SARibbonToolButton::PrivateData::calcSizeHint(const QStyleOptionToolButton& opt) {
 	if (SARibbonToolButton::LargeButton == mButtonType) {
 		return calcLargeButtonSizeHint(opt);
 	}
 	return calcSmallButtonSizeHint(opt);
 }
 
-QSize SARibbonToolButton::PrivateData::calcSmallButtonSizeHint(const QStyleOptionToolButton& opt)
-{
+QSize SARibbonToolButton::PrivateData::calcSmallButtonSizeHint(const QStyleOptionToolButton& opt) {
 	int w = 0, h = 0;
 
 	switch (opt.toolButtonStyle) {
@@ -3255,7 +3056,7 @@ QSize SARibbonToolButton::PrivateData::calcSmallButtonSizeHint(const QStyleOptio
 		} else {
 			// 没有文本的时候也要设置一下高度
 			QSize textSize = opt.fontMetrics.size(Qt::TextShowMnemonic, " ");
-			h              = qMax(h, (textSize.height() + (2 * mSpacing)));
+			h = qMax(h, (textSize.height() + (2 * mSpacing)));
 		}
 	}
 	}
@@ -3270,13 +3071,12 @@ QSize SARibbonToolButton::PrivateData::calcSmallButtonSizeHint(const QStyleOptio
 	return QSize(w, h).expandedTo(QSize(2, 2));
 }
 
-QSize SARibbonToolButton::PrivateData::calcLargeButtonSizeHint(const QStyleOptionToolButton& opt)
-{
-	int w    = 0;
-	int h    = opt.fontMetrics.lineSpacing() * 4.8;  // 3*1.6
-	int minW = h * 0.75;  // 最小宽度，在pannel里面的按钮，最小宽度要和icon适应
+QSize SARibbonToolButton::PrivateData::calcLargeButtonSizeHint(const QStyleOptionToolButton& opt) {
+	int w = 0;
+	int h = opt.fontMetrics.lineSpacing() * 4.8; // 3*1.6
+	int minW = h * 0.75; // 最小宽度，在pannel里面的按钮，最小宽度要和icon适应
 
-	if (SARibbonPannel* pannel = qobject_cast< SARibbonPannel* >(q_ptr->parent())) {
+	if (SARibbonPannel* pannel = qobject_cast<SARibbonPannel*>(q_ptr->parent())) {
 		// 对于建立在SARibbonPannel的基础上的大按钮，把高度设置为SARibbonPannel计算的大按钮高度
 		h = pannel->largeButtonHeight();
 	}
@@ -3291,11 +3091,11 @@ QSize SARibbonToolButton::PrivateData::calcLargeButtonSizeHint(const QStyleOptio
 
 #if SA_RIBBON_TOOLBUTTON_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "| | |-SARibbonToolButton::PrivateData::calcLargeButtonSizeHint,text=" << opt.text
-			 << "\n| | | |-lineSpacing*4.5=" << opt.fontMetrics.lineSpacing() * 4.5  //
-			 << "\n| | | |-textHeight=" << textHeight                                //
-			 << "\n| | | |-mDrawIconRect=" << mDrawIconRect                          //
-			 << "\n| | | |-minW=" << minW                                            //
-			 << "\n| | | |-w=" << w                                                  //
+			 << "\n| | | |-lineSpacing*4.5=" << opt.fontMetrics.lineSpacing() * 4.5 //
+			 << "\n| | | |-textHeight=" << textHeight //
+			 << "\n| | | |-mDrawIconRect=" << mDrawIconRect //
+			 << "\n| | | |-minW=" << minW //
+			 << "\n| | | |-w=" << w //
 		;
 #endif
 	//! Qt6.4 取消了QApplication::globalStrut
@@ -3307,8 +3107,7 @@ QSize SARibbonToolButton::PrivateData::calcLargeButtonSizeHint(const QStyleOptio
  * @param opt
  * @return
  */
-int SARibbonToolButton::PrivateData::calcTextDrawRectHeight(const QStyleOptionToolButton& opt) const
-{
+int SARibbonToolButton::PrivateData::calcTextDrawRectHeight(const QStyleOptionToolButton& opt) const {
 	if (SARibbonToolButton::LargeButton == mButtonType) {
 		if (isEnableWordWrap()) {
 			return opt.fontMetrics.lineSpacing() * SARIBBONTOOLBUTTON_WORDWRAP_TEXT_FACTOR + opt.fontMetrics.leading();
@@ -3330,35 +3129,34 @@ int SARibbonToolButton::PrivateData::calcTextDrawRectHeight(const QStyleOptionTo
  * @return
  */
 int SARibbonToolButton::PrivateData::estimateLargeButtonTextWidth(int buttonHeight,
-																  int textDrawRectHeight,
-																  const QString& text,
-																  const QFontMetrics& fm,
-																  float widthHeightRatio,
-																  int maxTrycount)
-{
+	int textDrawRectHeight,
+	const QString& text,
+	const QFontMetrics& fm,
+	float widthHeightRatio,
+	int maxTrycount) {
 	QSize textSize;
-	int space        = SA_FONTMETRICS_WIDTH(fm, (QLatin1Char(' '))) * 2;
-	int hintMaxWidth = buttonHeight * widthHeightRatio;  ///< 建议的宽度
+	int space = SA_FONTMETRICS_WIDTH(fm, (QLatin1Char(' '))) * 2;
+	int hintMaxWidth = buttonHeight * widthHeightRatio; ///< 建议的宽度
 	if (isEnableWordWrap()) {
 		textSize = fm.size(Qt::TextShowMnemonic, text);
 		textSize.setWidth(textSize.width() + space);
 
 		if (textSize.height() > fm.lineSpacing() * 1.1) {
 			//! 说明文字带有换行符，是用户手动换行，这种情况就直接返回字体尺寸，不进行估算
-			mIsTextNeedWrap = true;  // 文字需要换行显示，标记起来
+			mIsTextNeedWrap = true; // 文字需要换行显示，标记起来
 			return textSize.width();
 		}
 
 		// 这时候需要估算文本的长度
 		if (textSize.width() <= hintMaxWidth) {
 			// 范围合理，直接返回
-			mIsTextNeedWrap = false;  // 文字不需要换行显示，标记起来
+			mIsTextNeedWrap = false; // 文字不需要换行显示，标记起来
 			return textSize.width();
 		}
 
 		//! 大于宽高比尝试进行文字换行
 		//! 这里先对文本长度逐渐加长估算，一直到和原来长度一致为止
-		int trycount  = 0;
+		int trycount = 0;
 		int alignment = Qt::TextShowMnemonic | Qt::TextWordWrap;
 		// 对于英文字体，直接宽度减半是无法满足完全显示两行的，需要进行预估
 		QRect textRect(0, 0, textSize.width(), textDrawRectHeight);
@@ -3372,7 +3170,7 @@ int SARibbonToolButton::PrivateData::estimateLargeButtonTextWidth(int buttonHeig
 			textRect = fm.boundingRect(textRect, alignment, text);
 			if (textRect.height() <= (fm.lineSpacing() * 2)) {
 				// 保证在两行
-				mIsTextNeedWrap = true;  // 文字需要换行显示，标记起来
+				mIsTextNeedWrap = true; // 文字需要换行显示，标记起来
 				return textRect.width();
 			}
 			++trycount;
@@ -3389,7 +3187,7 @@ int SARibbonToolButton::PrivateData::estimateLargeButtonTextWidth(int buttonHeig
 
 	//! 说明是不换行
 
-	mIsTextNeedWrap = false;  // 文字不需要换行显示，标记起来
+	mIsTextNeedWrap = false; // 文字不需要换行显示，标记起来
 	// 文字不换行情况下，做simplified处理
 	textSize = fm.size(Qt::TextShowMnemonic, simplified(text));
 	textSize.setWidth(textSize.width() + space);
@@ -3404,9 +3202,8 @@ int SARibbonToolButton::PrivateData::estimateLargeButtonTextWidth(int buttonHeig
 	return hintMaxWidth;
 }
 
-QPixmap SARibbonToolButton::PrivateData::createIconPixmap(const QStyleOptionToolButton& opt, const QSize& iconsize) const
-{
-	if (opt.icon.isNull()) {  // 没有有图标
+QPixmap SARibbonToolButton::PrivateData::createIconPixmap(const QStyleOptionToolButton& opt, const QSize& iconsize) const {
+	if (opt.icon.isNull()) { // 没有有图标
 		return (QPixmap());
 	}
 	QIcon::State state = (opt.state & QStyle::State_On) ? QIcon::On : QIcon::Off;
@@ -3423,12 +3220,11 @@ QPixmap SARibbonToolButton::PrivateData::createIconPixmap(const QStyleOptionTool
 	return opt.icon.pixmap(pxiampSize, mode, state);
 }
 
-int SARibbonToolButton::PrivateData::getTextAlignment() const
-{
+int SARibbonToolButton::PrivateData::getTextAlignment() const {
 	int alignment = Qt::TextShowMnemonic;
 	if (SARibbonToolButton::LargeButton == mButtonType) {
 		if (isEnableWordWrap()) {
-			alignment |= Qt::TextWordWrap | Qt::AlignTop | Qt::AlignHCenter;  // 换行的情况下，顶部对齐
+			alignment |= Qt::TextWordWrap | Qt::AlignTop | Qt::AlignHCenter; // 换行的情况下，顶部对齐
 		} else {
 			alignment |= Qt::AlignCenter;
 		}
@@ -3442,8 +3238,7 @@ int SARibbonToolButton::PrivateData::getTextAlignment() const
  * @brief 确认文字是否确切要换行显示
  * @return
  */
-bool SARibbonToolButton::PrivateData::isTextNeedWrap() const
-{
+bool SARibbonToolButton::PrivateData::isTextNeedWrap() const {
 	return mIsTextNeedWrap;
 }
 
@@ -3452,8 +3247,7 @@ bool SARibbonToolButton::PrivateData::isTextNeedWrap() const
  * @param str
  * @return
  */
-QString SARibbonToolButton::PrivateData::simplified(const QString& str)
-{
+QString SARibbonToolButton::PrivateData::simplified(const QString& str) {
 	QString res = str;
 	res.remove('\n');
 	return res;
@@ -3463,8 +3257,8 @@ QString SARibbonToolButton::PrivateData::simplified(const QString& str)
 //===================================================
 
 SARibbonToolButton::SARibbonToolButton(QWidget* parent)
-	: QToolButton(parent), d_ptr(new SARibbonToolButton::PrivateData(this))
-{
+	: QToolButton(parent)
+	, d_ptr(new SARibbonToolButton::PrivateData(this)) {
 	setAutoRaise(true);
 	setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	setButtonType(SmallButton);
@@ -3472,8 +3266,8 @@ SARibbonToolButton::SARibbonToolButton(QWidget* parent)
 }
 
 SARibbonToolButton::SARibbonToolButton(QAction* defaultAction, QWidget* parent)
-	: QToolButton(parent), d_ptr(new SARibbonToolButton::PrivateData(this))
-{
+	: QToolButton(parent)
+	, d_ptr(new SARibbonToolButton::PrivateData(this)) {
 	setAutoRaise(true);
 	setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	setDefaultAction(defaultAction);
@@ -3481,8 +3275,7 @@ SARibbonToolButton::SARibbonToolButton(QAction* defaultAction, QWidget* parent)
 	setMouseTracking(true);
 }
 
-SARibbonToolButton::~SARibbonToolButton()
-{
+SARibbonToolButton::~SARibbonToolButton() {
 }
 
 /**
@@ -3493,8 +3286,7 @@ SARibbonToolButton::~SARibbonToolButton()
  * 因此需要重新捕获鼠标的位置来更新按钮当前的一些状态
  * @param e
  */
-void SARibbonToolButton::mouseMoveEvent(QMouseEvent* e)
-{
+void SARibbonToolButton::mouseMoveEvent(QMouseEvent* e) {
 	d_ptr->updateStatusByMousePosition(e->pos());
 	QToolButton::mouseMoveEvent(e);
 }
@@ -3503,8 +3295,7 @@ void SARibbonToolButton::mouseMoveEvent(QMouseEvent* e)
  * @brief SARibbonToolButton::mousePressEvent
  * @param e
  */
-void SARibbonToolButton::mousePressEvent(QMouseEvent* e)
-{
+void SARibbonToolButton::mousePressEvent(QMouseEvent* e) {
 	if ((e->button() == Qt::LeftButton) && (popupMode() == MenuButtonPopup)) {
 		d_ptr->updateStatusByMousePosition(e->pos());
 		if (d_ptr->mMouseOnSubControl) {
@@ -3521,26 +3312,22 @@ void SARibbonToolButton::mousePressEvent(QMouseEvent* e)
 	QAbstractButton::mousePressEvent(e);
 }
 
-void SARibbonToolButton::mouseReleaseEvent(QMouseEvent* e)
-{
+void SARibbonToolButton::mouseReleaseEvent(QMouseEvent* e) {
 	d_ptr->mMenuButtonPressed = false;
 	QToolButton::mouseReleaseEvent(e);
 }
 
-void SARibbonToolButton::focusOutEvent(QFocusEvent* e)
-{
+void SARibbonToolButton::focusOutEvent(QFocusEvent* e) {
 	d_ptr->mMouseOnSubControl = false;
 	QToolButton::focusOutEvent(e);
 }
 
-void SARibbonToolButton::leaveEvent(QEvent* e)
-{
+void SARibbonToolButton::leaveEvent(QEvent* e) {
 	d_ptr->mMouseOnSubControl = false;
 	QToolButton::leaveEvent(e);
 }
 
-bool SARibbonToolButton::hitButton(const QPoint& pos) const
-{
+bool SARibbonToolButton::hitButton(const QPoint& pos) const {
 	if (QToolButton::hitButton(pos)) {
 		return (!d_ptr->mMenuButtonPressed);
 	}
@@ -3551,8 +3338,7 @@ bool SARibbonToolButton::hitButton(const QPoint& pos) const
  * @brief 在resizeevent计算绘图所需的尺寸，避免在绘图过程中实时绘制提高效率
  * @param e
  */
-void SARibbonToolButton::resizeEvent(QResizeEvent* e)
-{
+void SARibbonToolButton::resizeEvent(QResizeEvent* e) {
 	// 在resizeevent计算绘图所需的尺寸，避免在绘图过程中实时绘制提高效率
 	QToolButton::resizeEvent(e);
 	updateRect();
@@ -3563,8 +3349,7 @@ void SARibbonToolButton::resizeEvent(QResizeEvent* e)
  * @note m_sizeHint的刷新需要注意
  * @return
  */
-QSize SARibbonToolButton::sizeHint() const
-{
+QSize SARibbonToolButton::sizeHint() const {
 	//    if (!d_ptr->mSizeHint.isValid()) {  // 22是给与sizehint的最小值，如果小于这个值，重新计算一下
 	//        QStyleOptionToolButton opt;
 	//        initStyleOption(&opt);
@@ -3579,8 +3364,7 @@ QSize SARibbonToolButton::sizeHint() const
 	return d_ptr->mSizeHint;
 }
 
-void SARibbonToolButton::paintEvent(QPaintEvent* e)
-{
+void SARibbonToolButton::paintEvent(QPaintEvent* e) {
 	Q_UNUSED(e);
 	QPainter p(this);
 	QStyleOptionToolButton opt;
@@ -3602,13 +3386,12 @@ void SARibbonToolButton::paintEvent(QPaintEvent* e)
  * @param p
  * @param opt
  */
-void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& opt)
-{
+void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& opt) {
 	// QStyle::State_Sunken 代表按钮按下去了
 	// QStyle::State_On 代表按钮按checked
 	// QStyle::State_MouseOver 代表当前鼠标位于按钮上面
 	QStyleOption tool = opt;
-	bool autoRaise    = opt.state & QStyle::State_AutoRaise;
+	bool autoRaise = opt.state & QStyle::State_AutoRaise;
 	// 绘制按钮
 	if (autoRaise) {
 		// 这个是为了实现按钮点击下去后(QStyle::State_Sunken),能出现选中的状态
@@ -3622,13 +3405,13 @@ void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& 
 	}
 	// 针对MenuButtonPopup的ribbon样式的特殊绘制
 	if ((opt.subControls & QStyle::SC_ToolButton) && (opt.features & QStyleOptionToolButton::MenuButtonPopup)) {
-		if (opt.state & QStyle::State_MouseOver) {                       // 鼠标在按钮上才进行绘制
-			if (!(opt.activeSubControls & QStyle::SC_ToolButtonMenu)) {  // 按钮的菜单弹出时不做处理
-				if (LargeButton == d_ptr->mButtonType) {                 // 大按钮模式
-					if (d_ptr->mMouseOnSubControl) {                     // 此时鼠标在indecater那
+		if (opt.state & QStyle::State_MouseOver) { // 鼠标在按钮上才进行绘制
+			if (!(opt.activeSubControls & QStyle::SC_ToolButtonMenu)) { // 按钮的菜单弹出时不做处理
+				if (LargeButton == d_ptr->mButtonType) { // 大按钮模式
+					if (d_ptr->mMouseOnSubControl) { // 此时鼠标在indecater那
 						// 鼠标在文字区，把图标显示为正常（就是鼠标不放上去的状态）
 						tool.rect = d_ptr->mDrawIconRect;
-						tool.state |= (QStyle::State_Raised);  // 把图标区域显示为正常
+						tool.state |= (QStyle::State_Raised); // 把图标区域显示为正常
 						tool.state &= ~QStyle::State_MouseOver;
 						if (autoRaise) {
 							style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
@@ -3639,7 +3422,7 @@ void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& 
 						// 鼠标在图标区，把文字显示为正常
 						if (!tool.state.testFlag(QStyle::State_Sunken)) {
 							// State_Sunken说明此按钮正在按下，这时候，文本区域不需要绘制，只有在非按下状态才需要绘制
-							tool.state |= (QStyle::State_Raised);  // 把图标区域显示为正常
+							tool.state |= (QStyle::State_Raised); // 把图标区域显示为正常
 							tool.state &= ~QStyle::State_MouseOver;
 							// 文字和Indicator都显示正常
 							tool.rect = d_ptr->mDrawTextRect.united(d_ptr->mDrawIndicatorArrowRect);
@@ -3650,11 +3433,11 @@ void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& 
 							}
 						}
 					}
-				} else {                              // 小按钮模式
-					if (d_ptr->mMouseOnSubControl) {  // 此时鼠标在indecater那
+				} else { // 小按钮模式
+					if (d_ptr->mMouseOnSubControl) { // 此时鼠标在indecater那
 						// 鼠标在文字区，把图标和文字显示为正常
-						tool.rect  = d_ptr->mDrawIconRect.united(d_ptr->mDrawTextRect);
-						tool.state = (QStyle::State_Raised);  // 把图标区域显示为正常
+						tool.rect = d_ptr->mDrawIconRect.united(d_ptr->mDrawTextRect);
+						tool.state = (QStyle::State_Raised); // 把图标区域显示为正常
 						if (autoRaise) {
 							style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
 						} else {
@@ -3662,7 +3445,7 @@ void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& 
 						}
 					} else {
 						// 鼠标在图标区，把文字显示为正常
-						tool.state = (QStyle::State_Raised);  // 把图标区域显示为正常
+						tool.state = (QStyle::State_Raised); // 把图标区域显示为正常
 						// 文字和Indicator都显示正常
 						tool.rect = d_ptr->mDrawIndicatorArrowRect;
 						if (autoRaise) {
@@ -3689,8 +3472,7 @@ void SARibbonToolButton::paintButton(QPainter& p, const QStyleOptionToolButton& 
  * @param p
  * @param opt
  */
-void SARibbonToolButton::paintIcon(QPainter& p, const QStyleOptionToolButton& opt, const QRect& iconDrawRect)
-{
+void SARibbonToolButton::paintIcon(QPainter& p, const QStyleOptionToolButton& opt, const QRect& iconDrawRect) {
 	if (!iconDrawRect.isValid()) {
 		return;
 	}
@@ -3705,8 +3487,7 @@ void SARibbonToolButton::paintIcon(QPainter& p, const QStyleOptionToolButton& op
  * @param p
  * @param opt
  */
-void SARibbonToolButton::paintText(QPainter& p, const QStyleOptionToolButton& opt, const QRect& textDrawRect)
-{
+void SARibbonToolButton::paintText(QPainter& p, const QStyleOptionToolButton& opt, const QRect& textDrawRect) {
 	int alignment = d_ptr->getTextAlignment();
 
 	if (!style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this)) {
@@ -3737,7 +3518,7 @@ void SARibbonToolButton::paintText(QPainter& p, const QStyleOptionToolButton& op
 		}
 	}
 	QStyleOptionToolButton label = opt;
-	label.state                  = bflags;
+	label.state = bflags;
 	style()->drawItemText(&p, textDrawRect, alignment, label.palette, label.state & QStyle::State_Enabled, text, QPalette::ButtonText);
 	SARIBBONTOOLBUTTON_DEBUG_DRAW_RECT(p, textDrawRect);
 }
@@ -3747,24 +3528,22 @@ void SARibbonToolButton::paintText(QPainter& p, const QStyleOptionToolButton& op
  * @param p
  * @param opt
  */
-void SARibbonToolButton::paintIndicator(QPainter& p, const QStyleOptionToolButton& opt, const QRect& indicatorDrawRect)
-{
+void SARibbonToolButton::paintIndicator(QPainter& p, const QStyleOptionToolButton& opt, const QRect& indicatorDrawRect) {
 	if (!indicatorDrawRect.isValid() || !d_ptr->hasIndicator(opt)) {
 		return;
 	}
 
 	QStyleOption tool = opt;
-	tool.rect         = indicatorDrawRect;
+	tool.rect = indicatorDrawRect;
 	style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &tool, &p, this);
 	SARIBBONTOOLBUTTON_DEBUG_DRAW_RECT(p, indicatorDrawRect);
 }
 
 void SARibbonToolButton::drawArrow(const QStyle* style,
-								   const QStyleOptionToolButton* toolbutton,
-								   const QRect& rect,
-								   QPainter* painter,
-								   const QWidget* widget)
-{
+	const QStyleOptionToolButton* toolbutton,
+	const QRect& rect,
+	QPainter* painter,
+	const QWidget* widget) {
 	QStyle::PrimitiveElement pe;
 
 	switch (toolbutton->arrowType) {
@@ -3793,8 +3572,7 @@ void SARibbonToolButton::drawArrow(const QStyle* style,
 	style->drawPrimitive(pe, &arrowOpt, painter, widget);
 }
 
-void SARibbonToolButton::actionEvent(QActionEvent* e)
-{
+void SARibbonToolButton::actionEvent(QActionEvent* e) {
 	QToolButton::actionEvent(e);
 	updateRect();
 }
@@ -3804,8 +3582,7 @@ void SARibbonToolButton::actionEvent(QActionEvent* e)
  * @sa setButtonType
  * @return
  */
-SARibbonToolButton::RibbonButtonType SARibbonToolButton::buttonType() const
-{
+SARibbonToolButton::RibbonButtonType SARibbonToolButton::buttonType() const {
 	return (d_ptr->mButtonType);
 }
 
@@ -3814,8 +3591,7 @@ SARibbonToolButton::RibbonButtonType SARibbonToolButton::buttonType() const
  * @note 设置按钮样式过程会调用setToolButtonStyle，如果要改变toolButtonStyle,如设置为Qt::ToolButtonIconOnly,需要在此函数之后设置
  * @param buttonType
  */
-void SARibbonToolButton::setButtonType(const RibbonButtonType& buttonType)
-{
+void SARibbonToolButton::setButtonType(const RibbonButtonType& buttonType) {
 	d_ptr->mButtonType = buttonType;
 	// 计算iconrect
 	// 根据字体计算文字的高度
@@ -3833,8 +3609,7 @@ void SARibbonToolButton::setButtonType(const RibbonButtonType& buttonType)
  * @brief 是否是小按钮
  * @return
  */
-bool SARibbonToolButton::isSmallRibbonButton() const
-{
+bool SARibbonToolButton::isSmallRibbonButton() const {
 	return (d_ptr->mButtonType == SmallButton);
 }
 
@@ -3842,13 +3617,11 @@ bool SARibbonToolButton::isSmallRibbonButton() const
  * @brief 是否是大按钮
  * @return
  */
-bool SARibbonToolButton::isLargeRibbonButton() const
-{
+bool SARibbonToolButton::isLargeRibbonButton() const {
 	return (d_ptr->mButtonType == LargeButton);
 }
 
-QSize SARibbonToolButton::minimumSizeHint() const
-{
+QSize SARibbonToolButton::minimumSizeHint() const {
 	return (sizeHint());
 }
 
@@ -3856,13 +3629,11 @@ QSize SARibbonToolButton::minimumSizeHint() const
  * @brief 间距是几个重要矩形的间隔
  * @return
  */
-int SARibbonToolButton::spacing() const
-{
+int SARibbonToolButton::spacing() const {
 	return d_ptr->mSpacing;
 }
 
-void SARibbonToolButton::updateRect()
-{
+void SARibbonToolButton::updateRect() {
 	QStyleOptionToolButton opt;
 	initStyleOption(&opt);
 	d_ptr->updateDrawRect(opt);
@@ -3872,8 +3643,7 @@ void SARibbonToolButton::updateRect()
  * @brief 设置在lite模式下是否允许文字换行，如果允许，则图标相对比较小，默认不允许
  * @param on
  */
-void SARibbonToolButton::setEnableWordWrap(bool on)
-{
+void SARibbonToolButton::setEnableWordWrap(bool on) {
 	SARibbonToolButton::PrivateData::s_enableWordWrap = on;
 }
 
@@ -3881,13 +3651,11 @@ void SARibbonToolButton::setEnableWordWrap(bool on)
  * @brief 在lite模式下是否允许文字换行
  * @return
  */
-bool SARibbonToolButton::isEnableWordWrap()
-{
+bool SARibbonToolButton::isEnableWordWrap() {
 	return SARibbonToolButton::PrivateData::s_enableWordWrap;
 }
 
-bool SARibbonToolButton::event(QEvent* e)
-{
+bool SARibbonToolButton::event(QEvent* e) {
 	switch (e->type()) {
 	case QEvent::WindowDeactivate:
 		d_ptr->mMouseOnSubControl = false;
@@ -3905,8 +3673,7 @@ bool SARibbonToolButton::event(QEvent* e)
 	return (QToolButton::event(e));
 }
 
-void SARibbonToolButton::changeEvent(QEvent* e)
-{
+void SARibbonToolButton::changeEvent(QEvent* e) {
 	if (e) {
 		if (e->type() == QEvent::FontChange) {
 			// 说明字体改变，需要重新计算和字体相关的信息
@@ -3918,19 +3685,17 @@ void SARibbonToolButton::changeEvent(QEvent* e)
 
 /*** End of inlined file: SARibbonToolButton.cpp ***/
 
-
 /*** Start of inlined file: SARibbonColorToolButton.cpp ***/
-#include <QStylePainter>
-#include <QStyleOptionToolButton>
 #include <QDebug>
+#include <QStyleOptionToolButton>
+#include <QStylePainter>
 
 //===================================================
 // SARibbonColorToolButton::PrivateData
 //===================================================
-const int c_ribbonbutton_color_height = 5;  ///< 颜色块的高度
+const int c_ribbonbutton_color_height = 5; ///< 颜色块的高度
 
-class SARibbonColorToolButton::PrivateData
-{
+class SARibbonColorToolButton::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonColorToolButton)
 public:
 	PrivateData(SARibbonColorToolButton* p);
@@ -3938,18 +3703,17 @@ public:
 	QIcon createColorIcon(const QColor& c, const QSize& size) const;
 
 public:
-	QColor mColor;                                                                                ///< 记录颜色
-	SARibbonColorToolButton::ColorStyle mColorStyle { SARibbonColorToolButton::ColorUnderIcon };  ///< 颜色显示样式
-	QIcon mOldIcon;                                                                               ///< 记录旧的icon
+	QColor mColor; ///< 记录颜色
+	SARibbonColorToolButton::ColorStyle mColorStyle { SARibbonColorToolButton::ColorUnderIcon }; ///< 颜色显示样式
+	QIcon mOldIcon; ///< 记录旧的icon
 };
 
-SARibbonColorToolButton::PrivateData::PrivateData(SARibbonColorToolButton* p) : q_ptr(p)
-{
+SARibbonColorToolButton::PrivateData::PrivateData(SARibbonColorToolButton* p)
+	: q_ptr(p) {
 }
 
-QPixmap SARibbonColorToolButton::PrivateData::createIconPixmap(const QStyleOptionToolButton& opt, const QSize& iconsize) const
-{
-	if (opt.icon.isNull()) {  // 没有有图标
+QPixmap SARibbonColorToolButton::PrivateData::createIconPixmap(const QStyleOptionToolButton& opt, const QSize& iconsize) const {
+	if (opt.icon.isNull()) { // 没有有图标
 		return QPixmap();
 	}
 	// 有icon，在icon下方加入颜色
@@ -3963,14 +3727,14 @@ QPixmap SARibbonColorToolButton::PrivateData::createIconPixmap(const QStyleOptio
 		mode = QIcon::Normal;
 	}
 	QSize realIconSize = iconsize - QSize(0, c_ribbonbutton_color_height + 1);
-	QPixmap pixmap     = opt.icon.pixmap(q_ptr->window()->windowHandle(), realIconSize, mode, state);
-	QPixmap res(pixmap.size() + QSize(4, c_ribbonbutton_color_height + 4));  // 宽度上，颜色块多出2px
+	QPixmap pixmap = opt.icon.pixmap(q_ptr->window()->windowHandle(), realIconSize, mode, state);
+	QPixmap res(pixmap.size() + QSize(4, c_ribbonbutton_color_height + 4)); // 宽度上，颜色块多出2px
 	res.fill(Qt::transparent);
 	QPainter painter(&res);
 	int xpixmap = (res.width() - pixmap.width()) / 2;
-	int ypixmap = (res.height() - c_ribbonbutton_color_height - 2 - pixmap.height()) / 2;  // 这里要减去2而不是1，这样奇数偶数都不会影响
-	int w         = pixmap.width();
-	int h         = pixmap.height();
+	int ypixmap = (res.height() - c_ribbonbutton_color_height - 2 - pixmap.height()) / 2; // 这里要减去2而不是1，这样奇数偶数都不会影响
+	int w = pixmap.width();
+	int h = pixmap.height();
 	QRect rpixmap = QRect(xpixmap, ypixmap, w, h);
 	painter.drawPixmap(rpixmap, pixmap);
 	QRect colorRect = rpixmap.adjusted(0, h + 1, 0, c_ribbonbutton_color_height + 1);
@@ -3990,8 +3754,7 @@ QPixmap SARibbonColorToolButton::PrivateData::createIconPixmap(const QStyleOptio
 	return res;
 }
 
-QIcon SARibbonColorToolButton::PrivateData::createColorIcon(const QColor& c, const QSize& size) const
-{
+QIcon SARibbonColorToolButton::PrivateData::createColorIcon(const QColor& c, const QSize& size) const {
 	QPixmap res(size);
 	res.fill(Qt::transparent);
 	QPainter painter(&res);
@@ -4015,27 +3778,25 @@ QIcon SARibbonColorToolButton::PrivateData::createColorIcon(const QColor& c, con
 //===================================================
 
 SARibbonColorToolButton::SARibbonColorToolButton(QWidget* parent)
-	: SARibbonToolButton(parent), d_ptr(new SARibbonColorToolButton::PrivateData(this))
-{
+	: SARibbonToolButton(parent)
+	, d_ptr(new SARibbonColorToolButton::PrivateData(this)) {
 	connect(this, &QAbstractButton::clicked, this, &SARibbonColorToolButton::onButtonClicked);
 }
 
 SARibbonColorToolButton::SARibbonColorToolButton(QAction* defaultAction, QWidget* parent)
-	: SARibbonToolButton(defaultAction, parent), d_ptr(new SARibbonColorToolButton::PrivateData(this))
-{
+	: SARibbonToolButton(defaultAction, parent)
+	, d_ptr(new SARibbonColorToolButton::PrivateData(this)) {
 	connect(this, &QAbstractButton::clicked, this, &SARibbonColorToolButton::onButtonClicked);
 }
 
-SARibbonColorToolButton::~SARibbonColorToolButton()
-{
+SARibbonColorToolButton::~SARibbonColorToolButton() {
 }
 
 /**
  * @brief 获取按钮维护的颜色
  * @return
  */
-QColor SARibbonColorToolButton::color() const
-{
+QColor SARibbonColorToolButton::color() const {
 	return d_ptr->mColor;
 }
 
@@ -4043,8 +3804,7 @@ QColor SARibbonColorToolButton::color() const
  * @brief 设置颜色显示的样式
  * @param s
  */
-void SARibbonColorToolButton::setColorStyle(SARibbonColorToolButton::ColorStyle s)
-{
+void SARibbonColorToolButton::setColorStyle(SARibbonColorToolButton::ColorStyle s) {
 	if (d_ptr->mColorStyle == s) {
 		return;
 	}
@@ -4062,8 +3822,7 @@ void SARibbonColorToolButton::setColorStyle(SARibbonColorToolButton::ColorStyle 
  * @brief 颜色显示的样式
  * @return
  */
-SARibbonColorToolButton::ColorStyle SARibbonColorToolButton::colorStyle() const
-{
+SARibbonColorToolButton::ColorStyle SARibbonColorToolButton::colorStyle() const {
 	return d_ptr->mColorStyle;
 }
 
@@ -4071,14 +3830,13 @@ SARibbonColorToolButton::ColorStyle SARibbonColorToolButton::colorStyle() const
  * @brief 建立标准的颜色菜单
  * @return
  */
-SAColorMenu* SARibbonColorToolButton::setupStandardColorMenu()
-{
+SAColorMenu* SARibbonColorToolButton::setupStandardColorMenu() {
 	setPopupMode(QToolButton::MenuButtonPopup);
 	SAColorMenu* m = new SAColorMenu(this);
 	m->enableNoneColorAction(true);
 	QAction* customColor = m->customColorAction();
 	if (customColor) {
-		customColor->setIcon(QIcon(":/image/resource/define-color.svg"));
+		customColor->setIcon(QIcon(":/images/images/define-color.svg"));
 	}
 	connect(m, &SAColorMenu::selectedColor, this, &SARibbonColorToolButton::setColor);
 	setMenu(m);
@@ -4094,8 +3852,7 @@ SAColorMenu* SARibbonColorToolButton::setupStandardColorMenu()
  * @note 会发射@sa colorChanged 信号
  * @param c
  */
-void SARibbonColorToolButton::setColor(const QColor& c)
-{
+void SARibbonColorToolButton::setColor(const QColor& c) {
 	if (d_ptr->mColor != c) {
 		d_ptr->mColor = c;
 		if (ColorFillToIcon == colorStyle()) {
@@ -4106,8 +3863,7 @@ void SARibbonColorToolButton::setColor(const QColor& c)
 	}
 }
 
-void SARibbonColorToolButton::onButtonClicked(bool checked)
-{
+void SARibbonColorToolButton::onButtonClicked(bool checked) {
 	emit colorClicked(d_ptr->mColor, checked);
 }
 
@@ -4117,8 +3873,7 @@ void SARibbonColorToolButton::onButtonClicked(bool checked)
  * @param opt
  * @param iconDrawRect
  */
-void SARibbonColorToolButton::paintIcon(QPainter& p, const QStyleOptionToolButton& opt, const QRect& iconDrawRect)
-{
+void SARibbonColorToolButton::paintIcon(QPainter& p, const QStyleOptionToolButton& opt, const QRect& iconDrawRect) {
 	if (ColorUnderIcon == colorStyle()) {
 		// 有icon
 		QPixmap pm = d_ptr->createIconPixmap(opt, iconDrawRect.size());
@@ -4130,16 +3885,15 @@ void SARibbonColorToolButton::paintIcon(QPainter& p, const QStyleOptionToolButto
 
 /*** End of inlined file: SARibbonColorToolButton.cpp ***/
 
-
 /*** Start of inlined file: SARibbonLineWidgetContainer.cpp ***/
 #include <QHBoxLayout>
 
-SARibbonLineWidgetContainer::SARibbonLineWidgetContainer(QWidget *par) : QWidget(par)
-	, m_innerWidget(nullptr)
-{
+SARibbonLineWidgetContainer::SARibbonLineWidgetContainer(QWidget* par)
+	: QWidget(par)
+	, m_innerWidget(nullptr) {
 	m_labelPrefix = new QLabel(this);
 	m_labelSuffix = new QLabel(this);
-	QHBoxLayout *lay = new QHBoxLayout();
+	QHBoxLayout* lay = new QHBoxLayout();
 
 	lay->setContentsMargins(0, 0, 0, 0);
 	lay->setSpacing(0);
@@ -4148,67 +3902,60 @@ SARibbonLineWidgetContainer::SARibbonLineWidgetContainer(QWidget *par) : QWidget
 	setLayout(lay);
 }
 
-void SARibbonLineWidgetContainer::setWidget(QWidget *innerWidget)
-{
-	QHBoxLayout *lay = static_cast<QHBoxLayout *>(layout());
+void SARibbonLineWidgetContainer::setWidget(QWidget* innerWidget) {
+	QHBoxLayout* lay = static_cast<QHBoxLayout*>(layout());
 
 	if (m_innerWidget) {
 		lay->replaceWidget(m_innerWidget, innerWidget);
-	}else{
+	} else {
 		lay->insertWidget(1, innerWidget);
 	}
 	m_innerWidget = innerWidget;
 }
 
-void SARibbonLineWidgetContainer::setPrefix(const QString& str)
-{
+void SARibbonLineWidgetContainer::setPrefix(const QString& str) {
 	m_labelPrefix->setText(str);
 }
 
-void SARibbonLineWidgetContainer::setSuffix(const QString& str)
-{
+void SARibbonLineWidgetContainer::setSuffix(const QString& str) {
 	m_labelSuffix->setText(str);
 }
 
-QLabel *SARibbonLineWidgetContainer::labelPrefix() const
-{
+QLabel* SARibbonLineWidgetContainer::labelPrefix() const {
 	return (m_labelPrefix);
 }
 
-QLabel *SARibbonLineWidgetContainer::labelSuffix() const
-{
+QLabel* SARibbonLineWidgetContainer::labelSuffix() const {
 	return (m_labelSuffix);
 }
 
 /*** End of inlined file: SARibbonLineWidgetContainer.cpp ***/
 
-
 /*** Start of inlined file: SARibbonActionsManager.cpp ***/
-#include <QMap>
-#include <QHash>
 #include <QDebug>
+#include <QHash>
+#include <QMap>
 
-class SARibbonActionsManager::PrivateData
-{
+class SARibbonActionsManager::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonActionsManager)
 public:
 	PrivateData(SARibbonActionsManager* p);
 	void clear();
 
-	QMap< int, QList< QAction* > > mTagToActions;   ///< tag : QList<QAction*>
-	QMap< int, QString > mTagToName;                ///< tag对应的名字
-	QHash< QString, QAction* > mKeyToAction;        ///< key对应action
-	QMap< QAction*, QString > mActionToKey;         ///< action对应key
-	QMap< int, SARibbonCategory* > mTagToCategory;  ///< 仅仅在autoRegisteActions函数会有用
-	int mSale;  ///< 盐用于生成固定的id，在用户不主动设置key时，id基于msale生成，只要SARibbonActionsManager的调用registeAction顺序不变，生成的id都不变，因为它是基于自增实现的
+	QMap<int, QList<QAction*>> mTagToActions; ///< tag : QList<QAction*>
+	QMap<int, QString> mTagToName; ///< tag对应的名字
+	QHash<QString, QAction*> mKeyToAction; ///< key对应action
+	QMap<QAction*, QString> mActionToKey; ///< action对应key
+	QMap<int, SARibbonCategory*> mTagToCategory; ///< 仅仅在autoRegisteActions函数会有用
+	int mSale; ///< 盐用于生成固定的id，在用户不主动设置key时，id基于msale生成，只要SARibbonActionsManager的调用registeAction顺序不变，生成的id都不变，因为它是基于自增实现的
 };
 
-SARibbonActionsManager::PrivateData::PrivateData(SARibbonActionsManager* p) : q_ptr(p), mSale(0)
-{
+SARibbonActionsManager::PrivateData::PrivateData(SARibbonActionsManager* p)
+	: q_ptr(p)
+	, mSale(0) {
 }
 
-void SARibbonActionsManager::PrivateData::clear()
-{
+void SARibbonActionsManager::PrivateData::clear() {
 	mTagToActions.clear();
 	mTagToName.clear();
 	mKeyToAction.clear();
@@ -4218,13 +3965,12 @@ void SARibbonActionsManager::PrivateData::clear()
 }
 
 SARibbonActionsManager::SARibbonActionsManager(SARibbonBar* bar)
-	: QObject(bar), d_ptr(new SARibbonActionsManager::PrivateData(this))
-{
+	: QObject(bar)
+	, d_ptr(new SARibbonActionsManager::PrivateData(this)) {
 	autoRegisteActions(bar);
 }
 
-SARibbonActionsManager::~SARibbonActionsManager()
-{
+SARibbonActionsManager::~SARibbonActionsManager() {
 }
 
 /**
@@ -4233,9 +3979,8 @@ SARibbonActionsManager::~SARibbonActionsManager()
  * @param name
  * @note 在支持多语言的环境下，在语言切换时需要重新设置，以更新名字
  */
-void SARibbonActionsManager::setTagName(int tag, const QString& name)
-{
-	d_ptr->mTagToName[ tag ] = name;
+void SARibbonActionsManager::setTagName(int tag, const QString& name) {
+	d_ptr->mTagToName[tag] = name;
 }
 
 /**
@@ -4243,8 +3988,7 @@ void SARibbonActionsManager::setTagName(int tag, const QString& name)
  * @param tag
  * @return
  */
-QString SARibbonActionsManager::tagName(int tag) const
-{
+QString SARibbonActionsManager::tagName(int tag) const {
 	return (d_ptr->mTagToName.value(tag, ""));
 }
 
@@ -4253,16 +3997,15 @@ QString SARibbonActionsManager::tagName(int tag) const
  * @note 注意，这个函数非常耗时
  * @param tag
  */
-void SARibbonActionsManager::removeTag(int tag)
-{
-	QList< QAction* > oldacts = actions(tag);
+void SARibbonActionsManager::removeTag(int tag) {
+	QList<QAction*> oldacts = actions(tag);
 
 	// 开始移除
 	d_ptr->mTagToActions.remove(tag);
 	d_ptr->mTagToName.remove(tag);
 	// 开始查找需要移出总表的action
-	QList< QAction* > needRemoveAct;
-	QList< QAction* > total;
+	QList<QAction*> needRemoveAct;
+	QList<QAction*> total;
 
 	for (auto i = d_ptr->mTagToActions.begin(); i != d_ptr->mTagToActions.end(); ++i) {
 		total += i.value();
@@ -4293,8 +4036,7 @@ void SARibbonActionsManager::removeTag(int tag)
  * @note 同一个action多次注册不同的tag可以通过tag索引到action，但通过action只能索引到最后一个注册的tag
  * @note tag的新增会触发actionTagChanged信号
  */
-bool SARibbonActionsManager::registeAction(QAction* act, int tag, const QString& key, bool enableEmit)
-{
+bool SARibbonActionsManager::registeAction(QAction* act, int tag, const QString& key, bool enableEmit) {
 	if (nullptr == act) {
 		return (false);
 	}
@@ -4308,12 +4050,12 @@ bool SARibbonActionsManager::registeAction(QAction* act, int tag, const QString&
 				   << k << " have been exist,you can set key in an unique value when use SARibbonActionsManager::registeAction";
 		return (false);
 	}
-	d_ptr->mKeyToAction[ k ]   = act;
-	d_ptr->mActionToKey[ act ] = k;
+	d_ptr->mKeyToAction[k] = act;
+	d_ptr->mActionToKey[act] = k;
 	// 记录tag 对 action
-	bool isneedemit = !(d_ptr->mTagToActions.contains(tag));  // 记录是否需要发射信号
+	bool isneedemit = !(d_ptr->mTagToActions.contains(tag)); // 记录是否需要发射信号
 
-	d_ptr->mTagToActions[ tag ].append(act);
+	d_ptr->mTagToActions[tag].append(act);
 	// 绑定槽
 	connect(act, &QObject::destroyed, this, &SARibbonActionsManager::onActionDestroyed);
 	if (isneedemit && enableEmit) {
@@ -4331,8 +4073,7 @@ bool SARibbonActionsManager::registeAction(QAction* act, int tag, const QString&
  * @note tag的删除会触发actionTagChanged信号
  * @note 如果action关联了多个tag，这些tag里的action都会被删除，对应的key也同理
  */
-void SARibbonActionsManager::unregisteAction(QAction* act, bool enableEmit)
-{
+void SARibbonActionsManager::unregisteAction(QAction* act, bool enableEmit) {
 	if (nullptr == act) {
 		return;
 	}
@@ -4348,17 +4089,16 @@ void SARibbonActionsManager::unregisteAction(QAction* act, bool enableEmit)
  * @param act
  * @param enableEmit
  */
-void SARibbonActionsManager::removeAction(QAction* act, bool enableEmit)
-{
-	QList< int > deletedTags;                     // 记录删除的tag，用于触发actionTagChanged
-	QMap< int, QList< QAction* > > tagToActions;  ///< tag : QList<QAction*>
+void SARibbonActionsManager::removeAction(QAction* act, bool enableEmit) {
+	QList<int> deletedTags; // 记录删除的tag，用于触发actionTagChanged
+	QMap<int, QList<QAction*>> tagToActions; ///< tag : QList<QAction*>
 
 	for (auto i = d_ptr->mTagToActions.begin(); i != d_ptr->mTagToActions.end(); ++i) {
 		// 把不是act的内容转移到tagToActions和tagToActionKeys中，之后再和m_d里的替换
-		auto tmpi = tagToActions.insert(i.key(), QList< QAction* >());
+		auto tmpi = tagToActions.insert(i.key(), QList<QAction*>());
 		int count = 0;
 		for (int j = 0; j < i.value().size(); ++j) {
-			if (i.value()[ j ] != act) {
+			if (i.value()[j] != act) {
 				tmpi.value().append(act);
 				++count;
 			}
@@ -4390,8 +4130,7 @@ void SARibbonActionsManager::removeAction(QAction* act, bool enableEmit)
  * @param tag
  * @return
  */
-QList< QAction* >& SARibbonActionsManager::filter(int tag)
-{
+QList<QAction*>& SARibbonActionsManager::filter(int tag) {
 	return (actions(tag));
 }
 
@@ -4400,22 +4139,19 @@ QList< QAction* >& SARibbonActionsManager::filter(int tag)
  * @param tag
  * @return
  */
-QList< QAction* >& SARibbonActionsManager::actions(int tag)
-{
-	return (d_ptr->mTagToActions[ tag ]);
+QList<QAction*>& SARibbonActionsManager::actions(int tag) {
+	return (d_ptr->mTagToActions[tag]);
 }
 
-const QList< QAction* > SARibbonActionsManager::actions(int tag) const
-{
-	return (d_ptr->mTagToActions[ tag ]);
+const QList<QAction*> SARibbonActionsManager::actions(int tag) const {
+	return (d_ptr->mTagToActions[tag]);
 }
 
 /**
  * @brief 获取所有的标签
  * @return
  */
-QList< int > SARibbonActionsManager::actionTags() const
-{
+QList<int> SARibbonActionsManager::actionTags() const {
 	return (d_ptr->mTagToActions.keys());
 }
 
@@ -4424,8 +4160,7 @@ QList< int > SARibbonActionsManager::actionTags() const
  * @param key
  * @return 如果没有key，返回nullptr
  */
-QAction* SARibbonActionsManager::action(const QString& key) const
-{
+QAction* SARibbonActionsManager::action(const QString& key) const {
 	return (d_ptr->mKeyToAction.value(key, nullptr));
 }
 
@@ -4434,8 +4169,7 @@ QAction* SARibbonActionsManager::action(const QString& key) const
  * @param act
  * @return 如果找不到，返回QString()
  */
-QString SARibbonActionsManager::key(QAction* act) const
-{
+QString SARibbonActionsManager::key(QAction* act) const {
 	return (d_ptr->mActionToKey.value(act, QString()));
 }
 
@@ -4443,8 +4177,7 @@ QString SARibbonActionsManager::key(QAction* act) const
  * @brief 返回所有管理的action数
  * @return
  */
-int SARibbonActionsManager::count() const
-{
+int SARibbonActionsManager::count() const {
 	return (d_ptr->mKeyToAction.size());
 }
 
@@ -4452,8 +4185,7 @@ int SARibbonActionsManager::count() const
  * @brief 返回所有管理的actions
  * @return
  */
-QList< QAction* > SARibbonActionsManager::allActions() const
-{
+QList<QAction*> SARibbonActionsManager::allActions() const {
 	return (d_ptr->mKeyToAction.values());
 }
 
@@ -4471,15 +4203,14 @@ QList< QAction* > SARibbonActionsManager::allActions() const
  * @return
  * @note 此函数的调用最好在category设置了标题后调用，因为会以category的标题作为标签的命名
  */
-QMap< int, SARibbonCategory* > SARibbonActionsManager::autoRegisteActions(SARibbonBar* bar)
-{
-	QMap< int, SARibbonCategory* > res;
+QMap<int, SARibbonCategory*> SARibbonActionsManager::autoRegisteActions(SARibbonBar* bar) {
+	QMap<int, SARibbonCategory*> res;
 	// 先遍历SARibbonBar的父窗口(一般是SARibbonMainWindow)下的所有子对象，把所有action找到
 	QWidget* parWidget = bar->parentWidget();
-	QSet< QAction* > mainwindowActions;
+	QSet<QAction*> mainwindowActions;
 	if (parWidget) {
 		for (QObject* o : qAsConst(parWidget->children())) {
-			if (QAction* a = qobject_cast< QAction* >(o)) {
+			if (QAction* a = qobject_cast<QAction*>(o)) {
 				// 说明是action
 				if (!a->objectName().isEmpty()) {
 					mainwindowActions.insert(a);
@@ -4493,21 +4224,21 @@ QMap< int, SARibbonCategory* > SARibbonActionsManager::autoRegisteActions(SARibb
 		// 非ribbon模式，直接退出
 		return (res);
 	}
-	QSet< QAction* > categoryActions;
-	QList< SARibbonCategory* > categorys = bar->categoryPages();
-	int tag                              = AutoCategoryDistinguishBeginTag;
+	QSet<QAction*> categoryActions;
+	QList<SARibbonCategory*> categorys = bar->categoryPages();
+	int tag = AutoCategoryDistinguishBeginTag;
 
 	for (SARibbonCategory* c : qAsConst(categorys)) {
-		QList< SARibbonPannel* > pannels = c->pannelList();
+		QList<SARibbonPannel*> pannels = c->pannelList();
 		for (SARibbonPannel* p : qAsConst(pannels)) {
 			categoryActions += autoRegisteWidgetActions(p, tag, false);
 		}
 		setTagName(tag, c->categoryName());
-		res[ tag ] = c;
+		res[tag] = c;
 		++tag;
 	}
 	// 找到不在功能区的actions
-	QSet< QAction* > notincategory = mainwindowActions - categoryActions;
+	QSet<QAction*> notincategory = mainwindowActions - categoryActions;
 
 	for (QAction* a : qAsConst(notincategory)) {
 		if (!a->objectName().isEmpty()) {
@@ -4531,10 +4262,9 @@ QMap< int, SARibbonCategory* > SARibbonActionsManager::autoRegisteActions(SARibb
  * @param enableEmit
  * @return 返回成功加入SARibbonActionsManager管理的action
  */
-QSet< QAction* > SARibbonActionsManager::autoRegisteWidgetActions(QWidget* w, int tag, bool enableEmit)
-{
-	QSet< QAction* > res;
-	QList< QAction* > was = w->actions();
+QSet<QAction*> SARibbonActionsManager::autoRegisteWidgetActions(QWidget* w, int tag, bool enableEmit) {
+	QSet<QAction*> res;
+	QList<QAction*> was = w->actions();
 
 	for (QAction* a : qAsConst(was)) {
 		if (res.contains(a) || a->objectName().isEmpty()) {
@@ -4554,9 +4284,8 @@ QSet< QAction* > SARibbonActionsManager::autoRegisteWidgetActions(QWidget* w, in
  * @param text
  * @return
  */
-QList< QAction* > SARibbonActionsManager::search(const QString& text)
-{
-	QList< QAction* > res;
+QList<QAction*> SARibbonActionsManager::search(const QString& text) {
+	QList<QAction*> res;
 
 	if (text.isEmpty()) {
 		return (res);
@@ -4566,7 +4295,7 @@ QList< QAction* > SARibbonActionsManager::search(const QString& text)
 	if (kws.isEmpty()) {
 		kws.append(text);
 	}
-	QList< QAction* > acts = d_ptr->mActionToKey.keys();
+	QList<QAction*> acts = d_ptr->mActionToKey.keys();
 
 	for (const QString& k : qAsConst(kws)) {
 		for (auto i = d_ptr->mActionToKey.begin(); i != d_ptr->mActionToKey.end(); ++i) {
@@ -4578,8 +4307,7 @@ QList< QAction* > SARibbonActionsManager::search(const QString& text)
 	return (res);
 }
 
-void SARibbonActionsManager::clear()
-{
+void SARibbonActionsManager::clear() {
 	d_ptr->clear();
 }
 
@@ -4588,9 +4316,8 @@ void SARibbonActionsManager::clear()
  * @param o
  * @note 这个函数不会触发actionTagChanged信号
  */
-void SARibbonActionsManager::onActionDestroyed(QObject* o)
-{
-	QAction* act = static_cast< QAction* >(o);
+void SARibbonActionsManager::onActionDestroyed(QObject* o) {
+	QAction* act = static_cast<QAction*>(o);
 
 	removeAction(act, false);
 }
@@ -4599,9 +4326,8 @@ void SARibbonActionsManager::onActionDestroyed(QObject* o)
  * @brief autoRegisteActions函数会关联此槽，在标签内容改变时改变tag 对应 文本
  * @param title
  */
-void SARibbonActionsManager::onCategoryTitleChanged(const QString& title)
-{
-	SARibbonCategory* c = qobject_cast< SARibbonCategory* >(sender());
+void SARibbonActionsManager::onCategoryTitleChanged(const QString& title) {
+	SARibbonCategory* c = qobject_cast<SARibbonCategory*>(sender());
 
 	if (nullptr == c) {
 		return;
@@ -4618,8 +4344,7 @@ void SARibbonActionsManager::onCategoryTitleChanged(const QString& title)
 /// SARibbonActionsModel
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class SARibbonActionsManagerModel::PrivateData
-{
+class SARibbonActionsManagerModel::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonActionsManagerModel)
 public:
 	PrivateData(SARibbonActionsManagerModel* p);
@@ -4632,15 +4357,14 @@ public:
 	SARibbonActionsManager* mMgr { nullptr };
 	int mTag { SARibbonActionsManager::CommonlyUsedActionTag };
 	QString mSeatchText;
-	QList< QAction* > mActions;
+	QList<QAction*> mActions;
 };
 
-SARibbonActionsManagerModel::PrivateData::PrivateData(SARibbonActionsManagerModel* p) : q_ptr(p)
-{
+SARibbonActionsManagerModel::PrivateData::PrivateData(SARibbonActionsManagerModel* p)
+	: q_ptr(p) {
 }
 
-void SARibbonActionsManagerModel::PrivateData::updateRef()
-{
+void SARibbonActionsManagerModel::PrivateData::updateRef() {
 	if (isNull()) {
 		return;
 	}
@@ -4651,16 +4375,14 @@ void SARibbonActionsManagerModel::PrivateData::updateRef()
 	}
 }
 
-int SARibbonActionsManagerModel::PrivateData::count() const
-{
+int SARibbonActionsManagerModel::PrivateData::count() const {
 	if (isNull()) {
 		return (0);
 	}
 	return (mActions.size());
 }
 
-QAction* SARibbonActionsManagerModel::PrivateData::at(int index)
-{
+QAction* SARibbonActionsManagerModel::PrivateData::at(int index) {
 	if (isNull()) {
 		return (nullptr);
 	}
@@ -4670,8 +4392,7 @@ QAction* SARibbonActionsManagerModel::PrivateData::at(int index)
 	return (mActions.at(index));
 }
 
-bool SARibbonActionsManagerModel::PrivateData::isNull() const
-{
+bool SARibbonActionsManagerModel::PrivateData::isNull() const {
 	return (mMgr == nullptr);
 }
 
@@ -4680,31 +4401,28 @@ bool SARibbonActionsManagerModel::PrivateData::isNull() const
 //===================================================
 
 SARibbonActionsManagerModel::SARibbonActionsManagerModel(QObject* p)
-	: QAbstractListModel(p), d_ptr(new SARibbonActionsManagerModel::PrivateData(this))
-{
+	: QAbstractListModel(p)
+	, d_ptr(new SARibbonActionsManagerModel::PrivateData(this)) {
 }
 
 SARibbonActionsManagerModel::SARibbonActionsManagerModel(SARibbonActionsManager* m, QObject* p)
-	: QAbstractListModel(p), d_ptr(new SARibbonActionsManagerModel::PrivateData(this))
-{
+	: QAbstractListModel(p)
+	, d_ptr(new SARibbonActionsManagerModel::PrivateData(this)) {
 	setupActionsManager(m);
 }
 
-SARibbonActionsManagerModel::~SARibbonActionsManagerModel()
-{
+SARibbonActionsManagerModel::~SARibbonActionsManagerModel() {
 }
 
-int SARibbonActionsManagerModel::rowCount(const QModelIndex& parent) const
-{
-	if (parent.isValid()) {  // 非顶层
+int SARibbonActionsManagerModel::rowCount(const QModelIndex& parent) const {
+	if (parent.isValid()) { // 非顶层
 		return (0);
 	}
 	// 顶层
 	return (d_ptr->count());
 }
 
-QVariant SARibbonActionsManagerModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
+QVariant SARibbonActionsManagerModel::headerData(int section, Qt::Orientation orientation, int role) const {
 	Q_UNUSED(section);
 	if (role != Qt::DisplayRole) {
 		return (QVariant());
@@ -4715,16 +4433,14 @@ QVariant SARibbonActionsManagerModel::headerData(int section, Qt::Orientation or
 	return (QVariant());
 }
 
-Qt::ItemFlags SARibbonActionsManagerModel::flags(const QModelIndex& index) const
-{
+Qt::ItemFlags SARibbonActionsManagerModel::flags(const QModelIndex& index) const {
 	if (!index.isValid()) {
 		return (Qt::NoItemFlags);
 	}
 	return (Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
-QVariant SARibbonActionsManagerModel::data(const QModelIndex& index, int role) const
-{
+QVariant SARibbonActionsManagerModel::data(const QModelIndex& index, int role) const {
 	QAction* act = indexToAction(index);
 
 	if (nullptr == act) {
@@ -4744,30 +4460,26 @@ QVariant SARibbonActionsManagerModel::data(const QModelIndex& index, int role) c
 	return (QVariant());
 }
 
-void SARibbonActionsManagerModel::setFilter(int tag)
-{
+void SARibbonActionsManagerModel::setFilter(int tag) {
 	d_ptr->mTag = tag;
 	update();
 }
 
-void SARibbonActionsManagerModel::update()
-{
+void SARibbonActionsManagerModel::update() {
 	beginResetModel();
 	d_ptr->updateRef();
 	endResetModel();
 }
 
-void SARibbonActionsManagerModel::setupActionsManager(SARibbonActionsManager* m)
-{
-	d_ptr->mMgr     = m;
-	d_ptr->mTag     = SARibbonActionsManager::CommonlyUsedActionTag;
+void SARibbonActionsManagerModel::setupActionsManager(SARibbonActionsManager* m) {
+	d_ptr->mMgr = m;
+	d_ptr->mTag = SARibbonActionsManager::CommonlyUsedActionTag;
 	d_ptr->mActions = m->filter(d_ptr->mTag);
 	connect(m, &SARibbonActionsManager::actionTagChanged, this, &SARibbonActionsManagerModel::onActionTagChanged);
 	update();
 }
 
-void SARibbonActionsManagerModel::uninstallActionsManager()
-{
+void SARibbonActionsManagerModel::uninstallActionsManager() {
 	if (!d_ptr->isNull()) {
 		disconnect(d_ptr->mMgr, &SARibbonActionsManager::actionTagChanged, this, &SARibbonActionsManagerModel::onActionTagChanged);
 		d_ptr->mMgr = nullptr;
@@ -4776,8 +4488,7 @@ void SARibbonActionsManagerModel::uninstallActionsManager()
 	update();
 }
 
-QAction* SARibbonActionsManagerModel::indexToAction(QModelIndex index) const
-{
+QAction* SARibbonActionsManagerModel::indexToAction(QModelIndex index) const {
 	if (!index.isValid()) {
 		return (nullptr);
 	}
@@ -4791,14 +4502,12 @@ QAction* SARibbonActionsManagerModel::indexToAction(QModelIndex index) const
  * @brief 查找
  * @param text
  */
-void SARibbonActionsManagerModel::search(const QString& text)
-{
+void SARibbonActionsManagerModel::search(const QString& text) {
 	d_ptr->mSeatchText = text;
 	update();
 }
 
-void SARibbonActionsManagerModel::onActionTagChanged(int tag, bool isdelete)
-{
+void SARibbonActionsManagerModel::onActionTagChanged(int tag, bool isdelete) {
 	if (isdelete && (tag == d_ptr->mTag)) {
 		d_ptr->mTag = SARibbonActionsManager::UnknowActionTag;
 		update();
@@ -4811,64 +4520,52 @@ void SARibbonActionsManagerModel::onActionTagChanged(int tag, bool isdelete)
 
 /*** End of inlined file: SARibbonActionsManager.cpp ***/
 
-
 /*** Start of inlined file: SARibbonLineEdit.cpp ***/
 #include <QStyleOption>
 
-SARibbonLineEdit::SARibbonLineEdit(QWidget *parent)
-	: QLineEdit(parent)
-{
+SARibbonLineEdit::SARibbonLineEdit(QWidget* parent)
+	: QLineEdit(parent) {
 }
 
-SARibbonLineEdit::SARibbonLineEdit(const QString &text, QWidget *parent)
-	: QLineEdit(text, parent)
-{
-
+SARibbonLineEdit::SARibbonLineEdit(const QString& text, QWidget* parent)
+	: QLineEdit(text, parent) {
 }
 
 /*** End of inlined file: SARibbonLineEdit.cpp ***/
 
-
 /*** Start of inlined file: SARibbonCheckBox.cpp ***/
 #include <QStyleOption>
 
-SARibbonCheckBox::SARibbonCheckBox(QWidget *parent)
-	: QCheckBox(parent)
-{
+SARibbonCheckBox::SARibbonCheckBox(QWidget* parent)
+	: QCheckBox(parent) {
 }
 
-SARibbonCheckBox::SARibbonCheckBox(const QString &text, QWidget *parent)
-	: QCheckBox(text, parent)
-{
-
+SARibbonCheckBox::SARibbonCheckBox(const QString& text, QWidget* parent)
+	: QCheckBox(text, parent) {
 }
 
 /*** End of inlined file: SARibbonCheckBox.cpp ***/
 
-
 /*** Start of inlined file: SARibbonComboBox.cpp ***/
-SARibbonComboBox::SARibbonComboBox(QWidget *parent)
-	: QComboBox(parent)
-{
+SARibbonComboBox::SARibbonComboBox(QWidget* parent)
+	: QComboBox(parent) {
 }
 
 /*** End of inlined file: SARibbonComboBox.cpp ***/
 
-
 /*** Start of inlined file: SARibbonButtonGroupWidget.cpp ***/
-#include <QHBoxLayout>
-#include <QDebug>
-#include <QMargins>
-#include <QChildEvent>
 #include <QActionEvent>
-#include <QWidgetAction>
 #include <QApplication>
+#include <QChildEvent>
+#include <QDebug>
+#include <QHBoxLayout>
+#include <QMargins>
+#include <QWidgetAction>
 
 //===================================================
 // SARibbonButtonGroupWidget::PrivateData
 //===================================================
-class SARibbonButtonGroupWidget::PrivateData
-{
+class SARibbonButtonGroupWidget::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonButtonGroupWidget)
 public:
 	PrivateData(SARibbonButtonGroupWidget* p);
@@ -4879,12 +4576,11 @@ public:
 	QSize mIconSize { 20, 20 };
 };
 
-SARibbonButtonGroupWidget::PrivateData::PrivateData(SARibbonButtonGroupWidget* p) : q_ptr(p)
-{
+SARibbonButtonGroupWidget::PrivateData::PrivateData(SARibbonButtonGroupWidget* p)
+	: q_ptr(p) {
 }
 
-void SARibbonButtonGroupWidget::PrivateData::init()
-{
+void SARibbonButtonGroupWidget::PrivateData::init() {
 	QHBoxLayout* layout = new QHBoxLayout(q_ptr);
 	// 上下保留一点间隙
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -4892,14 +4588,13 @@ void SARibbonButtonGroupWidget::PrivateData::init()
 	q_ptr->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
-void SARibbonButtonGroupWidget::PrivateData::removeAction(QAction* a)
-{
+void SARibbonButtonGroupWidget::PrivateData::removeAction(QAction* a) {
 	QLayout* lay = q_ptr->layout();
-	int c        = lay->count();
-	QList< QLayoutItem* > willRemoveItems;
+	int c = lay->count();
+	QList<QLayoutItem*> willRemoveItems;
 	for (int i = 0; i < c; ++i) {
-		QLayoutItem* item          = lay->itemAt(i);
-		SARibbonControlButton* btn = qobject_cast< SARibbonControlButton* >(item->widget());
+		QLayoutItem* item = lay->itemAt(i);
+		SARibbonControlButton* btn = qobject_cast<SARibbonControlButton*>(item->widget());
 		if (nullptr == btn) {
 			continue;
 		}
@@ -4918,23 +4613,21 @@ void SARibbonButtonGroupWidget::PrivateData::removeAction(QAction* a)
 //===================================================
 
 SARibbonButtonGroupWidget::SARibbonButtonGroupWidget(QWidget* parent)
-	: QFrame(parent), d_ptr(new SARibbonButtonGroupWidget::PrivateData(this))
-{
+	: QFrame(parent)
+	, d_ptr(new SARibbonButtonGroupWidget::PrivateData(this)) {
 	d_ptr->init();
 }
 
-SARibbonButtonGroupWidget::~SARibbonButtonGroupWidget()
-{
+SARibbonButtonGroupWidget::~SARibbonButtonGroupWidget() {
 }
 
 /**
  * @brief 设置图标尺寸
  * @param iconSize
  */
-void SARibbonButtonGroupWidget::setIconSize(const QSize& ic)
-{
+void SARibbonButtonGroupWidget::setIconSize(const QSize& ic) {
 	d_ptr->mIconSize = ic;
-	iterate([ ic ](SARibbonControlButton* btn) -> bool {
+	iterate([ic](SARibbonControlButton* btn) -> bool {
 		btn->setIconSize(ic);
 		return true;
 	});
@@ -4944,13 +4637,11 @@ void SARibbonButtonGroupWidget::setIconSize(const QSize& ic)
  * @brief 图标尺寸
  * @return
  */
-QSize SARibbonButtonGroupWidget::iconSize() const
-{
+QSize SARibbonButtonGroupWidget::iconSize() const {
 	return d_ptr->mIconSize;
 }
 
-QAction* SARibbonButtonGroupWidget::addAction(QAction* a, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+QAction* SARibbonButtonGroupWidget::addAction(QAction* a, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	SARibbonPannel::setActionToolButtonStyleProperty(a, buttonStyle);
 	SARibbonPannel::setActionToolButtonPopupModeProperty(a, popMode);
 	QWidget::addAction(a);
@@ -4965,22 +4656,19 @@ QAction* SARibbonButtonGroupWidget::addAction(QAction* a, Qt::ToolButtonStyle bu
  * @param popMode
  * @return
  */
-QAction* SARibbonButtonGroupWidget::addAction(const QString& text, const QIcon& icon, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+QAction* SARibbonButtonGroupWidget::addAction(const QString& text, const QIcon& icon, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	QAction* a = new QAction(icon, text, this);
 	addAction(a, buttonStyle, popMode);
 	return (a);
 }
 
-QAction* SARibbonButtonGroupWidget::addMenu(QMenu* menu, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+QAction* SARibbonButtonGroupWidget::addMenu(QMenu* menu, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	QAction* a = menu->menuAction();
 	addAction(a, buttonStyle, popMode);
 	return (a);
 }
 
-QAction* SARibbonButtonGroupWidget::addSeparator()
-{
+QAction* SARibbonButtonGroupWidget::addSeparator() {
 	QAction* a = new QAction(this);
 
 	a->setSeparator(true);
@@ -4988,8 +4676,7 @@ QAction* SARibbonButtonGroupWidget::addSeparator()
 	return (a);
 }
 
-QAction* SARibbonButtonGroupWidget::addWidget(QWidget* w)
-{
+QAction* SARibbonButtonGroupWidget::addWidget(QWidget* w) {
 	QWidgetAction* a = new QWidgetAction(this);
 
 	a->setDefaultWidget(w);
@@ -4998,26 +4685,23 @@ QAction* SARibbonButtonGroupWidget::addWidget(QWidget* w)
 	return (a);
 }
 
-SARibbonControlButton* SARibbonButtonGroupWidget::actionToRibbonControlToolButton(QAction* action)
-{
+SARibbonControlButton* SARibbonButtonGroupWidget::actionToRibbonControlToolButton(QAction* action) {
 	SARibbonControlButton* res = nullptr;
-	iterate([ &res, action ](SARibbonControlButton* btn) -> bool {
+	iterate([&res, action](SARibbonControlButton* btn) -> bool {
 		if (btn->defaultAction() == action) {
 			res = btn;
-			return false;  // 返回false退出迭代
+			return false; // 返回false退出迭代
 		}
 		return true;
 	});
 	return (res);
 }
 
-QSize SARibbonButtonGroupWidget::sizeHint() const
-{
+QSize SARibbonButtonGroupWidget::sizeHint() const {
 	return (layout()->sizeHint());
 }
 
-QSize SARibbonButtonGroupWidget::minimumSizeHint() const
-{
+QSize SARibbonButtonGroupWidget::minimumSizeHint() const {
 	return (layout()->minimumSize());
 }
 
@@ -5026,16 +4710,15 @@ QSize SARibbonButtonGroupWidget::minimumSizeHint() const
  * @param fp
  * @return 中途迭代退出返回false
  */
-bool SARibbonButtonGroupWidget::iterate(SARibbonButtonGroupWidget::FpButtonIterate fp)
-{
+bool SARibbonButtonGroupWidget::iterate(SARibbonButtonGroupWidget::FpButtonIterate fp) {
 	QLayout* lay = layout();
-	int c        = lay->count();
+	int c = lay->count();
 	for (int i = 0; i < c; ++i) {
 		auto item = lay->itemAt(i);
 		if (!item) {
 			continue;
 		}
-		SARibbonControlButton* btn = qobject_cast< SARibbonControlButton* >(item->widget());
+		SARibbonControlButton* btn = qobject_cast<SARibbonControlButton*>(item->widget());
 		if (!btn) {
 			continue;
 		}
@@ -5053,8 +4736,7 @@ bool SARibbonButtonGroupWidget::iterate(SARibbonButtonGroupWidget::FpButtonItera
  * ActionAdded时会生成窗口
  * @param e
  */
-void SARibbonButtonGroupWidget::actionEvent(QActionEvent* e)
-{
+void SARibbonButtonGroupWidget::actionEvent(QActionEvent* e) {
 	QAction* a = e->action();
 	if (!a) {
 		return;
@@ -5063,7 +4745,7 @@ void SARibbonButtonGroupWidget::actionEvent(QActionEvent* e)
 	switch (e->type()) {
 	case QEvent::ActionAdded: {
 		QWidget* w = nullptr;
-		if (QWidgetAction* widgetAction = qobject_cast< QWidgetAction* >(a)) {
+		if (QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(a)) {
 			widgetAction->setParent(this);
 			w = widgetAction->requestWidget(this);
 			if (w != nullptr) {
@@ -5072,7 +4754,7 @@ void SARibbonButtonGroupWidget::actionEvent(QActionEvent* e)
 			}
 		} else if (a->isSeparator()) {
 			SARibbonSeparatorWidget* sp = RibbonSubElementFactory->createRibbonSeparatorWidget(this);
-			w                           = sp;
+			w = sp;
 		}
 		// 不是widget，自动生成ButtonTyle
 		if (!w) {
@@ -5114,62 +4796,55 @@ void SARibbonButtonGroupWidget::actionEvent(QActionEvent* e)
 
 /*** End of inlined file: SARibbonButtonGroupWidget.cpp ***/
 
-
 /*** Start of inlined file: SARibbonStackedWidget.cpp ***/
-#include <QEventLoop>
-#include <QResizeEvent>
-#include <QMouseEvent>
-#include <QDebug>
 #include <QApplication>
+#include <QDebug>
+#include <QEventLoop>
+#include <QMouseEvent>
+#include <QResizeEvent>
 
 /**
  * @brief The SARibbonStackedWidgetPrivate class
  */
-class SARibbonStackedWidget::PrivateData
-{
+class SARibbonStackedWidget::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonStackedWidget)
 public:
 	QEventLoop* eventLoop { nullptr };
 
 public:
-	PrivateData(SARibbonStackedWidget* p) : q_ptr(p)
-	{
+	PrivateData(SARibbonStackedWidget* p)
+		: q_ptr(p) {
 	}
 
-	void init()
-	{
+	void init() {
 		// Parent->setFocusPolicy(Qt::StrongFocus);
 	}
 };
 
 SARibbonStackedWidget::SARibbonStackedWidget(QWidget* parent)
-	: QStackedWidget(parent), d_ptr(new SARibbonStackedWidget::PrivateData(this))
-{
+	: QStackedWidget(parent)
+	, d_ptr(new SARibbonStackedWidget::PrivateData(this)) {
 	d_ptr->init();
 	setNormalMode();
 }
 
-SARibbonStackedWidget::~SARibbonStackedWidget()
-{
+SARibbonStackedWidget::~SARibbonStackedWidget() {
 	if (d_ptr->eventLoop) {
 		d_ptr->eventLoop->exit();
 	}
 }
 
-void SARibbonStackedWidget::setPopupMode()
-{
+void SARibbonStackedWidget::setPopupMode() {
 	setMouseTracking(true);
 	setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
 	setFrameShape(QFrame::Panel);
 }
 
-bool SARibbonStackedWidget::isPopupMode() const
-{
+bool SARibbonStackedWidget::isPopupMode() const {
 	return (windowFlags() & Qt::Popup);
 }
 
-void SARibbonStackedWidget::setNormalMode()
-{
+void SARibbonStackedWidget::setNormalMode() {
 	if (d_ptr->eventLoop) {
 		d_ptr->eventLoop->exit();
 		d_ptr->eventLoop = nullptr;
@@ -5179,13 +4854,11 @@ void SARibbonStackedWidget::setNormalMode()
 	setFrameShape(QFrame::NoFrame);
 }
 
-bool SARibbonStackedWidget::isNormalMode() const
-{
+bool SARibbonStackedWidget::isNormalMode() const {
 	return (!isPopupMode());
 }
 
-void SARibbonStackedWidget::exec()
-{
+void SARibbonStackedWidget::exec() {
 	show();
 	if (!isPopupMode()) {
 		d_ptr->eventLoop = nullptr;
@@ -5204,16 +4877,14 @@ void SARibbonStackedWidget::exec()
  * @param to
  * @note 此操作会触发widgetRemoved(int index)信号
  */
-void SARibbonStackedWidget::moveWidget(int from, int to)
-{
+void SARibbonStackedWidget::moveWidget(int from, int to) {
 	QWidget* w = widget(from);
 
 	removeWidget(w);
 	insertWidget(to, w);
 }
 
-void SARibbonStackedWidget::hideEvent(QHideEvent* e)
-{
+void SARibbonStackedWidget::hideEvent(QHideEvent* e) {
 	if (isPopupMode()) {
 		if (d_ptr->eventLoop) {
 			d_ptr->eventLoop->exit();
@@ -5225,8 +4896,7 @@ void SARibbonStackedWidget::hideEvent(QHideEvent* e)
 	QStackedWidget::hideEvent(e);
 }
 
-void SARibbonStackedWidget::resizeEvent(QResizeEvent* e)
-{
+void SARibbonStackedWidget::resizeEvent(QResizeEvent* e) {
 	QStackedWidget::resizeEvent(e);
 	for (int i = 0; i < count(); ++i) {
 		if (i == currentIndex()) {
@@ -5239,22 +4909,20 @@ void SARibbonStackedWidget::resizeEvent(QResizeEvent* e)
 
 /*** End of inlined file: SARibbonStackedWidget.cpp ***/
 
-
 /*** Start of inlined file: SARibbonSeparatorWidget.cpp ***/
-#include <QStylePainter>
-#include <QPainter>
 #include <QDebug>
+#include <QPainter>
+#include <QStylePainter>
 
-SARibbonSeparatorWidget::SARibbonSeparatorWidget(QWidget* parent) : QFrame(parent)
-{
+SARibbonSeparatorWidget::SARibbonSeparatorWidget(QWidget* parent)
+	: QFrame(parent) {
 	setFrameShape(QFrame::VLine);
 	setFrameShadow(QFrame::Plain);
 	setLineWidth(1);
 	setMidLineWidth(1);
 }
 
-QSize SARibbonSeparatorWidget::sizeHint() const
-{
+QSize SARibbonSeparatorWidget::sizeHint() const {
 	QSize sh = QFrame::sizeHint();
 	sh.setWidth(1);
 	return sh;
@@ -5262,21 +4930,19 @@ QSize SARibbonSeparatorWidget::sizeHint() const
 
 /*** End of inlined file: SARibbonSeparatorWidget.cpp ***/
 
-
 /*** Start of inlined file: SARibbonCtrlContainer.cpp ***/
-#include <QHBoxLayout>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QStylePainter>
-#include <QDebug>
-#include <QLabel>
 #include <QApplication>
+#include <QDebug>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QScreen>
+#include <QStylePainter>
 /**
  * @brief The SARibbonCtrlContainerPrivate class
  */
-class SARibbonCtrlContainer::PrivateData
-{
+class SARibbonCtrlContainer::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonCtrlContainer)
 public:
 	QWidget* containerWidget { nullptr };
@@ -5285,8 +4951,8 @@ public:
 	QLabel* labelText { nullptr };
 	QSize iconSize { 24, 24 };
 	QIcon icon;
-	PrivateData(SARibbonCtrlContainer* p) : q_ptr(p)
-	{
+	PrivateData(SARibbonCtrlContainer* p)
+		: q_ptr(p) {
 		horizontalLayout = new QHBoxLayout(p);
 		horizontalLayout->setSpacing(0);
 		horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
@@ -5302,8 +4968,7 @@ public:
 		horizontalLayout->addWidget(labelText);
 	}
 
-	void setContainerWidget(QWidget* w)
-	{
+	void setContainerWidget(QWidget* w) {
 		if (containerWidget) {
 			// 原来有widget
 			QWidget* oldwidget = containerWidget;
@@ -5325,8 +4990,7 @@ public:
 		w->setSizePolicy(sizePolicy);
 	}
 
-	void takeContainerWidget(QWidget* w)
-	{
+	void takeContainerWidget(QWidget* w) {
 		int i = horizontalLayout->indexOf(w);
 		if (i >= 0) {
 			QLayoutItem* item = horizontalLayout->takeAt(i);
@@ -5339,31 +5003,26 @@ public:
 // SARibbonCtrlContainer
 //===================================================
 SARibbonCtrlContainer::SARibbonCtrlContainer(QWidget* parent)
-	: QWidget(parent), d_ptr(new SARibbonCtrlContainer::PrivateData(this))
-{
+	: QWidget(parent)
+	, d_ptr(new SARibbonCtrlContainer::PrivateData(this)) {
 }
 
-SARibbonCtrlContainer::~SARibbonCtrlContainer()
-{
+SARibbonCtrlContainer::~SARibbonCtrlContainer() {
 }
 
-QWidget* SARibbonCtrlContainer::containerWidget()
-{
+QWidget* SARibbonCtrlContainer::containerWidget() {
 	return (d_ptr->containerWidget);
 }
 
-const QWidget* SARibbonCtrlContainer::containerWidget() const
-{
+const QWidget* SARibbonCtrlContainer::containerWidget() const {
 	return (d_ptr->containerWidget);
 }
 
-void SARibbonCtrlContainer::setEnableShowIcon(bool b)
-{
+void SARibbonCtrlContainer::setEnableShowIcon(bool b) {
 	d_ptr->labelPixmap->setVisible(b);
 }
 
-void SARibbonCtrlContainer::setEnableShowTitle(bool b)
-{
+void SARibbonCtrlContainer::setEnableShowTitle(bool b) {
 	d_ptr->labelText->setVisible(b);
 }
 
@@ -5371,8 +5030,7 @@ void SARibbonCtrlContainer::setEnableShowTitle(bool b)
  * @brief 判断是否存在容器窗口
  * @return
  */
-bool SARibbonCtrlContainer::hasContainerWidget() const
-{
+bool SARibbonCtrlContainer::hasContainerWidget() const {
 	return (d_ptr->containerWidget != nullptr);
 }
 
@@ -5380,15 +5038,13 @@ bool SARibbonCtrlContainer::hasContainerWidget() const
  * @brief 设置图标
  * @param i
  */
-void SARibbonCtrlContainer::setIcon(const QIcon& i)
-{
-	d_ptr->icon    = i;
+void SARibbonCtrlContainer::setIcon(const QIcon& i) {
+	d_ptr->icon = i;
 	QPixmap pixmap = i.pixmap(d_ptr->iconSize);
 	d_ptr->labelPixmap->setPixmap(pixmap);
 }
 
-void SARibbonCtrlContainer::setIcon(const QPixmap& pixmap)
-{
+void SARibbonCtrlContainer::setIcon(const QPixmap& pixmap) {
 	d_ptr->labelPixmap->setPixmap(pixmap);
 }
 
@@ -5396,8 +5052,7 @@ void SARibbonCtrlContainer::setIcon(const QPixmap& pixmap)
  * @brief 获取图标
  * @return
  */
-QIcon SARibbonCtrlContainer::icon() const
-{
+QIcon SARibbonCtrlContainer::icon() const {
 	return d_ptr->icon;
 }
 
@@ -5405,8 +5060,7 @@ QIcon SARibbonCtrlContainer::icon() const
  * @brief 设置文字
  * @param t
  */
-void SARibbonCtrlContainer::setText(const QString& t)
-{
+void SARibbonCtrlContainer::setText(const QString& t) {
 	d_ptr->labelText->setText(t);
 }
 
@@ -5414,13 +5068,11 @@ void SARibbonCtrlContainer::setText(const QString& t)
  * @brief 获取文字
  * @return
  */
-QString SARibbonCtrlContainer::text() const
-{
+QString SARibbonCtrlContainer::text() const {
 	return d_ptr->labelText->text();
 }
 
-void SARibbonCtrlContainer::setContainerWidget(QWidget* w)
-{
+void SARibbonCtrlContainer::setContainerWidget(QWidget* w) {
 	d_ptr->setContainerWidget(w);
 }
 
@@ -5428,13 +5080,11 @@ void SARibbonCtrlContainer::setContainerWidget(QWidget* w)
  * @brief 获取显示icon的窗口
  * @return
  */
-QWidget* SARibbonCtrlContainer::iconWidget() const
-{
+QWidget* SARibbonCtrlContainer::iconWidget() const {
 	return d_ptr->labelPixmap;
 }
 
 /*** End of inlined file: SARibbonCtrlContainer.cpp ***/
-
 
 /*** Start of inlined file: SARibbonQuickAccessBar.cpp ***/
 #include <QGuiApplication>
@@ -5442,8 +5092,7 @@ QWidget* SARibbonCtrlContainer::iconWidget() const
 /**
  * @brief The SARibbonQuickAccessBarPrivate class
  */
-class SARibbonQuickAccessBar::PrivateData
-{
+class SARibbonQuickAccessBar::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonQuickAccessBar)
 public:
 	PrivateData(SARibbonQuickAccessBar* p);
@@ -5452,42 +5101,37 @@ public:
 	SARibbonButtonGroupWidget* groupWidget { nullptr };
 };
 
-SARibbonQuickAccessBar::PrivateData::PrivateData(SARibbonQuickAccessBar* p) : q_ptr(p)
-{
+SARibbonQuickAccessBar::PrivateData::PrivateData(SARibbonQuickAccessBar* p)
+	: q_ptr(p) {
 }
 
 //===================================================
 // SARibbonQuickAccessBar
 //===================================================
 SARibbonQuickAccessBar::SARibbonQuickAccessBar(QWidget* parent)
-	: SARibbonCtrlContainer(parent), d_ptr(new SARibbonQuickAccessBar::PrivateData(this))
-{
+	: SARibbonCtrlContainer(parent)
+	, d_ptr(new SARibbonQuickAccessBar::PrivateData(this)) {
 	d_ptr->groupWidget = new SARibbonButtonGroupWidget(this);
 	d_ptr->groupWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding));
 	setContainerWidget(d_ptr->groupWidget);
 }
 
-SARibbonQuickAccessBar::~SARibbonQuickAccessBar()
-{
+SARibbonQuickAccessBar::~SARibbonQuickAccessBar() {
 }
 
-void SARibbonQuickAccessBar::addSeparator()
-{
+void SARibbonQuickAccessBar::addSeparator() {
 	d_ptr->groupWidget->addSeparator();
 }
 
-void SARibbonQuickAccessBar::addAction(QAction* act, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonQuickAccessBar::addAction(QAction* act, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	d_ptr->groupWidget->addAction(act, buttonStyle, popMode);
 }
 
-void SARibbonQuickAccessBar::addWidget(QWidget* w)
-{
+void SARibbonQuickAccessBar::addWidget(QWidget* w) {
 	d_ptr->groupWidget->addWidget(w);
 }
 
-void SARibbonQuickAccessBar::addMenu(QMenu* m, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonQuickAccessBar::addMenu(QMenu* m, Qt::ToolButtonStyle buttonStyle, QToolButton::ToolButtonPopupMode popMode) {
 	d_ptr->groupWidget->addMenu(m, buttonStyle, popMode);
 }
 
@@ -5495,8 +5139,7 @@ void SARibbonQuickAccessBar::addMenu(QMenu* m, Qt::ToolButtonStyle buttonStyle, 
  * @brief 获取内部管理的ButtonGroupWidget
  * @return
  */
-SARibbonButtonGroupWidget* SARibbonQuickAccessBar::buttonGroupWidget()
-{
+SARibbonButtonGroupWidget* SARibbonQuickAccessBar::buttonGroupWidget() {
 	return d_ptr->groupWidget;
 }
 
@@ -5504,8 +5147,7 @@ SARibbonButtonGroupWidget* SARibbonQuickAccessBar::buttonGroupWidget()
  * @brief 获取内部管理的ButtonGroupWidget
  * @return
  */
-const SARibbonButtonGroupWidget* SARibbonQuickAccessBar::buttonGroupWidget() const
-{
+const SARibbonButtonGroupWidget* SARibbonQuickAccessBar::buttonGroupWidget() const {
 	return d_ptr->groupWidget;
 }
 
@@ -5513,8 +5155,7 @@ const SARibbonButtonGroupWidget* SARibbonQuickAccessBar::buttonGroupWidget() con
  * @brief 图标尺寸
  * @param s
  */
-void SARibbonQuickAccessBar::setIconSize(const QSize& s)
-{
+void SARibbonQuickAccessBar::setIconSize(const QSize& s) {
 	d_ptr->groupWidget->setIconSize(s);
 }
 
@@ -5522,81 +5163,72 @@ void SARibbonQuickAccessBar::setIconSize(const QSize& s)
  * @brief SARibbonQuickAccessBar::iconSize
  * @return
  */
-QSize SARibbonQuickAccessBar::iconSize() const
-{
+QSize SARibbonQuickAccessBar::iconSize() const {
 	return d_ptr->groupWidget->iconSize();
 }
 
 /*** End of inlined file: SARibbonQuickAccessBar.cpp ***/
 
-
 /*** Start of inlined file: SARibbonTabBar.cpp ***/
-SARibbonTabBar::SARibbonTabBar(QWidget* parent) : QTabBar(parent), m_tabMargin(6, 0, 0, 0)
-{
+SARibbonTabBar::SARibbonTabBar(QWidget* parent)
+	: QTabBar(parent)
+	, m_tabMargin(6, 0, 0, 0) {
 	setExpanding(false);
 }
 
-const QMargins& SARibbonTabBar::tabMargin() const
-{
+const QMargins& SARibbonTabBar::tabMargin() const {
 	return (m_tabMargin);
 }
 
-void SARibbonTabBar::setTabMargin(const QMargins& tabMargin)
-{
+void SARibbonTabBar::setTabMargin(const QMargins& tabMargin) {
 	m_tabMargin = tabMargin;
 }
 
 /*** End of inlined file: SARibbonTabBar.cpp ***/
 
-
 /*** Start of inlined file: SARibbonControlButton.cpp ***/
-SARibbonControlButton::SARibbonControlButton(QWidget* parent) : QToolButton(parent)
-{
+SARibbonControlButton::SARibbonControlButton(QWidget* parent)
+	: QToolButton(parent) {
 }
 
-SARibbonControlToolButton::SARibbonControlToolButton(QWidget* parent) : QToolButton(parent)
-{
+SARibbonControlToolButton::SARibbonControlToolButton(QWidget* parent)
+	: QToolButton(parent) {
 }
 
 /*** End of inlined file: SARibbonControlButton.cpp ***/
 
-
 /*** Start of inlined file: SARibbonMenu.cpp ***/
 #include <QWidgetAction>
 
-SARibbonMenu::SARibbonMenu(QWidget *parent) : QMenu(parent)
-{
+SARibbonMenu::SARibbonMenu(QWidget* parent)
+	: QMenu(parent) {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-SARibbonMenu::SARibbonMenu(const QString& title, QWidget *parent) : QMenu(title, parent)
-{
+SARibbonMenu::SARibbonMenu(const QString& title, QWidget* parent)
+	: QMenu(title, parent) {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-QAction *SARibbonMenu::addRibbonMenu(SARibbonMenu *menu)
-{
+QAction* SARibbonMenu::addRibbonMenu(SARibbonMenu* menu) {
 	return (QMenu::addMenu(menu));
 }
 
-SARibbonMenu *SARibbonMenu::addRibbonMenu(const QString& title)
-{
-	SARibbonMenu *menu = new SARibbonMenu(title, this);
+SARibbonMenu* SARibbonMenu::addRibbonMenu(const QString& title) {
+	SARibbonMenu* menu = new SARibbonMenu(title, this);
 
 	return (menu);
 }
 
-SARibbonMenu *SARibbonMenu::addRibbonMenu(const QIcon& icon, const QString& title)
-{
-	SARibbonMenu *menu = new SARibbonMenu(title, this);
+SARibbonMenu* SARibbonMenu::addRibbonMenu(const QIcon& icon, const QString& title) {
+	SARibbonMenu* menu = new SARibbonMenu(title, this);
 
 	menu->setIcon(icon);
 	return (menu);
 }
 
-QAction *SARibbonMenu::addWidget(QWidget *w)
-{
-	QWidgetAction *action = new QWidgetAction(this);
+QAction* SARibbonMenu::addWidget(QWidget* w) {
+	QWidgetAction* action = new QWidgetAction(this);
 
 	action->setDefaultWidget(w);
 	addAction(action);
@@ -5605,69 +5237,70 @@ QAction *SARibbonMenu::addWidget(QWidget *w)
 
 /*** End of inlined file: SARibbonMenu.cpp ***/
 
-
 /*** Start of inlined file: SARibbonPannelOptionButton.cpp ***/
 #include <QAction>
 
-SARibbonPannelOptionButton::SARibbonPannelOptionButton(QWidget* parent) : QToolButton(parent)
-{
+SARibbonPannelOptionButton::SARibbonPannelOptionButton(QWidget* parent)
+	: QToolButton(parent) {
 	setAutoRaise(true);
 	setCheckable(false);
 	setToolButtonStyle(Qt::ToolButtonIconOnly);
 	setIconSize(QSize(10, 10));
-	setIcon(QIcon(":/image/resource/ribbonPannelOptionButton.png"));
+	setIcon(QIcon(":/images/images/ribbonPannelOptionButton.png"));
 }
 
 /*** End of inlined file: SARibbonPannelOptionButton.cpp ***/
 
-
 /*** Start of inlined file: SARibbonPannelItem.cpp ***/
 SARibbonPannelItem::SARibbonPannelItem(QWidget* widget)
-	: QWidgetItem(widget), rowIndex(-1), columnIndex(-1), action(nullptr), customWidget(false), rowProportion(Large)
-{
+	: QWidgetItem(widget)
+	, rowIndex(-1)
+	, columnIndex(-1)
+	, action(nullptr)
+	, customWidget(false)
+	, rowProportion(Large) {
 }
 
-bool SARibbonPannelItem::isEmpty() const
-{
+bool SARibbonPannelItem::isEmpty() const {
 	return (action == nullptr || !action->isVisible());
 }
 
 /*** End of inlined file: SARibbonPannelItem.cpp ***/
 
-
 /*** Start of inlined file: SARibbonPannelLayout.cpp ***/
-#include <QWidgetAction>
 #include <QQueue>
+#include <QWidgetAction>
 
 #define SARibbonPannelLayout_DEBUG_PRINT 1
-#define HELP_DRAW_RECT(p, rect)                                                                                        \
-	do {                                                                                                               \
-		p.save();                                                                                                      \
-		QPen _pen(Qt::DashLine);                                                                                       \
-		_pen.setColor(Qt::blue);                                                                                       \
-		p.setPen(_pen);                                                                                                \
-		p.setBrush(QBrush());                                                                                          \
-		p.drawRect(rect);                                                                                              \
-		p.restore();                                                                                                   \
+#define HELP_DRAW_RECT(p, rect)  \
+	do {                         \
+		p.save();                \
+		QPen _pen(Qt::DashLine); \
+		_pen.setColor(Qt::blue); \
+		p.setPen(_pen);          \
+		p.setBrush(QBrush());    \
+		p.drawRect(rect);        \
+		p.restore();             \
 	} while (0)
 
 SARibbonPannelLayout::SARibbonPannelLayout(QWidget* p)
-	: QLayout(p), m_columnCount(0), m_expandFlag(false), m_dirty(true)
-{
+	: QLayout(p)
+	, m_columnCount(0)
+	, m_expandFlag(false)
+	, m_dirty(true) {
 	setSpacing(1);
-	SARibbonPannel* tb = qobject_cast< SARibbonPannel* >(p);
+	SARibbonPannel* tb = qobject_cast<SARibbonPannel*>(p);
 
 	if (!tb) {
 		return;
 	}
 }
 
-SARibbonPannelLayout::~SARibbonPannelLayout()
-{
+SARibbonPannelLayout::~SARibbonPannelLayout() {
 	// 参考QToolBarLayout
 	while (!m_items.isEmpty()) {
 		SARibbonPannelItem* item = m_items.takeFirst();
-		if (QWidgetAction* widgetAction = qobject_cast< QWidgetAction* >(item->action)) {
+		if (QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(item->action)) {
 			if (item->customWidget) {
 				widgetAction->releaseWidget(item->widget());
 			}
@@ -5681,8 +5314,7 @@ SARibbonPannelLayout::~SARibbonPannelLayout()
  * @param action
  * @return 没有查到返回-1
  */
-int SARibbonPannelLayout::indexByAction(QAction* action) const
-{
+int SARibbonPannelLayout::indexByAction(QAction* action) const {
 	for (int i = 0; i < m_items.count(); ++i) {
 		if (m_items.at(i)->action == action) {
 			return (i);
@@ -5695,13 +5327,11 @@ int SARibbonPannelLayout::indexByAction(QAction* action) const
  * @brief 获取ribbonpannel
  * @return
  */
-SARibbonPannel* SARibbonPannelLayout::ribbonPannel() const
-{
-	return qobject_cast< SARibbonPannel* >(parentWidget());
+SARibbonPannel* SARibbonPannelLayout::ribbonPannel() const {
+	return qobject_cast<SARibbonPannel*>(parentWidget());
 }
 
-void SARibbonPannelLayout::addItem(QLayoutItem* item)
-{
+void SARibbonPannelLayout::addItem(QLayoutItem* item) {
 	Q_UNUSED(item);
 	qWarning("SARibbonPannelLayout::addItem(): please use addAction() instead");
 	return;
@@ -5712,10 +5342,9 @@ void SARibbonPannelLayout::addItem(QLayoutItem* item)
  * @param act
  * @param rp 布局策略
  */
-void SARibbonPannelLayout::insertAction(int index, QAction* act, SARibbonPannelItem::RowProportion rp)
-{
-	index                    = qMax(0, index);
-	index                    = qMin(m_items.count(), index);
+void SARibbonPannelLayout::insertAction(int index, QAction* act, SARibbonPannelItem::RowProportion rp) {
+	index = qMax(0, index);
+	index = qMin(m_items.count(), index);
 	SARibbonPannelItem* item = createItem(act, rp);
 
 	if (item) {
@@ -5731,8 +5360,7 @@ void SARibbonPannelLayout::insertAction(int index, QAction* act, SARibbonPannelI
  * @note 要去除OptionAction直接传入nullptr即可
  * @note SARibbonPannel不对QAction的destroy进行关联，如果外部对action进行delete，需要先传入nullptr给addOptionAction
  */
-void SARibbonPannelLayout::setOptionAction(QAction* action)
-{
+void SARibbonPannelLayout::setOptionAction(QAction* action) {
 	SARibbonPannel* p = ribbonPannel();
 	if (!p) {
 		return;
@@ -5749,7 +5377,7 @@ void SARibbonPannelLayout::setOptionAction(QAction* action)
 		}
 		m_optionActionBtn->setDefaultAction(action);
 		if (action->icon().isNull()) {
-			m_optionActionBtn->setIcon(QIcon(":/image/resource/ribbonPannelOptionButton.png"));
+			m_optionActionBtn->setIcon(QIcon(":/images/images/ribbonPannelOptionButton.png"));
 		}
 		// 标记需要重新计算尺寸
 		invalidate();
@@ -5769,27 +5397,24 @@ void SARibbonPannelLayout::setOptionAction(QAction* action)
  * @brief 判断是否存在OptionAction
  * @return 存在返回true
  */
-bool SARibbonPannelLayout::isHaveOptionAction() const
-{
+bool SARibbonPannelLayout::isHaveOptionAction() const {
 	return (m_optionActionBtn != nullptr);
 }
 
-QLayoutItem* SARibbonPannelLayout::itemAt(int index) const
-{
+QLayoutItem* SARibbonPannelLayout::itemAt(int index) const {
 	if ((index < 0) || (index >= m_items.count())) {
 		return (nullptr);
 	}
 	return (m_items.at(index));
 }
 
-QLayoutItem* SARibbonPannelLayout::takeAt(int index)
-{
+QLayoutItem* SARibbonPannelLayout::takeAt(int index) {
 	if ((index < 0) || (index >= m_items.count())) {
 		return (nullptr);
 	}
 	SARibbonPannelItem* item = m_items.takeAt(index);
 
-	QWidgetAction* widgetAction = qobject_cast< QWidgetAction* >(item->action);
+	QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(item->action);
 
 	if ((widgetAction != 0) && item->customWidget) {
 		widgetAction->releaseWidget(item->widget());
@@ -5803,35 +5428,29 @@ QLayoutItem* SARibbonPannelLayout::takeAt(int index)
 	return (item);
 }
 
-int SARibbonPannelLayout::count() const
-{
+int SARibbonPannelLayout::count() const {
 	return (m_items.count());
 }
 
-bool SARibbonPannelLayout::isEmpty() const
-{
+bool SARibbonPannelLayout::isEmpty() const {
 
 	return (m_items.isEmpty());
 }
 
-void SARibbonPannelLayout::invalidate()
-{
+void SARibbonPannelLayout::invalidate() {
 	m_dirty = true;
 	QLayout::invalidate();
 }
 
-Qt::Orientations SARibbonPannelLayout::expandingDirections() const
-{
+Qt::Orientations SARibbonPannelLayout::expandingDirections() const {
 	return (Qt::Horizontal);
 }
 
-QSize SARibbonPannelLayout::minimumSize() const
-{
+QSize SARibbonPannelLayout::minimumSize() const {
 	return (m_sizeHint);
 }
 
-QSize SARibbonPannelLayout::sizeHint() const
-{
+QSize SARibbonPannelLayout::sizeHint() const {
 #if SARibbonPannelLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	if (SARibbonPannel* pannel = ribbonPannel()) {
 		qDebug() << "| |-SARibbonPannelLayout sizeHint,sizeHint = " << m_sizeHint;
@@ -5845,12 +5464,11 @@ QSize SARibbonPannelLayout::sizeHint() const
  * @param action
  * @return 如果没有返回nullptr
  */
-SARibbonPannelItem* SARibbonPannelLayout::pannelItem(QAction* action) const
-{
+SARibbonPannelItem* SARibbonPannelLayout::pannelItem(QAction* action) const {
 	int index = indexByAction(action);
 
 	if (index >= 0) {
-		return (m_items[ index ]);
+		return (m_items[index]);
 	}
 	return (nullptr);
 }
@@ -5859,8 +5477,7 @@ SARibbonPannelItem* SARibbonPannelLayout::pannelItem(QAction* action) const
  * @brief 获取最后一个添加的item
  * @return 如果没有返回nullptr
  */
-SARibbonPannelItem* SARibbonPannelLayout::lastItem() const
-{
+SARibbonPannelItem* SARibbonPannelLayout::lastItem() const {
 	if (m_items.isEmpty()) {
 		return (nullptr);
 	}
@@ -5871,8 +5488,7 @@ SARibbonPannelItem* SARibbonPannelLayout::lastItem() const
  * @brief 获取最后生成的窗口
  * @return 如果无窗口或者item为空，返回nullptr
  */
-QWidget* SARibbonPannelLayout::lastWidget() const
-{
+QWidget* SARibbonPannelLayout::lastWidget() const {
 	SARibbonPannelItem* item = lastItem();
 
 	if (item) {
@@ -5887,8 +5503,7 @@ QWidget* SARibbonPannelLayout::lastWidget() const
  * @param to
  * @note 移动完后所有都失效，需要重新布局
  */
-void SARibbonPannelLayout::move(int from, int to)
-{
+void SARibbonPannelLayout::move(int from, int to) {
 	if (from == to) {
 		return;
 	}
@@ -5906,21 +5521,18 @@ void SARibbonPannelLayout::move(int from, int to)
  * @brief 判断是否需要重新布局
  * @return
  */
-bool SARibbonPannelLayout::isDirty() const
-{
+bool SARibbonPannelLayout::isDirty() const {
 	return (m_dirty);
 }
 
-void SARibbonPannelLayout::updateGeomArray()
-{
+void SARibbonPannelLayout::updateGeomArray() {
 	updateGeomArray(geometry());
 }
 
 /**
  * @brief 布局所有action
  */
-void SARibbonPannelLayout::doLayout()
-{
+void SARibbonPannelLayout::doLayout() {
 #if SARibbonPannelLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	if (SARibbonPannel* pannel = ribbonPannel()) {
 		qDebug() << "| |-SARibbonPannelLayout layoutActions,pannel name = " << pannel->pannelName();
@@ -5929,7 +5541,7 @@ void SARibbonPannelLayout::doLayout()
 	if (isDirty()) {
 		updateGeomArray();
 	}
-	QList< QWidget* > showWidgets, hideWidgets;
+	QList<QWidget*> showWidgets, hideWidgets;
 	SARibbonPannel* pannel = ribbonPannel();
 	for (SARibbonPannelItem* item : qAsConst(m_items)) {
 		if (item->isEmpty()) {
@@ -5986,31 +5598,30 @@ void SARibbonPannelLayout::doLayout()
  * 否则会内部生成一个SARibbonToolButton
  *
  */
-SARibbonPannelItem* SARibbonPannelLayout::createItem(QAction* action, SARibbonPannelItem::RowProportion rp)
-{
-	bool customWidget      = false;
-	QWidget* widget        = nullptr;
-	SARibbonPannel* pannel = qobject_cast< SARibbonPannel* >(parentWidget());
+SARibbonPannelItem* SARibbonPannelLayout::createItem(QAction* action, SARibbonPannelItem::RowProportion rp) {
+	bool customWidget = false;
+	QWidget* widget = nullptr;
+	SARibbonPannel* pannel = qobject_cast<SARibbonPannel*>(parentWidget());
 
 	if (!pannel) {
 		// 在没有pannel这个函数会返回nullptr
 		return (nullptr);
 	}
-	if (QWidgetAction* widgetAction = qobject_cast< QWidgetAction* >(action)) {
+	if (QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(action)) {
 		widget = widgetAction->requestWidget(pannel);
 		if (widget != nullptr) {
 			widget->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-			customWidget = true;  // 标记为true，在移除的时候是不会对这个窗口进行删除，false默认会进行删除如SARibbonSeparatorWidget和SARibbonToolButton
+			customWidget = true; // 标记为true，在移除的时候是不会对这个窗口进行删除，false默认会进行删除如SARibbonSeparatorWidget和SARibbonToolButton
 		}
 	} else if (action->isSeparator()) {
 		SARibbonSeparatorWidget* sep = RibbonSubElementFactory->createRibbonSeparatorWidget(pannel);
-		widget                       = sep;
+		widget = sep;
 	}
 	// 不是widget，自动生成SARibbonToolbutton
 	if (!widget) {
 		SARibbonToolButton::RibbonButtonType buttonType = ((rp == SARibbonPannelItem::Large)
-															   ? SARibbonToolButton::LargeButton
-															   : SARibbonToolButton::SmallButton);
+				? SARibbonToolButton::LargeButton
+				: SARibbonToolButton::SmallButton);
 
 		SARibbonToolButton* button = RibbonSubElementFactory->createRibbonToolButton(pannel);
 		button->setFocusPolicy(Qt::NoFocus);
@@ -6029,31 +5640,30 @@ SARibbonPannelItem* SARibbonPannelLayout::createItem(QAction* action, SARibbonPa
 	SARibbonPannelItem* result = new SARibbonPannelItem(widget);
 
 	result->rowProportion = rp;
-	result->customWidget  = customWidget;
-	result->action        = action;
+	result->customWidget = customWidget;
+	result->action = action;
 	return (result);
 }
 
 /**
  * @brief 更新尺寸
  */
-void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
-{
-	SARibbonPannel* pannel = qobject_cast< SARibbonPannel* >(parentWidget());
+void SARibbonPannelLayout::updateGeomArray(const QRect& setrect) {
+	SARibbonPannel* pannel = qobject_cast<SARibbonPannel*>(parentWidget());
 
 	if (!pannel) {
 		return;
 	}
 
-	const int height    = setrect.height();
+	const int height = setrect.height();
 	const QMargins& mag = contentsMargins();
-	const int spacing   = this->spacing();
-	int x               = mag.left();
-	const int yBegin    = mag.top();
-	int titleH          = (m_titleHeight >= 0) ? m_titleHeight : 0;  // 防止负数影响
-	int titleSpace      = (m_titleHeight >= 0) ? m_titleSpace : 0;  // 对于没有标题的情况，spacing就不生效
+	const int spacing = this->spacing();
+	int x = mag.left();
+	const int yBegin = mag.top();
+	int titleH = (m_titleHeight >= 0) ? m_titleHeight : 0; // 防止负数影响
+	int titleSpace = (m_titleHeight >= 0) ? m_titleSpace : 0; // 对于没有标题的情况，spacing就不生效
 	if (!isEnableShowPannelTitle()) {
-		titleH     = 0;
+		titleH = 0;
 		titleSpace = 0;
 	}
 	// 获取pannel的布局模式 3行或者2行
@@ -6062,7 +5672,7 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 	// largeHeight是对应large占比的高度
 	const int largeHeight = height - mag.bottom() - mag.top() - titleH - titleSpace;
 	const int yTitleBegin = height - mag.bottom() - titleH;
-	m_largeHeight         = largeHeight;
+	m_largeHeight = largeHeight;
 	// 计算smallHeight的高度
 	const int smallHeight = (largeHeight - (rowCount - 1) * spacing) / rowCount;
 	// Medium行的y位置
@@ -6075,7 +5685,7 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 	const int ySmallRow2 = yBegin + 2 * (smallHeight + spacing);
 	// row用于记录下个item应该属于第几行，item->rowIndex用于记录当前处于第几行，
 	// item->rowIndex主要用于SARibbonPannelItem::Medium
-	short row  = 0;
+	short row = 0;
 	int column = 0;
 	// 记录每列最大的宽度
 	int columMaxWidth = 0;
@@ -6089,19 +5699,19 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 #endif
 	// 本列第一、二行占比
 	SARibbonPannelItem::RowProportion thisColumnRP0 = SARibbonPannelItem::None;
-	SARibbonPannelItem* lastGeomItem                = nullptr;  // 记录最后一个设置位置的item
+	SARibbonPannelItem* lastGeomItem = nullptr; // 记录最后一个设置位置的item
 	for (int i = 0; i < itemCount; ++i) {
 		SARibbonPannelItem* item = m_items.at(i);
 		if (item->isEmpty()) {
 			// 如果是hide就直接跳过
-			item->rowIndex    = -1;
+			item->rowIndex = -1;
 			item->columnIndex = -1;
 			continue;
 		}
 
 		QSize hint = item->sizeHint();
 #if SARibbonPannelLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
-		if (SARibbonToolButton* tb = qobject_cast< SARibbonToolButton* >(item->widget())) {
+		if (SARibbonToolButton* tb = qobject_cast<SARibbonToolButton*>(item->widget())) {
 			auto ss__ = tb->sizeHint();
 			debug_print__log__ += QString("| | |-[%1]SARibbonToolButton.sizeHint=(%2,%3),ButtonText=%4\n")
 									  .arg(i)
@@ -6136,13 +5746,13 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 				++column;
 			}
 			//
-			item->rowIndex            = 0;
-			item->columnIndex         = column;
+			item->rowIndex = 0;
+			item->columnIndex = column;
 			item->itemWillSetGeometry = QRect(x, yBegin, hint.width(), largeHeight);
-			columMaxWidth             = hint.width();
+			columMaxWidth = hint.width();
 			// 换列，x自动递增到下个坐标，列数增加，行数归零，最大列宽归零
 			x += (columMaxWidth + spacing);
-			row           = 0;
+			row = 0;
 			columMaxWidth = 0;
 			++column;
 		} break;
@@ -6151,44 +5761,44 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 			// 2行模式下Medium和small等价
 			if (2 == rowCount) {
 				if (0 == row) {
-					item->rowIndex            = 0;
-					item->columnIndex         = column;
+					item->rowIndex = 0;
+					item->columnIndex = column;
 					item->itemWillSetGeometry = QRect(x, yMediumRow0, hint.width(), smallHeight);
-					thisColumnRP0             = SARibbonPannelItem::Medium;
-					columMaxWidth             = hint.width();
+					thisColumnRP0 = SARibbonPannelItem::Medium;
+					columMaxWidth = hint.width();
 					// 下个row为1
 					row = 1;
 					// x不变
 				} else {
-					item->rowIndex            = 1;
-					item->columnIndex         = column;
+					item->rowIndex = 1;
+					item->columnIndex = column;
 					item->itemWillSetGeometry = QRect(x, yMediumRow1, hint.width(), smallHeight);
 					// 和上个进行比较得到最长宽度
 					columMaxWidth = qMax(columMaxWidth, hint.width());
 					// 换列，x自动递增到下个坐标，列数增加，行数归零，最大列宽归零
 					x += (columMaxWidth + spacing);
-					row           = 0;
+					row = 0;
 					columMaxWidth = 0;
 					++column;
 				}
 			} else {
 				// 3行模式
 				if (0 == row) {
-					item->rowIndex            = 0;
-					item->columnIndex         = column;
+					item->rowIndex = 0;
+					item->columnIndex = column;
 					item->itemWillSetGeometry = QRect(x, yMediumRow0, hint.width(), smallHeight);
-					thisColumnRP0             = SARibbonPannelItem::Medium;
-					columMaxWidth             = hint.width();
-					row                       = 1;
+					thisColumnRP0 = SARibbonPannelItem::Medium;
+					columMaxWidth = hint.width();
+					row = 1;
 					// x不变
 				} else if (1 == row) {
-					item->rowIndex            = 1;
-					item->columnIndex         = column;
+					item->rowIndex = 1;
+					item->columnIndex = column;
 					item->itemWillSetGeometry = QRect(x, yMediumRow1, hint.width(), smallHeight);
-					columMaxWidth             = qMax(columMaxWidth, hint.width());
+					columMaxWidth = qMax(columMaxWidth, hint.width());
 					// 换列，x自动递增到下个坐标，列数增加，行数归零，最大列宽归零
 					x += (columMaxWidth + spacing);
-					row           = 0;
+					row = 0;
 					columMaxWidth = 0;
 					++column;
 				} else {
@@ -6198,12 +5808,12 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 					x += (columMaxWidth + spacing);
 					++column;
 					// 换列后此时等价于0 == row
-					item->rowIndex            = 0;
-					item->columnIndex         = column;
+					item->rowIndex = 0;
+					item->columnIndex = column;
 					item->itemWillSetGeometry = QRect(x, yMediumRow0, hint.width(), smallHeight);
-					thisColumnRP0             = SARibbonPannelItem::Medium;
-					columMaxWidth             = hint.width();
-					row                       = 1;
+					thisColumnRP0 = SARibbonPannelItem::Medium;
+					columMaxWidth = hint.width();
+					row = 1;
 				}
 			}
 		} break;
@@ -6211,18 +5821,18 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 		case SARibbonPannelItem::Small: {
 			if (0 == row) {
 				// 第一行
-				item->rowIndex            = 0;
-				item->columnIndex         = column;
+				item->rowIndex = 0;
+				item->columnIndex = column;
 				item->itemWillSetGeometry = QRect(x, ySmallRow0, hint.width(), smallHeight);
-				thisColumnRP0             = SARibbonPannelItem::Small;
-				columMaxWidth             = hint.width();
+				thisColumnRP0 = SARibbonPannelItem::Small;
+				columMaxWidth = hint.width();
 				// 下个row为1
 				row = 1;
 				// x不变
 			} else if (1 == row) {
 				// 第二行
-				item->rowIndex            = 1;
-				item->columnIndex         = column;
+				item->rowIndex = 1;
+				item->columnIndex = column;
 				item->itemWillSetGeometry = QRect(x, ySmallRow1, hint.width(), smallHeight);
 				if ((3 == rowCount) && (SARibbonPannelItem::Medium == thisColumnRP0)) {
 					// 三行模式，并且第一行是Medium
@@ -6235,7 +5845,7 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 					// 两行模式，换列
 					// 换列，x自动递增到下个坐标，列数增加，行数归零，最大列宽归零
 					x += (columMaxWidth + spacing);
-					row           = 0;
+					row = 0;
 					columMaxWidth = 0;
 					++column;
 				} else {
@@ -6247,20 +5857,20 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 					// 三行模式，并且第一行是Medium，换列
 					// 换列，x自动递增到下个坐标，列数增加，行数归零，最大列宽归零
 					x += (columMaxWidth + spacing);
-					row           = 0;
+					row = 0;
 					columMaxWidth = 0;
 					++column;
 				}
 			} else {
 				// 第三行
-				item->rowIndex            = 2;
-				item->columnIndex         = column;
+				item->rowIndex = 2;
+				item->columnIndex = column;
 				item->itemWillSetGeometry = QRect(x, ySmallRow2, hint.width(), smallHeight);
 				// 和上个进行比较得到最长宽度
 				columMaxWidth = qMax(columMaxWidth, hint.width());
 				// 换列，x自动递增到下个坐标，列数增加，行数归零，最大列宽归零
 				x += (columMaxWidth + spacing);
-				row           = 0;
+				row = 0;
 				columMaxWidth = 0;
 				++column;
 			}
@@ -6274,7 +5884,7 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 	}
 	// 最后一个元素，更新列数
 	//  2022-06-20 此句本来在循环里面，如果最后一个元素隐藏，会导致无法到达此判断导致异常
-	if (lastGeomItem) {  // 最后一个元素，更新totalWidth
+	if (lastGeomItem) { // 最后一个元素，更新totalWidth
 		if (lastGeomItem->columnIndex != column) {
 			// 说明最后一个元素处于最后位置，触发了换列，此时真实列数需要减1，直接等于column索引
 			m_columnCount = column;
@@ -6299,11 +5909,11 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 		m_titleLabelGeometry.setRect(mag.left(), yTitleBegin, setrect.width() - mag.left() - mag.right(), titleH);
 		// 这里要确认标题宽度是否大于totalWidth，如果大于，则要把标题的宽度作为totalwidth
 		QFontMetrics fm = m_titleLabel->fontMetrics();
-		int textWidth   = SA_FONTMETRICS_WIDTH(fm, pannel->pannelName());
+		int textWidth = SA_FONTMETRICS_WIDTH(fm, pannel->pannelName());
 		textWidth += 4;
 		if (totalWidth < textWidth) {
-			totalWidth             = textWidth;
-			isTitleWidthThanPannel = true;  // 说明标题的长度大于按钮布局的长度
+			totalWidth = textWidth;
+			isTitleWidthThanPannel = true; // 说明标题的长度大于按钮布局的长度
 		}
 	}
 	// 布局optionActionButton
@@ -6313,9 +5923,9 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 		if (isEnableShowPannelTitle()) {
 			// 有标题
 			m_optionActionBtnGeometry.setRect(m_titleLabelGeometry.right() - m_titleLabelGeometry.height(),
-											  m_titleLabelGeometry.y(),
-											  m_titleLabelGeometry.height(),
-											  m_titleLabelGeometry.height());
+				m_titleLabelGeometry.y(),
+				m_titleLabelGeometry.height(),
+				m_titleLabelGeometry.height());
 
 			// 特殊情况，如果pannel的标题长度大于totalWidth，那么说明totalWidth比较短
 			// 这时候，optionActionBtn的宽度要加上到标题宽度上
@@ -6326,32 +5936,31 @@ void SARibbonPannelLayout::updateGeomArray(const QRect& setrect)
 		} else {
 			// 无标题
 			m_optionActionBtnGeometry.setRect(setrect.right() - optBtnSize.width() - mag.right(),
-											  setrect.bottom() - optBtnSize.height() - mag.bottom(),
-											  optBtnSize.width(),
-											  optBtnSize.height());
+				setrect.bottom() - optBtnSize.height() - mag.bottom(),
+				optBtnSize.width(),
+				optBtnSize.height());
 			totalWidth += optBtnSize.width();
 		}
 	}
 	// 刷新sizeHint
-	int heightHint   = SARibbonPannel::pannelHeightHint(pannel->fontMetrics(), pannel->pannelLayoutMode(), titleH);
+	int heightHint = SARibbonPannel::pannelHeightHint(pannel->fontMetrics(), pannel->pannelLayoutMode(), titleH);
 	this->m_sizeHint = QSize(totalWidth, heightHint);
 #if SARibbonPannelLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "| |-SARibbonPannelLayout updateGeomArray(" << setrect << "),pannel name = " << pannel->pannelName()
-			 << "\n| | |-size hint =" << this->m_sizeHint  //
-			 << "\n| | |-totalWidth=" << totalWidth        //
-			 << "\n| | |-last x=" << x                     //
-			 << "\n| | |-columMaxWidth=" << columMaxWidth  //
-			 << "\n| | |-spacing=" << spacing              //
-			 << "\n| | |-mag=" << mag                      //
-			 << "\n| | |-largeHeight=" << largeHeight      //
-			 << "\n| | |-smallHeight=" << smallHeight      //
+			 << "\n| | |-size hint =" << this->m_sizeHint //
+			 << "\n| | |-totalWidth=" << totalWidth //
+			 << "\n| | |-last x=" << x //
+			 << "\n| | |-columMaxWidth=" << columMaxWidth //
+			 << "\n| | |-spacing=" << spacing //
+			 << "\n| | |-mag=" << mag //
+			 << "\n| | |-largeHeight=" << largeHeight //
+			 << "\n| | |-smallHeight=" << smallHeight //
 		;
 	qDebug().noquote() << debug_print__log__;
 #endif
 }
 
-void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect)
-{
+void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect) {
 	// 计算能扩展的尺寸
 	int expandwidth = setrect.width() - this->m_sizeHint.width();
 
@@ -6360,20 +5969,19 @@ void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect)
 		return;
 	}
 	// 列扩展信息
-	struct _columnExpandInfo
-	{
-		int oldColumnWidth      = 0;   ///< 原来的列宽
-		int columnMaximumWidth  = -1;  ///< 列的最大宽度
-		int columnExpandedWidth = 0;   ///< 扩展后列的宽度
-		QList< SARibbonPannelItem* > expandItems;
+	struct _columnExpandInfo {
+		int oldColumnWidth = 0; ///< 原来的列宽
+		int columnMaximumWidth = -1; ///< 列的最大宽度
+		int columnExpandedWidth = 0; ///< 扩展后列的宽度
+		QList<SARibbonPannelItem*> expandItems;
 	};
 	// 此变量用于记录可以水平扩展的列和控件，在布局结束后，如果还有空间，就把水平扩展的控件进行扩展
-	QMap< int, _columnExpandInfo > columnExpandInfo;
+	QMap<int, _columnExpandInfo> columnExpandInfo;
 
 	for (SARibbonPannelItem* item : qAsConst(m_items)) {
 		if ((!item->isEmpty()) && item->expandingDirections() & Qt::Horizontal) {
 			// 只获取可见的
-			QMap< int, _columnExpandInfo >::iterator i = columnExpandInfo.find(item->columnIndex);
+			QMap<int, _columnExpandInfo>::iterator i = columnExpandInfo.find(item->columnIndex);
 			if (i == columnExpandInfo.end()) {
 				i = columnExpandInfo.insert(item->columnIndex, _columnExpandInfo());
 			}
@@ -6388,8 +5996,8 @@ void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect)
 	// 计算能扩展的尺寸
 	int oneColCanexpandWidth = expandwidth / columnExpandInfo.size();
 
-	for (QMap< int, _columnExpandInfo >::iterator i = columnExpandInfo.begin(); i != columnExpandInfo.end();) {
-		int& oldColumnWidth     = i.value().oldColumnWidth;
+	for (QMap<int, _columnExpandInfo>::iterator i = columnExpandInfo.begin(); i != columnExpandInfo.end();) {
+		int& oldColumnWidth = i.value().oldColumnWidth;
 		int& columnMaximumWidth = i.value().columnMaximumWidth;
 		this->columnWidthInfo(i.key(), oldColumnWidth, columnMaximumWidth);
 		if ((oldColumnWidth <= 0) || (oldColumnWidth > columnMaximumWidth)) {
@@ -6399,7 +6007,7 @@ void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect)
 			continue;
 		}
 		// 开始调整
-		int colwidth = oneColCanexpandWidth + oldColumnWidth;  // 先扩展了
+		int colwidth = oneColCanexpandWidth + oldColumnWidth; // 先扩展了
 		if (colwidth >= columnMaximumWidth) {
 			// 过最大宽度要求
 			i.value().columnExpandedWidth = columnMaximumWidth;
@@ -6434,8 +6042,8 @@ void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect)
 	}
 #if SARibbonPannelLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "| |-SARibbonPannelLayout recalcExpandGeomArray(" << setrect
-			 << ") pannelName=" << ribbonPannel()->pannelName()  //
-			 << ",expandwidth=" << expandwidth                   //
+			 << ") pannelName=" << ribbonPannel()->pannelName() //
+			 << ",expandwidth=" << expandwidth //
 		;
 #endif
 }
@@ -6446,20 +6054,18 @@ void SARibbonPannelLayout::recalcExpandGeomArray(const QRect& setrect)
  * @param width 如果传入没有这个列，返回-1
  * @param maximum 如果传入没有这个列，返回-1
  */
-void SARibbonPannelLayout::columnWidthInfo(int colindex, int& width, int& maximum) const
-{
-	width   = -1;
+void SARibbonPannelLayout::columnWidthInfo(int colindex, int& width, int& maximum) const {
+	width = -1;
 	maximum = -1;
 	for (SARibbonPannelItem* item : m_items) {
 		if (!item->isEmpty() && (item->columnIndex == colindex)) {
-			width   = qMax(width, item->itemWillSetGeometry.width());
+			width = qMax(width, item->itemWillSetGeometry.width());
 			maximum = qMax(maximum, item->widget()->maximumWidth());
 		}
 	}
 }
 
-SARibbonPannelLabel* SARibbonPannelLayout::pannelTitleLabel() const
-{
+SARibbonPannelLabel* SARibbonPannelLayout::pannelTitleLabel() const {
 	return m_titleLabel;
 }
 
@@ -6467,13 +6073,11 @@ SARibbonPannelLabel* SARibbonPannelLayout::pannelTitleLabel() const
  * @brief 获取optionAction 按钮尺寸
  * @return
  */
-QSize SARibbonPannelLayout::optionActionButtonSize() const
-{
+QSize SARibbonPannelLayout::optionActionButtonSize() const {
 	return (isEnableShowPannelTitle() ? QSize(12, 12) : QSize(m_titleHeight, m_titleHeight));
 }
 
-void SARibbonPannelLayout::setPannelTitleLabel(SARibbonPannelLabel* newTitleLabel)
-{
+void SARibbonPannelLayout::setPannelTitleLabel(SARibbonPannelLabel* newTitleLabel) {
 	m_titleLabel = newTitleLabel;
 	// 确保m_optionActionBtn在label之上
 	if (m_optionActionBtn) {
@@ -6487,8 +6091,7 @@ void SARibbonPannelLayout::setPannelTitleLabel(SARibbonPannelLabel* newTitleLabe
  * @brief 标题区域和按钮的间隔
  * @return
  */
-int SARibbonPannelLayout::pannelTitleSpace() const
-{
+int SARibbonPannelLayout::pannelTitleSpace() const {
 	return m_titleSpace;
 }
 
@@ -6496,8 +6099,7 @@ int SARibbonPannelLayout::pannelTitleSpace() const
  * @brief 设置标题区域和按钮的间隔
  * @param newTitleSpace
  */
-void SARibbonPannelLayout::setPannelTitleSpace(int newTitleSpace)
-{
+void SARibbonPannelLayout::setPannelTitleSpace(int newTitleSpace) {
 	if (m_titleSpace == newTitleSpace) {
 		return;
 	}
@@ -6509,8 +6111,7 @@ void SARibbonPannelLayout::setPannelTitleSpace(int newTitleSpace)
  * @brief 标题高度
  * @return
  */
-int SARibbonPannelLayout::pannelTitleHeight() const
-{
+int SARibbonPannelLayout::pannelTitleHeight() const {
 	return m_titleHeight;
 }
 
@@ -6518,8 +6119,7 @@ int SARibbonPannelLayout::pannelTitleHeight() const
  * @brief 设置标题高度
  * @param newTitleHeight
  */
-void SARibbonPannelLayout::setPannelTitleHeight(int newTitleHeight)
-{
+void SARibbonPannelLayout::setPannelTitleHeight(int newTitleHeight) {
 	if (m_titleHeight == newTitleHeight) {
 		return;
 	}
@@ -6531,8 +6131,7 @@ void SARibbonPannelLayout::setPannelTitleHeight(int newTitleHeight)
  * @brief 判断是否存在标题
  * @return
  */
-bool SARibbonPannelLayout::isEnableShowPannelTitle() const
-{
+bool SARibbonPannelLayout::isEnableShowPannelTitle() const {
 	return m_enableShowTitle;
 }
 
@@ -6540,8 +6139,7 @@ bool SARibbonPannelLayout::isEnableShowPannelTitle() const
  * @brief 设置显示标题
  * @param on
  */
-void SARibbonPannelLayout::setEnableShowPannelTitle(bool on)
-{
+void SARibbonPannelLayout::setEnableShowPannelTitle(bool on) {
 	if (m_enableShowTitle == on) {
 		return;
 	}
@@ -6553,13 +6151,11 @@ void SARibbonPannelLayout::setEnableShowPannelTitle(bool on)
  * @brief 大按钮的高度
  * @return
  */
-int SARibbonPannelLayout::largeButtonHeight() const
-{
+int SARibbonPannelLayout::largeButtonHeight() const {
 	return m_largeHeight;
 }
 
-void SARibbonPannelLayout::setGeometry(const QRect& rect)
-{
+void SARibbonPannelLayout::setGeometry(const QRect& rect) {
 	QRect old = geometry();
 	if (old == rect) {
 		return;
@@ -6574,7 +6170,6 @@ void SARibbonPannelLayout::setGeometry(const QRect& rect)
 }
 
 /*** End of inlined file: SARibbonPannelLayout.cpp ***/
-
 
 /*** Start of inlined file: SARibbonPannel.cpp ***/
 #include <QAction>
@@ -6592,30 +6187,29 @@ void SARibbonPannelLayout::setGeometry(const QRect& rect)
 #define SARibbonPannel_DEBUG_PRINT 0
 #endif
 
-#define HELP_DRAW_RECT(p, rect)                                                                                        \
-	do {                                                                                                               \
-		p.save();                                                                                                      \
-		QPen _pen(Qt::DashLine);                                                                                       \
-		_pen.setColor(Qt::blue);                                                                                       \
-		p.setPen(_pen);                                                                                                \
-		p.setBrush(QBrush());                                                                                          \
-		p.drawRect(rect);                                                                                              \
-		p.restore();                                                                                                   \
+#define HELP_DRAW_RECT(p, rect)  \
+	do {                         \
+		p.save();                \
+		QPen _pen(Qt::DashLine); \
+		_pen.setColor(Qt::blue); \
+		p.setPen(_pen);          \
+		p.setBrush(QBrush());    \
+		p.drawRect(rect);        \
+		p.restore();             \
 	} while (0)
 //===============================================================
 // SARibbonPannelLabel
 //===============================================================
 
-SARibbonPannelLabel::SARibbonPannelLabel(QWidget* parent) : QLabel(parent)
-{
+SARibbonPannelLabel::SARibbonPannelLabel(QWidget* parent)
+	: QLabel(parent) {
 }
 
 //===============================================================
 // SARibbonPannel::PrivateData
 //===============================================================
 
-class SARibbonPannel::PrivateData
-{
+class SARibbonPannel::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonPannel)
 public:
 	PrivateData(SARibbonPannel* p);
@@ -6633,19 +6227,18 @@ public:
 	void setPannelName(const QString& title);
 
 public:
-	bool m_isCanCustomize { true };                                                        ///< 记录是否可自定义
-	SARibbonPannel::PannelLayoutMode m_pannelLayoutMode { SARibbonPannel::ThreeRowMode };  ///< pannel的布局模式，默认为3行模式ThreeRowMode
-	SARibbonPannelOptionButton* m_optionActionButton { nullptr };  ///< 标题栏的y距离
+	bool m_isCanCustomize { true }; ///< 记录是否可自定义
+	SARibbonPannel::PannelLayoutMode m_pannelLayoutMode { SARibbonPannel::ThreeRowMode }; ///< pannel的布局模式，默认为3行模式ThreeRowMode
+	SARibbonPannelOptionButton* m_optionActionButton { nullptr }; ///< 标题栏的y距离
 	SARibbonPannelLabel* m_label { nullptr };
 };
 
-SARibbonPannel::PrivateData::PrivateData(SARibbonPannel* p) : q_ptr(p)
-{
+SARibbonPannel::PrivateData::PrivateData(SARibbonPannel* p)
+	: q_ptr(p) {
 	createLayout();
 }
 
-int SARibbonPannel::PrivateData::rowadded()
-{
+int SARibbonPannel::PrivateData::rowadded() {
 	switch (m_pannelLayoutMode) {
 	case SARibbonPannel::ThreeRowMode:
 		return (2);
@@ -6659,8 +6252,7 @@ int SARibbonPannel::PrivateData::rowadded()
 	return (2);
 }
 
-void SARibbonPannel::PrivateData::createLayout()
-{
+void SARibbonPannel::PrivateData::createLayout() {
 	m_label = new SARibbonPannelLabel(q_ptr);
 	m_label->setAlignment(Qt::AlignCenter);
 	SARibbonPannelLayout* lay = new SARibbonPannelLayout(q_ptr);
@@ -6669,15 +6261,13 @@ void SARibbonPannel::PrivateData::createLayout()
 	lay->setContentsMargins(2, 2, 2, 2);
 }
 
-SARibbonPannelLayout* SARibbonPannel::PrivateData::pannelLayout() const
-{
-	return qobject_cast< SARibbonPannelLayout* >(q_ptr->layout());
+SARibbonPannelLayout* SARibbonPannel::PrivateData::pannelLayout() const {
+	return qobject_cast<SARibbonPannelLayout*>(q_ptr->layout());
 }
 
-SARibbonToolButton* SARibbonPannel::PrivateData::lastAddActionButton()
-{
+SARibbonToolButton* SARibbonPannel::PrivateData::lastAddActionButton() {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
-		return (qobject_cast< SARibbonToolButton* >(lay->lastWidget()));
+		return (qobject_cast<SARibbonToolButton*>(lay->lastWidget()));
 	}
 	return (nullptr);
 }
@@ -6687,10 +6277,9 @@ SARibbonToolButton* SARibbonPannel::PrivateData::lastAddActionButton()
  *
  * @note 此函数必须在布局设置后调用
  */
-void SARibbonPannel::PrivateData::resetTitleLabelFont()
-{
+void SARibbonPannel::PrivateData::resetTitleLabelFont() {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
-		int h   = lay->pannelTitleHeight();
+		int h = lay->pannelTitleHeight();
 		QFont f = q_ptr->font();
 		f.setPixelSize(h * 0.8);
 		if (m_label) {
@@ -6699,16 +6288,14 @@ void SARibbonPannel::PrivateData::resetTitleLabelFont()
 	}
 }
 
-QString SARibbonPannel::PrivateData::pannelName() const
-{
+QString SARibbonPannel::PrivateData::pannelName() const {
 	if (m_label) {
 		return m_label->text();
 	}
 	return (QString());
 }
 
-void SARibbonPannel::PrivateData::setPannelName(const QString& title)
-{
+void SARibbonPannel::PrivateData::setPannelName(const QString& title) {
 	if (m_label) {
 		m_label->setText(title);
 	}
@@ -6718,20 +6305,20 @@ void SARibbonPannel::PrivateData::setPannelName(const QString& title)
 // SARibbonPannel
 //==================================================
 
-SARibbonPannel::SARibbonPannel(QWidget* parent) : QFrame(parent), d_ptr(new SARibbonPannel::PrivateData(this))
-{
+SARibbonPannel::SARibbonPannel(QWidget* parent)
+	: QFrame(parent)
+	, d_ptr(new SARibbonPannel::PrivateData(this)) {
 	setPannelLayoutMode(ThreeRowMode);
 }
 
 SARibbonPannel::SARibbonPannel(const QString& name, QWidget* parent)
-	: QFrame(parent), d_ptr(new SARibbonPannel::PrivateData(this))
-{
+	: QFrame(parent)
+	, d_ptr(new SARibbonPannel::PrivateData(this)) {
 	setPannelLayoutMode(ThreeRowMode);
 	setPannelName(name);
 }
 
-SARibbonPannel::~SARibbonPannel()
-{
+SARibbonPannel::~SARibbonPannel() {
 }
 
 /**
@@ -6739,10 +6326,9 @@ SARibbonPannel::~SARibbonPannel()
  * @param action
  * @param rp
  */
-void SARibbonPannel::setActionRowProportionProperty(QAction* action, SARibbonPannelItem::RowProportion rp)
-{
+void SARibbonPannel::setActionRowProportionProperty(QAction* action, SARibbonPannelItem::RowProportion rp) {
 	Q_CHECK_PTR(action);
-	action->setProperty(SA_ActionPropertyName_RowProportion, static_cast< int >(rp));
+	action->setProperty(SA_ActionPropertyName_RowProportion, static_cast<int>(rp));
 }
 
 /**
@@ -6750,13 +6336,12 @@ void SARibbonPannel::setActionRowProportionProperty(QAction* action, SARibbonPan
  * @param action
  * @return
  */
-SARibbonPannelItem::RowProportion SARibbonPannel::getActionRowProportionProperty(QAction* action)
-{
+SARibbonPannelItem::RowProportion SARibbonPannel::getActionRowProportionProperty(QAction* action) {
 	bool isok = false;
-	int r     = action->property(SA_ActionPropertyName_RowProportion).toInt(&isok);
+	int r = action->property(SA_ActionPropertyName_RowProportion).toInt(&isok);
 
 	if (isok) {
-		return (static_cast< SARibbonPannelItem::RowProportion >(r));
+		return (static_cast<SARibbonPannelItem::RowProportion>(r));
 	}
 	return (SARibbonPannelItem::Large);
 }
@@ -6766,10 +6351,9 @@ SARibbonPannelItem::RowProportion SARibbonPannel::getActionRowProportionProperty
  * @param action
  * @param popMode
  */
-void SARibbonPannel::setActionToolButtonPopupModeProperty(QAction* action, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::setActionToolButtonPopupModeProperty(QAction* action, QToolButton::ToolButtonPopupMode popMode) {
 	Q_CHECK_PTR(action);
-	action->setProperty(SA_ActionPropertyName_ToolButtonPopupMode, static_cast< int >(popMode));
+	action->setProperty(SA_ActionPropertyName_ToolButtonPopupMode, static_cast<int>(popMode));
 }
 
 /**
@@ -6777,13 +6361,12 @@ void SARibbonPannel::setActionToolButtonPopupModeProperty(QAction* action, QTool
  * @param action
  * @return
  */
-QToolButton::ToolButtonPopupMode SARibbonPannel::getActionToolButtonPopupModeProperty(QAction* action)
-{
+QToolButton::ToolButtonPopupMode SARibbonPannel::getActionToolButtonPopupModeProperty(QAction* action) {
 	bool isok = false;
-	int r     = action->property(SA_ActionPropertyName_ToolButtonPopupMode).toInt(&isok);
+	int r = action->property(SA_ActionPropertyName_ToolButtonPopupMode).toInt(&isok);
 
 	if (isok) {
-		return (static_cast< QToolButton::ToolButtonPopupMode >(r));
+		return (static_cast<QToolButton::ToolButtonPopupMode>(r));
 	}
 	return (QToolButton::InstantPopup);
 }
@@ -6793,10 +6376,9 @@ QToolButton::ToolButtonPopupMode SARibbonPannel::getActionToolButtonPopupModePro
  * @param action
  * @param buttonStyle
  */
-void SARibbonPannel::setActionToolButtonStyleProperty(QAction* action, Qt::ToolButtonStyle buttonStyle)
-{
+void SARibbonPannel::setActionToolButtonStyleProperty(QAction* action, Qt::ToolButtonStyle buttonStyle) {
 	Q_CHECK_PTR(action);
-	action->setProperty(SA_ActionPropertyName_ToolButtonStyle, static_cast< int >(buttonStyle));
+	action->setProperty(SA_ActionPropertyName_ToolButtonStyle, static_cast<int>(buttonStyle));
 }
 
 /**
@@ -6804,13 +6386,12 @@ void SARibbonPannel::setActionToolButtonStyleProperty(QAction* action, Qt::ToolB
  * @param action
  * @return
  */
-Qt::ToolButtonStyle SARibbonPannel::getActionToolButtonStyleProperty(QAction* action)
-{
+Qt::ToolButtonStyle SARibbonPannel::getActionToolButtonStyleProperty(QAction* action) {
 	bool isok = false;
-	int r     = action->property(SA_ActionPropertyName_ToolButtonStyle).toInt(&isok);
+	int r = action->property(SA_ActionPropertyName_ToolButtonStyle).toInt(&isok);
 
 	if (isok) {
-		return (static_cast< Qt::ToolButtonStyle >(r));
+		return (static_cast<Qt::ToolButtonStyle>(r));
 	}
 	return (Qt::ToolButtonIconOnly);
 }
@@ -6823,8 +6404,7 @@ Qt::ToolButtonStyle SARibbonPannel::getActionToolButtonStyleProperty(QAction* ac
  * @param rp 指定action的行占比
  * @param popMode 菜单弹出样式
  */
-void SARibbonPannel::addAction(QAction* action, SARibbonPannelItem::RowProportion rp)
-{
+void SARibbonPannel::addAction(QAction* action, SARibbonPannelItem::RowProportion rp) {
 	Q_CHECK_PTR(action);
 	setActionRowProportionProperty(action, rp);
 	addAction(action);
@@ -6836,8 +6416,7 @@ void SARibbonPannel::addAction(QAction* action, SARibbonPannelItem::RowProportio
  * @param popMode 按钮的样式
  * @param rp action在pannel中的占位情况，默认是大图标
  */
-void SARibbonPannel::addAction(QAction* act, QToolButton::ToolButtonPopupMode popMode, SARibbonPannelItem::RowProportion rp)
-{
+void SARibbonPannel::addAction(QAction* act, QToolButton::ToolButtonPopupMode popMode, SARibbonPannelItem::RowProportion rp) {
 	Q_CHECK_PTR(act);
 	setActionRowProportionProperty(act, rp);
 	setActionToolButtonPopupModeProperty(act, popMode);
@@ -6850,8 +6429,7 @@ void SARibbonPannel::addAction(QAction* act, QToolButton::ToolButtonPopupMode po
    action实际对应了一个toolbutton，如果想找到对应的toolbutton，使用@ref actionToRibbonToolButton
    @param action
  */
-void SARibbonPannel::addLargeAction(QAction* action)
-{
+void SARibbonPannel::addLargeAction(QAction* action) {
 	addAction(action, SARibbonPannelItem::Large);
 }
 
@@ -6863,8 +6441,7 @@ void SARibbonPannel::addLargeAction(QAction* action)
    action实际对应了一个toolbutton，如果想找到对应的toolbutton，使用@ref actionToRibbonToolButton
    @param action
  */
-void SARibbonPannel::addMediumAction(QAction* action)
-{
+void SARibbonPannel::addMediumAction(QAction* action) {
 	addAction(action, SARibbonPannelItem::Medium);
 }
 
@@ -6874,23 +6451,19 @@ void SARibbonPannel::addMediumAction(QAction* action)
    action实际对应了一个toolbutton，如果想找到对应的toolbutton，使用@ref actionToRibbonToolButton
    @param action
  */
-void SARibbonPannel::addSmallAction(QAction* action)
-{
+void SARibbonPannel::addSmallAction(QAction* action) {
 	addAction(action, SARibbonPannelItem::Small);
 }
 
-void SARibbonPannel::addSmallAction(QAction* action, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::addSmallAction(QAction* action, QToolButton::ToolButtonPopupMode popMode) {
 	addAction(action, popMode, SARibbonPannelItem::Small);
 }
 
-void SARibbonPannel::addLargeAction(QAction* action, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::addLargeAction(QAction* action, QToolButton::ToolButtonPopupMode popMode) {
 	addAction(action, popMode, SARibbonPannelItem::Large);
 }
 
-void SARibbonPannel::addMediumAction(QAction* action, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::addMediumAction(QAction* action, QToolButton::ToolButtonPopupMode popMode) {
 	addAction(action, popMode, SARibbonPannelItem::Medium);
 }
 
@@ -6909,10 +6482,9 @@ void SARibbonPannel::addMediumAction(QAction* action, QToolButton::ToolButtonPop
  * @return 返回添加的action
  */
 QAction* SARibbonPannel::addAction(const QString& text,
-								   const QIcon& icon,
-								   QToolButton::ToolButtonPopupMode popMode,
-								   SARibbonPannelItem::RowProportion rp)
-{
+	const QIcon& icon,
+	QToolButton::ToolButtonPopupMode popMode,
+	SARibbonPannelItem::RowProportion rp) {
 	QAction* action = new QAction(icon, text, this);
 	addAction(action, popMode, rp);
 	return (action);
@@ -6925,8 +6497,7 @@ QAction* SARibbonPannel::addAction(const QString& text,
  * @param popMode,菜单弹出模式，默认InstantPopup模式
  * @return
  */
-void SARibbonPannel::addMenu(QMenu* menu, SARibbonPannelItem::RowProportion rp, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::addMenu(QMenu* menu, SARibbonPannelItem::RowProportion rp, QToolButton::ToolButtonPopupMode popMode) {
 	Q_CHECK_PTR(menu);
 	QAction* action = menu->menuAction();
 	action->setIcon(menu->icon());
@@ -6935,13 +6506,11 @@ void SARibbonPannel::addMenu(QMenu* menu, SARibbonPannelItem::RowProportion rp, 
 	addAction(action, popMode, rp);
 }
 
-void SARibbonPannel::addLargeMenu(QMenu* menu, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::addLargeMenu(QMenu* menu, QToolButton::ToolButtonPopupMode popMode) {
 	addMenu(menu, SARibbonPannelItem::Large, popMode);
 }
 
-void SARibbonPannel::addSmallMenu(QMenu* menu, QToolButton::ToolButtonPopupMode popMode)
-{
+void SARibbonPannel::addSmallMenu(QMenu* menu, QToolButton::ToolButtonPopupMode popMode) {
 	addMenu(menu, SARibbonPannelItem::Small, popMode);
 }
 
@@ -6953,8 +6522,7 @@ void SARibbonPannel::addSmallMenu(QMenu* menu, QToolButton::ToolButtonPopupMode 
  * @return 返回action(QWidgetAction)
  * @note SARibbonPannel并不会管理此窗口内存，在delete SARibbonPannel时，此窗口如果父对象不是SARibbonPannel将不会被删除
  */
-QAction* SARibbonPannel::addWidget(QWidget* w, SARibbonPannelItem::RowProportion rp)
-{
+QAction* SARibbonPannel::addWidget(QWidget* w, SARibbonPannelItem::RowProportion rp) {
 	QWidgetAction* action = new QWidgetAction(this);
 
 	action->setDefaultWidget(w);
@@ -6972,8 +6540,7 @@ QAction* SARibbonPannel::addWidget(QWidget* w, SARibbonPannelItem::RowProportion
  * @param w
  * @return 返回action(QWidgetAction)
  */
-QAction* SARibbonPannel::addSmallWidget(QWidget* w)
-{
+QAction* SARibbonPannel::addSmallWidget(QWidget* w) {
 	return (addWidget(w, SARibbonPannelItem::Small));
 }
 
@@ -6982,8 +6549,7 @@ QAction* SARibbonPannel::addSmallWidget(QWidget* w)
  * @param w
  * @return
  */
-QAction* SARibbonPannel::addMediumWidget(QWidget* w)
-{
+QAction* SARibbonPannel::addMediumWidget(QWidget* w) {
 	return (addWidget(w, SARibbonPannelItem::Medium));
 }
 
@@ -6992,8 +6558,7 @@ QAction* SARibbonPannel::addMediumWidget(QWidget* w)
  * @param w
  * @return 返回action(QWidgetAction)
  */
-QAction* SARibbonPannel::addLargeWidget(QWidget* w)
-{
+QAction* SARibbonPannel::addLargeWidget(QWidget* w) {
 	return (addWidget(w, SARibbonPannelItem::Large));
 }
 
@@ -7002,8 +6567,7 @@ QAction* SARibbonPannel::addLargeWidget(QWidget* w)
  * @return
  * @note SARibbonPannel将拥有SARibbonGallery的管理权
  */
-SARibbonGallery* SARibbonPannel::addGallery(bool expanding)
-{
+SARibbonGallery* SARibbonPannel::addGallery(bool expanding) {
 	SARibbonGallery* gallery = RibbonSubElementFactory->createRibbonGallery(this);
 
 	addWidget(gallery, SARibbonPannelItem::Large);
@@ -7018,8 +6582,7 @@ SARibbonGallery* SARibbonPannel::addGallery(bool expanding)
  * @param top 上边距 @default 6
  * @param bottom 下边距 @default 6
  */
-QAction* SARibbonPannel::addSeparator()
-{
+QAction* SARibbonPannel::addSeparator() {
 	QAction* action = new QAction(this);
 
 	action->setSeparator(true);
@@ -7033,8 +6596,7 @@ QAction* SARibbonPannel::addSeparator()
  * @param action
  * @return 如果action没有对应的button，就返回nullptr
  */
-SARibbonToolButton* SARibbonPannel::actionToRibbonToolButton(QAction* action)
-{
+SARibbonToolButton* SARibbonPannel::actionToRibbonToolButton(QAction* action) {
 #if 0
 	SARibbonPannelLayout* lay = qobject_cast< SARibbonPannelLayout* >(layout());
 
@@ -7051,7 +6613,7 @@ SARibbonToolButton* SARibbonPannel::actionToRibbonToolButton(QAction* action)
 #else
 	for (auto obj : qAsConst(children())) {
 		if (obj->isWidgetType()) {
-			if (SARibbonToolButton* btn = qobject_cast< SARibbonToolButton* >(obj)) {
+			if (SARibbonToolButton* btn = qobject_cast<SARibbonToolButton*>(obj)) {
 				if (btn->defaultAction() == action) {
 					return btn;
 				}
@@ -7066,13 +6628,12 @@ SARibbonToolButton* SARibbonPannel::actionToRibbonToolButton(QAction* action)
  * @brief 获取pannel下面的所有toolbutton
  * @return
  */
-QList< SARibbonToolButton* > SARibbonPannel::ribbonToolButtons() const
-{
+QList<SARibbonToolButton*> SARibbonPannel::ribbonToolButtons() const {
 	const QObjectList& objs = children();
-	QList< SARibbonToolButton* > res;
+	QList<SARibbonToolButton*> res;
 
 	for (QObject* o : objs) {
-		SARibbonToolButton* b = qobject_cast< SARibbonToolButton* >(o);
+		SARibbonToolButton* b = qobject_cast<SARibbonToolButton*>(o);
 		if (b) {
 			res.append(b);
 		}
@@ -7084,8 +6645,7 @@ QList< SARibbonToolButton* > SARibbonPannel::ribbonToolButtons() const
  * @brief 设置PannelLayoutMode
  * @param mode
  */
-void SARibbonPannel::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode mode)
-{
+void SARibbonPannel::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode mode) {
 	if (d_ptr->m_pannelLayoutMode == mode) {
 		return;
 	}
@@ -7093,8 +6653,7 @@ void SARibbonPannel::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode mode)
 	updateItemGeometry();
 }
 
-SARibbonPannel::PannelLayoutMode SARibbonPannel::pannelLayoutMode() const
-{
+SARibbonPannel::PannelLayoutMode SARibbonPannel::pannelLayoutMode() const {
 	return (d_ptr->m_pannelLayoutMode);
 }
 
@@ -7104,8 +6663,7 @@ SARibbonPannel::PannelLayoutMode SARibbonPannel::pannelLayoutMode() const
  * @note 要去除OptionAction直接传入nullptr即可
  * @note SARibbonPannel不对QAction的destroy进行关联，如果外部对action进行delete，需要先传入nullptr给addOptionAction
  */
-void SARibbonPannel::setOptionAction(QAction* action)
-{
+void SARibbonPannel::setOptionAction(QAction* action) {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		lay->setOptionAction(action);
 	}
@@ -7115,28 +6673,25 @@ void SARibbonPannel::setOptionAction(QAction* action)
  * @brief 判断是否存在OptionAction
  * @return 存在返回true
  */
-bool SARibbonPannel::isHaveOptionAction() const
-{
+bool SARibbonPannel::isHaveOptionAction() const {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		return lay->isHaveOptionAction();
 	}
 	return false;
 }
 
-QSize SARibbonPannel::sizeHint() const
-{
-	int shWidth  = 500;
+QSize SARibbonPannel::sizeHint() const {
+	int shWidth = 500;
 	int shHeight = 100;
 	if (QLayout* lay = layout()) {
 		QSize laySize = layout()->sizeHint();
-		shWidth       = laySize.width();
-		shHeight      = laySize.height();
+		shWidth = laySize.width();
+		shHeight = laySize.height();
 	}
 	return QSize(shWidth, shHeight);
 }
 
-QSize SARibbonPannel::minimumSizeHint() const
-{
+QSize SARibbonPannel::minimumSizeHint() const {
 	return (layout()->minimumSize());
 }
 
@@ -7144,8 +6699,7 @@ QSize SARibbonPannel::minimumSizeHint() const
  * @brief 把pannel设置为扩展模式，此时会撑大水平区域
  * @param isExpanding
  */
-void SARibbonPannel::setExpanding(bool isExpanding)
-{
+void SARibbonPannel::setExpanding(bool isExpanding) {
 	setSizePolicy(isExpanding ? QSizePolicy::Expanding : QSizePolicy::Preferred, QSizePolicy::Fixed);
 }
 
@@ -7153,8 +6707,7 @@ void SARibbonPannel::setExpanding(bool isExpanding)
  * @brief 判断此pannel是否为（水平）扩展模式
  * @return 是扩展模式返回true
  */
-bool SARibbonPannel::isExpanding() const
-{
+bool SARibbonPannel::isExpanding() const {
 	QSizePolicy sp = sizePolicy();
 
 	return (sp.horizontalPolicy() == QSizePolicy::Expanding);
@@ -7164,8 +6717,7 @@ bool SARibbonPannel::isExpanding() const
    @brief 设置标题栏的高度
    @param h
  */
-void SARibbonPannel::setTitleHeight(int h)
-{
+void SARibbonPannel::setTitleHeight(int h) {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		lay->setPannelTitleHeight(h);
 	}
@@ -7175,8 +6727,7 @@ void SARibbonPannel::setTitleHeight(int h)
  * @brief 标题栏高度
  * @return
  */
-int SARibbonPannel::titleHeight() const
-{
+int SARibbonPannel::titleHeight() const {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		return lay->pannelTitleHeight();
 	}
@@ -7187,8 +6738,7 @@ int SARibbonPannel::titleHeight() const
  * @brief 判断是否显示标题，只有标题的高度被设置，才会显示标题
  * @return
  */
-bool SARibbonPannel::isEnableShowTitle() const
-{
+bool SARibbonPannel::isEnableShowTitle() const {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		return lay->isEnableShowPannelTitle();
 	}
@@ -7199,8 +6749,7 @@ bool SARibbonPannel::isEnableShowTitle() const
  * @brief 是否显示标题，显示标题后，标题的高度需要设置，默认高度为15
  * @param on
  */
-void SARibbonPannel::setEnableShowTitle(bool on)
-{
+void SARibbonPannel::setEnableShowTitle(bool on) {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		return lay->setEnableShowPannelTitle(on);
 	}
@@ -7211,8 +6760,7 @@ void SARibbonPannel::setEnableShowTitle(bool on)
  * @param act
  * @return 没有查到返回-1
  */
-int SARibbonPannel::actionIndex(QAction* act) const
-{
+int SARibbonPannel::actionIndex(QAction* act) const {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		return (lay->indexByAction(act));
 	}
@@ -7224,20 +6772,18 @@ int SARibbonPannel::actionIndex(QAction* act) const
  * @param from 要移动action的位置，通过@ref actionIndex 获取
  * @param to 要移动的位置
  */
-void SARibbonPannel::moveAction(int from, int to)
-{
+void SARibbonPannel::moveAction(int from, int to) {
 	if (SARibbonPannelLayout* lay = pannelLayout()) {
 		return (lay->move(from, to));
 	}
-	updateGeometry();  // 通知layout进行重新布局
+	updateGeometry(); // 通知layout进行重新布局
 }
 
 /**
  * @brief 判断是否可以自定义
  * @return
  */
-bool SARibbonPannel::isCanCustomize() const
-{
+bool SARibbonPannel::isCanCustomize() const {
 	return (d_ptr->m_isCanCustomize);
 }
 
@@ -7245,8 +6791,7 @@ bool SARibbonPannel::isCanCustomize() const
  * @brief 设置是否可以自定义
  * @param b
  */
-void SARibbonPannel::setCanCustomize(bool b)
-{
+void SARibbonPannel::setCanCustomize(bool b) {
 	d_ptr->m_isCanCustomize = b;
 }
 
@@ -7254,8 +6799,7 @@ void SARibbonPannel::setCanCustomize(bool b)
  * @brief pannel名称
  * @return
  */
-QString SARibbonPannel::pannelName() const
-{
+QString SARibbonPannel::pannelName() const {
 	return (d_ptr->pannelName());
 }
 
@@ -7264,8 +6808,7 @@ QString SARibbonPannel::pannelName() const
  * @param title 标题
  * @note 此函数会触发@sa pannelNameChanged 信号
  */
-void SARibbonPannel::setPannelName(const QString& title)
-{
+void SARibbonPannel::setPannelName(const QString& title) {
 	QString oldName = pannelName();
 	if (oldName != title) {
 		d_ptr->setPannelName(title);
@@ -7277,8 +6820,7 @@ void SARibbonPannel::setPannelName(const QString& title)
  * @brief 获取大图标的高度
  * @return
  */
-int SARibbonPannel::largeButtonHeight() const
-{
+int SARibbonPannel::largeButtonHeight() const {
 	const QMargins& mag = contentsMargins();
 	return height() - mag.top() - mag.bottom() - titleHeight();
 }
@@ -7287,16 +6829,14 @@ int SARibbonPannel::largeButtonHeight() const
  * @brief 获取pannel layout
  * @return
  */
-SARibbonPannelLayout* SARibbonPannel::pannelLayout() const
-{
+SARibbonPannelLayout* SARibbonPannel::pannelLayout() const {
 	return d_ptr->pannelLayout();
 }
 
 /**
  * @brief 更新布局
  */
-void SARibbonPannel::updateItemGeometry()
-{
+void SARibbonPannel::updateItemGeometry() {
 #if SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "SARibbonPannel updateItemGeometry,pannelName=" << pannelName();
 #endif
@@ -7311,17 +6851,15 @@ void SARibbonPannel::updateItemGeometry()
    @brief 获取category指针，如果没有parent，或者不在category管理，返回nullptr
    @return
  */
-SARibbonCategory* SARibbonPannel::category() const
-{
-	return qobject_cast< SARibbonCategory* >(parent());
+SARibbonCategory* SARibbonPannel::category() const {
+	return qobject_cast<SARibbonCategory*>(parent());
 }
 
 /**
    @brief 获取ribbonBar指针，如果没有返回nullptr
    @return
  */
-SARibbonBar* SARibbonPannel::ribbonBar() const
-{
+SARibbonBar* SARibbonPannel::ribbonBar() const {
 	if (SARibbonCategory* c = category()) {
 		return c->ribbonBar();
 	}
@@ -7335,9 +6873,8 @@ SARibbonBar* SARibbonPannel::ribbonBar() const
  * @param pannelTitleHeight
  * @return
  */
-int SARibbonPannel::pannelHeightHint(const QFontMetrics& fm, PannelLayoutMode layMode, int pannelTitleHeight)
-{
-	int textH = fm.lineSpacing();  // 这里用linespace，因为在换行的情况下，行距是不可忽略的，ribbon的大按钮默认是2行
+int SARibbonPannel::pannelHeightHint(const QFontMetrics& fm, PannelLayoutMode layMode, int pannelTitleHeight) {
+	int textH = fm.lineSpacing(); // 这里用linespace，因为在换行的情况下，行距是不可忽略的，ribbon的大按钮默认是2行
 	switch (layMode) {
 	case SARibbonPannel::ThreeRowMode: {
 		// 5.5=（3*1.6+1） （三行）,1是给panneltitle预留的
@@ -7357,9 +6894,8 @@ int SARibbonPannel::pannelHeightHint(const QFontMetrics& fm, PannelLayoutMode la
 /**
  * @brief 重置按钮的尺寸，在布局改变后（尤其高度变更），按钮的尺寸需要手动变更
  */
-void SARibbonPannel::resetToolButtonSize()
-{
-	QList< SARibbonToolButton* > btns = ribbonToolButtons();
+void SARibbonPannel::resetToolButtonSize() {
+	QList<SARibbonToolButton*> btns = ribbonToolButtons();
 
 	for (SARibbonToolButton* b : qAsConst(btns)) {
 		if ((nullptr == b)) {
@@ -7369,8 +6905,7 @@ void SARibbonPannel::resetToolButtonSize()
 	}
 }
 
-bool SARibbonPannel::event(QEvent* e)
-{
+bool SARibbonPannel::event(QEvent* e) {
 #if SA_DEBUG_PRINT_EVENT
 	if (e->type() != QEvent::Paint) {
 		qDebug() << "SARibbonPannel event(" << e->type() << "),name=" << pannelName();
@@ -7405,10 +6940,9 @@ bool SARibbonPannel::event(QEvent* e)
  * @note 所有action事件都会向category请求重新布局
  *
  */
-void SARibbonPannel::actionEvent(QActionEvent* e)
-{
-	QAction* action             = e->action();
-	QWidgetAction* widgetAction = qobject_cast< QWidgetAction* >(action);
+void SARibbonPannel::actionEvent(QActionEvent* e) {
+	QAction* action = e->action();
+	QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(action);
 
 	switch (e->type()) {
 	case QEvent::ActionAdded: {
@@ -7423,7 +6957,7 @@ void SARibbonPannel::actionEvent(QActionEvent* e)
 			// 说明是插入
 			index = lay->indexByAction(e->before());
 			if (-1 == index) {
-				index = layout()->count();  // 找不到的时候就插入到最后
+				index = layout()->count(); // 找不到的时候就插入到最后
 			}
 		}
 		lay->insertAction(index, action, getActionRowProportionProperty(action));
@@ -7486,14 +7020,13 @@ void SARibbonPannel::actionEvent(QActionEvent* e)
  * @brief 追踪字体改变事件，把新字体设置到childwidget中
  * @param e
  */
-void SARibbonPannel::changeEvent(QEvent* e)
-{
+void SARibbonPannel::changeEvent(QEvent* e) {
 	if (nullptr == e) {
 		return;
 	}
 	if (e->type() == QEvent::FontChange) {
-		QFont f                       = font();
-		QList< QWidget* > listWidgets = findChildren< QWidget* >();
+		QFont f = font();
+		QList<QWidget*> listWidgets = findChildren<QWidget*>();
 		for (QWidget* w : listWidgets) {
 			w->setFont(f);
 		}
@@ -7509,32 +7042,27 @@ void SARibbonPannel::changeEvent(QEvent* e)
  * @brief 获取布局item
  * @return
  */
-const QList< SARibbonPannelItem* >& SARibbonPannel::ribbonPannelItem() const
-{
+const QList<SARibbonPannelItem*>& SARibbonPannel::ribbonPannelItem() const {
 	return (pannelLayout()->m_items);
 }
 
 /*** End of inlined file: SARibbonPannel.cpp ***/
 
-
 /*** Start of inlined file: SARibbonCategory.cpp ***/
-#include <QList>
-#include <QResizeEvent>
-#include <QPainter>
-#include <QLinearGradient>
-#include <QDebug>
 #include <QApplication>
+#include <QDebug>
 #include <QHBoxLayout>
+#include <QLinearGradient>
 #include <QList>
 #include <QMap>
+#include <QPainter>
 #include <QResizeEvent>
 
 ///
 /// \brief ribbon页的代理类
 /// 如果需要修改重绘SARibbonCategory，可以通过设置SARibbonCategory::setProxy
 ///
-class SARibbonCategory::PrivateData
-{
+class SARibbonCategory::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonCategory)
 public:
 	PrivateData(SARibbonCategory* p);
@@ -7553,7 +7081,7 @@ public:
 	const SARibbonCategory* ribbonCategory() const;
 
 	// 返回所有的Pannel
-	QList< SARibbonPannel* > pannelList();
+	QList<SARibbonPannel*> pannelList();
 
 	// 更新item的布局,此函数会调用doItemLayout
 	void updateItemGeometry();
@@ -7563,18 +7091,17 @@ public:
 	void init(SARibbonCategory* c);
 
 public:
-	bool mEnableShowPannelTitle { true };  ///< 是否运行pannel的标题栏显示
-	int mPannelTitleHeight { 15 };         ///< pannel的标题栏默认高度
-	bool mIsContextCategory { false };     ///< 标记是否是上下文标签
-	bool mIsCanCustomize { true };         ///< 标记是否可以自定义
+	bool mEnableShowPannelTitle { true }; ///< 是否运行pannel的标题栏显示
+	int mPannelTitleHeight { 15 }; ///< pannel的标题栏默认高度
+	bool mIsContextCategory { false }; ///< 标记是否是上下文标签
+	bool mIsCanCustomize { true }; ///< 标记是否可以自定义
 	SARibbonPannel::PannelLayoutMode mDefaultPannelLayoutMode { SARibbonPannel::ThreeRowMode };
 };
-SARibbonCategory::PrivateData::PrivateData(SARibbonCategory* p) : q_ptr(p)
-{
+SARibbonCategory::PrivateData::PrivateData(SARibbonCategory* p)
+	: q_ptr(p) {
 }
 
-SARibbonPannel* SARibbonCategory::PrivateData::addPannel(const QString& title)
-{
+SARibbonPannel* SARibbonCategory::PrivateData::addPannel(const QString& title) {
 	if (SARibbonCategoryLayout* lay = q_ptr->categoryLayout()) {
 		SARibbonPannel* p = insertPannel(title, lay->pannelCount());
 		return p;
@@ -7582,8 +7109,7 @@ SARibbonPannel* SARibbonCategory::PrivateData::addPannel(const QString& title)
 	return nullptr;
 }
 
-SARibbonPannel* SARibbonCategory::PrivateData::insertPannel(const QString& title, int index)
-{
+SARibbonPannel* SARibbonCategory::PrivateData::insertPannel(const QString& title, int index) {
 	SARibbonPannel* pannel = RibbonSubElementFactory->createRibbonPannel(ribbonCategory());
 
 	pannel->setPannelName(title);
@@ -7592,8 +7118,7 @@ SARibbonPannel* SARibbonCategory::PrivateData::insertPannel(const QString& title
 	return (pannel);
 }
 
-void SARibbonCategory::PrivateData::addPannel(SARibbonPannel* pannel)
-{
+void SARibbonCategory::PrivateData::addPannel(SARibbonPannel* pannel) {
 	if (SARibbonCategoryLayout* lay = q_ptr->categoryLayout()) {
 		insertPannel(lay->pannelCount(), pannel);
 	}
@@ -7606,12 +7131,11 @@ void SARibbonCategory::PrivateData::addPannel(SARibbonPannel* pannel)
  * @param index
  * @param pannel
  */
-void SARibbonCategory::PrivateData::insertPannel(int index, SARibbonPannel* pannel)
-{
+void SARibbonCategory::PrivateData::insertPannel(int index, SARibbonPannel* pannel) {
 	if (nullptr == pannel) {
 		return;
 	}
-	SARibbonCategoryLayout* lay = qobject_cast< SARibbonCategoryLayout* >(q_ptr->layout());
+	SARibbonCategoryLayout* lay = qobject_cast<SARibbonCategoryLayout*>(q_ptr->layout());
 	if (nullptr == lay) {
 		return;
 	}
@@ -7628,17 +7152,15 @@ void SARibbonCategory::PrivateData::insertPannel(int index, SARibbonPannel* pann
 	pannel->setVisible(true);
 }
 
-bool SARibbonCategory::PrivateData::takePannel(SARibbonPannel* pannel)
-{
-	SARibbonCategoryLayout* lay = qobject_cast< SARibbonCategoryLayout* >(q_ptr->layout());
+bool SARibbonCategory::PrivateData::takePannel(SARibbonPannel* pannel) {
+	SARibbonCategoryLayout* lay = qobject_cast<SARibbonCategoryLayout*>(q_ptr->layout());
 	if (nullptr == lay) {
 		return false;
 	}
 	return lay->takePannel(pannel);
 }
 
-bool SARibbonCategory::PrivateData::removePannel(SARibbonPannel* pannel)
-{
+bool SARibbonCategory::PrivateData::removePannel(SARibbonPannel* pannel) {
 	if (takePannel(pannel)) {
 		pannel->hide();
 		pannel->deleteLater();
@@ -7647,34 +7169,30 @@ bool SARibbonCategory::PrivateData::removePannel(SARibbonPannel* pannel)
 	return (false);
 }
 
-QList< SARibbonPannel* > SARibbonCategory::PrivateData::pannelList()
-{
+QList<SARibbonPannel*> SARibbonCategory::PrivateData::pannelList() {
 	if (SARibbonCategoryLayout* lay = q_ptr->categoryLayout()) {
 		return lay->pannelList();
 	}
-	return QList< SARibbonPannel* >();
+	return QList<SARibbonPannel*>();
 }
 
-SARibbonCategory* SARibbonCategory::PrivateData::ribbonCategory()
-{
+SARibbonCategory* SARibbonCategory::PrivateData::ribbonCategory() {
 	return (q_ptr);
 }
 
-const SARibbonCategory* SARibbonCategory::PrivateData::ribbonCategory() const
-{
+const SARibbonCategory* SARibbonCategory::PrivateData::ribbonCategory() const {
 	return (q_ptr);
 }
 
-void SARibbonCategory::PrivateData::updateItemGeometry()
-{
+void SARibbonCategory::PrivateData::updateItemGeometry() {
 #if SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "SARibbonCategory::PrivateData::updateItemGeometry,categoryName=" << q_ptr->categoryName();
 #endif
-	SARibbonCategoryLayout* lay = qobject_cast< SARibbonCategoryLayout* >(q_ptr->layout());
+	SARibbonCategoryLayout* lay = qobject_cast<SARibbonCategoryLayout*>(q_ptr->layout());
 	if (!lay) {
 		return;
 	}
-	const QList< SARibbonPannel* > pannels = lay->pannelList();
+	const QList<SARibbonPannel*> pannels = lay->pannelList();
 	for (auto pannel : pannels) {
 		pannel->updateItemGeometry();
 	}
@@ -7682,8 +7200,7 @@ void SARibbonCategory::PrivateData::updateItemGeometry()
 	return;
 }
 
-void SARibbonCategory::PrivateData::doWheelEvent(QWheelEvent* event)
-{
+void SARibbonCategory::PrivateData::doWheelEvent(QWheelEvent* event) {
 	SARibbonCategoryLayout* lay = q_ptr->categoryLayout();
 	if (nullptr == lay) {
 		return;
@@ -7697,7 +7214,7 @@ void SARibbonCategory::PrivateData::doWheelEvent(QWheelEvent* event)
 		int scrollpix = 40;
 		// Qt6 取消了QWheelEvent::delta函数
 		// 是要下面方法可兼容qt5/6
-		QPoint numPixels  = event->pixelDelta();
+		QPoint numPixels = event->pixelDelta();
 		QPoint numDegrees = event->angleDelta() / 8;
 		if (!numPixels.isNull()) {
 			if (numDegrees.y() < 0) {
@@ -7719,8 +7236,7 @@ void SARibbonCategory::PrivateData::doWheelEvent(QWheelEvent* event)
 	}
 }
 
-void SARibbonCategory::PrivateData::init(SARibbonCategory* c)
-{
+void SARibbonCategory::PrivateData::init(SARibbonCategory* c) {
 	c->setLayout(new SARibbonCategoryLayout(c));
 	c->connect(c, &SARibbonCategory::windowTitleChanged, c, &SARibbonCategory::categoryNameChanged);
 }
@@ -7729,28 +7245,27 @@ void SARibbonCategory::PrivateData::init(SARibbonCategory* c)
 // SARibbonCategory
 //----------------------------------------------------
 
-SARibbonCategory::SARibbonCategory(QWidget* p) : QFrame(p), d_ptr(new SARibbonCategory::PrivateData(this))
-{
+SARibbonCategory::SARibbonCategory(QWidget* p)
+	: QFrame(p)
+	, d_ptr(new SARibbonCategory::PrivateData(this)) {
 	d_ptr->init(this);
 }
 
 SARibbonCategory::SARibbonCategory(const QString& name, QWidget* p)
-	: QFrame(p), d_ptr(new SARibbonCategory::PrivateData(this))
-{
+	: QFrame(p)
+	, d_ptr(new SARibbonCategory::PrivateData(this)) {
 	setCategoryName(name);
 	d_ptr->init(this);
 }
 
-SARibbonCategory::~SARibbonCategory()
-{
+SARibbonCategory::~SARibbonCategory() {
 }
 
 /**
  * @brief category的名字,等同windowTitle函数
  * @return
  */
-QString SARibbonCategory::categoryName() const
-{
+QString SARibbonCategory::categoryName() const {
 	return (windowTitle());
 }
 
@@ -7758,13 +7273,11 @@ QString SARibbonCategory::categoryName() const
  * @brief 设置category名字，等同setWindowTitle
  * @param title
  */
-void SARibbonCategory::setCategoryName(const QString& title)
-{
+void SARibbonCategory::setCategoryName(const QString& title) {
 	setWindowTitle(title);
 }
 
-bool SARibbonCategory::event(QEvent* e)
-{
+bool SARibbonCategory::event(QEvent* e) {
 #if SA_DEBUG_PRINT_EVENT
 	if (e->type() != QEvent::Paint) {
 		qDebug() << "SARibbonCategory event(" << e->type() << "),name=" << categoryName();
@@ -7777,8 +7290,7 @@ bool SARibbonCategory::event(QEvent* e)
  * @brief pannel的模式
  * @return
  */
-SARibbonPannel::PannelLayoutMode SARibbonCategory::pannelLayoutMode() const
-{
+SARibbonPannel::PannelLayoutMode SARibbonCategory::pannelLayoutMode() const {
 	return (d_ptr->mDefaultPannelLayoutMode);
 }
 
@@ -7789,10 +7301,9 @@ SARibbonPannel::PannelLayoutMode SARibbonCategory::pannelLayoutMode() const
  * 把新的SARibbonPannel::PannelLayoutMode设置进去
  * @param m
  */
-void SARibbonCategory::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode m)
-{
+void SARibbonCategory::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode m) {
 	d_ptr->mDefaultPannelLayoutMode = m;
-	iterate([ m ](SARibbonPannel* p) -> bool {
+	iterate([m](SARibbonPannel* p) -> bool {
 		p->setPannelLayoutMode(m);
 		return true;
 	});
@@ -7807,8 +7318,7 @@ void SARibbonCategory::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode m)
  * @return 返回生成的@ref SARibbonPannel 指针
  * @see 对SARibbonPannel的其他操作，参考 @ref SARibbonCategory::takePannel
  */
-SARibbonPannel* SARibbonCategory::addPannel(const QString& title)
-{
+SARibbonPannel* SARibbonCategory::addPannel(const QString& title) {
 	return (d_ptr->addPannel(title));
 }
 
@@ -7816,8 +7326,7 @@ SARibbonPannel* SARibbonCategory::addPannel(const QString& title)
  * @brief 添加pannel
  * @param pannel pannel的所有权SARibbonCategory来管理
  */
-void SARibbonCategory::addPannel(SARibbonPannel* pannel)
-{
+void SARibbonCategory::addPannel(SARibbonPannel* pannel) {
 	d_ptr->addPannel(pannel);
 }
 
@@ -7825,9 +7334,8 @@ void SARibbonCategory::addPannel(SARibbonPannel* pannel)
  * @brief qt designer专用
  * @param pannel
  */
-void SARibbonCategory::addPannel(QWidget* pannel)
-{
-	SARibbonPannel* p = qobject_cast< SARibbonPannel* >(pannel);
+void SARibbonCategory::addPannel(QWidget* pannel) {
+	SARibbonPannel* p = qobject_cast<SARibbonPannel*>(pannel);
 	if (p) {
 		addPannel(p);
 	}
@@ -7840,8 +7348,7 @@ void SARibbonCategory::addPannel(QWidget* pannel)
  * @return 返回生成的@ref SARibbonPannel 指针
  * @note 如果
  */
-SARibbonPannel* SARibbonCategory::insertPannel(const QString& title, int index)
-{
+SARibbonPannel* SARibbonCategory::insertPannel(const QString& title, int index) {
 	return (d_ptr->insertPannel(title, index));
 }
 
@@ -7850,8 +7357,7 @@ SARibbonPannel* SARibbonCategory::insertPannel(const QString& title, int index)
  * @param title
  * @return 如果有重名，只会返回第一个符合条件的
  */
-SARibbonPannel* SARibbonCategory::pannelByName(const QString& title) const
-{
+SARibbonPannel* SARibbonCategory::pannelByName(const QString& title) const {
 	if (SARibbonCategoryLayout* lay = categoryLayout()) {
 		return lay->pannelByName(title);
 	}
@@ -7863,8 +7369,7 @@ SARibbonPannel* SARibbonCategory::pannelByName(const QString& title) const
  * @param objname
  * @return
  */
-SARibbonPannel* SARibbonCategory::pannelByObjectName(const QString& objname) const
-{
+SARibbonPannel* SARibbonCategory::pannelByObjectName(const QString& objname) const {
 	if (SARibbonCategoryLayout* lay = categoryLayout()) {
 		return lay->pannelByObjectName(objname);
 	}
@@ -7876,8 +7381,7 @@ SARibbonPannel* SARibbonCategory::pannelByObjectName(const QString& objname) con
  * @param index
  * @return 如果超过索引范围，会返回nullptr
  */
-SARibbonPannel* SARibbonCategory::pannelByIndex(int index) const
-{
+SARibbonPannel* SARibbonCategory::pannelByIndex(int index) const {
 	if (SARibbonCategoryLayout* lay = categoryLayout()) {
 		return lay->pannelByIndex(index);
 	}
@@ -7889,8 +7393,7 @@ SARibbonPannel* SARibbonCategory::pannelByIndex(int index) const
  * @param p
  * @return 如果找不到，返回-1
  */
-int SARibbonCategory::pannelIndex(SARibbonPannel* p) const
-{
+int SARibbonCategory::pannelIndex(SARibbonPannel* p) const {
 	if (SARibbonCategoryLayout* lay = categoryLayout()) {
 		return lay->pannelIndex(p);
 	}
@@ -7902,8 +7405,7 @@ int SARibbonCategory::pannelIndex(SARibbonPannel* p) const
  * @param from 要移动pannel的index
  * @param to 要移动到的位置
  */
-void SARibbonCategory::movePannel(int from, int to)
-{
+void SARibbonCategory::movePannel(int from, int to) {
 	if (from == to) {
 		return;
 	}
@@ -7923,8 +7425,7 @@ void SARibbonCategory::movePannel(int from, int to)
  * @param pannel 需要提取的pannel
  * @return 成功返回true，否则返回false
  */
-bool SARibbonCategory::takePannel(SARibbonPannel* pannel)
-{
+bool SARibbonCategory::takePannel(SARibbonPannel* pannel) {
 	return (d_ptr->takePannel(pannel));
 }
 
@@ -7943,8 +7444,7 @@ bool SARibbonCategory::takePannel(SARibbonPannel* pannel)
  * pannel->deleteLater();
  * @endcode
  */
-bool SARibbonCategory::removePannel(SARibbonPannel* pannel)
-{
+bool SARibbonCategory::removePannel(SARibbonPannel* pannel) {
 	return (d_ptr->removePannel(pannel));
 }
 
@@ -7953,8 +7453,7 @@ bool SARibbonCategory::removePannel(SARibbonPannel* pannel)
  * @param index pannel的索引，如果超出会返回false
  * @return 成功返回true
  */
-bool SARibbonCategory::removePannel(int index)
-{
+bool SARibbonCategory::removePannel(int index) {
 	SARibbonPannel* p = pannelByIndex(index);
 
 	if (nullptr == p) {
@@ -7967,13 +7466,11 @@ bool SARibbonCategory::removePannel(int index)
  * @brief 返回Category下的所有pannel
  * @return
  */
-QList< SARibbonPannel* > SARibbonCategory::pannelList() const
-{
+QList<SARibbonPannel*> SARibbonCategory::pannelList() const {
 	return (d_ptr->pannelList());
 }
 
-QSize SARibbonCategory::sizeHint() const
-{
+QSize SARibbonCategory::sizeHint() const {
 	if (SARibbonCategoryLayout* lay = categoryLayout()) {
 		return lay->sizeHint();
 	}
@@ -7984,8 +7481,7 @@ QSize SARibbonCategory::sizeHint() const
  * @brief 如果是ContextCategory，此函数返回true
  * @return
  */
-bool SARibbonCategory::isContextCategory() const
-{
+bool SARibbonCategory::isContextCategory() const {
 	return (d_ptr->mIsContextCategory);
 }
 
@@ -7993,8 +7489,7 @@ bool SARibbonCategory::isContextCategory() const
  * @brief 返回pannel的个数
  * @return
  */
-int SARibbonCategory::pannelCount() const
-{
+int SARibbonCategory::pannelCount() const {
 	if (SARibbonCategoryLayout* lay = categoryLayout()) {
 		return lay->pannelCount();
 	}
@@ -8005,8 +7500,7 @@ int SARibbonCategory::pannelCount() const
  * @brief 判断是否可以自定义
  * @return
  */
-bool SARibbonCategory::isCanCustomize() const
-{
+bool SARibbonCategory::isCanCustomize() const {
 	return (d_ptr->mIsCanCustomize);
 }
 
@@ -8014,8 +7508,7 @@ bool SARibbonCategory::isCanCustomize() const
  * @brief 设置是否可以自定义
  * @param b
  */
-void SARibbonCategory::setCanCustomize(bool b)
-{
+void SARibbonCategory::setCanCustomize(bool b) {
 	d_ptr->mIsCanCustomize = b;
 }
 
@@ -8023,18 +7516,16 @@ void SARibbonCategory::setCanCustomize(bool b)
  * @brief pannel标题栏的高度
  * @return
  */
-int SARibbonCategory::pannelTitleHeight() const
-{
+int SARibbonCategory::pannelTitleHeight() const {
 	return d_ptr->mPannelTitleHeight;
 }
 /**
  * @brief 设置pannel的高度
  * @param h
  */
-void SARibbonCategory::setPannelTitleHeight(int h)
-{
+void SARibbonCategory::setPannelTitleHeight(int h) {
 	d_ptr->mPannelTitleHeight = h;
-	iterate([ h ](SARibbonPannel* p) -> bool {
+	iterate([h](SARibbonPannel* p) -> bool {
 		p->setTitleHeight(h);
 		return true;
 	});
@@ -8044,8 +7535,7 @@ void SARibbonCategory::setPannelTitleHeight(int h)
  * @brief 是否pannel显示标题栏
  * @return
  */
-bool SARibbonCategory::isEnableShowPannelTitle() const
-{
+bool SARibbonCategory::isEnableShowPannelTitle() const {
 	return d_ptr->mEnableShowPannelTitle;
 }
 
@@ -8053,10 +7543,9 @@ bool SARibbonCategory::isEnableShowPannelTitle() const
  * @brief 设置显示pannel标题
  * @param on
  */
-void SARibbonCategory::setEnableShowPannelTitle(bool on)
-{
+void SARibbonCategory::setEnableShowPannelTitle(bool on) {
 	d_ptr->mEnableShowPannelTitle = on;
-	iterate([ on ](SARibbonPannel* p) -> bool {
+	iterate([on](SARibbonPannel* p) -> bool {
 		p->setEnableShowTitle(on);
 		return true;
 	});
@@ -8066,14 +7555,13 @@ void SARibbonCategory::setEnableShowPannelTitle(bool on)
  * @brief 获取对应的ribbonbar
  * @return 如果没有加入ribbonbar的管理，此值为null
  */
-SARibbonBar* SARibbonCategory::ribbonBar() const
-{
+SARibbonBar* SARibbonCategory::ribbonBar() const {
 	// 第一个par是stackwidget
 	if (QWidget* par = parentWidget()) {
 		// 理论此时是ribbonbar
 		par = par->parentWidget();
 		while (par) {
-			if (SARibbonBar* ribbon = qobject_cast< SARibbonBar* >(par)) {
+			if (SARibbonBar* ribbon = qobject_cast<SARibbonBar*>(par)) {
 				return ribbon;
 			}
 			par = par->parentWidget();
@@ -8085,8 +7573,7 @@ SARibbonBar* SARibbonCategory::ribbonBar() const
 /**
  * @brief 刷新category的布局，适用于改变ribbon的模式之后调用
  */
-void SARibbonCategory::updateItemGeometry()
-{
+void SARibbonCategory::updateItemGeometry() {
 #if SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "SARibbonCategory name=" << categoryName() << " updateItemGeometry";
 #endif
@@ -8098,9 +7585,8 @@ void SARibbonCategory::updateItemGeometry()
  * @param fp 函数指针返回false则停止迭代
  * @return 返回false代表没有迭代完所有的category，中途接收到回调函数的false返回而中断迭代
  */
-bool SARibbonCategory::iterate(FpPannelIterate fp)
-{
-	const QList< SARibbonPannel* > ps = pannelList();
+bool SARibbonCategory::iterate(FpPannelIterate fp) {
+	const QList<SARibbonPannel*> ps = pannelList();
 	for (SARibbonPannel* p : ps) {
 		if (!fp(p)) {
 			return false;
@@ -8113,9 +7599,8 @@ bool SARibbonCategory::iterate(FpPannelIterate fp)
    @brief 设置Category的对齐方式
    @param al
  */
-void SARibbonCategory::setCategoryAlignment(SARibbonAlignment al)
-{
-	SARibbonCategoryLayout* lay = qobject_cast< SARibbonCategoryLayout* >(layout());
+void SARibbonCategory::setCategoryAlignment(SARibbonAlignment al) {
+	SARibbonCategoryLayout* lay = qobject_cast<SARibbonCategoryLayout*>(layout());
 	if (lay) {
 		lay->setCategoryAlignment(al);
 	}
@@ -8125,9 +7610,8 @@ void SARibbonCategory::setCategoryAlignment(SARibbonAlignment al)
    @brief Category的对齐方式
    @return
  */
-SARibbonAlignment SARibbonCategory::categoryAlignment() const
-{
-	SARibbonCategoryLayout* lay = qobject_cast< SARibbonCategoryLayout* >(layout());
+SARibbonAlignment SARibbonCategory::categoryAlignment() const {
+	SARibbonCategoryLayout* lay = qobject_cast<SARibbonCategoryLayout*>(layout());
 	if (lay) {
 		return lay->categoryAlignment();
 	}
@@ -8138,13 +7622,11 @@ SARibbonAlignment SARibbonCategory::categoryAlignment() const
  * @brief 在超出边界情况下，滚轮可滚动pannel
  * @param event
  */
-void SARibbonCategory::wheelEvent(QWheelEvent* event)
-{
+void SARibbonCategory::wheelEvent(QWheelEvent* event) {
 	d_ptr->doWheelEvent(event);
 }
 
-void SARibbonCategory::changeEvent(QEvent* event)
-{
+void SARibbonCategory::changeEvent(QEvent* event) {
 	switch (event->type()) {
 	case QEvent::StyleChange: {
 		if (layout()) {
@@ -8159,7 +7641,7 @@ void SARibbonCategory::changeEvent(QEvent* event)
 		qDebug() << "SARibbonCategory changeEvent(FontChange),categoryName=" << categoryName();
 #endif
 		QFont f = font();
-		iterate([ f ](SARibbonPannel* p) -> bool {
+		iterate([f](SARibbonPannel* p) -> bool {
 			p->setFont(f);
 			return true;
 		});
@@ -8177,8 +7659,7 @@ void SARibbonCategory::changeEvent(QEvent* event)
  * @brief 标记这个是上下文标签
  * @param isContextCategory
  */
-void SARibbonCategory::markIsContextCategory(bool isContextCategory)
-{
+void SARibbonCategory::markIsContextCategory(bool isContextCategory) {
 	d_ptr->mIsContextCategory = isContextCategory;
 }
 
@@ -8186,21 +7667,19 @@ void SARibbonCategory::markIsContextCategory(bool isContextCategory)
  * @brief 获取SARibbonCategoryLayoutlayout
  * @return
  */
-SARibbonCategoryLayout* SARibbonCategory::categoryLayout() const
-{
-	return qobject_cast< SARibbonCategoryLayout* >(layout());
+SARibbonCategoryLayout* SARibbonCategory::categoryLayout() const {
+	return qobject_cast<SARibbonCategoryLayout*>(layout());
 }
 
 //===================================================
 // SARibbonCategoryScrollButton
 //===================================================
-SARibbonCategoryScrollButton::SARibbonCategoryScrollButton(Qt::ArrowType arr, QWidget* p) : QToolButton(p)
-{
+SARibbonCategoryScrollButton::SARibbonCategoryScrollButton(Qt::ArrowType arr, QWidget* p)
+	: QToolButton(p) {
 	setArrowType(arr);
 }
 
 /*** End of inlined file: SARibbonCategory.cpp ***/
-
 
 /*** Start of inlined file: SARibbonCategoryLayout.cpp ***/
 #include <QLayoutItem>
@@ -8214,8 +7693,7 @@ SARibbonCategoryScrollButton::SARibbonCategoryScrollButton(Qt::ArrowType arr, QW
 /**
  * @brief The SARibbonCategoryLayoutPrivate class
  */
-class SARibbonCategoryLayout::PrivateData
-{
+class SARibbonCategoryLayout::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonCategoryLayout)
 public:
 	PrivateData(SARibbonCategoryLayout* p);
@@ -8224,33 +7702,32 @@ public:
 
 public:
 	bool mDirty { true };
-	bool mIsRightScrollBtnShow { false };                       ///< 标记右滚动按钮是否需要显示
-	bool mIsLeftScrollBtnShow { false };                        ///< 标记左滚动按钮是否需要显示
-	SARibbonCategoryScrollButton* mLeftScrollBtn { nullptr };   ///< 在区域无法显示时显示的按钮
-	SARibbonCategoryScrollButton* mRightScrollBtn { nullptr };  ///< 在区域无法显示时显示的按钮
+	bool mIsRightScrollBtnShow { false }; ///< 标记右滚动按钮是否需要显示
+	bool mIsLeftScrollBtnShow { false }; ///< 标记左滚动按钮是否需要显示
+	SARibbonCategoryScrollButton* mLeftScrollBtn { nullptr }; ///< 在区域无法显示时显示的按钮
+	SARibbonCategoryScrollButton* mRightScrollBtn { nullptr }; ///< 在区域无法显示时显示的按钮
 	int mTotalWidth { 0 };
 	int mXBase { 0 };
 	QSize mSizeHint;
 	QSize mMinSizeHint;
-	QList< SARibbonCategoryLayoutItem* > mItemList;
-	SARibbonAlignment mCategoryAlignment { SARibbonAlignment::AlignLeft };  ///< 对齐方式
+	QList<SARibbonCategoryLayoutItem*> mItemList;
+	SARibbonAlignment mCategoryAlignment { SARibbonAlignment::AlignLeft }; ///< 对齐方式
 };
 
 //=============================================================
 // SARibbonCategoryLayoutPrivate
 //=============================================================
 
-SARibbonCategoryLayout::PrivateData::PrivateData(SARibbonCategoryLayout* p) : q_ptr(p)
-{
+SARibbonCategoryLayout::PrivateData::PrivateData(SARibbonCategoryLayout* p)
+	: q_ptr(p) {
 }
 
 /**
  * @brief 计算所有元素的SizeHint宽度总和
  * @return
  */
-int SARibbonCategoryLayout::PrivateData::totalSizeHintWidth() const
-{
-	int total    = 0;
+int SARibbonCategoryLayout::PrivateData::totalSizeHintWidth() const {
+	int total = 0;
 	QMargins mag = q_ptr->contentsMargins();
 #if SA_DEBUG_PRINT_SIZE_HINT
 	int debug_i__ = 0;
@@ -8303,10 +7780,10 @@ int SARibbonCategoryLayout::PrivateData::totalSizeHintWidth() const
 //=============================================================
 
 SARibbonCategoryLayout::SARibbonCategoryLayout(SARibbonCategory* parent)
-	: QLayout(parent), d_ptr(new SARibbonCategoryLayout::PrivateData(this))
-{
+	: QLayout(parent)
+	, d_ptr(new SARibbonCategoryLayout::PrivateData(this)) {
 	setContentsMargins(1, 1, 1, 1);
-	d_ptr->mLeftScrollBtn  = new SARibbonCategoryScrollButton(Qt::LeftArrow, parent);
+	d_ptr->mLeftScrollBtn = new SARibbonCategoryScrollButton(Qt::LeftArrow, parent);
 	d_ptr->mRightScrollBtn = new SARibbonCategoryScrollButton(Qt::RightArrow, parent);
 	d_ptr->mLeftScrollBtn->setVisible(false);
 	d_ptr->mRightScrollBtn->setVisible(false);
@@ -8314,20 +7791,17 @@ SARibbonCategoryLayout::SARibbonCategoryLayout(SARibbonCategory* parent)
 	connect(d_ptr->mRightScrollBtn, &QToolButton::clicked, this, &SARibbonCategoryLayout::onRightScrollButtonClicked);
 }
 
-SARibbonCategoryLayout::~SARibbonCategoryLayout()
-{
+SARibbonCategoryLayout::~SARibbonCategoryLayout() {
 	while (auto item = takePannelItem(0)) {
 		delete item;
 	}
 }
 
-SARibbonCategory* SARibbonCategoryLayout::ribbonCategory() const
-{
-	return (qobject_cast< SARibbonCategory* >(parentWidget()));
+SARibbonCategory* SARibbonCategoryLayout::ribbonCategory() const {
+	return (qobject_cast<SARibbonCategory*>(parentWidget()));
 }
 
-void SARibbonCategoryLayout::addItem(QLayoutItem* item)
-{
+void SARibbonCategoryLayout::addItem(QLayoutItem* item) {
 	Q_UNUSED(item);
 	qWarning() << tr("in SARibbonCategoryLayout cannot addItem,use addPannel instead");
 	invalidate();
@@ -8339,8 +7813,7 @@ void SARibbonCategoryLayout::addItem(QLayoutItem* item)
  * @return
  * @note 注意，pannel是和分割线一起的，但这个只返回一个pannel对应的layout
  */
-QLayoutItem* SARibbonCategoryLayout::itemAt(int index) const
-{
+QLayoutItem* SARibbonCategoryLayout::itemAt(int index) const {
 	SARibbonCategoryLayoutItem* item = d_ptr->mItemList.value(index, nullptr);
 
 	return (item);
@@ -8351,15 +7824,13 @@ QLayoutItem* SARibbonCategoryLayout::itemAt(int index) const
  * @param index
  * @return
  */
-QLayoutItem* SARibbonCategoryLayout::takeAt(int index)
-{
+QLayoutItem* SARibbonCategoryLayout::takeAt(int index) {
 	QLayoutItem* r = takePannelItem(index);
 	invalidate();
 	return r;
 }
 
-SARibbonCategoryLayoutItem* SARibbonCategoryLayout::takePannelItem(int index)
-{
+SARibbonCategoryLayoutItem* SARibbonCategoryLayout::takePannelItem(int index) {
 	if ((index >= 0) && (index < d_ptr->mItemList.size())) {
 		SARibbonCategoryLayoutItem* item = d_ptr->mItemList.takeAt(index);
 		if (item->widget()) {
@@ -8373,10 +7844,9 @@ SARibbonCategoryLayoutItem* SARibbonCategoryLayout::takePannelItem(int index)
 	return (nullptr);
 }
 
-SARibbonCategoryLayoutItem* SARibbonCategoryLayout::takePannelItem(SARibbonPannel* pannel)
-{
+SARibbonCategoryLayoutItem* SARibbonCategoryLayout::takePannelItem(SARibbonPannel* pannel) {
 	for (int i = 0; i < d_ptr->mItemList.size(); ++i) {
-		SARibbonCategoryLayoutItem* item = d_ptr->mItemList[ i ];
+		SARibbonCategoryLayoutItem* item = d_ptr->mItemList[i];
 		if (item->widget() == pannel) {
 			return (takePannelItem(i));
 		}
@@ -8389,8 +7859,7 @@ SARibbonCategoryLayoutItem* SARibbonCategoryLayout::takePannelItem(SARibbonPanne
  * @param pannel
  * @return
  */
-bool SARibbonCategoryLayout::takePannel(SARibbonPannel* pannel)
-{
+bool SARibbonCategoryLayout::takePannel(SARibbonPannel* pannel) {
 	SARibbonCategoryLayoutItem* i = takePannelItem(pannel);
 	if (i) {
 		SARibbonSeparatorWidget* sp = i->separatorWidget;
@@ -8404,13 +7873,11 @@ bool SARibbonCategoryLayout::takePannel(SARibbonPannel* pannel)
 	return false;
 }
 
-int SARibbonCategoryLayout::count() const
-{
+int SARibbonCategoryLayout::count() const {
 	return (d_ptr->mItemList.size());
 }
 
-void SARibbonCategoryLayout::addPannel(SARibbonPannel* pannel)
-{
+void SARibbonCategoryLayout::addPannel(SARibbonPannel* pannel) {
 	insertPannel(d_ptr->mItemList.count(), pannel);
 }
 
@@ -8421,10 +7888,9 @@ void SARibbonCategoryLayout::addPannel(SARibbonPannel* pannel)
  * @return 返回对应的分割线SARibbonSeparatorWidget
  * @note 在SARibbonCategoryLayout的布局中，一个pannel会携带一个分割线
  */
-void SARibbonCategoryLayout::insertPannel(int index, SARibbonPannel* pannel)
-{
-	index                            = qMax(0, index);
-	index                            = qMin(d_ptr->mItemList.count(), index);
+void SARibbonCategoryLayout::insertPannel(int index, SARibbonPannel* pannel) {
+	index = qMax(0, index);
+	index = qMin(d_ptr->mItemList.count(), index);
 	SARibbonCategoryLayoutItem* item = new SARibbonCategoryLayoutItem(pannel);
 
 	// 分割线
@@ -8435,19 +7901,17 @@ void SARibbonCategoryLayout::insertPannel(int index, SARibbonPannel* pannel)
 	invalidate();
 }
 
-QSize SARibbonCategoryLayout::sizeHint() const
-{
+QSize SARibbonCategoryLayout::sizeHint() const {
 	if (d_ptr->mSizeHint.isNull()) {
-		SARibbonCategoryLayout* that = const_cast< SARibbonCategoryLayout* >(this);
+		SARibbonCategoryLayout* that = const_cast<SARibbonCategoryLayout*>(this);
 		that->updateGeometryArr();
 	}
 	return (d_ptr->mSizeHint);
 }
 
-QSize SARibbonCategoryLayout::minimumSize() const
-{
+QSize SARibbonCategoryLayout::minimumSize() const {
 	if (d_ptr->mMinSizeHint.isNull()) {
-		SARibbonCategoryLayout* that = const_cast< SARibbonCategoryLayout* >(this);
+		SARibbonCategoryLayout* that = const_cast<SARibbonCategoryLayout*>(this);
 		that->updateGeometryArr();
 	}
 	return (d_ptr->mMinSizeHint);
@@ -8457,13 +7921,11 @@ QSize SARibbonCategoryLayout::minimumSize() const
  * @brief SARibbonCategory充满整个stacked widget
  * @return
  */
-Qt::Orientations SARibbonCategoryLayout::expandingDirections() const
-{
+Qt::Orientations SARibbonCategoryLayout::expandingDirections() const {
 	return (Qt::Horizontal | Qt::Vertical);
 }
 
-void SARibbonCategoryLayout::invalidate()
-{
+void SARibbonCategoryLayout::invalidate() {
 	d_ptr->mDirty = true;
 	QLayout::invalidate();
 }
@@ -8471,11 +7933,10 @@ void SARibbonCategoryLayout::invalidate()
  * @brief category的内容尺寸（把margins减去）
  * @return
  */
-QSize SARibbonCategoryLayout::categoryContentSize() const
-{
+QSize SARibbonCategoryLayout::categoryContentSize() const {
 	SARibbonCategory* category = ribbonCategory();
-	QSize s                    = category->size();
-	QMargins mag               = contentsMargins();
+	QSize s = category->size();
+	QMargins mag = contentsMargins();
 	if (!mag.isNull()) {
 		s.rheight() -= (mag.top() + mag.bottom());
 		s.rwidth() -= (mag.right() + mag.left());
@@ -8486,16 +7947,15 @@ QSize SARibbonCategoryLayout::categoryContentSize() const
 /**
  * @brief 更新尺寸
  */
-void SARibbonCategoryLayout::updateGeometryArr()
-{
+void SARibbonCategoryLayout::updateGeometryArr() {
 	SARibbonCategory* category = ribbonCategory();
 	if (nullptr == category) {
 		return;
 	}
 	int categoryWidth = category->width();
-	QMargins mag      = contentsMargins();
-	int height        = category->height();
-	int y             = 0;
+	QMargins mag = contentsMargins();
+	int height = category->height();
+	int y = 0;
 
 	if (!mag.isNull()) {
 		y = mag.top();
@@ -8512,11 +7972,11 @@ void SARibbonCategoryLayout::updateGeometryArr()
 // 判断是否超过总长度
 #if SARibbonCategoryLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "SARibbonCategoryLayout::updateGeometryArr"
-			 << "\n|-category name=" << category->categoryName()  //
-			 << "\n|-category height=" << height                  //
-			 << "\n|-totalSizeHintWidth=" << total                //
-			 << "\n|-y=" << y                                     //
-			 << "\n|-expandWidth:" << expandWidth                 //
+			 << "\n|-category name=" << category->categoryName() //
+			 << "\n|-category height=" << height //
+			 << "\n|-totalSizeHintWidth=" << total //
+			 << "\n|-y=" << y //
+			 << "\n|-expandWidth:" << expandWidth //
 			 << "\n|-mag=" << mag;
 #endif
 	if (total > categoryWidth) {
@@ -8524,22 +7984,22 @@ void SARibbonCategoryLayout::updateGeometryArr()
 		if (0 == d_ptr->mXBase) {
 			// 已经移动到最左，需要可以向右移动
 			d_ptr->mIsRightScrollBtnShow = true;
-			d_ptr->mIsLeftScrollBtnShow  = false;
+			d_ptr->mIsLeftScrollBtnShow = false;
 		} else if (d_ptr->mXBase <= (categoryWidth - total)) {
 			// 已经移动到最右，需要可以向左移动
 			d_ptr->mIsRightScrollBtnShow = false;
-			d_ptr->mIsLeftScrollBtnShow  = true;
+			d_ptr->mIsLeftScrollBtnShow = true;
 		} else {
 			// 移动到中间两边都可以动
 			d_ptr->mIsRightScrollBtnShow = true;
-			d_ptr->mIsLeftScrollBtnShow  = true;
+			d_ptr->mIsLeftScrollBtnShow = true;
 		}
 	} else {
 		// 说明total 小于 categoryWidth
 		// 记录可以扩展的数量
-		int canExpandingCount        = 0;
+		int canExpandingCount = 0;
 		d_ptr->mIsRightScrollBtnShow = false;
-		d_ptr->mIsLeftScrollBtnShow  = false;
+		d_ptr->mIsLeftScrollBtnShow = false;
 		// 这个是避免一开始totalWidth > categorySize.width()，通过滚动按钮调整了m_d->mBaseX
 		// 随之调整了窗体尺寸，调整后totalWidth < categorySize.width()导致category在原来位置
 		// 无法显示，必须这里把mBaseX设置为0
@@ -8548,7 +8008,7 @@ void SARibbonCategoryLayout::updateGeometryArr()
 		//
 
 		for (SARibbonCategoryLayoutItem* item : qAsConst(d_ptr->mItemList)) {
-			if (SARibbonPannel* p = qobject_cast< SARibbonPannel* >(item->widget())) {
+			if (SARibbonPannel* p = qobject_cast<SARibbonPannel*>(item->widget())) {
 				if (p->isExpanding()) {
 					// pannel可扩展
 					++canExpandingCount;
@@ -8567,7 +8027,7 @@ void SARibbonCategoryLayout::updateGeometryArr()
 		// 如果是居中对齐，同时没有伸缩的pannel，同时总宽度没有超过category的宽度
 		x = (categoryWidth - total) / 2;
 	}
-	total = 0;  // total重新计算
+	total = 0; // total重新计算
 	// 先按照sizeHint设置所有的尺寸
 	for (SARibbonCategoryLayoutItem* item : qAsConst(d_ptr->mItemList)) {
 		if (item->isEmpty()) {
@@ -8576,7 +8036,7 @@ void SARibbonCategoryLayout::updateGeometryArr()
 				// pannel hide分割线也要hide
 				item->separatorWidget->hide();
 			}
-			item->mWillSetGeometry          = QRect(0, 0, 0, 0);
+			item->mWillSetGeometry = QRect(0, 0, 0, 0);
 			item->mWillSetSeparatorGeometry = QRect(0, 0, 0, 0);
 			continue;
 		}
@@ -8600,13 +8060,13 @@ void SARibbonCategoryLayout::updateGeometryArr()
 		item->mWillSetGeometry = QRect(x, y, w, height);
 		x += w;
 		total += w;
-		w                               = SeparatorSize.width();
+		w = SeparatorSize.width();
 		item->mWillSetSeparatorGeometry = QRect(x, y, w, height);
 		x += w;
 		total += w;
 	}
-	d_ptr->mTotalWidth  = total;
-	d_ptr->mSizeHint    = QSize(d_ptr->mTotalWidth, height);
+	d_ptr->mTotalWidth = total;
+	d_ptr->mSizeHint = QSize(d_ptr->mTotalWidth, height);
 	d_ptr->mMinSizeHint = QSize(categoryWidth, height);
 #if SARibbonCategoryLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	qDebug() << "SARibbonCategoryLayout updateGeometryArr,SizeHint=" << d_ptr->mSizeHint
@@ -8617,8 +8077,7 @@ void SARibbonCategoryLayout::updateGeometryArr()
 /**
  * @brief 执行layout调整
  */
-void SARibbonCategoryLayout::doLayout()
-{
+void SARibbonCategoryLayout::doLayout() {
 	if (d_ptr->mDirty) {
 		updateGeometryArr();
 	}
@@ -8626,7 +8085,7 @@ void SARibbonCategoryLayout::doLayout()
 	// 两个滚动按钮的位置永远不变
 	d_ptr->mLeftScrollBtn->setGeometry(0, 0, 12, category->height());
 	d_ptr->mRightScrollBtn->setGeometry(category->width() - 12, 0, 12, category->height());
-	QList< QWidget* > showWidgets, hideWidgets;
+	QList<QWidget*> showWidgets, hideWidgets;
 #if SARibbonCategoryLayout_DEBUG_PRINT && SA_DEBUG_PRINT_SIZE_HINT
 	int debug_i__(0);
 	qDebug() << "SARibbonCategoryLayout::doLayout(),name=" << category->categoryName();
@@ -8687,9 +8146,8 @@ void SARibbonCategoryLayout::doLayout()
  * @brief 返回所有pannels
  * @return
  */
-QList< SARibbonPannel* > SARibbonCategoryLayout::pannels() const
-{
-	QList< SARibbonPannel* > res;
+QList<SARibbonPannel*> SARibbonCategoryLayout::pannels() const {
+	QList<SARibbonPannel*> res;
 
 	for (SARibbonCategoryLayoutItem* item : qAsConst(d_ptr->mItemList)) {
 		SARibbonPannel* p = item->toPannelWidget();
@@ -8703,8 +8161,7 @@ QList< SARibbonPannel* > SARibbonCategoryLayout::pannels() const
  * @param objname
  * @return
  */
-SARibbonPannel* SARibbonCategoryLayout::pannelByObjectName(const QString& objname) const
-{
+SARibbonPannel* SARibbonCategoryLayout::pannelByObjectName(const QString& objname) const {
 	for (SARibbonCategoryLayoutItem* item : d_ptr->mItemList) {
 		if (SARibbonPannel* pannel = item->toPannelWidget()) {
 			if (pannel->objectName() == objname) {
@@ -8720,8 +8177,7 @@ SARibbonPannel* SARibbonCategoryLayout::pannelByObjectName(const QString& objnam
  * @param title
  * @return 如果有重名，只会返回第一个符合条件的
  */
-SARibbonPannel* SARibbonCategoryLayout::pannelByName(const QString& pannelname) const
-{
+SARibbonPannel* SARibbonCategoryLayout::pannelByName(const QString& pannelname) const {
 	for (SARibbonCategoryLayoutItem* item : qAsConst(d_ptr->mItemList)) {
 		if (SARibbonPannel* pannel = item->toPannelWidget()) {
 			if (pannel->pannelName() == pannelname) {
@@ -8737,10 +8193,9 @@ SARibbonPannel* SARibbonCategoryLayout::pannelByName(const QString& pannelname) 
  * @param i
  * @return
  */
-SARibbonPannel* SARibbonCategoryLayout::pannelByIndex(int i) const
-{
+SARibbonPannel* SARibbonCategoryLayout::pannelByIndex(int i) const {
 	if (i >= 0 && i < d_ptr->mItemList.size()) {
-		return d_ptr->mItemList[ i ]->toPannelWidget();
+		return d_ptr->mItemList[i]->toPannelWidget();
 	}
 	return nullptr;
 }
@@ -8750,8 +8205,7 @@ SARibbonPannel* SARibbonCategoryLayout::pannelByIndex(int i) const
  * @param from
  * @param to
  */
-void SARibbonCategoryLayout::movePannel(int from, int to)
-{
+void SARibbonCategoryLayout::movePannel(int from, int to) {
 	d_ptr->mItemList.move(from, to);
 	doLayout();
 }
@@ -8760,8 +8214,7 @@ void SARibbonCategoryLayout::movePannel(int from, int to)
  * @brief 返回pannel的个数
  * @return
  */
-int SARibbonCategoryLayout::pannelCount() const
-{
+int SARibbonCategoryLayout::pannelCount() const {
 	return d_ptr->mItemList.size();
 }
 
@@ -8770,12 +8223,11 @@ int SARibbonCategoryLayout::pannelCount() const
  * @param p
  * @return 如果找不到，返回-1
  */
-int SARibbonCategoryLayout::pannelIndex(SARibbonPannel* p) const
-{
+int SARibbonCategoryLayout::pannelIndex(SARibbonPannel* p) const {
 	int c = pannelCount();
 
 	for (int i = 0; i < c; ++i) {
-		if (d_ptr->mItemList[ i ]->toPannelWidget() == p) {
+		if (d_ptr->mItemList[i]->toPannelWidget() == p) {
 			return (i);
 		}
 	}
@@ -8786,9 +8238,8 @@ int SARibbonCategoryLayout::pannelIndex(SARibbonPannel* p) const
  * @brief 获取所有的pannel
  * @return
  */
-QList< SARibbonPannel* > SARibbonCategoryLayout::pannelList() const
-{
-	QList< SARibbonPannel* > res;
+QList<SARibbonPannel*> SARibbonCategoryLayout::pannelList() const {
+	QList<SARibbonPannel*> res;
 
 	for (SARibbonCategoryLayoutItem* i : qAsConst(d_ptr->mItemList)) {
 		if (SARibbonPannel* p = i->toPannelWidget()) {
@@ -8802,8 +8253,7 @@ QList< SARibbonPannel* > SARibbonCategoryLayout::pannelList() const
  * @brief 执行滚动
  * @param px
  */
-void SARibbonCategoryLayout::scroll(int px)
-{
+void SARibbonCategoryLayout::scroll(int px) {
 	QSize contentSize = categoryContentSize();
 	d_ptr->mXBase += px;
 	if (d_ptr->mXBase > 0) {
@@ -8818,8 +8268,7 @@ void SARibbonCategoryLayout::scroll(int px)
  * @brief 判断是否滚动过
  * @return
  */
-bool SARibbonCategoryLayout::isScrolled() const
-{
+bool SARibbonCategoryLayout::isScrolled() const {
 	return (d_ptr->mXBase != 0);
 }
 
@@ -8827,8 +8276,7 @@ bool SARibbonCategoryLayout::isScrolled() const
  * @brief 这个宽度是实际内容的宽度，有可能大于size.width，也有可能小于
  * @return
  */
-int SARibbonCategoryLayout::categoryTotalWidth() const
-{
+int SARibbonCategoryLayout::categoryTotalWidth() const {
 	return d_ptr->mTotalWidth;
 }
 
@@ -8838,8 +8286,7 @@ int SARibbonCategoryLayout::categoryTotalWidth() const
    居中对齐会让pannel以居中进行对齐
    @param al
  */
-void SARibbonCategoryLayout::setCategoryAlignment(SARibbonAlignment al)
-{
+void SARibbonCategoryLayout::setCategoryAlignment(SARibbonAlignment al) {
 	d_ptr->mCategoryAlignment = al;
 }
 
@@ -8847,15 +8294,13 @@ void SARibbonCategoryLayout::setCategoryAlignment(SARibbonAlignment al)
    @brief Category的对齐方式
    @return
  */
-SARibbonAlignment SARibbonCategoryLayout::categoryAlignment() const
-{
+SARibbonAlignment SARibbonCategoryLayout::categoryAlignment() const {
 	return d_ptr->mCategoryAlignment;
 }
 
-void SARibbonCategoryLayout::onLeftScrollButtonClicked()
-{
-	SARibbonCategory* category = qobject_cast< SARibbonCategory* >(parentWidget());
-	int width                  = category->width();
+void SARibbonCategoryLayout::onLeftScrollButtonClicked() {
+	SARibbonCategory* category = qobject_cast<SARibbonCategory*>(parentWidget());
+	int width = category->width();
 	// 求总宽
 	int totalWidth = d_ptr->mTotalWidth;
 
@@ -8871,10 +8316,9 @@ void SARibbonCategoryLayout::onLeftScrollButtonClicked()
 	invalidate();
 }
 
-void SARibbonCategoryLayout::onRightScrollButtonClicked()
-{
-	SARibbonCategory* category = qobject_cast< SARibbonCategory* >(parentWidget());
-	int width                  = category->width();
+void SARibbonCategoryLayout::onRightScrollButtonClicked() {
+	SARibbonCategory* category = qobject_cast<SARibbonCategory*>(parentWidget());
+	int width = category->width();
 	// 求总宽
 	int totalWidth = d_ptr->mTotalWidth;
 
@@ -8890,8 +8334,7 @@ void SARibbonCategoryLayout::onRightScrollButtonClicked()
 	invalidate();
 }
 
-void SARibbonCategoryLayout::setGeometry(const QRect& rect)
-{
+void SARibbonCategoryLayout::setGeometry(const QRect& rect) {
 	QRect old = geometry();
 	if (old == rect) {
 		return;
@@ -8909,18 +8352,16 @@ void SARibbonCategoryLayout::setGeometry(const QRect& rect)
 // SARibbonCategoryLayoutItem
 //=============================================================
 
-SARibbonCategoryLayoutItem::SARibbonCategoryLayoutItem(SARibbonPannel* w) : QWidgetItem(w)
-{
+SARibbonCategoryLayoutItem::SARibbonCategoryLayoutItem(SARibbonPannel* w)
+	: QWidgetItem(w) {
 	separatorWidget = nullptr;
 }
 
-SARibbonPannel* SARibbonCategoryLayoutItem::toPannelWidget()
-{
-	return qobject_cast< SARibbonPannel* >(widget());
+SARibbonPannel* SARibbonCategoryLayoutItem::toPannelWidget() {
+	return qobject_cast<SARibbonPannel*>(widget());
 }
 
 /*** End of inlined file: SARibbonCategoryLayout.cpp ***/
-
 
 /*** Start of inlined file: SARibbonContextCategory.cpp ***/
 #include <QList>
@@ -8931,8 +8372,7 @@ SARibbonPannel* SARibbonCategoryLayoutItem::toPannelWidget()
 /**
  * @brief The SARibbonCategoryData class
  */
-class SAPrivateRibbonCategoryData
-{
+class SAPrivateRibbonCategoryData {
 public:
 	SARibbonCategory* categoryPage;
 };
@@ -8940,40 +8380,37 @@ public:
 /**
  * @brief The SARibbonContextCategoryPrivate class
  */
-class SARibbonContextCategory::PrivateData
-{
+class SARibbonContextCategory::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonContextCategory)
 public:
 	PrivateData(SARibbonContextCategory* p);
 
 public:
-	QList< SAPrivateRibbonCategoryData > categoryDataList;
+	QList<SAPrivateRibbonCategoryData> categoryDataList;
 	QVariant contextID;
 	QColor contextColor;
 	QString contextTitle;
 };
-SARibbonContextCategory::PrivateData::PrivateData(SARibbonContextCategory* p) : q_ptr(p)
-{
+SARibbonContextCategory::PrivateData::PrivateData(SARibbonContextCategory* p)
+	: q_ptr(p) {
 }
 
 //===================================================
 // SARibbonContextCategory
 //===================================================
 SARibbonContextCategory::SARibbonContextCategory(QWidget* parent)
-	: QObject(parent), d_ptr(new SARibbonContextCategory::PrivateData(this))
-{
+	: QObject(parent)
+	, d_ptr(new SARibbonContextCategory::PrivateData(this)) {
 }
 
-SARibbonContextCategory::~SARibbonContextCategory()
-{
+SARibbonContextCategory::~SARibbonContextCategory() {
 }
 
 /**
  * @brief 添加标签
  * @param title 标签名字
  */
-SARibbonCategory* SARibbonContextCategory::addCategoryPage(const QString& title)
-{
+SARibbonCategory* SARibbonContextCategory::addCategoryPage(const QString& title) {
 	SARibbonCategory* category = RibbonSubElementFactory->createRibbonCategory(parentWidget());
 	category->setCategoryName(title);
 	addCategoryPage(category);
@@ -8984,8 +8421,7 @@ SARibbonCategory* SARibbonContextCategory::addCategoryPage(const QString& title)
  * @brief 添加标签
  * @param page
  */
-void SARibbonContextCategory::addCategoryPage(SARibbonCategory* category)
-{
+void SARibbonContextCategory::addCategoryPage(SARibbonCategory* category) {
 	if (isHaveCategory(category)) {
 		// cn:SARibbonContextCategory已经持有标签：%1，将跳过
 		qWarning() << tr("SARibbonContextCategory have category %1,will skip").arg(category->categoryName());
@@ -9000,44 +8436,37 @@ void SARibbonContextCategory::addCategoryPage(SARibbonCategory* category)
 	emit categoryPageAdded(category);
 }
 
-int SARibbonContextCategory::categoryCount() const
-{
+int SARibbonContextCategory::categoryCount() const {
 	return (d_ptr->categoryDataList.count());
 }
 
-void SARibbonContextCategory::setId(const QVariant& id)
-{
+void SARibbonContextCategory::setId(const QVariant& id) {
 	d_ptr->contextID = id;
 }
 
-QVariant SARibbonContextCategory::id() const
-{
+QVariant SARibbonContextCategory::id() const {
 	return (d_ptr->contextID);
 }
 
-void SARibbonContextCategory::setContextColor(const QColor color)
-{
+void SARibbonContextCategory::setContextColor(const QColor color) {
 	d_ptr->contextColor = color;
 }
 
-QColor SARibbonContextCategory::contextColor() const
-{
+QColor SARibbonContextCategory::contextColor() const {
 	return (d_ptr->contextColor);
 }
 
-QWidget* SARibbonContextCategory::parentWidget() const
-{
-	return (qobject_cast< QWidget* >(parent()));
+QWidget* SARibbonContextCategory::parentWidget() const {
+	return (qobject_cast<QWidget*>(parent()));
 }
 
-bool SARibbonContextCategory::eventFilter(QObject* watched, QEvent* e)
-{
+bool SARibbonContextCategory::eventFilter(QObject* watched, QEvent* e) {
 	if (nullptr == watched) {
 		return (false);
 	}
 	switch (e->type()) {
 	case QEvent::Close: {
-		SARibbonCategory* c = qobject_cast< SARibbonCategory* >(watched);
+		SARibbonCategory* c = qobject_cast<SARibbonCategory*>(watched);
 		if (c) {
 #ifdef SA_RIBBON_DEBUG_HELP_DRAW
 			qDebug() << " -----------> close event";
@@ -9056,8 +8485,7 @@ bool SARibbonContextCategory::eventFilter(QObject* watched, QEvent* e)
  * @brief 获取上下文标签的标题
  * @return
  */
-QString SARibbonContextCategory::contextTitle() const
-{
+QString SARibbonContextCategory::contextTitle() const {
 	return (d_ptr->contextTitle);
 }
 
@@ -9066,8 +8494,7 @@ QString SARibbonContextCategory::contextTitle() const
  * @param contextTitle
  * @note 此函数会触发信号@sa contextTitleChanged
  */
-void SARibbonContextCategory::setContextTitle(const QString& contextTitle)
-{
+void SARibbonContextCategory::setContextTitle(const QString& contextTitle) {
 	d_ptr->contextTitle = contextTitle;
 	emit contextTitleChanged(contextTitle);
 }
@@ -9077,18 +8504,16 @@ void SARibbonContextCategory::setContextTitle(const QString& contextTitle)
  * @param index
  * @return
  */
-SARibbonCategory* SARibbonContextCategory::categoryPage(int index)
-{
-	return (d_ptr->categoryDataList[ index ].categoryPage);
+SARibbonCategory* SARibbonContextCategory::categoryPage(int index) {
+	return (d_ptr->categoryDataList[index].categoryPage);
 }
 
 /**
  * @brief 获取所有的SARibbonCategory*
  * @return
  */
-QList< SARibbonCategory* > SARibbonContextCategory::categoryList() const
-{
-	QList< SARibbonCategory* > res;
+QList<SARibbonCategory*> SARibbonContextCategory::categoryList() const {
+	QList<SARibbonCategory*> res;
 
 	for (const SAPrivateRibbonCategoryData& c : qAsConst(d_ptr->categoryDataList)) {
 		res.append(c.categoryPage);
@@ -9101,10 +8526,9 @@ QList< SARibbonCategory* > SARibbonContextCategory::categoryList() const
  * @param category
  * @return 成功移除返回true
  */
-bool SARibbonContextCategory::takeCategory(SARibbonCategory* category)
-{
+bool SARibbonContextCategory::takeCategory(SARibbonCategory* category) {
 	for (int i = 0; i < d_ptr->categoryDataList.size(); ++i) {
-		if (d_ptr->categoryDataList[ i ].categoryPage == category) {
+		if (d_ptr->categoryDataList[i].categoryPage == category) {
 			d_ptr->categoryDataList.takeAt(i);
 			return (true);
 		}
@@ -9117,19 +8541,17 @@ bool SARibbonContextCategory::takeCategory(SARibbonCategory* category)
  * @param category
  * @return
  */
-bool SARibbonContextCategory::isHaveCategory(SARibbonCategory* category) const
-{
+bool SARibbonContextCategory::isHaveCategory(SARibbonCategory* category) const {
 	for (int i = 0; i < d_ptr->categoryDataList.size(); ++i) {
-		if (d_ptr->categoryDataList[ i ].categoryPage == category) {
+		if (d_ptr->categoryDataList[i].categoryPage == category) {
 			return (true);
 		}
 	}
 	return (false);
 }
 
-void SARibbonContextCategory::onCategoryTitleChanged(const QString& title)
-{
-	SARibbonCategory* category = qobject_cast< SARibbonCategory* >(sender());
+void SARibbonContextCategory::onCategoryTitleChanged(const QString& title) {
+	SARibbonCategory* category = qobject_cast<SARibbonCategory*>(sender());
 	if (category) {
 		emit categoryTitleChanged(category, title);
 	}
@@ -9137,37 +8559,34 @@ void SARibbonContextCategory::onCategoryTitleChanged(const QString& title)
 
 /*** End of inlined file: SARibbonContextCategory.cpp ***/
 
-
 /*** Start of inlined file: SARibbonGalleryItem.cpp ***/
-SARibbonGalleryItem::SARibbonGalleryItem() : m_flags(Qt::ItemIsEnabled | Qt::ItemIsSelectable), m_action(nullptr)
-{
+SARibbonGalleryItem::SARibbonGalleryItem()
+	: m_flags(Qt::ItemIsEnabled | Qt::ItemIsSelectable)
+	, m_action(nullptr) {
 }
 
 SARibbonGalleryItem::SARibbonGalleryItem(const QString& text, const QIcon& icon)
-	: m_flags(Qt::ItemIsEnabled | Qt::ItemIsSelectable), m_action(nullptr)
-{
+	: m_flags(Qt::ItemIsEnabled | Qt::ItemIsSelectable)
+	, m_action(nullptr) {
 	setText(text);
 	setIcon(icon);
 	setTextAlignment(Qt::AlignTop | Qt::AlignHCenter);
 }
 
-SARibbonGalleryItem::SARibbonGalleryItem(QAction* act) : m_flags(Qt::ItemIsEnabled | Qt::ItemIsSelectable)
-{
+SARibbonGalleryItem::SARibbonGalleryItem(QAction* act)
+	: m_flags(Qt::ItemIsEnabled | Qt::ItemIsSelectable) {
 	setTextAlignment(Qt::AlignTop | Qt::AlignHCenter);
 	setAction(act);
 }
 
-SARibbonGalleryItem::~SARibbonGalleryItem()
-{
+SARibbonGalleryItem::~SARibbonGalleryItem() {
 }
 
-void SARibbonGalleryItem::setData(int role, const QVariant& data)
-{
-	m_datas[ role ] = data;
+void SARibbonGalleryItem::setData(int role, const QVariant& data) {
+	m_datas[role] = data;
 }
 
-QVariant SARibbonGalleryItem::data(int role) const
-{
+QVariant SARibbonGalleryItem::data(int role) const {
 	if (m_action) {
 		switch (role) {
 		case Qt::DisplayRole:
@@ -9185,52 +8604,44 @@ QVariant SARibbonGalleryItem::data(int role) const
 	return (m_datas.value(role));
 }
 
-void SARibbonGalleryItem::setText(const QString& text)
-{
+void SARibbonGalleryItem::setText(const QString& text) {
 	setData(Qt::DisplayRole, text);
 }
 
-QString SARibbonGalleryItem::text() const
-{
+QString SARibbonGalleryItem::text() const {
 	if (m_action) {
 		return (m_action->text());
 	}
 	return (data(Qt::DisplayRole).toString());
 }
 
-void SARibbonGalleryItem::setToolTip(const QString& text)
-{
+void SARibbonGalleryItem::setToolTip(const QString& text) {
 	setData(Qt::ToolTipRole, text);
 }
 
-QString SARibbonGalleryItem::toolTip() const
-{
+QString SARibbonGalleryItem::toolTip() const {
 	if (m_action) {
 		return (m_action->toolTip());
 	}
 	return (data(Qt::ToolTipRole).toString());
 }
 
-void SARibbonGalleryItem::setIcon(const QIcon& ico)
-{
+void SARibbonGalleryItem::setIcon(const QIcon& ico) {
 	setData(Qt::DecorationRole, ico);
 }
 
-QIcon SARibbonGalleryItem::icon() const
-{
+QIcon SARibbonGalleryItem::icon() const {
 	if (m_action) {
 		return (m_action->icon());
 	}
-	return (qvariant_cast< QIcon >(data(Qt::DecorationRole)));
+	return (qvariant_cast<QIcon>(data(Qt::DecorationRole)));
 }
 
-bool SARibbonGalleryItem::isSelectable() const
-{
+bool SARibbonGalleryItem::isSelectable() const {
 	return (m_flags & Qt::ItemIsSelectable);
 }
 
-void SARibbonGalleryItem::setSelectable(bool isSelectable)
-{
+void SARibbonGalleryItem::setSelectable(bool isSelectable) {
 	if (isSelectable) {
 		m_flags |= Qt::ItemIsSelectable;
 	} else {
@@ -9238,16 +8649,14 @@ void SARibbonGalleryItem::setSelectable(bool isSelectable)
 	}
 }
 
-bool SARibbonGalleryItem::isEnable() const
-{
+bool SARibbonGalleryItem::isEnable() const {
 	if (m_action) {
 		return (m_action->isEnabled());
 	}
 	return (m_flags & Qt::ItemIsEnabled);
 }
 
-void SARibbonGalleryItem::setEnable(bool isEnable)
-{
+void SARibbonGalleryItem::setEnable(bool isEnable) {
 	if (m_action) {
 		m_action->setEnabled(isEnable);
 	}
@@ -9259,21 +8668,18 @@ void SARibbonGalleryItem::setEnable(bool isEnable)
 	}
 }
 
-void SARibbonGalleryItem::setFlags(Qt::ItemFlags flag)
-{
+void SARibbonGalleryItem::setFlags(Qt::ItemFlags flag) {
 	m_flags = flag;
 	if (m_action) {
 		m_action->setEnabled(flag & Qt::ItemIsEnabled);
 	}
 }
 
-Qt::ItemFlags SARibbonGalleryItem::flags() const
-{
+Qt::ItemFlags SARibbonGalleryItem::flags() const {
 	return (m_flags);
 }
 
-void SARibbonGalleryItem::setAction(QAction* act)
-{
+void SARibbonGalleryItem::setAction(QAction* act) {
 	m_action = act;
 	if (nullptr == m_action) {
 		return;
@@ -9285,47 +8691,42 @@ void SARibbonGalleryItem::setAction(QAction* act)
 	}
 }
 
-QAction* SARibbonGalleryItem::action()
-{
+QAction* SARibbonGalleryItem::action() {
 	return (m_action);
 }
 
-void SARibbonGalleryItem::setTextAlignment(Qt::Alignment a)
-{
+void SARibbonGalleryItem::setTextAlignment(Qt::Alignment a) {
 	setData(Qt::TextAlignmentRole, (int)a);
 }
 
-Qt::Alignment SARibbonGalleryItem::textAlignment() const
-{
-	return qvariant_cast< Qt::Alignment >(data(Qt::TextAlignmentRole));
+Qt::Alignment SARibbonGalleryItem::textAlignment() const {
+	return qvariant_cast<Qt::Alignment>(data(Qt::TextAlignmentRole));
 }
 
 /*** End of inlined file: SARibbonGalleryItem.cpp ***/
 
-
 /*** Start of inlined file: SARibbonGalleryGroup.cpp ***/
-#include <QPainter>
-#include <QDebug>
 #include <QActionGroup>
+#include <QDebug>
 #include <QItemSelectionModel>
+#include <QPainter>
 
 /**
  * @brief The SARibbonGalleryGroupPrivate class
  */
-class SARibbonGalleryGroup::PrivateData
-{
+class SARibbonGalleryGroup::PrivateData {
 public:
 	SARibbonGalleryGroup* q_ptr;
 	QString mGroupTitle;
 	SARibbonGalleryGroup::GalleryGroupStyle mPreStyle { SARibbonGalleryGroup::IconWithText };
 	SARibbonGalleryGroup::DisplayRow mDisplayRow { SARibbonGalleryGroup::DisplayOneRow };
 	bool mBlockRecalc { false };
-	int mGridMinimumWidth { 0 };             ///< grid最小宽度
-	int mGridMaximumWidth { 0 };             ///< grid最大宽度
-	QActionGroup* mActionGroup { nullptr };  ///< 所有GalleryGroup管理的actions都由这个actiongroup管理
+	int mGridMinimumWidth { 0 }; ///< grid最小宽度
+	int mGridMaximumWidth { 0 }; ///< grid最大宽度
+	QActionGroup* mActionGroup { nullptr }; ///< 所有GalleryGroup管理的actions都由这个actiongroup管理
 public:
-	PrivateData(SARibbonGalleryGroup* p) : q_ptr(p)
-	{
+	PrivateData(SARibbonGalleryGroup* p)
+		: q_ptr(p) {
 		mActionGroup = new QActionGroup(p);
 		p->connect(mActionGroup, &QActionGroup::triggered, p, &SARibbonGalleryGroup::triggered);
 		p->connect(mActionGroup, &QActionGroup::hovered, p, &SARibbonGalleryGroup::hovered);
@@ -9337,12 +8738,11 @@ public:
 //===================================================
 
 SARibbonGalleryGroupItemDelegate::SARibbonGalleryGroupItemDelegate(SARibbonGalleryGroup* group, QObject* parent)
-	: QStyledItemDelegate(parent), m_group(group)
-{
+	: QStyledItemDelegate(parent)
+	, m_group(group) {
 }
 
-void SARibbonGalleryGroupItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
+void SARibbonGalleryGroupItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
 	if (nullptr == m_group) {
 		return;
 	}
@@ -9362,10 +8762,9 @@ void SARibbonGalleryGroupItemDelegate::paint(QPainter* painter, const QStyleOpti
 	}
 }
 
-void SARibbonGalleryGroupItemDelegate::paintIconOnly(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
+void SARibbonGalleryGroupItemDelegate::paintIconOnly(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
 	QStyle* style = m_group->style();
-	int sp        = m_group->spacing();
+	int sp = m_group->spacing();
 	sp += 3;
 	painter->save();
 	painter->setClipRect(option.rect);
@@ -9374,26 +8773,23 @@ void SARibbonGalleryGroupItemDelegate::paintIconOnly(QPainter* painter, const QS
 	QRect iconRect = option.rect;
 
 	iconRect.adjust(sp, sp, -sp, -sp);
-	QIcon ico = qvariant_cast< QIcon >(index.data(Qt::DecorationRole));
+	QIcon ico = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
 
 	ico.paint(painter, iconRect, Qt::AlignCenter, QIcon::Normal, QIcon::On);
 	painter->restore();
 }
 
-void SARibbonGalleryGroupItemDelegate::paintIconWithText(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
+void SARibbonGalleryGroupItemDelegate::paintIconWithText(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
 	QStyledItemDelegate::paint(painter, option, index);
 }
 
 void SARibbonGalleryGroupItemDelegate::paintIconWithTextWordWrap(QPainter* painter,
-																 const QStyleOptionViewItem& option,
-																 const QModelIndex& index) const
-{
+	const QStyleOptionViewItem& option,
+	const QModelIndex& index) const {
 	QStyledItemDelegate::paint(painter, option, index);
 }
 
-QSize SARibbonGalleryGroupItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
+QSize SARibbonGalleryGroupItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const {
 	Q_UNUSED(index);
 	Q_UNUSED(option);
 	return m_group->gridSize();
@@ -9403,46 +8799,40 @@ QSize SARibbonGalleryGroupItemDelegate::sizeHint(const QStyleOptionViewItem& opt
 // SARibbonGalleryGroupModel
 //===================================================
 
-SARibbonGalleryGroupModel::SARibbonGalleryGroupModel(QObject* parent) : QAbstractListModel(parent)
-{
+SARibbonGalleryGroupModel::SARibbonGalleryGroupModel(QObject* parent)
+	: QAbstractListModel(parent) {
 }
 
-SARibbonGalleryGroupModel::~SARibbonGalleryGroupModel()
-{
+SARibbonGalleryGroupModel::~SARibbonGalleryGroupModel() {
 	clear();
 }
 
-int SARibbonGalleryGroupModel::rowCount(const QModelIndex& parent) const
-{
+int SARibbonGalleryGroupModel::rowCount(const QModelIndex& parent) const {
 	return (parent.isValid() ? 0 : m_items.size());
 }
 
-Qt::ItemFlags SARibbonGalleryGroupModel::flags(const QModelIndex& index) const
-{
+Qt::ItemFlags SARibbonGalleryGroupModel::flags(const QModelIndex& index) const {
 	if (!index.isValid() || (index.row() >= m_items.size())) {
 		return (Qt::NoItemFlags);
 	}
 	return (m_items.at(index.row())->flags());
 }
 
-QVariant SARibbonGalleryGroupModel::data(const QModelIndex& index, int role) const
-{
+QVariant SARibbonGalleryGroupModel::data(const QModelIndex& index, int role) const {
 	if (!index.isValid() || (index.row() >= m_items.count())) {
 		return (QVariant());
 	}
 	return (m_items.at(index.row())->data(role));
 }
 
-QModelIndex SARibbonGalleryGroupModel::index(int row, int column, const QModelIndex& parent) const
-{
+QModelIndex SARibbonGalleryGroupModel::index(int row, int column, const QModelIndex& parent) const {
 	if (hasIndex(row, column, parent)) {
 		return (createIndex(row, column, m_items.at(row)));
 	}
 	return (QModelIndex());
 }
 
-bool SARibbonGalleryGroupModel::setData(const QModelIndex& index, const QVariant& value, int role)
-{
+bool SARibbonGalleryGroupModel::setData(const QModelIndex& index, const QVariant& value, int role) {
 	if (!index.isValid() || (index.row() >= m_items.count())) {
 		return (false);
 	}
@@ -9451,8 +8841,7 @@ bool SARibbonGalleryGroupModel::setData(const QModelIndex& index, const QVariant
 	return (true);
 }
 
-void SARibbonGalleryGroupModel::clear()
-{
+void SARibbonGalleryGroupModel::clear() {
 	beginResetModel();
 	for (int i = 0; i < m_items.count(); ++i) {
 		if (m_items.at(i)) {
@@ -9463,20 +8852,17 @@ void SARibbonGalleryGroupModel::clear()
 	endResetModel();
 }
 
-SARibbonGalleryItem* SARibbonGalleryGroupModel::at(int row) const
-{
+SARibbonGalleryItem* SARibbonGalleryGroupModel::at(int row) const {
 	return (m_items.value(row));
 }
 
-void SARibbonGalleryGroupModel::insert(int row, SARibbonGalleryItem* item)
-{
+void SARibbonGalleryGroupModel::insert(int row, SARibbonGalleryItem* item) {
 	beginInsertRows(QModelIndex(), row, row);
 	m_items.insert(row, item);
 	endInsertRows();
 }
 
-SARibbonGalleryItem* SARibbonGalleryGroupModel::take(int row)
-{
+SARibbonGalleryItem* SARibbonGalleryGroupModel::take(int row) {
 	if ((row < 0) || (row >= m_items.count())) {
 		return (0);
 	}
@@ -9488,8 +8874,7 @@ SARibbonGalleryItem* SARibbonGalleryGroupModel::take(int row)
 	return (item);
 }
 
-void SARibbonGalleryGroupModel::append(SARibbonGalleryItem* item)
-{
+void SARibbonGalleryGroupModel::append(SARibbonGalleryItem* item) {
 	beginInsertRows(QModelIndex(), m_items.count(), m_items.count() + 1);
 	m_items.append(item);
 	endInsertRows();
@@ -9499,8 +8884,8 @@ void SARibbonGalleryGroupModel::append(SARibbonGalleryItem* item)
 // SARibbonGalleryGroup
 //===================================================
 SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget* w)
-	: QListView(w), d_ptr(new SARibbonGalleryGroup::PrivateData(this))
-{
+	: QListView(w)
+	, d_ptr(new SARibbonGalleryGroup::PrivateData(this)) {
 	setViewMode(QListView::IconMode);
 	setResizeMode(QListView::Adjust);
 	setSelectionRectVisible(true);
@@ -9512,39 +8897,34 @@ SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget* w)
 	setModel(m);
 }
 
-SARibbonGalleryGroup::~SARibbonGalleryGroup()
-{
+SARibbonGalleryGroup::~SARibbonGalleryGroup() {
 }
 
 /**
  * @brief 是否禁止计算
  * @param on
  */
-void SARibbonGalleryGroup::setRecalcGridSizeBlock(bool on)
-{
+void SARibbonGalleryGroup::setRecalcGridSizeBlock(bool on) {
 	d_ptr->mBlockRecalc = on;
 }
 
-bool SARibbonGalleryGroup::isRecalcGridSizeBlock() const
-{
+bool SARibbonGalleryGroup::isRecalcGridSizeBlock() const {
 	return d_ptr->mBlockRecalc;
 }
 
 /**
  * @brief 重新计算grid和icon的尺寸
  */
-void SARibbonGalleryGroup::recalcGridSize()
-{
+void SARibbonGalleryGroup::recalcGridSize() {
 	recalcGridSize(height());
 }
 
-void SARibbonGalleryGroup::recalcGridSize(int galleryHeight)
-{
+void SARibbonGalleryGroup::recalcGridSize(int galleryHeight) {
 	if (isRecalcGridSizeBlock()) {
 		return;
 	}
 	// 首先通过DisplayRow计算GridSize
-	int dr = static_cast< int >(displayRow());
+	int dr = static_cast<int>(displayRow());
 	if (dr < 1) {
 		dr = 1;
 	} else if (dr > 3) {
@@ -9567,7 +8947,7 @@ void SARibbonGalleryGroup::recalcGridSize(int galleryHeight)
 	}
 	setGridSize(QSize(w, h));
 	// 在通过GalleryGroupStyle确定icon的尺寸
-	const int shiftpix = 4;  // 这个是移动像素，qt在鼠标移动到图标上时会移动一下，给用户明确的动态，导致如果布局很满会超出显示范围，因此要在此基础上缩放一点
+	const int shiftpix = 4; // 这个是移动像素，qt在鼠标移动到图标上时会移动一下，给用户明确的动态，导致如果布局很满会超出显示范围，因此要在此基础上缩放一点
 	switch (galleryGroupStyle()) {
 	case IconWithText: {
 		int textHeight = fontMetrics().lineSpacing();
@@ -9608,8 +8988,7 @@ void SARibbonGalleryGroup::recalcGridSize(int galleryHeight)
 /// \brief 设置默认的预设样式
 /// \param style
 ///
-void SARibbonGalleryGroup::setGalleryGroupStyle(SARibbonGalleryGroup::GalleryGroupStyle style)
-{
+void SARibbonGalleryGroup::setGalleryGroupStyle(SARibbonGalleryGroup::GalleryGroupStyle style) {
 	d_ptr->mPreStyle = style;
 	if (style == IconWithWordWrapText) {
 		setWordWrap(true);
@@ -9617,13 +8996,11 @@ void SARibbonGalleryGroup::setGalleryGroupStyle(SARibbonGalleryGroup::GalleryGro
 	recalcGridSize();
 }
 
-SARibbonGalleryGroup::GalleryGroupStyle SARibbonGalleryGroup::galleryGroupStyle() const
-{
+SARibbonGalleryGroup::GalleryGroupStyle SARibbonGalleryGroup::galleryGroupStyle() const {
 	return d_ptr->mPreStyle;
 }
 
-void SARibbonGalleryGroup::addItem(const QString& text, const QIcon& icon)
-{
+void SARibbonGalleryGroup::addItem(const QString& text, const QIcon& icon) {
 	if (nullptr == groupModel()) {
 		return;
 	}
@@ -9635,16 +9012,14 @@ void SARibbonGalleryGroup::addItem(const QString& text, const QIcon& icon)
  *
  * @param item 条目的内存所有权归属SARibbonGalleryGroup管理
  */
-void SARibbonGalleryGroup::addItem(SARibbonGalleryItem* item)
-{
+void SARibbonGalleryGroup::addItem(SARibbonGalleryItem* item) {
 	if (nullptr == groupModel()) {
 		return;
 	}
 	groupModel()->append(item);
 }
 
-void SARibbonGalleryGroup::addActionItem(QAction* act)
-{
+void SARibbonGalleryGroup::addActionItem(QAction* act) {
 	if (nullptr == groupModel()) {
 		return;
 	}
@@ -9652,8 +9027,7 @@ void SARibbonGalleryGroup::addActionItem(QAction* act)
 	groupModel()->append(new SARibbonGalleryItem(act));
 }
 
-void SARibbonGalleryGroup::addActionItemList(const QList< QAction* >& acts)
-{
+void SARibbonGalleryGroup::addActionItemList(const QList<QAction*>& acts) {
 	SARibbonGalleryGroupModel* model = groupModel();
 
 	if (nullptr == model) {
@@ -9663,42 +9037,37 @@ void SARibbonGalleryGroup::addActionItemList(const QList< QAction* >& acts)
 		d_ptr->mActionGroup->addAction(a);
 	}
 	for (int i = 0; i < acts.size(); ++i) {
-		model->append(new SARibbonGalleryItem(acts[ i ]));
+		model->append(new SARibbonGalleryItem(acts[i]));
 	}
 }
 
 ///
 /// \brief 构建一个model，这个model的父类是SARibbonGalleryGroup，如果要共享model，需要手动处理model的父类
 ///
-void SARibbonGalleryGroup::setupGroupModel()
-{
+void SARibbonGalleryGroup::setupGroupModel() {
 	setModel(new SARibbonGalleryGroupModel(this));
 }
 
-SARibbonGalleryGroupModel* SARibbonGalleryGroup::groupModel()
-{
-	return (qobject_cast< SARibbonGalleryGroupModel* >(model()));
+SARibbonGalleryGroupModel* SARibbonGalleryGroup::groupModel() {
+	return (qobject_cast<SARibbonGalleryGroupModel*>(model()));
 }
 
-void SARibbonGalleryGroup::setGroupTitle(const QString& title)
-{
+void SARibbonGalleryGroup::setGroupTitle(const QString& title) {
 	d_ptr->mGroupTitle = title;
 	emit groupTitleChanged(d_ptr->mGroupTitle);
 }
 
-QString SARibbonGalleryGroup::groupTitle() const
-{
+QString SARibbonGalleryGroup::groupTitle() const {
 	return (d_ptr->mGroupTitle);
 }
 
-void SARibbonGalleryGroup::selectByIndex(int i)
-{
+void SARibbonGalleryGroup::selectByIndex(int i) {
 	SARibbonGalleryGroupModel* model = groupModel();
 
 	if (nullptr == model) {
 		return;
 	}
-	QModelIndex ind               = model->index(i, 0, QModelIndex());
+	QModelIndex ind = model->index(i, 0, QModelIndex());
 	QItemSelectionModel* selmodel = selectionModel();
 
 	if (selmodel) {
@@ -9710,8 +9079,7 @@ void SARibbonGalleryGroup::selectByIndex(int i)
  * @brief 设置显示的行数
  * @param r
  */
-void SARibbonGalleryGroup::setDisplayRow(DisplayRow r)
-{
+void SARibbonGalleryGroup::setDisplayRow(DisplayRow r) {
 	d_ptr->mDisplayRow = r;
 	recalcGridSize();
 }
@@ -9720,8 +9088,7 @@ void SARibbonGalleryGroup::setDisplayRow(DisplayRow r)
  * @brief Gallery显示的行数
  * @return
  */
-SARibbonGalleryGroup::DisplayRow SARibbonGalleryGroup::displayRow() const
-{
+SARibbonGalleryGroup::DisplayRow SARibbonGalleryGroup::displayRow() const {
 	return d_ptr->mDisplayRow;
 }
 
@@ -9729,8 +9096,7 @@ SARibbonGalleryGroup::DisplayRow SARibbonGalleryGroup::displayRow() const
  * @brief 设置grid最小的宽度，默认为0（不限制）
  * @param w
  */
-void SARibbonGalleryGroup::setGridMinimumWidth(int w)
-{
+void SARibbonGalleryGroup::setGridMinimumWidth(int w) {
 	d_ptr->mGridMinimumWidth = w;
 }
 
@@ -9738,8 +9104,7 @@ void SARibbonGalleryGroup::setGridMinimumWidth(int w)
  * @brief grid最小的宽度，默认为0（不限制）
  * @return
  */
-int SARibbonGalleryGroup::gridMinimumWidth() const
-{
+int SARibbonGalleryGroup::gridMinimumWidth() const {
 	return d_ptr->mGridMinimumWidth;
 }
 
@@ -9747,8 +9112,7 @@ int SARibbonGalleryGroup::gridMinimumWidth() const
  * @brief 设置grid最大的宽度，默认为0（不限制）
  * @param w
  */
-void SARibbonGalleryGroup::setGridMaximumWidth(int w)
-{
+void SARibbonGalleryGroup::setGridMaximumWidth(int w) {
 	d_ptr->mGridMaximumWidth = w;
 }
 
@@ -9756,8 +9120,7 @@ void SARibbonGalleryGroup::setGridMaximumWidth(int w)
  * @brief grid最大的的宽度，默认为0（不限制）
  * @param w
  */
-int SARibbonGalleryGroup::gridMaximumWidth() const
-{
+int SARibbonGalleryGroup::gridMaximumWidth() const {
 	return d_ptr->mGridMaximumWidth;
 }
 
@@ -9765,13 +9128,11 @@ int SARibbonGalleryGroup::gridMaximumWidth() const
  * @brief 获取SARibbonGalleryGroup管理的actiongroup
  * @return
  */
-QActionGroup* SARibbonGalleryGroup::actionGroup() const
-{
+QActionGroup* SARibbonGalleryGroup::actionGroup() const {
 	return d_ptr->mActionGroup;
 }
 
-void SARibbonGalleryGroup::onItemClicked(const QModelIndex& index)
-{
+void SARibbonGalleryGroup::onItemClicked(const QModelIndex& index) {
 	if (index.isValid()) {
 		SARibbonGalleryItem* item = (SARibbonGalleryItem*)index.internalPointer();
 		if (item) {
@@ -9783,8 +9144,7 @@ void SARibbonGalleryGroup::onItemClicked(const QModelIndex& index)
 	}
 }
 
-void SARibbonGalleryGroup::onItemEntered(const QModelIndex& index)
-{
+void SARibbonGalleryGroup::onItemEntered(const QModelIndex& index) {
 	if (index.isValid()) {
 		SARibbonGalleryItem* item = (SARibbonGalleryItem*)index.internalPointer();
 		if (item) {
@@ -9798,26 +9158,24 @@ void SARibbonGalleryGroup::onItemEntered(const QModelIndex& index)
 
 /*** End of inlined file: SARibbonGalleryGroup.cpp ***/
 
-
 /*** Start of inlined file: SARibbonGallery.cpp ***/
-#include <QIcon>
 #include <QApplication>
-#define ICON_ARROW_UP QIcon(":/image/resource/ArrowUp.png")
-#define ICON_ARROW_DOWN QIcon(":/image/resource/ArrowDown.png")
-#define ICON_ARROW_MORE QIcon(":/image/resource/ArrowMore.png")
-#include <QResizeEvent>
+#include <QIcon>
+#define ICON_ARROW_UP QIcon(":/images/images/ArrowUp.png")
+#define ICON_ARROW_DOWN QIcon(":/images/images/ArrowDown.png")
+#define ICON_ARROW_MORE QIcon(":/images/images/ArrowMore.png")
 #include <QDebug>
-#include <QVBoxLayout>
-#include <QScrollBar>
 #include <QLabel>
+#include <QResizeEvent>
+#include <QScrollBar>
+#include <QVBoxLayout>
 
 #include <QActionGroup>
 
 /**
  * @brief The SARibbonGalleryPrivate class
  */
-class SARibbonGallery::PrivateData
-{
+class SARibbonGallery::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonGallery)
 public:
 	static int sGalleryButtonMaximumWidth;
@@ -9832,13 +9190,12 @@ public:
 	SARibbonGalleryGroup* viewportGroup { nullptr };
 	QBoxLayout* btnLayout { nullptr };
 	QBoxLayout* layout { nullptr };
-	PrivateData(SARibbonGallery* p) : q_ptr(p)
-	{
+	PrivateData(SARibbonGallery* p)
+		: q_ptr(p) {
 	}
 
-	void init()
-	{
-		buttonUp   = new SARibbonGalleryButton(q_ptr);
+	void init() {
+		buttonUp = new SARibbonGalleryButton(q_ptr);
 		buttonDown = new SARibbonGalleryButton(q_ptr);
 		buttonMore = new SARibbonGalleryButton(q_ptr);
 		buttonUp->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -9861,9 +9218,9 @@ public:
 		q_ptr->connect(buttonMore, &QAbstractButton::clicked, q_ptr, &SARibbonGallery::showMoreDetail);
 		// 信号转发
 		q_ptr->connect(q_ptr, &SARibbonGallery::triggered, q_ptr, &SARibbonGallery::onTriggered);
-		popupWidget   = nullptr;
+		popupWidget = nullptr;
 		viewportGroup = nullptr;
-		btnLayout     = new QBoxLayout(QBoxLayout::TopToBottom);
+		btnLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 		btnLayout->setSpacing(0);
 		btnLayout->setContentsMargins(0, 0, 0, 0);
 		btnLayout->addWidget(buttonUp);
@@ -9877,13 +9234,11 @@ public:
 		q_ptr->setLayout(layout);
 	}
 
-	bool isValid() const
-	{
+	bool isValid() const {
 		return (q_ptr != nullptr);
 	}
 
-	void createPopupWidget()
-	{
+	void createPopupWidget() {
 		if (nullptr == popupWidget) {
 #if 0
 			popupWidget = new SARibbonMenu(Parent);
@@ -9893,8 +9248,7 @@ public:
 		}
 	}
 
-	void setViewPort(SARibbonGalleryGroup* v)
-	{
+	void setViewPort(SARibbonGalleryGroup* v) {
 		if (nullptr == viewportGroup) {
 			viewportGroup = RibbonSubElementFactory->createRibbonGalleryGroup(q_ptr);
 			layout->addWidget(viewportGroup, 1);
@@ -9925,16 +9279,16 @@ int SARibbonGallery::PrivateData::sGalleryButtonMaximumWidth = 15;
 // SARibbonGalleryButton
 //===================================================
 
-SARibbonGalleryButton::SARibbonGalleryButton(QWidget* parent) : QToolButton(parent)
-{
+SARibbonGalleryButton::SARibbonGalleryButton(QWidget* parent)
+	: QToolButton(parent) {
 }
 
 //===================================================
 // SARibbonGalleryViewport
 //===================================================
 
-SARibbonGalleryViewport::SARibbonGalleryViewport(QWidget* parent) : QWidget(parent)
-{
+SARibbonGalleryViewport::SARibbonGalleryViewport(QWidget* parent)
+	: QWidget(parent) {
 	setWindowFlags(Qt::Popup);
 	QPalette pl = palette();
 	pl.setBrush(QPalette::Window, pl.brush(QPalette::Base));
@@ -9948,8 +9302,7 @@ SARibbonGalleryViewport::SARibbonGalleryViewport(QWidget* parent) : QWidget(pare
  * @brief 添加窗口不带标题
  * @param w
  */
-void SARibbonGalleryViewport::addWidget(QWidget* w)
-{
+void SARibbonGalleryViewport::addWidget(QWidget* w) {
 	w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	m_layout->addWidget(w);
 }
@@ -9959,15 +9312,14 @@ void SARibbonGalleryViewport::addWidget(QWidget* w)
  * @param w
  * @param title
  */
-void SARibbonGalleryViewport::addWidget(QWidget* w, const QString& title)
-{
+void SARibbonGalleryViewport::addWidget(QWidget* w, const QString& title) {
 	QLabel* label = new QLabel(this);
 	label->setText(title);
 	label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	m_layout->addWidget(label);
 	w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	m_layout->addWidget(w);
-	_widgetToTitleLable[ w ] = label;
+	_widgetToTitleLable[w] = label;
 }
 
 /**
@@ -9975,8 +9327,7 @@ void SARibbonGalleryViewport::addWidget(QWidget* w, const QString& title)
  * @param g
  * @return 如果没有管理group，将返回nullptr
  */
-QLabel* SARibbonGalleryViewport::titleLabel(QWidget* w)
-{
+QLabel* SARibbonGalleryViewport::titleLabel(QWidget* w) {
 	return _widgetToTitleLable.value(w, nullptr);
 }
 
@@ -9984,8 +9335,7 @@ QLabel* SARibbonGalleryViewport::titleLabel(QWidget* w)
  * @brief 移除窗口
  * @param w
  */
-void SARibbonGalleryViewport::removeWidget(QWidget* w)
-{
+void SARibbonGalleryViewport::removeWidget(QWidget* w) {
 	QLabel* label = titleLabel(w);
 	if (label) {
 		m_layout->removeWidget(label);
@@ -9998,8 +9348,7 @@ void SARibbonGalleryViewport::removeWidget(QWidget* w)
  * @param g
  * @param title
  */
-void SARibbonGalleryViewport::onTitleChanged(QWidget* w, const QString& title)
-{
+void SARibbonGalleryViewport::onTitleChanged(QWidget* w, const QString& title) {
 	QLabel* l = titleLabel(w);
 	if (l) {
 		l->setText(title);
@@ -10010,20 +9359,19 @@ void SARibbonGalleryViewport::onTitleChanged(QWidget* w, const QString& title)
 // SARibbonGallery
 //===================================================
 
-SARibbonGallery::SARibbonGallery(QWidget* parent) : QFrame(parent), d_ptr(new SARibbonGallery::PrivateData(this))
-{
+SARibbonGallery::SARibbonGallery(QWidget* parent)
+	: QFrame(parent)
+	, d_ptr(new SARibbonGallery::PrivateData(this)) {
 	d_ptr->init();
 	setFrameShape(QFrame::Box);
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	setMinimumWidth(200);
 }
 
-SARibbonGallery::~SARibbonGallery()
-{
+SARibbonGallery::~SARibbonGallery() {
 }
 
-QSize SARibbonGallery::sizeHint() const
-{
+QSize SARibbonGallery::sizeHint() const {
 	return (QSize(100, 62));
 }
 
@@ -10031,8 +9379,7 @@ QSize SARibbonGallery::sizeHint() const
  * @brief 获取一个空白SARibbonGalleryGroup
  * @return
  */
-SARibbonGalleryGroup* SARibbonGallery::addGalleryGroup()
-{
+SARibbonGalleryGroup* SARibbonGallery::addGalleryGroup() {
 	SARibbonGalleryGroup* group = RibbonSubElementFactory->createRibbonGalleryGroup(this);
 	addGalleryGroup(group);
 	return (group);
@@ -10042,13 +9389,12 @@ SARibbonGalleryGroup* SARibbonGallery::addGalleryGroup()
  * @brief 添加一组SARibbonGalleryGroup
  * @param group
  */
-void SARibbonGallery::addGalleryGroup(SARibbonGalleryGroup* group)
-{
+void SARibbonGallery::addGalleryGroup(SARibbonGalleryGroup* group) {
 	group->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	SARibbonGalleryViewport* viewport = ensureGetPopupViewPort();
 	viewport->addWidget(group, group->groupTitle());
 	connect(group, &QAbstractItemView::clicked, this, &SARibbonGallery::onItemClicked);
-	connect(group, &SARibbonGalleryGroup::groupTitleChanged, this, [ group, viewport ](const QString& t) {
+	connect(group, &SARibbonGalleryGroup::groupTitleChanged, this, [group, viewport](const QString& t) {
 		viewport->onTitleChanged(group, t);
 	});
 	connect(group, &SARibbonGalleryGroup::triggered, this, &SARibbonGallery::triggered);
@@ -10062,8 +9408,7 @@ void SARibbonGallery::addGalleryGroup(SARibbonGalleryGroup* group)
  * @param actions
  * @return 返回SARibbonGalleryGroup，用户可以通过修改SARibbonGalleryGroup属性控制其显示方法
  */
-SARibbonGalleryGroup* SARibbonGallery::addCategoryActions(const QString& title, QList< QAction* > actions)
-{
+SARibbonGalleryGroup* SARibbonGallery::addCategoryActions(const QString& title, QList<QAction*> actions) {
 	SARibbonGalleryGroup* group = RibbonSubElementFactory->createRibbonGalleryGroup(this);
 	if (!title.isEmpty()) {
 		group->setGroupTitle(title);
@@ -10073,14 +9418,12 @@ SARibbonGalleryGroup* SARibbonGallery::addCategoryActions(const QString& title, 
 	return (group);
 }
 
-void SARibbonGallery::setCurrentViewGroup(SARibbonGalleryGroup* group)
-{
+void SARibbonGallery::setCurrentViewGroup(SARibbonGalleryGroup* group) {
 	d_ptr->setViewPort(group);
 	QApplication::postEvent(this, new QResizeEvent(size(), size()));
 }
 
-SARibbonGalleryGroup* SARibbonGallery::currentViewGroup() const
-{
+SARibbonGalleryGroup* SARibbonGallery::currentViewGroup() const {
 	return (d_ptr->viewportGroup);
 }
 
@@ -10088,8 +9431,7 @@ SARibbonGalleryGroup* SARibbonGallery::currentViewGroup() const
  * @brief 获取弹出窗口
  * @return
  */
-SARibbonGalleryViewport* SARibbonGallery::getPopupViewPort() const
-{
+SARibbonGalleryViewport* SARibbonGallery::getPopupViewPort() const {
 	return d_ptr->popupWidget;
 }
 
@@ -10097,19 +9439,17 @@ SARibbonGalleryViewport* SARibbonGallery::getPopupViewPort() const
  * @brief 设置最右边三个控制按钮的最大宽度（默认15）
  * @param w
  */
-void SARibbonGallery::setGalleryButtonMaximumWidth(int w)
-{
+void SARibbonGallery::setGalleryButtonMaximumWidth(int w) {
 	SARibbonGallery::PrivateData::sGalleryButtonMaximumWidth = w;
 }
 
 /**
  * @brief 上翻页
  */
-void SARibbonGallery::pageDown()
-{
+void SARibbonGallery::pageDown() {
 	if (d_ptr->viewportGroup) {
 		QScrollBar* vscrollBar = d_ptr->viewportGroup->verticalScrollBar();
-		int v                  = vscrollBar->value();
+		int v = vscrollBar->value();
 		v += vscrollBar->singleStep();
 		vscrollBar->setValue(v);
 	}
@@ -10118,11 +9458,10 @@ void SARibbonGallery::pageDown()
 /**
  * @brief 下翻页
  */
-void SARibbonGallery::pageUp()
-{
+void SARibbonGallery::pageUp() {
 	if (d_ptr->viewportGroup) {
 		QScrollBar* vscrollBar = d_ptr->viewportGroup->verticalScrollBar();
-		int v                  = vscrollBar->value();
+		int v = vscrollBar->value();
 		v -= vscrollBar->singleStep();
 		vscrollBar->setValue(v);
 	}
@@ -10131,25 +9470,23 @@ void SARibbonGallery::pageUp()
 /**
  * @brief 显示更多触发，默认弹出内部管理的SARibbonGalleryViewport，用户可重载此函数实现自定义的弹出
  */
-void SARibbonGallery::showMoreDetail()
-{
+void SARibbonGallery::showMoreDetail() {
 	if (nullptr == d_ptr->popupWidget) {
 		return;
 	}
 	QSize popupMenuSize = d_ptr->popupWidget->sizeHint();
-	QPoint start        = mapToGlobal(QPoint(0, 0));
+	QPoint start = mapToGlobal(QPoint(0, 0));
 
-	int width = d_ptr->viewportGroup->width();  // viewport
+	int width = d_ptr->viewportGroup->width(); // viewport
 
-	width += qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent);  // scrollbar
+	width += qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent); // scrollbar
 	d_ptr->popupWidget->setGeometry(start.x(), start.y(), width, popupMenuSize.height());
 	d_ptr->popupWidget->show();
 }
 
-void SARibbonGallery::onItemClicked(const QModelIndex& index)
-{
-	QObject* obj                = sender();
-	SARibbonGalleryGroup* group = qobject_cast< SARibbonGalleryGroup* >(obj);
+void SARibbonGallery::onItemClicked(const QModelIndex& index) {
+	QObject* obj = sender();
+	SARibbonGalleryGroup* group = qobject_cast<SARibbonGalleryGroup*>(obj);
 	if (group) {
 		setCurrentViewGroup(group);
 		SARibbonGalleryGroup* curGroup = currentViewGroup();
@@ -10158,8 +9495,7 @@ void SARibbonGallery::onItemClicked(const QModelIndex& index)
 	}
 }
 
-void SARibbonGallery::onTriggered(QAction* action)
-{
+void SARibbonGallery::onTriggered(QAction* action) {
 	Q_UNUSED(action);
 	// 点击后关闭弹出窗口
 	if (d_ptr->popupWidget) {
@@ -10169,16 +9505,14 @@ void SARibbonGallery::onTriggered(QAction* action)
 	}
 }
 
-SARibbonGalleryViewport* SARibbonGallery::ensureGetPopupViewPort()
-{
+SARibbonGalleryViewport* SARibbonGallery::ensureGetPopupViewPort() {
 	if (nullptr == d_ptr->popupWidget) {
 		d_ptr->createPopupWidget();
 	}
 	return (d_ptr->popupWidget);
 }
 
-void SARibbonGallery::resizeEvent(QResizeEvent* event)
-{
+void SARibbonGallery::resizeEvent(QResizeEvent* event) {
 	QFrame::resizeEvent(event);
 	// 对SARibbonGalleryViewport所有SARibbonGalleryGroup重置尺寸
 	int h = layout()->contentsRect().height();
@@ -10201,7 +9535,7 @@ void SARibbonGallery::resizeEvent(QResizeEvent* event)
 			if (!w) {
 				continue;
 			}
-			SARibbonGalleryGroup* g = qobject_cast< SARibbonGalleryGroup* >(w);
+			SARibbonGalleryGroup* g = qobject_cast<SARibbonGalleryGroup*>(w);
 			if (!g) {
 				continue;
 			}
@@ -10210,46 +9544,42 @@ void SARibbonGallery::resizeEvent(QResizeEvent* event)
 	}
 }
 
-void SARibbonGallery::paintEvent(QPaintEvent* event)
-{
+void SARibbonGallery::paintEvent(QPaintEvent* event) {
 	QFrame::paintEvent(event);
 }
 
 /*** End of inlined file: SARibbonGallery.cpp ***/
 
-
 /*** Start of inlined file: SARibbonBar.cpp ***/
-#include <QPointer>
 #include <QAction>
 #include <QApplication>
 #include <QDebug>
 #include <QHoverEvent>
 #include <QLinearGradient>
 #include <QPainter>
+#include <QPointer>
 #include <QResizeEvent>
 #include <QSet>
 #include <QStyleOptionMenuItem>
 #include <QTimer>
 #include <QVariant>
 
-#define HELP_DRAW_RECT(p, rect)                                                                                        \
-	do {                                                                                                               \
-		p.save();                                                                                                      \
-		QPen _pen(Qt::DashDotDotLine);                                                                                 \
-		_pen.setColor(QColor(219, 26, 59));                                                                            \
-		p.setPen(_pen);                                                                                                \
-		p.setBrush(QBrush());                                                                                          \
-		p.drawRect(rect);                                                                                              \
-		p.restore();                                                                                                   \
+#define HELP_DRAW_RECT(p, rect)             \
+	do {                                    \
+		p.save();                           \
+		QPen _pen(Qt::DashDotDotLine);      \
+		_pen.setColor(QColor(219, 26, 59)); \
+		p.setPen(_pen);                     \
+		p.setBrush(QBrush());               \
+		p.drawRect(rect);                   \
+		p.restore();                        \
 	} while (0)
 
-class _SAContextCategoryManagerData
-{
+class _SAContextCategoryManagerData {
 public:
 	SARibbonContextCategory* contextCategory;
-	QList< int > tabPageIndex;
-	bool operator==(const SARibbonContextCategory* contextPage)
-	{
+	QList<int> tabPageIndex;
+	bool operator==(const SARibbonContextCategory* contextPage) {
 		return (this->contextCategory == contextPage);
 	}
 };
@@ -10257,55 +9587,54 @@ public:
 /**
  * @todo 此处要修改，此方式容易异常
  */
-class _SARibbonTabData
-{
+class _SARibbonTabData {
 public:
 	SARibbonCategory* category;
 	int index;
-	_SARibbonTabData() : category(nullptr), index(-1)
-	{
+	_SARibbonTabData()
+		: category(nullptr)
+		, index(-1) {
 	}
 };
 Q_DECLARE_METATYPE(_SARibbonTabData)
 
-class SARibbonBar::PrivateData
-{
+class SARibbonBar::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonBar)
 public:
-	QPointer< QAbstractButton > mApplicationButton;
-	QPointer< SARibbonTabBar > mRibbonTabBar;
-	QPointer< SARibbonStackedWidget > mStackedContainerWidget;
-	QPointer< SARibbonButtonGroupWidget > mRightButtonGroup;  ///< 在tab bar右边的按钮群
-	QPointer< SARibbonQuickAccessBar > mQuickAccessBar;       ///< 快速响应栏
-	QAction* mMinimumCategoryButtonAction { nullptr };        ///< 隐藏面板按钮action
-	QList< _SAContextCategoryManagerData > mCurrentShowingContextCategory;
-	QList< SARibbonContextCategory* > mContextCategoryList;  ///< 存放所有的上下文标签
-	QList< _SARibbonTabData > mHidedCategory;
-	int mIconRightBorderPosition { 1 };  ///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
-	SARibbonBar::RibbonStyles mRibbonStyle { SARibbonBar::RibbonStyleLooseThreeRow };  ///< ribbon的风格
-	SARibbonBar::RibbonMode mCurrentRibbonMode { SARibbonBar::NormalRibbonMode };      ///< 记录当前模式
-	QSize mWindowButtonSize;                    ///< 由SARibbonMainWindow告诉的windowbutton的尺寸
-	QList< QColor > mContextCategoryColorList;  ///< contextCategory的色系
-	int mContextCategoryColorListIndex { -1 };  ///< 记录contextCategory色系索引
-	QColor mTitleTextColor;  ///< 标题文字颜色,默认无效，无效的情况下和SARibbonBar的qss:color属性一致
-	QColor mTabBarBaseLineColor { QColor(186, 201, 219) };  ///< tabbar 底部会绘制一条线条，定义线条颜色
-	QColor mContextCategoryTitleTextColor { Qt::black };    ///< 记录Context category的标题字体颜色
-	Qt::Alignment mTitleAligment { Qt::AlignCenter };       ///< 标题对齐方式
-	bool mIsTitleVisible { true };                          ///< 标题是否显示
-	SARibbonAlignment mRibbonAlignment { SARibbonAlignment::AlignLeft };                         ///< 对齐方式
-	SARibbonPannel::PannelLayoutMode mDefaulePannelLayoutMode { SARibbonPannel::ThreeRowMode };  ///< 默认的PannelLayoutMode
-	bool mEnableShowPannelTitle { true };  ///< 是否运行pannel的标题栏显示
-	bool mIsTabOnTitle { false };          ///< 是否tab在标题栏上
-	int mTitleBarHeight { 30 };            ///< 标题栏高度
-	int mTabBarHeight { 28 };              ///< tabbar高度
-	int mPannelTitleHeight { 15 };         ///< pannel的标题栏默认高度
-	int mCategoryHeight { 60 };            ///< Category的高度
-	std::unique_ptr< int > mUserDefTitleBarHeight;  ///< 用户定义的标题栏高度，正常不使用用户设定的高度，而是使用自动计算的高度
-	std::unique_ptr< int > mUserDefTabBarHeight;  ///< 用户定义的tabbar高度，正常不使用用户设定的高度，而是使用自动计算的高度
-	std::unique_ptr< int > mUserDefCategoryHeight;  ///< 用户定义的Category的高度，正常不使用用户设定的高度，而是使用自动计算的高度
+	QPointer<QAbstractButton> mApplicationButton;
+	QPointer<SARibbonTabBar> mRibbonTabBar;
+	QPointer<SARibbonStackedWidget> mStackedContainerWidget;
+	QPointer<SARibbonButtonGroupWidget> mRightButtonGroup; ///< 在tab bar右边的按钮群
+	QPointer<SARibbonQuickAccessBar> mQuickAccessBar; ///< 快速响应栏
+	QAction* mMinimumCategoryButtonAction { nullptr }; ///< 隐藏面板按钮action
+	QList<_SAContextCategoryManagerData> mCurrentShowingContextCategory;
+	QList<SARibbonContextCategory*> mContextCategoryList; ///< 存放所有的上下文标签
+	QList<_SARibbonTabData> mHidedCategory;
+	int mIconRightBorderPosition { 1 }; ///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
+	SARibbonBar::RibbonStyles mRibbonStyle { SARibbonBar::RibbonStyleLooseThreeRow }; ///< ribbon的风格
+	SARibbonBar::RibbonMode mCurrentRibbonMode { SARibbonBar::NormalRibbonMode }; ///< 记录当前模式
+	QSize mWindowButtonSize; ///< 由SARibbonMainWindow告诉的windowbutton的尺寸
+	QList<QColor> mContextCategoryColorList; ///< contextCategory的色系
+	int mContextCategoryColorListIndex { -1 }; ///< 记录contextCategory色系索引
+	QColor mTitleTextColor; ///< 标题文字颜色,默认无效，无效的情况下和SARibbonBar的qss:color属性一致
+	QColor mTabBarBaseLineColor { QColor(186, 201, 219) }; ///< tabbar 底部会绘制一条线条，定义线条颜色
+	QColor mContextCategoryTitleTextColor { Qt::black }; ///< 记录Context category的标题字体颜色
+	Qt::Alignment mTitleAligment { Qt::AlignCenter }; ///< 标题对齐方式
+	bool mIsTitleVisible { true }; ///< 标题是否显示
+	SARibbonAlignment mRibbonAlignment { SARibbonAlignment::AlignLeft }; ///< 对齐方式
+	SARibbonPannel::PannelLayoutMode mDefaulePannelLayoutMode { SARibbonPannel::ThreeRowMode }; ///< 默认的PannelLayoutMode
+	bool mEnableShowPannelTitle { true }; ///< 是否运行pannel的标题栏显示
+	bool mIsTabOnTitle { false }; ///< 是否tab在标题栏上
+	int mTitleBarHeight { 30 }; ///< 标题栏高度
+	int mTabBarHeight { 28 }; ///< tabbar高度
+	int mPannelTitleHeight { 15 }; ///< pannel的标题栏默认高度
+	int mCategoryHeight { 60 }; ///< Category的高度
+	std::unique_ptr<int> mUserDefTitleBarHeight; ///< 用户定义的标题栏高度，正常不使用用户设定的高度，而是使用自动计算的高度
+	std::unique_ptr<int> mUserDefTabBarHeight; ///< 用户定义的tabbar高度，正常不使用用户设定的高度，而是使用自动计算的高度
+	std::unique_ptr<int> mUserDefCategoryHeight; ///< 用户定义的Category的高度，正常不使用用户设定的高度，而是使用自动计算的高度
 public:
-	PrivateData(SARibbonBar* par) : q_ptr(par)
-	{
+	PrivateData(SARibbonBar* par)
+		: q_ptr(par) {
 		mContextCategoryColorList = SARibbonBar::defaultContextCategoryColorList();
 	}
 	void init();
@@ -10352,8 +9681,7 @@ public:
 	static QSize calcIconSizeByHeight(int h);
 };
 
-void SARibbonBar::PrivateData::init()
-{
+void SARibbonBar::PrivateData::init() {
 	mApplicationButton = RibbonSubElementFactory->createRibbonApplicationButton(q_ptr);
 	q_ptr->connect(mApplicationButton, &QAbstractButton::clicked, q_ptr, &SARibbonBar::applicationButtonClicked);
 	mRibbonTabBar = RibbonSubElementFactory->createRibbonTabBar(q_ptr);
@@ -10384,13 +9712,12 @@ void SARibbonBar::PrivateData::init()
  * @param fm
  * @return
  */
-int SARibbonBar::PrivateData::calcTabBarHeight()
-{
-	int defaultHeight  = q_ptr->style()->pixelMetric(QStyle::PM_TabBarBaseHeight);
-	int fontHeight     = q_ptr->fontMetrics().lineSpacing();  // 不要用height，像宋体这种字体，height=12，lineSpacing=14，有些就无法显示
+int SARibbonBar::PrivateData::calcTabBarHeight() {
+	int defaultHeight = q_ptr->style()->pixelMetric(QStyle::PM_TabBarBaseHeight);
+	int fontHeight = q_ptr->fontMetrics().lineSpacing(); // 不要用height，像宋体这种字体，height=12，lineSpacing=14，有些就无法显示
 	int defaultHeight2 = fontHeight * 1.6;
 	if (defaultHeight2 < fontHeight + 10) {
-		defaultHeight2 = fontHeight + 10;  // 主要为了满足office2021主题，tab下有个4px的横杠
+		defaultHeight2 = fontHeight + 10; // 主要为了满足office2021主题，tab下有个4px的横杠
 	}
 	int r = qMax(defaultHeight, defaultHeight2);
 	if (r < 20) {
@@ -10404,11 +9731,10 @@ int SARibbonBar::PrivateData::calcTabBarHeight()
  * @param fm
  * @return
  */
-int SARibbonBar::PrivateData::calcTitleBarHeight()
-{
-	int defaultHeight  = q_ptr->style()->pixelMetric(QStyle::PM_TitleBarHeight);
+int SARibbonBar::PrivateData::calcTitleBarHeight() {
+	int defaultHeight = q_ptr->style()->pixelMetric(QStyle::PM_TitleBarHeight);
 	int defaultHeight2 = q_ptr->fontMetrics().height() * 1.8;
-	int r              = qMax(defaultHeight, defaultHeight2);
+	int r = qMax(defaultHeight, defaultHeight2);
 	if (r < 25) {
 		r = 25;
 	}
@@ -10422,9 +9748,8 @@ int SARibbonBar::PrivateData::calcTitleBarHeight()
  * @param s
  * @return
  */
-int SARibbonBar::PrivateData::calcCategoryHeight()
-{
-	int textH = q_ptr->fontMetrics().lineSpacing();  // 这里用linespace，因为在换行的情况下，行距是不可忽略的，ribbon的大按钮默认是2行
+int SARibbonBar::PrivateData::calcCategoryHeight() {
+	int textH = q_ptr->fontMetrics().lineSpacing(); // 这里用linespace，因为在换行的情况下，行距是不可忽略的，ribbon的大按钮默认是2行
 	if (SARibbonPannel::ThreeRowMode == mDefaulePannelLayoutMode) {
 		// 5.5=（3*1.6+1） （三行）,1是给panneltitle预留的
 		return textH * 4.8 + mPannelTitleHeight;
@@ -10445,8 +9770,7 @@ int SARibbonBar::PrivateData::calcCategoryHeight()
  * @param categoryHeight
  * @return
  */
-int SARibbonBar::PrivateData::calcMainBarHeight(int tabHegith, int titleHeight, int categoryHeight, bool tabOnTitle, SARibbonBar::RibbonMode rMode)
-{
+int SARibbonBar::PrivateData::calcMainBarHeight(int tabHegith, int titleHeight, int categoryHeight, bool tabOnTitle, SARibbonBar::RibbonMode rMode) {
 	if (rMode == MinimumRibbonMode) {
 		// 最小模式，没有categoryHeight
 		if (tabOnTitle) {
@@ -10464,23 +9788,20 @@ int SARibbonBar::PrivateData::calcMainBarHeight(int tabHegith, int titleHeight, 
 	return tabHegith + titleHeight + categoryHeight;
 }
 
-int SARibbonBar::PrivateData::getCurrentMinimumModeMainBarHeight() const
-{
+int SARibbonBar::PrivateData::getCurrentMinimumModeMainBarHeight() const {
 	return calcMainBarHeight(tabBarHeigth(), titleBarHeight(), categoryHeight(), mIsTabOnTitle, SARibbonBar::MinimumRibbonMode);
 }
 
-int SARibbonBar::PrivateData::getCurrentNormalModeMainBarHeight() const
-{
+int SARibbonBar::PrivateData::getCurrentNormalModeMainBarHeight() const {
 	return calcMainBarHeight(tabBarHeigth(), titleBarHeight(), categoryHeight(), mIsTabOnTitle, SARibbonBar::NormalRibbonMode);
 }
 
 /**
  * @brief 重新计算尺寸
  */
-void SARibbonBar::PrivateData::resetSize()
-{
+void SARibbonBar::PrivateData::resetSize() {
 	updateHintSize();
-	const int th      = tabBarHeigth();
+	const int th = tabBarHeigth();
 	int mainBarHeight = calcMainBarHeight(th, titleBarHeight(), categoryHeight(), mIsTabOnTitle, mCurrentRibbonMode);
 	if (mRibbonTabBar) {
 		mRibbonTabBar->setFixedHeight(th);
@@ -10493,8 +9814,7 @@ void SARibbonBar::PrivateData::resetSize()
  * @brief 标题栏高度
  * @return
  */
-int SARibbonBar::PrivateData::titleBarHeight() const
-{
+int SARibbonBar::PrivateData::titleBarHeight() const {
 	if (mUserDefTitleBarHeight) {
 		return *mUserDefTitleBarHeight;
 	}
@@ -10505,8 +9825,7 @@ int SARibbonBar::PrivateData::titleBarHeight() const
  * @brief tab高度
  * @return
  */
-int SARibbonBar::PrivateData::tabBarHeigth() const
-{
+int SARibbonBar::PrivateData::tabBarHeigth() const {
 	if (mUserDefTabBarHeight) {
 		return *mUserDefTabBarHeight;
 	}
@@ -10517,8 +9836,7 @@ int SARibbonBar::PrivateData::tabBarHeigth() const
  * @brief category高度
  * @return
  */
-int SARibbonBar::PrivateData::categoryHeight() const
-{
+int SARibbonBar::PrivateData::categoryHeight() const {
 	if (mUserDefCategoryHeight) {
 		return *mUserDefCategoryHeight;
 	} else {
@@ -10529,17 +9847,15 @@ int SARibbonBar::PrivateData::categoryHeight() const
 /**
  * @brief 更新推荐的尺寸值
  */
-void SARibbonBar::PrivateData::updateHintSize()
-{
-	auto fm         = q_ptr->fontMetrics();
+void SARibbonBar::PrivateData::updateHintSize() {
+	auto fm = q_ptr->fontMetrics();
 	mTitleBarHeight = calcTitleBarHeight();
 	// mTabBarHeight有大于0的值说明用户设置了，就使用用户设置的值
-	mTabBarHeight   = calcTabBarHeight();
+	mTabBarHeight = calcTabBarHeight();
 	mCategoryHeight = calcCategoryHeight();
 }
 
-void SARibbonBar::PrivateData::setApplicationButton(QAbstractButton* btn)
-{
+void SARibbonBar::PrivateData::setApplicationButton(QAbstractButton* btn) {
 	if (mApplicationButton) {
 		mApplicationButton->hide();
 		mApplicationButton->deleteLater();
@@ -10555,18 +9871,16 @@ void SARibbonBar::PrivateData::setApplicationButton(QAbstractButton* btn)
 	mApplicationButton = btn;
 }
 
-bool SARibbonBar::PrivateData::isContainContextCategoryInList(SARibbonContextCategory* contextCategory)
-{
+bool SARibbonBar::PrivateData::isContainContextCategoryInList(SARibbonContextCategory* contextCategory) {
 	for (int i = 0; i < mCurrentShowingContextCategory.size(); ++i) {
-		if (mCurrentShowingContextCategory[ i ] == contextCategory) {
+		if (mCurrentShowingContextCategory[i] == contextCategory) {
 			return (true);
 		}
 	}
 	return (false);
 }
 
-void SARibbonBar::PrivateData::setMinimumMode()
-{
+void SARibbonBar::PrivateData::setMinimumMode() {
 	mCurrentRibbonMode = SARibbonBar::MinimumRibbonMode;
 	this->mStackedContainerWidget->setPopupMode();
 	this->mStackedContainerWidget->setFocusPolicy(Qt::NoFocus);
@@ -10576,8 +9890,7 @@ void SARibbonBar::PrivateData::setMinimumMode()
 	resetSize();
 }
 
-void SARibbonBar::PrivateData::setNormalMode()
-{
+void SARibbonBar::PrivateData::setNormalMode() {
 	mCurrentRibbonMode = SARibbonBar::NormalRibbonMode;
 	this->mStackedContainerWidget->setNormalMode();
 	this->mStackedContainerWidget->setFocus();
@@ -10585,8 +9898,7 @@ void SARibbonBar::PrivateData::setNormalMode()
 	resetSize();
 }
 
-QColor SARibbonBar::PrivateData::getContextCategoryColor()
-{
+QColor SARibbonBar::PrivateData::getContextCategoryColor() {
 	if (mContextCategoryColorList.isEmpty()) {
 		mContextCategoryColorListIndex = -1;
 		return (QColor());
@@ -10598,15 +9910,14 @@ QColor SARibbonBar::PrivateData::getContextCategoryColor()
 	return (mContextCategoryColorList.at(mContextCategoryColorListIndex));
 }
 
-void SARibbonBar::PrivateData::updateTabData()
-{
+void SARibbonBar::PrivateData::updateTabData() {
 	int tabcount = mRibbonTabBar->count();
 
 	for (int i = 0; i < tabcount; ++i) {
 		QVariant var = mRibbonTabBar->tabData(i);
 		if (var.isValid()) {
-			_SARibbonTabData p = var.value< _SARibbonTabData >();
-			p.index            = i;
+			_SARibbonTabData p = var.value<_SARibbonTabData>();
+			p.index = i;
 			mRibbonTabBar->setTabData(i, QVariant::fromValue(p));
 		}
 	}
@@ -10618,7 +9929,7 @@ void SARibbonBar::PrivateData::updateTabData()
 			for (int t = 0; t < tabcount; ++t) {
 				QVariant v = mRibbonTabBar->tabData(t);
 				if (v.isValid()) {
-					_SARibbonTabData d = v.value< _SARibbonTabData >();
+					_SARibbonTabData d = v.value<_SARibbonTabData>();
 					if (d.category == category) {
 						cd.tabPageIndex.append(t);
 					}
@@ -10630,8 +9941,7 @@ void SARibbonBar::PrivateData::updateTabData()
 	}
 }
 
-QSize SARibbonBar::PrivateData::calcIconSizeByHeight(int h)
-{
+QSize SARibbonBar::PrivateData::calcIconSizeByHeight(int h) {
 	if (h - 8 >= 20) {
 		return QSize(h - 8, h - 8);
 	}
@@ -10646,8 +9956,9 @@ QSize SARibbonBar::PrivateData::calcIconSizeByHeight(int h)
  * @brief SARibbonBar构造函数
  * @param parent
  */
-SARibbonBar::SARibbonBar(QWidget* parent) : QMenuBar(parent), d_ptr(new SARibbonBar::PrivateData(this))
-{
+SARibbonBar::SARibbonBar(QWidget* parent)
+	: QMenuBar(parent)
+	, d_ptr(new SARibbonBar::PrivateData(this)) {
 	d_ptr->init();
 	ensurePolished();
 	setNativeMenuBar(false);
@@ -10664,8 +9975,7 @@ SARibbonBar::SARibbonBar(QWidget* parent) : QMenuBar(parent), d_ptr(new SARibbon
 	setRibbonStyle(RibbonStyleLooseThreeRow);
 }
 
-SARibbonBar::~SARibbonBar()
-{
+SARibbonBar::~SARibbonBar() {
 }
 
 /**
@@ -10673,8 +9983,7 @@ SARibbonBar::~SARibbonBar()
  * @param s
  * @return 2行返回true，返回false代表当前是3行
  */
-bool SARibbonBar::isTwoRowStyle(SARibbonBar::RibbonStyles s)
-{
+bool SARibbonBar::isTwoRowStyle(SARibbonBar::RibbonStyles s) {
 	return s.testFlag(SARibbonBar::RibbonStyleTwoRow);
 }
 
@@ -10683,8 +9992,7 @@ bool SARibbonBar::isTwoRowStyle(SARibbonBar::RibbonStyles s)
  * @param s
  * @return 3行返回true，返回false代表当前是2行
  */
-bool SARibbonBar::isThreeRowStyle(RibbonStyles s)
-{
+bool SARibbonBar::isThreeRowStyle(RibbonStyles s) {
 	return s.testFlag(SARibbonBar::RibbonStyleThreeRow);
 }
 
@@ -10693,8 +10001,7 @@ bool SARibbonBar::isThreeRowStyle(RibbonStyles s)
  * @param s
  * @return 宽松样式（带标题栏）返回true，否则就是紧凑样式
  */
-bool SARibbonBar::isLooseStyle(SARibbonBar::RibbonStyles s)
-{
+bool SARibbonBar::isLooseStyle(SARibbonBar::RibbonStyles s) {
 	return s.testFlag(SARibbonBar::RibbonStyleLoose);
 }
 
@@ -10703,8 +10010,7 @@ bool SARibbonBar::isLooseStyle(SARibbonBar::RibbonStyles s)
  * @param s
  * @return 紧凑样式（不带标题栏）返回true，否则就是宽松样式
  */
-bool SARibbonBar::isCompactStyle(RibbonStyles s)
-{
+bool SARibbonBar::isCompactStyle(RibbonStyles s) {
 	return s.testFlag(SARibbonBar::RibbonStyleCompact);
 }
 
@@ -10712,8 +10018,7 @@ bool SARibbonBar::isCompactStyle(RibbonStyles s)
  * @brief 获取版本信息
  * @return {SA_RIBBON_BAR_VERSION_MAJ}.{SA_RIBBON_BAR_VERSION_MIN}.{SA_RIBBON_BAR_VERSION_PAT}
  */
-QString SARibbonBar::versionString()
-{
+QString SARibbonBar::versionString() {
 	return QString("%1.%2.%3").arg(SA_RIBBON_BAR_VERSION_MAJ).arg(SA_RIBBON_BAR_VERSION_MIN).arg(SA_RIBBON_BAR_VERSION_PAT);
 }
 
@@ -10721,17 +10026,16 @@ QString SARibbonBar::versionString()
    @brief 获取默认的上下文标签颜色列表
    @return
  */
-QList< QColor > SARibbonBar::defaultContextCategoryColorList()
-{
-	QList< QColor > res;
-	res                               //
-			<< QColor(206, 232, 252)  // 蓝
-			<< QColor(253, 238, 179)  // 黄
-			<< QColor(212, 255, 174)  // 绿
-			<< QColor(255, 196, 214)  // 红
-			<< QColor(255, 216, 153)  // 橙
-			<< QColor(255, 224, 243)  // 玫红
-			;
+QList<QColor> SARibbonBar::defaultContextCategoryColorList() {
+	QList<QColor> res;
+	res //
+		<< QColor(206, 232, 252) // 蓝
+		<< QColor(253, 238, 179) // 黄
+		<< QColor(212, 255, 174) // 绿
+		<< QColor(255, 196, 214) // 红
+		<< QColor(255, 216, 153) // 橙
+		<< QColor(255, 224, 243) // 玫红
+		;
 	return res;
 }
 
@@ -10747,8 +10051,7 @@ QList< QColor > SARibbonBar::defaultContextCategoryColorList()
  * }
  * @endcode
  */
-void SARibbonBar::initHighDpi()
-{
+void SARibbonBar::initHighDpi() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -10762,8 +10065,7 @@ void SARibbonBar::initHighDpi()
  * @brief 返回applicationButton
  * @return 默认的applicationButton是@ref SARibbonApplicationButton 生成，通过@ref setApplicationButton 可设置为其他button
  */
-QAbstractButton* SARibbonBar::applicationButton()
-{
+QAbstractButton* SARibbonBar::applicationButton() {
 	return (d_ptr->mApplicationButton);
 }
 
@@ -10776,8 +10078,7 @@ QAbstractButton* SARibbonBar::applicationButton()
  * @param btn applicationButton指针，可以传入@ref SARibbonApplicationButton，
  * SA已经对SARibbonApplicationButton进行了样式设置
  */
-void SARibbonBar::setApplicationButton(QAbstractButton* btn)
-{
+void SARibbonBar::setApplicationButton(QAbstractButton* btn) {
 	d_ptr->setApplicationButton(btn);
 	if (btn) {
 		if (btn->objectName().isEmpty()) {
@@ -10795,8 +10096,7 @@ void SARibbonBar::setApplicationButton(QAbstractButton* btn)
  * @return SARibbonTabBar指针
  * @sa SARibbonTabBar
  */
-SARibbonTabBar* SARibbonBar::ribbonTabBar()
-{
+SARibbonTabBar* SARibbonBar::ribbonTabBar() {
 	return (d_ptr->mRibbonTabBar);
 }
 
@@ -10807,8 +10107,7 @@ SARibbonTabBar* SARibbonBar::ribbonTabBar()
  * @return 返回一个窗口容器，在Category里可以添加其他控件
  * @sa SARibbonCategory
  */
-SARibbonCategory* SARibbonBar::addCategoryPage(const QString& title)
-{
+SARibbonCategory* SARibbonBar::addCategoryPage(const QString& title) {
 	SARibbonCategory* category = RibbonSubElementFactory->createRibbonCategory(this);
 
 	category->setObjectName(title);
@@ -10821,8 +10120,7 @@ SARibbonCategory* SARibbonBar::addCategoryPage(const QString& title)
  * @brief 添加一个标签
  * @param category
  */
-void SARibbonBar::addCategoryPage(SARibbonCategory* category)
-{
+void SARibbonBar::addCategoryPage(SARibbonCategory* category) {
 	if (nullptr == category) {
 		return;
 	}
@@ -10834,9 +10132,8 @@ void SARibbonBar::addCategoryPage(SARibbonCategory* category)
  * @brief qtdesigner专用
  * @param category
  */
-void SARibbonBar::addCategoryPage(QWidget* category)
-{
-	SARibbonCategory* c = qobject_cast< SARibbonCategory* >(category);
+void SARibbonBar::addCategoryPage(QWidget* category) {
+	SARibbonCategory* c = qobject_cast<SARibbonCategory*>(category);
 
 	if (c) {
 		addCategoryPage(c);
@@ -10849,8 +10146,7 @@ void SARibbonBar::addCategoryPage(QWidget* category)
  * @param index category的位置
  * @return
  */
-SARibbonCategory* SARibbonBar::insertCategoryPage(const QString& title, int index)
-{
+SARibbonCategory* SARibbonBar::insertCategoryPage(const QString& title, int index) {
 	SARibbonCategory* category = RibbonSubElementFactory->createRibbonCategory(this);
 
 	category->setObjectName(title);
@@ -10859,8 +10155,7 @@ SARibbonCategory* SARibbonBar::insertCategoryPage(const QString& title, int inde
 	return (category);
 }
 
-void SARibbonBar::insertCategoryPage(SARibbonCategory* category, int index)
-{
+void SARibbonBar::insertCategoryPage(SARibbonCategory* category, int index) {
 	if (nullptr == category) {
 		return;
 	}
@@ -10870,7 +10165,7 @@ void SARibbonBar::insertCategoryPage(SARibbonCategory* category, int index)
 	_SARibbonTabData tabdata;
 
 	tabdata.category = category;
-	tabdata.index    = i;
+	tabdata.index = i;
 	d_ptr->mRibbonTabBar->setTabData(i, QVariant::fromValue(tabdata));
 	d_ptr->mStackedContainerWidget->insertWidget(index, category);
 	connect(category, &QWidget::windowTitleChanged, this, &SARibbonBar::onCategoryWindowTitleChanged);
@@ -10886,12 +10181,11 @@ void SARibbonBar::insertCategoryPage(SARibbonCategory* category, int index)
  * @note 由于翻译等原因，可能title会变化，因此如果想通过固定内容查找category，应该使用 @ref categoryByObjectName
  * @see categoryByObjectName
  */
-SARibbonCategory* SARibbonBar::categoryByName(const QString& title) const
-{
+SARibbonCategory* SARibbonBar::categoryByName(const QString& title) const {
 	int c = d_ptr->mStackedContainerWidget->count();
 
 	for (int i = 0; i < c; ++i) {
-		SARibbonCategory* w = qobject_cast< SARibbonCategory* >(d_ptr->mStackedContainerWidget->widget(i));
+		SARibbonCategory* w = qobject_cast<SARibbonCategory*>(d_ptr->mStackedContainerWidget->widget(i));
 		if (w) {
 			if (w->categoryName() == title) {
 				return (w);
@@ -10907,12 +10201,11 @@ SARibbonCategory* SARibbonBar::categoryByName(const QString& title) const
  * @return 如果没有找到，将返回nullptr，如果有同样的ObjectName，将返回第一个查询到的名字，因此，尽量避免ObjectName重名
  * @see categoryByName
  */
-SARibbonCategory* SARibbonBar::categoryByObjectName(const QString& objname) const
-{
+SARibbonCategory* SARibbonBar::categoryByObjectName(const QString& objname) const {
 	int c = d_ptr->mStackedContainerWidget->count();
 
 	for (int i = 0; i < c; ++i) {
-		SARibbonCategory* w = qobject_cast< SARibbonCategory* >(d_ptr->mStackedContainerWidget->widget(i));
+		SARibbonCategory* w = qobject_cast<SARibbonCategory*>(d_ptr->mStackedContainerWidget->widget(i));
 		if (w) {
 			if (w->objectName() == objname) {
 				return (w);
@@ -10932,12 +10225,11 @@ SARibbonCategory* SARibbonBar::categoryByObjectName(const QString& objname) cons
  * 如果想得到ribbonbar管理的所有标签，可以通过函数@ref categoryPages 得到
  * @see categoryIndex categoryByObjectName categoryByName
  */
-SARibbonCategory* SARibbonBar::categoryByIndex(int index) const
-{
+SARibbonCategory* SARibbonBar::categoryByIndex(int index) const {
 	QVariant var = d_ptr->mRibbonTabBar->tabData(index);
 
 	if (var.isValid()) {
-		_SARibbonTabData p = var.value< _SARibbonTabData >();
+		_SARibbonTabData p = var.value<_SARibbonTabData>();
 		return (p.category);
 	}
 	return (nullptr);
@@ -10947,17 +10239,16 @@ SARibbonCategory* SARibbonBar::categoryByIndex(int index) const
  * @brief 隐藏category,并不会删除或者取走，只是隐藏
  * @param category
  */
-void SARibbonBar::hideCategory(SARibbonCategory* category)
-{
+void SARibbonBar::hideCategory(SARibbonCategory* category) {
 	int tabcount = d_ptr->mRibbonTabBar->count();
 
 	for (int i = 0; i < tabcount; ++i) {
 		QVariant var = d_ptr->mRibbonTabBar->tabData(i);
 		if (var.isValid()) {
-			_SARibbonTabData p = var.value< _SARibbonTabData >();
+			_SARibbonTabData p = var.value<_SARibbonTabData>();
 			if (p.category == category) {
 				d_ptr->mHidedCategory.append(p);
-				d_ptr->mRibbonTabBar->removeTab(i);  // 仅仅把tab移除
+				d_ptr->mRibbonTabBar->removeTab(i); // 仅仅把tab移除
 				// 注意Category隐藏后，contex的位置就会发生变化，需要更新
 				d_ptr->updateTabData();
 				return;
@@ -10970,15 +10261,14 @@ void SARibbonBar::hideCategory(SARibbonCategory* category)
  * @brief 显示被隐藏的category
  * @param category
  */
-void SARibbonBar::showCategory(SARibbonCategory* category)
-{
+void SARibbonBar::showCategory(SARibbonCategory* category) {
 	for (auto i = d_ptr->mHidedCategory.begin(); i != d_ptr->mHidedCategory.end(); ++i) {
 		if (i->category == category) {
 			// 说明要显示
 			int index = d_ptr->mRibbonTabBar->insertTab(i->index, i->category->categoryName());
-			i->index  = index;
+			i->index = index;
 			d_ptr->mRibbonTabBar->setTabData(index, QVariant::fromValue(*i));
-			d_ptr->mHidedCategory.erase(i);  // 移除
+			d_ptr->mHidedCategory.erase(i); // 移除
 			// 更新index信息
 			d_ptr->updateTabData();
 			raiseCategory(category);
@@ -10993,8 +10283,7 @@ void SARibbonBar::showCategory(SARibbonCategory* category)
  * @param category
  * @return
  */
-bool SARibbonBar::isCategoryVisible(const SARibbonCategory* c) const
-{
+bool SARibbonBar::isCategoryVisible(const SARibbonCategory* c) const {
 	int tabindex = categoryIndex(c);
 
 	return (tabindex >= 0);
@@ -11005,15 +10294,14 @@ bool SARibbonBar::isCategoryVisible(const SARibbonCategory* c) const
  * @param c
  * @return 如果找不到，返回-1
  */
-int SARibbonBar::categoryIndex(const SARibbonCategory* c) const
-{
+int SARibbonBar::categoryIndex(const SARibbonCategory* c) const {
 	// category的顺序不能以stackedwidget为准，因为存在contextcategory，contextcategory正常是不显示的
 	int tabcount = d_ptr->mRibbonTabBar->count();
 
 	for (int i = 0; i < tabcount; ++i) {
 		QVariant var = d_ptr->mRibbonTabBar->tabData(i);
 		if (var.isValid()) {
-			_SARibbonTabData p = var.value< _SARibbonTabData >();
+			_SARibbonTabData p = var.value<_SARibbonTabData>();
 			if (p.category == c) {
 				return (i);
 			}
@@ -11027,8 +10315,7 @@ int SARibbonBar::categoryIndex(const SARibbonCategory* c) const
  * @param from
  * @param to
  */
-void SARibbonBar::moveCategory(int from, int to)
-{
+void SARibbonBar::moveCategory(int from, int to) {
 	d_ptr->mRibbonTabBar->moveTab(from, to);
 	// 这时要刷新所有tabdata的index信息
 	d_ptr->updateTabData();
@@ -11040,13 +10327,12 @@ void SARibbonBar::moveCategory(int from, int to)
  *
  * @return
  */
-QList< SARibbonCategory* > SARibbonBar::categoryPages(bool getAll) const
-{
+QList<SARibbonCategory*> SARibbonBar::categoryPages(bool getAll) const {
 	int c = d_ptr->mStackedContainerWidget->count();
-	QList< SARibbonCategory* > res;
+	QList<SARibbonCategory*> res;
 
 	for (int i = 0; i < c; ++i) {
-		SARibbonCategory* w = qobject_cast< SARibbonCategory* >(d_ptr->mStackedContainerWidget->widget(i));
+		SARibbonCategory* w = qobject_cast<SARibbonCategory*>(d_ptr->mStackedContainerWidget->widget(i));
 		if (w) {
 			if (!getAll && w->isContextCategory()) {
 				// 不是getall且是上下文时跳过
@@ -11065,9 +10351,8 @@ QList< SARibbonCategory* > SARibbonBar::categoryPages(bool getAll) const
  * 表现在tabbar会移除，面板会移除，使用此函数后可以对SARibbonCategory进行delete
  * @param category
  */
-void SARibbonBar::removeCategory(SARibbonCategory* category)
-{
-	int index     = tabIndex(category);
+void SARibbonBar::removeCategory(SARibbonCategory* category) {
+	int index = tabIndex(category);
 	bool isupdate = false;
 	if (index >= 0) {
 		d_ptr->mRibbonTabBar->removeTab(index);
@@ -11101,8 +10386,7 @@ void SARibbonBar::removeCategory(SARibbonCategory* category)
  * @return 返回上下文标签指针
  * @note SARibbonBar拥有SARibbonContextCategory的管理权，用户避免在外部直接delete,如果要删除，调用@ref destroyContextCategory 函数
  */
-SARibbonContextCategory* SARibbonBar::addContextCategory(const QString& title, const QColor& color, const QVariant& id)
-{
+SARibbonContextCategory* SARibbonBar::addContextCategory(const QString& title, const QColor& color, const QVariant& id) {
 	SARibbonContextCategory* context = RibbonSubElementFactory->createRibbonContextCategory(this);
 
 	context->setObjectName(title);
@@ -11117,8 +10401,7 @@ SARibbonContextCategory* SARibbonBar::addContextCategory(const QString& title, c
  * @brief 添加上下文标签
  * @param context
  */
-void SARibbonBar::addContextCategory(SARibbonContextCategory* context)
-{
+void SARibbonBar::addContextCategory(SARibbonContextCategory* context) {
 	if (nullptr == context) {
 		return;
 	}
@@ -11132,8 +10415,7 @@ void SARibbonBar::addContextCategory(SARibbonContextCategory* context)
  * @brief 显示上下文标签
  * @param context 上下文标签指针
  */
-void SARibbonBar::showContextCategory(SARibbonContextCategory* context)
-{
+void SARibbonBar::showContextCategory(SARibbonContextCategory* context) {
 	if (isContextCategoryVisible(context)) {
 		return;
 	}
@@ -11150,7 +10432,7 @@ void SARibbonBar::showContextCategory(SARibbonContextCategory* context)
 
 		_SARibbonTabData tabdata;
 		tabdata.category = category;
-		tabdata.index    = index;
+		tabdata.index = index;
 		d_ptr->mRibbonTabBar->setTabData(index, QVariant::fromValue(tabdata));
 	}
 	d_ptr->mCurrentShowingContextCategory.append(contextCategoryData);
@@ -11162,15 +10444,14 @@ void SARibbonBar::showContextCategory(SARibbonContextCategory* context)
  * @brief 隐藏上下文标签
  * @param context 上下文标签指针
  */
-void SARibbonBar::hideContextCategory(SARibbonContextCategory* context)
-{
+void SARibbonBar::hideContextCategory(SARibbonContextCategory* context) {
 	bool needResize = false;
 
 	for (int i = 0; i < d_ptr->mCurrentShowingContextCategory.size(); ++i) {
-		if (d_ptr->mCurrentShowingContextCategory[ i ].contextCategory == context) {
-			const QList< int >& indexs = d_ptr->mCurrentShowingContextCategory[ i ].tabPageIndex;
+		if (d_ptr->mCurrentShowingContextCategory[i].contextCategory == context) {
+			const QList<int>& indexs = d_ptr->mCurrentShowingContextCategory[i].tabPageIndex;
 			for (int j = indexs.size() - 1; j >= 0; --j) {
-				d_ptr->mRibbonTabBar->removeTab(indexs[ j ]);
+				d_ptr->mRibbonTabBar->removeTab(indexs[j]);
 			}
 			// 注意，再删除ContextCategory后，tab的序号就会改变，这时，这个tab后面的都要调整它的序号
 			needResize = true;
@@ -11191,8 +10472,7 @@ void SARibbonBar::hideContextCategory(SARibbonContextCategory* context)
  * @return 在显示状态返回true
  * @sa setContextCategoryVisible
  */
-bool SARibbonBar::isContextCategoryVisible(SARibbonContextCategory* context)
-{
+bool SARibbonBar::isContextCategoryVisible(SARibbonContextCategory* context) {
 	return (d_ptr->isContainContextCategoryInList(context));
 }
 
@@ -11203,8 +10483,7 @@ bool SARibbonBar::isContextCategoryVisible(SARibbonContextCategory* context)
  * @param context 上下文标签
  * @param visible 显示状态，true为显示
  */
-void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory* context, bool visible)
-{
+void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory* context, bool visible) {
 	if (nullptr == context) {
 		return;
 	}
@@ -11219,8 +10498,7 @@ void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory* context, bo
  * @brief 获取所有的上下文标签
  * @return 返回上下文标签列表
  */
-QList< SARibbonContextCategory* > SARibbonBar::contextCategoryList() const
-{
+QList<SARibbonContextCategory*> SARibbonBar::contextCategoryList() const {
 	return (d_ptr->mContextCategoryList);
 }
 
@@ -11228,8 +10506,7 @@ QList< SARibbonContextCategory* > SARibbonBar::contextCategoryList() const
  * @brief 销毁上下文标签，上下文标签的SARibbonCategory也会随之销毁
  * @param context 需要销毁的上下文标签指针
  */
-void SARibbonBar::destroyContextCategory(SARibbonContextCategory* context)
-{
+void SARibbonBar::destroyContextCategory(SARibbonContextCategory* context) {
 	if (nullptr == context) {
 		return;
 	}
@@ -11240,7 +10517,7 @@ void SARibbonBar::destroyContextCategory(SARibbonContextCategory* context)
 	//! 2、删除上下文标签的相关内容
 	d_ptr->mContextCategoryList.removeAll(context);
 	//!
-	QList< SARibbonCategory* > res = context->categoryList();
+	QList<SARibbonCategory*> res = context->categoryList();
 
 	for (SARibbonCategory* c : qAsConst(res)) {
 		c->hide();
@@ -11261,8 +10538,7 @@ void SARibbonBar::destroyContextCategory(SARibbonContextCategory* context)
  * @param isMinimum 参数为true时，切换为Minimum模式
  * @see 此函数会改变@ref RibbonState 状态，通过@ref currentRibbonState 函数可以查看当前状态
  */
-void SARibbonBar::setMinimumMode(bool isMinimum)
-{
+void SARibbonBar::setMinimumMode(bool isMinimum) {
 #ifdef SA_RIBBON_DEBUG_HELP_DRAW
 	qDebug() << "SARibbonBar::setHideMode " << isMinimum;
 #endif
@@ -11281,26 +10557,24 @@ void SARibbonBar::setMinimumMode(bool isMinimum)
 /// \brief 当前ribbon是否是隐藏模式
 /// \return
 ///
-bool SARibbonBar::isMinimumMode() const
-{
+bool SARibbonBar::isMinimumMode() const {
 	return (d_ptr->mStackedContainerWidget->isPopupMode());
 }
 
 ///
 /// \brief 设置显示隐藏ribbon按钮
 ///
-void SARibbonBar::showMinimumModeButton(bool isShow)
-{
+void SARibbonBar::showMinimumModeButton(bool isShow) {
 	if (isShow) {
 		activeRightButtonGroup();
 
 		d_ptr->mMinimumCategoryButtonAction = new QAction(this);
 		d_ptr->mMinimumCategoryButtonAction->setIcon(
-				style()->standardIcon(isMinimumMode() ? QStyle::SP_TitleBarUnshadeButton : QStyle::SP_TitleBarShadeButton, nullptr));
-		connect(d_ptr->mMinimumCategoryButtonAction, &QAction::triggered, this, [ this ]() {
+			style()->standardIcon(isMinimumMode() ? QStyle::SP_TitleBarUnshadeButton : QStyle::SP_TitleBarShadeButton, nullptr));
+		connect(d_ptr->mMinimumCategoryButtonAction, &QAction::triggered, this, [this]() {
 			this->setMinimumMode(!isMinimumMode());
 			this->d_ptr->mMinimumCategoryButtonAction->setIcon(
-					style()->standardIcon(isMinimumMode() ? QStyle::SP_TitleBarUnshadeButton : QStyle::SP_TitleBarShadeButton, nullptr));
+				style()->standardIcon(isMinimumMode() ? QStyle::SP_TitleBarUnshadeButton : QStyle::SP_TitleBarShadeButton, nullptr));
 		});
 		d_ptr->mRightButtonGroup->addAction(d_ptr->mMinimumCategoryButtonAction);
 
@@ -11319,8 +10593,7 @@ void SARibbonBar::showMinimumModeButton(bool isShow)
  * @brief 是否显示隐藏ribbon按钮
  * @return
  */
-bool SARibbonBar::haveShowMinimumModeButton() const
-{
+bool SARibbonBar::haveShowMinimumModeButton() const {
 	return (nullptr != d_ptr->mMinimumCategoryButtonAction);
 }
 
@@ -11328,8 +10601,7 @@ bool SARibbonBar::haveShowMinimumModeButton() const
    @brief 隐藏ribbon对应的action
    @return
  */
-QAction* SARibbonBar::minimumModeAction() const
-{
+QAction* SARibbonBar::minimumModeAction() const {
 	return d_ptr->mMinimumCategoryButtonAction;
 }
 
@@ -11337,8 +10609,7 @@ QAction* SARibbonBar::minimumModeAction() const
  * @brief 当前ribbon的状态（正常|最小化）
  * @return
  */
-SARibbonBar::RibbonMode SARibbonBar::currentRibbonState() const
-{
+SARibbonBar::RibbonMode SARibbonBar::currentRibbonState() const {
 	return (d_ptr->mCurrentRibbonMode);
 }
 
@@ -11346,8 +10617,7 @@ SARibbonBar::RibbonMode SARibbonBar::currentRibbonState() const
    @brief tabBar的高度
    @return
  */
-int SARibbonBar::tabBarHeight() const
-{
+int SARibbonBar::tabBarHeight() const {
 	return d_ptr->mRibbonTabBar->height();
 }
 
@@ -11360,10 +10630,9 @@ int SARibbonBar::tabBarHeight() const
  * @note 此函数不会自动刷新，如果需要刷新调用此函数后需要调用@ref updateRibbonGeometry
  * @param h
  */
-void SARibbonBar::setTabBarHeight(int h, bool resizeByNow)
-{
+void SARibbonBar::setTabBarHeight(int h, bool resizeByNow) {
 	if (nullptr == d_ptr->mUserDefTabBarHeight) {
-		d_ptr->mUserDefTabBarHeight = std::make_unique< int >(h);
+		d_ptr->mUserDefTabBarHeight = std::make_unique<int>(h);
 	} else {
 		*(d_ptr->mUserDefTabBarHeight) = h;
 	}
@@ -11377,8 +10646,7 @@ void SARibbonBar::setTabBarHeight(int h, bool resizeByNow)
    @sa setTitleBarHeight
    @return
  */
-int SARibbonBar::titleBarHeight() const
-{
+int SARibbonBar::titleBarHeight() const {
 	return d_ptr->titleBarHeight();
 }
 
@@ -11388,11 +10656,10 @@ int SARibbonBar::titleBarHeight() const
    @note 此操作会发射@ref titleBarHeightChanged 信号
    @param h
  */
-void SARibbonBar::setTitleBarHeight(int h, bool resizeByNow)
-{
+void SARibbonBar::setTitleBarHeight(int h, bool resizeByNow) {
 	int oldHeight = d_ptr->mTitleBarHeight;
 	if (nullptr == d_ptr->mUserDefTitleBarHeight) {
-		d_ptr->mUserDefTitleBarHeight = std::make_unique< int >(h);
+		d_ptr->mUserDefTitleBarHeight = std::make_unique<int>(h);
 	} else {
 		*(d_ptr->mUserDefTitleBarHeight) = h;
 		//
@@ -11409,8 +10676,7 @@ void SARibbonBar::setTitleBarHeight(int h, bool resizeByNow)
  * @brief category的高度
  * @return
  */
-int SARibbonBar::categoryHeight() const
-{
+int SARibbonBar::categoryHeight() const {
 	return d_ptr->mStackedContainerWidget->height();
 }
 
@@ -11419,10 +10685,9 @@ int SARibbonBar::categoryHeight() const
  * @param h
  * @param resizeByNow
  */
-void SARibbonBar::setCategoryHeight(int h, bool resizeByNow)
-{
+void SARibbonBar::setCategoryHeight(int h, bool resizeByNow) {
 	if (nullptr == d_ptr->mUserDefCategoryHeight) {
-		d_ptr->mUserDefCategoryHeight = std::make_unique< int >(h);
+		d_ptr->mUserDefCategoryHeight = std::make_unique<int>(h);
 	} else {
 		*(d_ptr->mUserDefCategoryHeight) = h;
 	}
@@ -11431,14 +10696,12 @@ void SARibbonBar::setCategoryHeight(int h, bool resizeByNow)
 	}
 }
 
-void SARibbonBar::onWindowTitleChanged(const QString& title)
-{
+void SARibbonBar::onWindowTitleChanged(const QString& title) {
 	Q_UNUSED(title);
 	update();
 }
 
-void SARibbonBar::onWindowIconChanged(const QIcon& i)
-{
+void SARibbonBar::onWindowIconChanged(const QIcon& i) {
 	if (quickAccessBar()) {
 		quickAccessBar()->setIcon(i);
 	}
@@ -11448,8 +10711,7 @@ void SARibbonBar::onWindowIconChanged(const QIcon& i)
  * @brief category的名字发生改变触发
  * @param title
  */
-void SARibbonBar::onCategoryWindowTitleChanged(const QString& title)
-{
+void SARibbonBar::onCategoryWindowTitleChanged(const QString& title) {
 	// 全部更新一遍
 	Q_UNUSED(title);
 	updateCategoryTitleToTabName();
@@ -11458,22 +10720,20 @@ void SARibbonBar::onCategoryWindowTitleChanged(const QString& title)
 ///
 /// \brief ribbon的显示界面隐藏
 ///
-void SARibbonBar::onStackWidgetHided()
-{
+void SARibbonBar::onStackWidgetHided() {
 }
 
 /**
  * @brief 标签切换触发槽函数
  * @param index
  */
-void SARibbonBar::onCurrentRibbonTabChanged(int index)
-{
-	QVariant var               = d_ptr->mRibbonTabBar->tabData(index);
+void SARibbonBar::onCurrentRibbonTabChanged(int index) {
+	QVariant var = d_ptr->mRibbonTabBar->tabData(index);
 	SARibbonCategory* category = nullptr;
 
 	if (var.isValid()) {
-		_SARibbonTabData p = var.value< _SARibbonTabData >();
-		category           = p.category;
+		_SARibbonTabData p = var.value<_SARibbonTabData>();
+		category = p.category;
 	}
 	if (!category) {
 		return;
@@ -11488,8 +10748,8 @@ void SARibbonBar::onCurrentRibbonTabChanged(int index)
 			if (d_ptr->mStackedContainerWidget->isPopupMode()) {
 				// 在stackedContainerWidget弹出前，先给tabbar一个QHoverEvent,让tabbar知道鼠标已经移开
 				QHoverEvent ehl(QEvent::HoverLeave,
-								d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()),
-								d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()));
+					d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()),
+					d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()));
 				QApplication::sendEvent(d_ptr->mRibbonTabBar, &ehl);
 				resizeStackedContainerWidget();
 				d_ptr->mStackedContainerWidget->setFocus();
@@ -11508,8 +10768,7 @@ void SARibbonBar::onCurrentRibbonTabChanged(int index)
  * 单击事件仅用于响应点击同一个tab时
  * @param index
  */
-void SARibbonBar::onCurrentRibbonTabClicked(int index)
-{
+void SARibbonBar::onCurrentRibbonTabClicked(int index) {
 	if (index != d_ptr->mRibbonTabBar->currentIndex()) {
 		// 点击的标签不一致通过changed槽去处理
 		return;
@@ -11519,8 +10778,8 @@ void SARibbonBar::onCurrentRibbonTabClicked(int index)
 			if (this->d_ptr->mStackedContainerWidget->isPopupMode()) {
 				// 在stackedContainerWidget弹出前，先给tabbar一个QHoverEvent,让tabbar知道鼠标已经移开
 				QHoverEvent ehl(QEvent::HoverLeave,
-								d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()),
-								d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()));
+					d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()),
+					d_ptr->mRibbonTabBar->mapToGlobal(QCursor::pos()));
 				QApplication::sendEvent(d_ptr->mRibbonTabBar, &ehl);
 				// 弹出前都调整一下位置，避免移动后位置异常
 				resizeStackedContainerWidget();
@@ -11537,16 +10796,14 @@ void SARibbonBar::onCurrentRibbonTabClicked(int index)
  * 默认情况下双击会切换最小和正常模式
  * @param index
  */
-void SARibbonBar::onCurrentRibbonTabDoubleClicked(int index)
-{
+void SARibbonBar::onCurrentRibbonTabDoubleClicked(int index) {
 	Q_UNUSED(index);
 	setMinimumMode(!isMinimumMode());
 }
 
-void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory* category)
-{
+void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory* category) {
 	Q_ASSERT_X(category != nullptr, "onContextsCategoryPageAdded", "add nullptr page");
-	d_ptr->mStackedContainerWidget->addWidget(category);  // 这里stackedWidget用append，其他地方都应该使用insert
+	d_ptr->mStackedContainerWidget->addWidget(category); // 这里stackedWidget用append，其他地方都应该使用insert
 }
 
 /**
@@ -11554,8 +10811,7 @@ void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory* category)
  * @param category
  * @param title
  */
-void SARibbonBar::onContextsCategoryCategoryNameChanged(SARibbonCategory* category, const QString& title)
-{
+void SARibbonBar::onContextsCategoryCategoryNameChanged(SARibbonCategory* category, const QString& title) {
 	Q_UNUSED(category);
 	Q_UNUSED(title);
 	updateCategoryTitleToTabName();
@@ -11566,8 +10822,7 @@ void SARibbonBar::onContextsCategoryCategoryNameChanged(SARibbonCategory* catego
  * @param from
  * @param to
  */
-void SARibbonBar::onTabMoved(int from, int to)
-{
+void SARibbonBar::onTabMoved(int from, int to) {
 	const QSignalBlocker blocker(d_ptr->mStackedContainerWidget);
 	// 调整stacked widget的顺序，调整顺序是为了调用categoryPages函数返回的QList<SARibbonCategory *>顺序和tabbar一致
 	d_ptr->mStackedContainerWidget->moveWidget(from, to);
@@ -11580,14 +10835,13 @@ void SARibbonBar::onTabMoved(int from, int to)
  * @return 如果没有找到，返回-1
  * @note 此函数不会调用SARibbonCategory*的任何方法，因此可以在SARibbonCategory的destroyed槽中调用
  */
-int SARibbonBar::tabIndex(SARibbonCategory* obj)
-{
+int SARibbonBar::tabIndex(SARibbonCategory* obj) {
 	const int size = d_ptr->mRibbonTabBar->count();
 
 	for (int i = 0; i < size; ++i) {
 		QVariant v = d_ptr->mRibbonTabBar->tabData(i);
 		if (v.isValid()) {
-			_SARibbonTabData innervalue = v.value< _SARibbonTabData >();
+			_SARibbonTabData innervalue = v.value<_SARibbonTabData>();
 			if (innervalue.category == obj) {
 				return (i);
 			}
@@ -11598,8 +10852,7 @@ int SARibbonBar::tabIndex(SARibbonCategory* obj)
 	return (-1);
 }
 
-void SARibbonBar::resizeAll()
-{
+void SARibbonBar::resizeAll() {
 	if (isLooseStyle()) {
 		resizeInLooseStyle();
 	} else {
@@ -11612,9 +10865,8 @@ void SARibbonBar::resizeAll()
  * @brief 把ribbonbar的内容，同步进各个category中
  * @param autoUpdate
  */
-void SARibbonBar::synchronousCategoryData(bool autoUpdate)
-{
-	iterate([ this ](SARibbonCategory* c) -> bool {
+void SARibbonBar::synchronousCategoryData(bool autoUpdate) {
+	iterate([this](SARibbonCategory* c) -> bool {
 		c->setEnableShowPannelTitle(this->isEnableShowPannelTitle());
 		c->setPannelTitleHeight(this->pannelTitleHeight());
 		c->setCategoryAlignment(this->ribbonAlignment());
@@ -11633,8 +10885,7 @@ void SARibbonBar::synchronousCategoryData(bool autoUpdate)
    @brief 激活tabbar右边的按钮群
    @return 返回右边的按钮群指针
  */
-SARibbonButtonGroupWidget* SARibbonBar::activeRightButtonGroup()
-{
+SARibbonButtonGroupWidget* SARibbonBar::activeRightButtonGroup() {
 	if (nullptr == d_ptr->mRightButtonGroup) {
 		d_ptr->mRightButtonGroup = RibbonSubElementFactory->craeteButtonGroupWidget(this);
 	}
@@ -11646,8 +10897,7 @@ SARibbonButtonGroupWidget* SARibbonBar::activeRightButtonGroup()
    @brief 返回右边的按钮群指针
    @return 如果没有创建，返回nullptr
  */
-SARibbonButtonGroupWidget* SARibbonBar::rightButtonGroup()
-{
+SARibbonButtonGroupWidget* SARibbonBar::rightButtonGroup() {
 	return d_ptr->mRightButtonGroup;
 }
 
@@ -11655,8 +10905,7 @@ SARibbonButtonGroupWidget* SARibbonBar::rightButtonGroup()
    @brief 激活QuickAccessBar
    @return
  */
-SARibbonQuickAccessBar* SARibbonBar::activeQuickAccessBar()
-{
+SARibbonQuickAccessBar* SARibbonBar::activeQuickAccessBar() {
 	if (nullptr == d_ptr->mQuickAccessBar) {
 		d_ptr->mQuickAccessBar = RibbonSubElementFactory->createQuickAccessBar(this);
 		d_ptr->mQuickAccessBar->setObjectName(QStringLiteral("objSARibbonQuickAccessBar"));
@@ -11666,8 +10915,7 @@ SARibbonQuickAccessBar* SARibbonBar::activeQuickAccessBar()
 	return d_ptr->mQuickAccessBar;
 }
 
-SARibbonQuickAccessBar* SARibbonBar::quickAccessBar()
-{
+SARibbonQuickAccessBar* SARibbonBar::quickAccessBar() {
 	return (d_ptr->mQuickAccessBar);
 }
 
@@ -11679,17 +10927,16 @@ SARibbonQuickAccessBar* SARibbonBar::quickAccessBar()
  * ,同时再调用updateRibbonElementGeometry()刷新布局
  * @param v 样式，见@ref SARibbonBar::RibbonStyle
  */
-void SARibbonBar::setRibbonStyle(SARibbonBar::RibbonStyles v)
-{
+void SARibbonBar::setRibbonStyle(SARibbonBar::RibbonStyles v) {
 	// 先幅值给变量
 	d_ptr->mRibbonStyle = v;
 #if SA_DEBUG_PRINT_SIZE_HINT
-	qDebug() << "setRibbonStyle(" << v << ")"                //
-			 << "\n  isThreeRowStyle=" << isThreeRowStyle()  //
-			 << "\n  isTwoRowStyle=" << isTwoRowStyle()      //
-			 << "\n  isLooseStyle=" << isLooseStyle()        //
-			 << "\n  isCompactStyle=" << isCompactStyle()    //
-			;
+	qDebug() << "setRibbonStyle(" << v << ")" //
+			 << "\n  isThreeRowStyle=" << isThreeRowStyle() //
+			 << "\n  isTwoRowStyle=" << isTwoRowStyle() //
+			 << "\n  isLooseStyle=" << isLooseStyle() //
+			 << "\n  isCompactStyle=" << isCompactStyle() //
+		;
 #endif
 	// 执行判断
 	setEnableWordWrap(isThreeRowStyle(v));
@@ -11699,7 +10946,7 @@ void SARibbonBar::setRibbonStyle(SARibbonBar::RibbonStyles v)
 	setPannelLayoutMode(isThreeRowStyle(v) ? SARibbonPannel::ThreeRowMode : SARibbonPannel::TwoRowMode);
 
 	// 此函数会调用setFixedHeight
-	synchronousCategoryData(false);  // 这里不急着刷新，下面会继续刷新
+	synchronousCategoryData(false); // 这里不急着刷新，下面会继续刷新
 	d_ptr->resetSize();
 
 	emit ribbonStyleChanged(d_ptr->mRibbonStyle);
@@ -11709,8 +10956,7 @@ void SARibbonBar::setRibbonStyle(SARibbonBar::RibbonStyles v)
    @brief 返回当前ribbon的风格
    @return 返回当前ribbon的风格
  */
-SARibbonBar::RibbonStyles SARibbonBar::currentRibbonStyle() const
-{
+SARibbonBar::RibbonStyles SARibbonBar::currentRibbonStyle() const {
 	return (d_ptr->mRibbonStyle);
 }
 
@@ -11718,8 +10964,7 @@ SARibbonBar::RibbonStyles SARibbonBar::currentRibbonStyle() const
    @brief 切换到对应标签
    @param index 标签索引
  */
-void SARibbonBar::setCurrentIndex(int index)
-{
+void SARibbonBar::setCurrentIndex(int index) {
 	d_ptr->mRibbonTabBar->setCurrentIndex(index);
 	// onCurrentRibbonTabChanged(index);
 }
@@ -11728,8 +10973,7 @@ void SARibbonBar::setCurrentIndex(int index)
  * @brief 返回当前的tab索引
  * @return 当前的索引
  */
-int SARibbonBar::currentIndex()
-{
+int SARibbonBar::currentIndex() {
 	return (d_ptr->mRibbonTabBar->currentIndex());
 }
 
@@ -11737,8 +10981,7 @@ int SARibbonBar::currentIndex()
  * @brief 确保标签显示出来，tab并切换到对应页
  * @param category 标签指针
  */
-void SARibbonBar::raiseCategory(SARibbonCategory* category)
-{
+void SARibbonBar::raiseCategory(SARibbonCategory* category) {
 	int index = d_ptr->mStackedContainerWidget->indexOf(category);
 
 	if (index >= 0) {
@@ -11750,8 +10993,7 @@ void SARibbonBar::raiseCategory(SARibbonCategory* category)
  * @brief 判断当前的样式是否为2行
  * @return
  */
-bool SARibbonBar::isTwoRowStyle() const
-{
+bool SARibbonBar::isTwoRowStyle() const {
 	return (d_ptr->mDefaulePannelLayoutMode == SARibbonPannel::TwoRowMode);
 }
 
@@ -11759,8 +11001,7 @@ bool SARibbonBar::isTwoRowStyle() const
  * @brief 判断当前的样式是否为3行
  * @return
  */
-bool SARibbonBar::isThreeRowStyle() const
-{
+bool SARibbonBar::isThreeRowStyle() const {
 	return (d_ptr->mDefaulePannelLayoutMode == SARibbonPannel::ThreeRowMode);
 }
 
@@ -11768,8 +11009,7 @@ bool SARibbonBar::isThreeRowStyle() const
  * @brief 判断当前的样式是否为宽松样式
  * @return
  */
-bool SARibbonBar::isLooseStyle() const
-{
+bool SARibbonBar::isLooseStyle() const {
 	return (SARibbonBar::isLooseStyle(currentRibbonStyle()));
 }
 
@@ -11777,8 +11017,7 @@ bool SARibbonBar::isLooseStyle() const
  * @brief 判断当前的样式是否为紧凑样式
  * @return
  */
-bool SARibbonBar::isCompactStyle() const
-{
+bool SARibbonBar::isCompactStyle() const {
 	return (SARibbonBar::isCompactStyle(currentRibbonStyle()));
 }
 
@@ -11791,8 +11030,7 @@ bool SARibbonBar::isCompactStyle() const
  * @param clr
  * @note 此函数不会刷新，刷新请自行调用repaint
  */
-void SARibbonBar::setWindowTitleTextColor(const QColor& clr)
-{
+void SARibbonBar::setWindowTitleTextColor(const QColor& clr) {
 	d_ptr->mTitleTextColor = clr;
 }
 
@@ -11800,8 +11038,7 @@ void SARibbonBar::setWindowTitleTextColor(const QColor& clr)
  * @brief 获取标题的文字颜色
  * @return 如果返回的是无效颜色，!QColor::isValid()，说明没有手动设置颜色，颜色将跟随SARibbonBar的qss的文字颜色
  */
-QColor SARibbonBar::windowTitleTextColor() const
-{
+QColor SARibbonBar::windowTitleTextColor() const {
 	return d_ptr->mTitleTextColor;
 }
 
@@ -11809,8 +11046,7 @@ QColor SARibbonBar::windowTitleTextColor() const
  * @brief tabbar 底部会绘制一条线条，此接口定义线条颜色
  * @param clr
  */
-void SARibbonBar::setTabBarBaseLineColor(const QColor& clr)
-{
+void SARibbonBar::setTabBarBaseLineColor(const QColor& clr) {
 	d_ptr->mTabBarBaseLineColor = clr;
 }
 
@@ -11818,8 +11054,7 @@ void SARibbonBar::setTabBarBaseLineColor(const QColor& clr)
  * @brief 获取tabbar底部基线颜色
  * @return
  */
-QColor SARibbonBar::tabBarBaseLineColor() const
-{
+QColor SARibbonBar::tabBarBaseLineColor() const {
 	return d_ptr->mTabBarBaseLineColor;
 }
 
@@ -11828,26 +11063,24 @@ QColor SARibbonBar::tabBarBaseLineColor() const
  *
  * @note 此函数调用较慢，避免在高速要求场合调用
  */
-void SARibbonBar::updateRibbonGeometry()
-{
+void SARibbonBar::updateRibbonGeometry() {
 	d_ptr->resetSize();
 	iterate([](SARibbonCategory* c) -> bool {
 		c->updateItemGeometry();
 		return true;
 	});
-	//！主题变更后，tabbar的长度需要进行刷新
+	// ！主题变更后，tabbar的长度需要进行刷新
 
 	//! 直接给一个resizeevent，让所有刷新
-	 QResizeEvent* e = new QResizeEvent(size(), QSize());
-	 QApplication::postEvent(this, e);
+	QResizeEvent* e = new QResizeEvent(size(), QSize());
+	QApplication::postEvent(this, e);
 }
 
 /**
  * @brief SARibbonPannel的布局模式
  * @return
  */
-SARibbonPannel::PannelLayoutMode SARibbonBar::pannelLayoutMode() const
-{
+SARibbonPannel::PannelLayoutMode SARibbonBar::pannelLayoutMode() const {
 	return d_ptr->mDefaulePannelLayoutMode;
 }
 
@@ -11855,10 +11088,9 @@ SARibbonPannel::PannelLayoutMode SARibbonBar::pannelLayoutMode() const
  * @brief SARibbonPannel的布局模式设置
  * @param m
  */
-void SARibbonBar::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode m)
-{
+void SARibbonBar::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode m) {
 	d_ptr->mDefaulePannelLayoutMode = m;
-	iterate([ m ](SARibbonCategory* c) -> bool {
+	iterate([m](SARibbonCategory* c) -> bool {
 		c->setPannelLayoutMode(m);
 		return true;
 	});
@@ -11868,8 +11100,7 @@ void SARibbonBar::setPannelLayoutMode(SARibbonPannel::PannelLayoutMode m)
  * @brief 设置tab在title上面，这样可以省略title区域
  * @param on
  */
-void SARibbonBar::setTabOnTitle(bool on)
-{
+void SARibbonBar::setTabOnTitle(bool on) {
 	if (d_ptr->mIsTabOnTitle != on) {
 		d_ptr->mIsTabOnTitle = on;
 		d_ptr->resetSize();
@@ -11880,8 +11111,7 @@ void SARibbonBar::setTabOnTitle(bool on)
  * @brief tab是否在title上面
  * @return
  */
-bool SARibbonBar::isTabOnTitle() const
-{
+bool SARibbonBar::isTabOnTitle() const {
 	return d_ptr->mIsTabOnTitle;
 }
 
@@ -11889,8 +11119,7 @@ bool SARibbonBar::isTabOnTitle() const
  * @brief 设置标题的对齐方式
  * @param al
  */
-void SARibbonBar::setWindowTitleAligment(Qt::Alignment al)
-{
+void SARibbonBar::setWindowTitleAligment(Qt::Alignment al) {
 	d_ptr->mTitleAligment = al;
 }
 
@@ -11898,8 +11127,7 @@ void SARibbonBar::setWindowTitleAligment(Qt::Alignment al)
  * @brief 获取标题的对齐方式
  * @return
  */
-Qt::Alignment SARibbonBar::windowTitleAligment() const
-{
+Qt::Alignment SARibbonBar::windowTitleAligment() const {
 	return d_ptr->mTitleAligment;
 }
 
@@ -11907,8 +11135,7 @@ Qt::Alignment SARibbonBar::windowTitleAligment() const
  * @brief 设置ribbonbar的按钮文字允许换行
  * @param on
  */
-void SARibbonBar::setEnableWordWrap(bool on)
-{
+void SARibbonBar::setEnableWordWrap(bool on) {
 	SARibbonToolButton::setEnableWordWrap(on);
 	updateRibbonGeometry();
 }
@@ -11917,8 +11144,7 @@ void SARibbonBar::setEnableWordWrap(bool on)
  * @brief 判断是否允许换行
  * @return
  */
-bool SARibbonBar::isEnableWordWrap() const
-{
+bool SARibbonBar::isEnableWordWrap() const {
 	return SARibbonToolButton::isEnableWordWrap();
 }
 
@@ -11926,8 +11152,7 @@ bool SARibbonBar::isEnableWordWrap() const
  * @brief pannel标题栏的高度
  * @return
  */
-int SARibbonBar::pannelTitleHeight() const
-{
+int SARibbonBar::pannelTitleHeight() const {
 	return d_ptr->mPannelTitleHeight;
 }
 
@@ -11935,10 +11160,9 @@ int SARibbonBar::pannelTitleHeight() const
  * @brief 设置pannel的高度
  * @param h
  */
-void SARibbonBar::setPannelTitleHeight(int h)
-{
+void SARibbonBar::setPannelTitleHeight(int h) {
 	d_ptr->mPannelTitleHeight = h;
-	iterate([ h ](SARibbonCategory* c) -> bool {
+	iterate([h](SARibbonCategory* c) -> bool {
 		c->setPannelTitleHeight(h);
 		return true;
 	});
@@ -11948,8 +11172,7 @@ void SARibbonBar::setPannelTitleHeight(int h)
  * @brief 是否pannel显示标题栏
  * @return
  */
-bool SARibbonBar::isEnableShowPannelTitle() const
-{
+bool SARibbonBar::isEnableShowPannelTitle() const {
 	return d_ptr->mEnableShowPannelTitle;
 }
 
@@ -11957,10 +11180,9 @@ bool SARibbonBar::isEnableShowPannelTitle() const
  * @brief 设置显示pannel标题
  * @param on
  */
-void SARibbonBar::setEnableShowPannelTitle(bool on)
-{
+void SARibbonBar::setEnableShowPannelTitle(bool on) {
 	d_ptr->mEnableShowPannelTitle = on;
-	iterate([ on ](SARibbonCategory* c) -> bool {
+	iterate([on](SARibbonCategory* c) -> bool {
 		c->setEnableShowPannelTitle(on);
 		return true;
 	});
@@ -11971,8 +11193,7 @@ void SARibbonBar::setEnableShowPannelTitle(bool on)
  * 所有的category都放置在StackedWidget中
  * @return
  */
-SARibbonStackedWidget* SARibbonBar::ribbonStackedWidget()
-{
+SARibbonStackedWidget* SARibbonBar::ribbonStackedWidget() {
 	return d_ptr->mStackedContainerWidget;
 }
 
@@ -11980,8 +11201,7 @@ SARibbonStackedWidget* SARibbonBar::ribbonStackedWidget()
  * @brief 设置是否显示标题
  * @param on
  */
-void SARibbonBar::setTitleVisible(bool on)
-{
+void SARibbonBar::setTitleVisible(bool on) {
 	d_ptr->mIsTitleVisible = on;
 }
 
@@ -11989,8 +11209,7 @@ void SARibbonBar::setTitleVisible(bool on)
  * @brief 判断标题是否显示
  * @return
  */
-bool SARibbonBar::isTitleVisible() const
-{
+bool SARibbonBar::isTitleVisible() const {
 	return d_ptr->mIsTitleVisible;
 }
 
@@ -12000,8 +11219,7 @@ bool SARibbonBar::isTitleVisible() const
 	上下文标签显示的时候，会从颜色列表中取颜色进行标签的渲染
    @param cls
  */
-void SARibbonBar::setContextCategoryColorList(const QList< QColor >& cls)
-{
+void SARibbonBar::setContextCategoryColorList(const QList<QColor>& cls) {
 	d_ptr->mContextCategoryColorList = cls;
 	if (d_ptr->mContextCategoryColorList.isEmpty()) {
 		d_ptr->mContextCategoryColorList = defaultContextCategoryColorList();
@@ -12017,8 +11235,7 @@ void SARibbonBar::setContextCategoryColorList(const QList< QColor >& cls)
    @brief 获取上下文标签的颜色列表
    @return
  */
-QList< QColor > SARibbonBar::contextCategoryColorList() const
-{
+QList<QColor> SARibbonBar::contextCategoryColorList() const {
 	return d_ptr->mContextCategoryColorList;
 }
 
@@ -12026,8 +11243,7 @@ QList< QColor > SARibbonBar::contextCategoryColorList() const
  * @brief 设置contextCategory 标题的颜色
  * @param clr
  */
-void SARibbonBar::setContextCategoryTitleTextColor(const QColor& clr)
-{
+void SARibbonBar::setContextCategoryTitleTextColor(const QColor& clr) {
 	d_ptr->mContextCategoryTitleTextColor = clr;
 }
 
@@ -12035,8 +11251,7 @@ void SARibbonBar::setContextCategoryTitleTextColor(const QColor& clr)
  * @brief contextCategory 标题的颜色
  * @return
  */
-QColor SARibbonBar::contextCategoryTitleTextColor() const
-{
+QColor SARibbonBar::contextCategoryTitleTextColor() const {
 	return d_ptr->mContextCategoryTitleTextColor;
 }
 
@@ -12044,8 +11259,7 @@ QColor SARibbonBar::contextCategoryTitleTextColor() const
    @brief 设置ribbon的对齐方式
    @param al
  */
-void SARibbonBar::setRibbonAlignment(SARibbonAlignment al)
-{
+void SARibbonBar::setRibbonAlignment(SARibbonAlignment al) {
 	d_ptr->mRibbonAlignment = al;
 	synchronousCategoryData();
 }
@@ -12054,8 +11268,7 @@ void SARibbonBar::setRibbonAlignment(SARibbonAlignment al)
    @brief ribbon的对齐方式
    @return
  */
-SARibbonAlignment SARibbonBar::ribbonAlignment() const
-{
+SARibbonAlignment SARibbonBar::ribbonAlignment() const {
 	return d_ptr->mRibbonAlignment;
 }
 
@@ -12064,9 +11277,8 @@ SARibbonAlignment SARibbonBar::ribbonAlignment() const
  * @param fp 函数指针返回false则停止迭代
  * @return 返回false代表没有迭代完所有的category，中途接收到回调函数的false返回而中断迭代
  */
-bool SARibbonBar::iterate(FpCategoryIterate fp)
-{
-	const QList< SARibbonCategory* > cs = categoryPages(true);
+bool SARibbonBar::iterate(FpCategoryIterate fp) {
+	const QList<SARibbonCategory*> cs = categoryPages(true);
 	for (SARibbonCategory* c : cs) {
 		if (!fp(c)) {
 			return false;
@@ -12080,9 +11292,8 @@ bool SARibbonBar::iterate(FpCategoryIterate fp)
  * @param fp 函数指针返回false则停止迭代
  * @return 返回false代表没有迭代完所有的category，中途接收到回调函数的false返回而中断迭代
  */
-bool SARibbonBar::iterate(FpPannelIterate fp)
-{
-	const QList< SARibbonCategory* > cs = categoryPages(true);
+bool SARibbonBar::iterate(FpPannelIterate fp) {
+	const QList<SARibbonCategory*> cs = categoryPages(true);
 	for (SARibbonCategory* c : cs) {
 		if (!c->iterate(fp)) {
 			return false;
@@ -12096,8 +11307,7 @@ bool SARibbonBar::iterate(FpPannelIterate fp)
  * @param on
  * @param c
  */
-void SARibbonBar::setCornerWidgetVisible(bool on, Qt::Corner c)
-{
+void SARibbonBar::setCornerWidgetVisible(bool on, Qt::Corner c) {
 	if (QWidget* w = cornerWidget(c)) {
 		w->setVisible(on);
 	}
@@ -12109,8 +11319,7 @@ void SARibbonBar::setCornerWidgetVisible(bool on, Qt::Corner c)
  * @param e
  * @return
  */
-bool SARibbonBar::eventFilter(QObject* obj, QEvent* e)
-{
+bool SARibbonBar::eventFilter(QObject* obj, QEvent* e) {
 	if (obj) {
 		// 调整多文档时在窗口模式下的按钮更新
 		if ((obj == cornerWidget(Qt::TopLeftCorner)) || (obj == cornerWidget(Qt::TopRightCorner))) {
@@ -12124,17 +11333,17 @@ bool SARibbonBar::eventFilter(QObject* obj, QEvent* e)
 			// 隐藏又显示，出现闪烁
 			if ((QEvent::MouseButtonPress == e->type()) || (QEvent::MouseButtonDblClick == e->type())) {
 				if (d_ptr->mStackedContainerWidget->isPopupMode()) {
-					QMouseEvent* mouseEvent = static_cast< QMouseEvent* >(e);
+					QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(e);
 					if (!d_ptr->mStackedContainerWidget->rect().contains(mouseEvent->pos())) {
 						QWidget* clickedWidget = QApplication::widgetAt(mouseEvent->globalPos());
 						if (clickedWidget == d_ptr->mRibbonTabBar) {
 							const QPoint targetPoint = clickedWidget->mapFromGlobal(mouseEvent->globalPos());
-							QMouseEvent* evPress     = new QMouseEvent(mouseEvent->type(),
-																   targetPoint,
-																   mouseEvent->globalPos(),
-																   mouseEvent->button(),
-																   mouseEvent->buttons(),
-																   mouseEvent->modifiers());
+							QMouseEvent* evPress = new QMouseEvent(mouseEvent->type(),
+								targetPoint,
+								mouseEvent->globalPos(),
+								mouseEvent->button(),
+								mouseEvent->buttons(),
+								mouseEvent->modifiers());
 							QApplication::postEvent(clickedWidget, evPress);
 							return (true);
 						}
@@ -12149,8 +11358,7 @@ bool SARibbonBar::eventFilter(QObject* obj, QEvent* e)
 /**
  * @brief 根据情况重置tabbar的宽度，主要针对wps模式
  */
-int SARibbonBar::calcMinTabBarWidth() const
-{
+int SARibbonBar::calcMinTabBarWidth() const {
 	// 20200831
 	// tabBarWidth的宽度原来为endX - x;，现需要根据实际进行调整
 	// 为了把tabbar没有tab的部分不占用，这里的宽度需要根据tab的size来进行设置，让tabbar的长度刚刚好，这样能让出
@@ -12166,8 +11374,7 @@ int SARibbonBar::calcMinTabBarWidth() const
  * 有可能SARibbonBar::height和mainBarHeight不相等，这种情况发生在RibbonState::MinimumRibbonMode状态下
  * @return 高度
  */
-int SARibbonBar::normalModeMainBarHeight() const
-{
+int SARibbonBar::normalModeMainBarHeight() const {
 	return d_ptr->getCurrentNormalModeMainBarHeight();
 }
 
@@ -12175,8 +11382,7 @@ int SARibbonBar::normalModeMainBarHeight() const
    @brief 最小模式下的高度
    @return
  */
-int SARibbonBar::minimumModeMainBarHeight() const
-{
+int SARibbonBar::minimumModeMainBarHeight() const {
 	return d_ptr->getCurrentMinimumModeMainBarHeight();
 }
 
@@ -12185,14 +11391,13 @@ int SARibbonBar::minimumModeMainBarHeight() const
  *
  * 此函数会对所有的category的名字和tab进行匹配，如果匹配不上会重新设置tab名
  */
-void SARibbonBar::updateCategoryTitleToTabName()
-{
+void SARibbonBar::updateCategoryTitleToTabName() {
 	SARibbonTabBar* tab = d_ptr->mRibbonTabBar;
 	for (int i = 0; i < tab->count(); ++i) {
 		// 鉴于tab不会很多，不考虑效率问题
 		QVariant var = tab->tabData(i);
 		if (var.isValid()) {
-			_SARibbonTabData p = var.value< _SARibbonTabData >();
+			_SARibbonTabData p = var.value<_SARibbonTabData>();
 			if (p.category && p.category->categoryName() != tab->tabText(i)) {
 				tab->setTabText(i, p.category->categoryName());
 			}
@@ -12205,13 +11410,11 @@ void SARibbonBar::updateCategoryTitleToTabName()
  * @brief 告知WindowButtonGroup的尺寸
  * @param s
  */
-void SARibbonBar::setWindowButtonGroupSize(const QSize& s)
-{
+void SARibbonBar::setWindowButtonGroupSize(const QSize& s) {
 	d_ptr->mWindowButtonSize = s;
 }
 
-void SARibbonBar::paintEvent(QPaintEvent* e)
-{
+void SARibbonBar::paintEvent(QPaintEvent* e) {
 	Q_UNUSED(e);
 	if (isLooseStyle()) {
 		paintInLooseStyle();
@@ -12226,16 +11429,15 @@ void SARibbonBar::paintEvent(QPaintEvent* e)
 #endif
 }
 
-void SARibbonBar::paintInLooseStyle()
-{
+void SARibbonBar::paintInLooseStyle() {
 	QPainter p(this);
 
-	//!绘制tabbar下的基线，这个函数仅仅对office2013主题有用，大部分主题都不绘制基线
+	//! 绘制tabbar下的基线，这个函数仅仅对office2013主题有用，大部分主题都不绘制基线
 	paintTabbarBaseLine(p);
 
 	//! 显示上下文标签
 	p.save();
-	QList< _SAContextCategoryManagerData > contextCategoryDataList = d_ptr->mCurrentShowingContextCategory;
+	QList<_SAContextCategoryManagerData> contextCategoryDataList = d_ptr->mCurrentShowingContextCategory;
 	// bool isCurrentSelectContextCategoryPage                        = false;
 
 	QPoint contextCategoryRegion(width(), -1);
@@ -12243,19 +11445,19 @@ void SARibbonBar::paintInLooseStyle()
 
 	for (int i = 0; i < contextCategoryDataList.size(); ++i) {
 		QRect contextTitleRect;
-		QList< int > indexs = contextCategoryDataList[ i ].tabPageIndex;
-		QColor clr          = contextCategoryDataList[ i ].contextCategory->contextColor();
+		QList<int> indexs = contextCategoryDataList[i].tabPageIndex;
+		QColor clr = contextCategoryDataList[i].contextCategory->contextColor();
 		if (!indexs.isEmpty()) {
 			contextTitleRect = d_ptr->mRibbonTabBar->tabRect(indexs.first());
-			QRect endRect    = d_ptr->mRibbonTabBar->tabRect(indexs.last());
+			QRect endRect = d_ptr->mRibbonTabBar->tabRect(indexs.last());
 			contextTitleRect.setRight(endRect.right());
 			contextTitleRect.translate(d_ptr->mRibbonTabBar->x(), d_ptr->mRibbonTabBar->y());
-			contextTitleRect.setHeight(d_ptr->mRibbonTabBar->height() - 1);  // 减1像素，避免tabbar基线覆盖
+			contextTitleRect.setHeight(d_ptr->mRibbonTabBar->height() - 1); // 减1像素，避免tabbar基线覆盖
 			contextTitleRect -= d_ptr->mRibbonTabBar->tabMargin();
 			// 把区域顶部扩展到窗口顶部
 			contextTitleRect.setTop(border.top());
 			// 绘制
-			paintContextCategoryTab(p, contextCategoryDataList[ i ].contextCategory->contextTitle(), contextTitleRect, clr);
+			paintContextCategoryTab(p, contextCategoryDataList[i].contextCategory->contextTitle(), contextTitleRect, clr);
 			// 更新上下文标签的范围，用于控制标题栏的显示
 			if (contextTitleRect.left() < contextCategoryRegion.x()) {
 				contextCategoryRegion.setX(contextTitleRect.left());
@@ -12283,10 +11485,10 @@ void SARibbonBar::paintInLooseStyle()
 		QRect titleRegion;
 		if (contextCategoryRegion.y() < 0) {
 			titleRegion.setRect(d_ptr->mQuickAccessBar->geometry().right() + 1,
-								border.top(),
-								width() - d_ptr->mIconRightBorderPosition - border.right()
-										- d_ptr->mWindowButtonSize.width() - d_ptr->mQuickAccessBar->geometry().right() - 1,
-								titleBarHeight());
+				border.top(),
+				width() - d_ptr->mIconRightBorderPosition - border.right()
+					- d_ptr->mWindowButtonSize.width() - d_ptr->mQuickAccessBar->geometry().right() - 1,
+				titleBarHeight());
 		} else {
 			int leftwidth = contextCategoryRegion.x() - d_ptr->mQuickAccessBar->geometry().right() - d_ptr->mIconRightBorderPosition;
 			int rightwidth = width() - contextCategoryRegion.y() - d_ptr->mWindowButtonSize.width();
@@ -12297,9 +11499,9 @@ void SARibbonBar::paintInLooseStyle()
 			} else {
 				// 说明左边的大一点
 				titleRegion.setRect(d_ptr->mIconRightBorderPosition + d_ptr->mQuickAccessBar->geometry().right(),
-									border.top(),
-									leftwidth,
-									titleBarHeight());
+					border.top(),
+					leftwidth,
+					titleBarHeight());
 			}
 		}
 #ifdef SA_RIBBON_DEBUG_HELP_DRAW
@@ -12312,22 +11514,21 @@ void SARibbonBar::paintInLooseStyle()
 	}
 }
 
-void SARibbonBar::paintInCompactStyle()
-{
+void SARibbonBar::paintInCompactStyle() {
 	QPainter p(this);
 	//!
 	paintTabbarBaseLine(p);
 	//! 显示上下文标签
 	p.save();
-	QList< _SAContextCategoryManagerData > contextCategoryDataList = d_ptr->mCurrentShowingContextCategory;
-	QMargins border                                                = contentsMargins();
+	QList<_SAContextCategoryManagerData> contextCategoryDataList = d_ptr->mCurrentShowingContextCategory;
+	QMargins border = contentsMargins();
 	for (int i = 0; i < contextCategoryDataList.size(); ++i) {
 		QRect contextTitleRect;
-		QList< int > indexs = contextCategoryDataList[ i ].tabPageIndex;
-		QColor clr          = contextCategoryDataList[ i ].contextCategory->contextColor();
+		QList<int> indexs = contextCategoryDataList[i].tabPageIndex;
+		QColor clr = contextCategoryDataList[i].contextCategory->contextColor();
 		if (!indexs.isEmpty()) {
 			contextTitleRect = d_ptr->mRibbonTabBar->tabRect(indexs.first());
-			QRect endRect    = d_ptr->mRibbonTabBar->tabRect(indexs.last());
+			QRect endRect = d_ptr->mRibbonTabBar->tabRect(indexs.last());
 			contextTitleRect.setRight(endRect.right());
 			contextTitleRect.translate(d_ptr->mRibbonTabBar->x(), d_ptr->mRibbonTabBar->y());
 			contextTitleRect.setHeight(d_ptr->mRibbonTabBar->height() - 1);
@@ -12359,9 +11560,8 @@ void SARibbonBar::paintInCompactStyle()
 	}
 }
 
-void SARibbonBar::resizeStackedContainerWidget()
-{
-	QMargins border                   = contentsMargins();
+void SARibbonBar::resizeStackedContainerWidget() {
+	QMargins border = contentsMargins();
 	const QRect& ribbonTabBarGeometry = d_ptr->mRibbonTabBar->geometry();
 
 	int x = border.left();
@@ -12371,8 +11571,8 @@ void SARibbonBar::resizeStackedContainerWidget()
 	if (d_ptr->mStackedContainerWidget->isPopupMode()) {
 		// 弹出模式时，位置为全局位置
 		QPoint absPosition = mapToGlobal(QPoint(x, y));
-		x                  = absPosition.x();
-		y                  = absPosition.y();
+		x = absPosition.x();
+		y = absPosition.y();
 	}
 	d_ptr->mStackedContainerWidget->setFixedSize(QSize(w, h));
 	d_ptr->mStackedContainerWidget->setGeometry(x, y, w, h);
@@ -12381,8 +11581,7 @@ void SARibbonBar::resizeStackedContainerWidget()
 /**
  * @brief 刷新所有ContextCategoryManagerData，这个在单独一个Category删除时调用
  */
-void SARibbonBar::updateContextCategoryManagerData()
-{
+void SARibbonBar::updateContextCategoryManagerData() {
 	const int c = d_ptr->mRibbonTabBar->count();
 
 	for (_SAContextCategoryManagerData& cd : d_ptr->mCurrentShowingContextCategory) {
@@ -12392,7 +11591,7 @@ void SARibbonBar::updateContextCategoryManagerData()
 			for (int t = 0; t < c; ++t) {
 				QVariant v = d_ptr->mRibbonTabBar->tabData(t);
 				if (v.isValid()) {
-					_SARibbonTabData d = v.value< _SARibbonTabData >();
+					_SARibbonTabData d = v.value<_SARibbonTabData>();
 					if (d.category == category) {
 						cd.tabPageIndex.append(t);
 					}
@@ -12411,8 +11610,7 @@ void SARibbonBar::updateContextCategoryManagerData()
  * @param contextRect 上下文标签的绘制区域
  * @param color 上下文标签赋予的颜色
  */
-void SARibbonBar::paintContextCategoryTab(QPainter& painter, const QString& title, const QRect& contextRect, const QColor& color)
-{
+void SARibbonBar::paintContextCategoryTab(QPainter& painter, const QString& title, const QRect& contextRect, const QColor& color) {
 	// 绘制上下文标签
 	// 首先有5像素的实体粗线位于顶部
 	QMargins border = contentsMargins();
@@ -12429,9 +11627,9 @@ void SARibbonBar::paintContextCategoryTab(QPainter& painter, const QString& titl
 	if (isLooseStyle()) {
 		if (!title.isEmpty()) {
 			QRect textRect = QRect(contextRect.x(),
-								   contextRect.y() + contextLineWidth,
-								   contextRect.width(),
-								   contextRect.height() - contextLineWidth - d_ptr->mRibbonTabBar->height());
+				contextRect.y() + contextLineWidth,
+				contextRect.width(),
+				contextRect.height() - contextLineWidth - d_ptr->mRibbonTabBar->height());
 			painter.setPen(contextCategoryTitleTextColor());
 			painter.drawText(textRect, Qt::AlignCenter, title);
 		}
@@ -12439,8 +11637,7 @@ void SARibbonBar::paintContextCategoryTab(QPainter& painter, const QString& titl
 	painter.restore();
 }
 
-void SARibbonBar::resizeEvent(QResizeEvent* e)
-{
+void SARibbonBar::resizeEvent(QResizeEvent* e) {
 	Q_UNUSED(e);
 	if (isLooseStyle()) {
 		resizeInLooseStyle();
@@ -12454,8 +11651,7 @@ void SARibbonBar::resizeEvent(QResizeEvent* e)
  * @brief 重写moveevent是为了在移动时调整isPopupMode状态下的stackedContainerWidget位置
  * @param event
  */
-void SARibbonBar::moveEvent(QMoveEvent* e)
-{
+void SARibbonBar::moveEvent(QMoveEvent* e) {
 	if (d_ptr->mStackedContainerWidget) {
 		if (d_ptr->mStackedContainerWidget->isPopupMode()) {
 			// 弹出模式时，窗口发生了移动，同步调整StackedContainerWidget的位置
@@ -12469,15 +11665,14 @@ void SARibbonBar::moveEvent(QMoveEvent* e)
  * @brief 跟踪字体改变
  * @param event
  */
-void SARibbonBar::changeEvent(QEvent* e)
-{
+void SARibbonBar::changeEvent(QEvent* e) {
 	if (nullptr == e) {
 		return;
 	}
 	switch (e->type()) {
 	case QEvent::FontChange: {
-		QFont f                       = font();
-		QList< QWidget* > listWidgets = findChildren< QWidget* >();
+		QFont f = font();
+		QList<QWidget*> listWidgets = findChildren<QWidget*>();
 		for (QWidget* w : listWidgets) {
 			w->setFont(f);
 		}
@@ -12492,8 +11687,7 @@ void SARibbonBar::changeEvent(QEvent* e)
 	QMenuBar::changeEvent(e);
 }
 
-bool SARibbonBar::event(QEvent* e)
-{
+bool SARibbonBar::event(QEvent* e) {
 	switch (e->type()) {
 	case QEvent::Show:
 		// 第一次显示刷新
@@ -12505,17 +11699,16 @@ bool SARibbonBar::event(QEvent* e)
 	return QMenuBar::event(e);
 }
 
-void SARibbonBar::resizeInLooseStyle()
-{
+void SARibbonBar::resizeInLooseStyle() {
 	synchronousCategoryData(false);
 
 	QMargins border = contentsMargins();
-	int x           = border.left();
-	int y           = border.top();
+	int x = border.left();
+	int y = border.top();
 
 	// cornerWidget - TopLeftCorner
 	const int validTitleBarHeight = d_ptr->titleBarHeight();
-	const int tabH                = d_ptr->tabBarHeigth();
+	const int tabH = d_ptr->tabBarHeigth();
 
 	// 布局corner widget
 	x += d_ptr->mIconRightBorderPosition + 5;
@@ -12601,12 +11794,11 @@ void SARibbonBar::resizeInLooseStyle()
 	resizeStackedContainerWidget();
 }
 
-void SARibbonBar::resizeInCompactStyle()
-{
+void SARibbonBar::resizeInCompactStyle() {
 	synchronousCategoryData(false);
 	QMargins border = contentsMargins();
-	int x           = border.left();
-	int y           = border.top();
+	int x = border.left();
+	int y = border.top();
 
 	const int validTitleBarHeight = titleBarHeight();
 
@@ -12665,7 +11857,7 @@ void SARibbonBar::resizeInCompactStyle()
 		// 这种直接把tabH设置为validTitleBarHeight
 		tabH = validTitleBarHeight;
 	}
-	y = y + validTitleBarHeight - tabH;  // 如果tabH较小，则下以，让tab底部和title的底部对齐
+	y = y + validTitleBarHeight - tabH; // 如果tabH较小，则下以，让tab底部和title的底部对齐
 
 	// applicationButton 定位，与TabBar同高
 	if (d_ptr->mApplicationButton) {
@@ -12707,8 +11899,7 @@ void SARibbonBar::resizeInCompactStyle()
  * @brief 绘制tabbar下的基准线，这个方法仅仅在office2013模式下需要
  * @param painter
  */
-void SARibbonBar::paintTabbarBaseLine(QPainter& painter)
-{
+void SARibbonBar::paintTabbarBaseLine(QPainter& painter) {
 	if (!d_ptr->mTabBarBaseLineColor.isValid()) {
 		return;
 	}
@@ -12732,8 +11923,7 @@ void SARibbonBar::paintTabbarBaseLine(QPainter& painter)
 /// \param contextCategoryRegion 当前显示的上下文标签的范围，上下文标签是可以遮挡标题栏的，因此需要知道上下文标签的范围
 /// x表示左边界，y表示右边界
 ///
-void SARibbonBar::paintWindowTitle(QPainter& painter, const QString& title, const QRect& titleRegion)
-{
+void SARibbonBar::paintWindowTitle(QPainter& painter, const QString& title, const QRect& titleRegion) {
 	// 如果标题不显示直接跳出
 	if (!isTitleVisible()) {
 		return;
@@ -12747,26 +11937,25 @@ void SARibbonBar::paintWindowTitle(QPainter& painter, const QString& title, cons
 }
 
 #if SA_DEBUG_PRINT_SARIBBONBAR
-QDebug operator<<(QDebug debug, const SARibbonBar& ribbon)
-{
+QDebug operator<<(QDebug debug, const SARibbonBar& ribbon) {
 	QDebugStateSaver saver(debug);
 	QFontMetrics fm = ribbon.fontMetrics();
-	debug.nospace() << "SARibbonBar(" << ribbon.versionString() << ")"                            //
-					<< "\nribbon font metrics info:"                                              //
-					<< "\n - lineSpacing:" << fm.lineSpacing()                                    //
-					<< "\n - height:" << fm.height()                                              //
-					<< "\n - em:" << fm.boundingRect("M").width()                                 //
-					<< "\n - ex:" << fm.boundingRect("X").height()                                //
-					<< "\nribbon info:"                                                           //
-					<< "\n -mTitleBarHeight=" << ribbon.d_ptr->mTitleBarHeight                    //
-					<< "\n -mTabBarHeight=" << ribbon.d_ptr->mTabBarHeight                        //
-					<< "\n -mPannelTitleHeight=" << ribbon.d_ptr->mPannelTitleHeight              //
-					<< "\n -mCategoryHeight=" << ribbon.d_ptr->mCategoryHeight                    //
-					<< "\n -mIsTabOnTitle=" << ribbon.d_ptr->mIsTabOnTitle                        //
-					<< "\n -mEnableShowPannelTitle=" << ribbon.d_ptr->mEnableShowPannelTitle      //
-					<< "\n -mWindowButtonSize=" << ribbon.d_ptr->mWindowButtonSize                //
-					<< "\n -mIconRightBorderPosition=" << ribbon.d_ptr->mIconRightBorderPosition  //
-			;
+	debug.nospace() << "SARibbonBar(" << ribbon.versionString() << ")" //
+					<< "\nribbon font metrics info:" //
+					<< "\n - lineSpacing:" << fm.lineSpacing() //
+					<< "\n - height:" << fm.height() //
+					<< "\n - em:" << fm.boundingRect("M").width() //
+					<< "\n - ex:" << fm.boundingRect("X").height() //
+					<< "\nribbon info:" //
+					<< "\n -mTitleBarHeight=" << ribbon.d_ptr->mTitleBarHeight //
+					<< "\n -mTabBarHeight=" << ribbon.d_ptr->mTabBarHeight //
+					<< "\n -mPannelTitleHeight=" << ribbon.d_ptr->mPannelTitleHeight //
+					<< "\n -mCategoryHeight=" << ribbon.d_ptr->mCategoryHeight //
+					<< "\n -mIsTabOnTitle=" << ribbon.d_ptr->mIsTabOnTitle //
+					<< "\n -mEnableShowPannelTitle=" << ribbon.d_ptr->mEnableShowPannelTitle //
+					<< "\n -mWindowButtonSize=" << ribbon.d_ptr->mWindowButtonSize //
+					<< "\n -mIconRightBorderPosition=" << ribbon.d_ptr->mIconRightBorderPosition //
+		;
 
 	return debug;
 }
@@ -12774,91 +11963,73 @@ QDebug operator<<(QDebug debug, const SARibbonBar& ribbon)
 
 /*** End of inlined file: SARibbonBar.cpp ***/
 
-
 /*** Start of inlined file: SARibbonElementFactory.cpp ***/
 #include <QApplication>
 #include <QFontMetrics>
 
-SARibbonElementFactory::SARibbonElementFactory()
-{
+SARibbonElementFactory::SARibbonElementFactory() {
 }
 
-SARibbonElementFactory::~SARibbonElementFactory()
-{
+SARibbonElementFactory::~SARibbonElementFactory() {
 }
 
-SARibbonTabBar* SARibbonElementFactory::createRibbonTabBar(QWidget* parent)
-{
+SARibbonTabBar* SARibbonElementFactory::createRibbonTabBar(QWidget* parent) {
 	return (new SARibbonTabBar(parent));
 }
 
-SARibbonApplicationButton* SARibbonElementFactory::createRibbonApplicationButton(QWidget* parent)
-{
+SARibbonApplicationButton* SARibbonElementFactory::createRibbonApplicationButton(QWidget* parent) {
 	return (new SARibbonApplicationButton(parent));
 }
 
-SARibbonCategory* SARibbonElementFactory::createRibbonCategory(QWidget* parent)
-{
+SARibbonCategory* SARibbonElementFactory::createRibbonCategory(QWidget* parent) {
 	return (new SARibbonCategory(parent));
 }
 
-SARibbonContextCategory* SARibbonElementFactory::createRibbonContextCategory(QWidget* parent)
-{
+SARibbonContextCategory* SARibbonElementFactory::createRibbonContextCategory(QWidget* parent) {
 	return (new SARibbonContextCategory(parent));
 }
 
-SARibbonPannel* SARibbonElementFactory::createRibbonPannel(QWidget* parent)
-{
+SARibbonPannel* SARibbonElementFactory::createRibbonPannel(QWidget* parent) {
 	return (new SARibbonPannel(parent));
 }
 
-SARibbonSeparatorWidget* SARibbonElementFactory::createRibbonSeparatorWidget(QWidget* parent)
-{
+SARibbonSeparatorWidget* SARibbonElementFactory::createRibbonSeparatorWidget(QWidget* parent) {
 	return (new SARibbonSeparatorWidget(parent));
 }
 
-SARibbonGallery* SARibbonElementFactory::createRibbonGallery(QWidget* parent)
-{
+SARibbonGallery* SARibbonElementFactory::createRibbonGallery(QWidget* parent) {
 	return (new SARibbonGallery(parent));
 }
 
-SARibbonGalleryGroup* SARibbonElementFactory::createRibbonGalleryGroup(QWidget* parent)
-{
+SARibbonGalleryGroup* SARibbonElementFactory::createRibbonGalleryGroup(QWidget* parent) {
 	return (new SARibbonGalleryGroup(parent));
 }
 
-SARibbonToolButton* SARibbonElementFactory::createRibbonToolButton(QWidget* parent)
-{
+SARibbonToolButton* SARibbonElementFactory::createRibbonToolButton(QWidget* parent) {
 	return (new SARibbonToolButton(parent));
 }
 
-SARibbonControlButton* SARibbonElementFactory::createRibbonControlButton(QWidget* parent)
-{
+SARibbonControlButton* SARibbonElementFactory::createRibbonControlButton(QWidget* parent) {
 	return (new SARibbonControlButton(parent));
 }
 
-SARibbonControlToolButton* SARibbonElementFactory::createRibbonControlToolButton(QWidget* parent)
-{
+SARibbonControlToolButton* SARibbonElementFactory::createRibbonControlToolButton(QWidget* parent) {
 	return (new SARibbonControlToolButton(parent));
 }
 
-SARibbonStackedWidget* SARibbonElementFactory::createRibbonStackedWidget(SARibbonBar* parent)
-{
+SARibbonStackedWidget* SARibbonElementFactory::createRibbonStackedWidget(SARibbonBar* parent) {
 	return (new SARibbonStackedWidget(parent));
 }
 
-SARibbonButtonGroupWidget* SARibbonElementFactory::craeteButtonGroupWidget(QWidget* parent)
-{
+SARibbonButtonGroupWidget* SARibbonElementFactory::craeteButtonGroupWidget(QWidget* parent) {
 	return (new SARibbonButtonGroupWidget(parent));
 }
 
-SARibbonQuickAccessBar* SARibbonElementFactory::createQuickAccessBar(QWidget* parent)
-{
+SARibbonQuickAccessBar* SARibbonElementFactory::createQuickAccessBar(QWidget* parent) {
 	return (new SARibbonQuickAccessBar(parent));
 }
 
-SARibbonSystemButtonBar* SARibbonElementFactory::createWindowButtonGroup(QWidget* parent)
-{
+SARibbonSystemButtonBar* SARibbonElementFactory::createWindowButtonGroup(QWidget* parent) {
 	return (new SARibbonSystemButtonBar(parent));
 }
 
@@ -12868,43 +12039,35 @@ SARibbonSystemButtonBar* SARibbonElementFactory::createWindowButtonGroup(QWidget
  * @return
  * @sa SARibbonPannelOptionButton
  */
-SARibbonPannelOptionButton* SARibbonElementFactory::createRibbonPannelOptionButton(SARibbonPannel* pannel)
-{
+SARibbonPannelOptionButton* SARibbonElementFactory::createRibbonPannelOptionButton(SARibbonPannel* pannel) {
 	return (new SARibbonPannelOptionButton(pannel));
 }
 
 /*** End of inlined file: SARibbonElementFactory.cpp ***/
 
-
 /*** Start of inlined file: SARibbonElementManager.cpp ***/
-SARibbonElementManager::SARibbonElementManager()
-{
+SARibbonElementManager::SARibbonElementManager() {
 	mFactory.reset(new SARibbonElementFactory());
 }
 
-SARibbonElementManager::~SARibbonElementManager()
-{
+SARibbonElementManager::~SARibbonElementManager() {
 }
 
-SARibbonElementManager* SARibbonElementManager::instance()
-{
+SARibbonElementManager* SARibbonElementManager::instance() {
 	static SARibbonElementManager s_instance;
 
 	return (&(s_instance));
 }
 
-SARibbonElementFactory* SARibbonElementManager::factory()
-{
+SARibbonElementFactory* SARibbonElementManager::factory() {
 	return (mFactory.data());
 }
 
-void SARibbonElementManager::setupFactory(SARibbonElementFactory* delegate)
-{
+void SARibbonElementManager::setupFactory(SARibbonElementFactory* delegate) {
 	mFactory.reset(delegate);
 }
 
 /*** End of inlined file: SARibbonElementManager.cpp ***/
-
 
 /*** Start of inlined file: SARibbonCustomizeData.cpp ***/
 #include <QDebug>
@@ -12914,21 +12077,24 @@ void SARibbonElementManager::setupFactory(SARibbonElementFactory* delegate)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 SARibbonCustomizeData::SARibbonCustomizeData()
-	: indexValue(-1), actionRowProportionValue(SARibbonPannelItem::Large), m_type(UnknowActionType), m_actionsManagerPointer(nullptr)
-{
+	: indexValue(-1)
+	, actionRowProportionValue(SARibbonPannelItem::Large)
+	, m_type(UnknowActionType)
+	, m_actionsManagerPointer(nullptr) {
 }
 
 SARibbonCustomizeData::SARibbonCustomizeData(ActionType type, SARibbonActionsManager* mgr)
-	: indexValue(-1), actionRowProportionValue(SARibbonPannelItem::Large), m_type(type), m_actionsManagerPointer(mgr)
-{
+	: indexValue(-1)
+	, actionRowProportionValue(SARibbonPannelItem::Large)
+	, m_type(type)
+	, m_actionsManagerPointer(mgr) {
 }
 
 /**
  * @brief 获取CustomizeData的action type
  * @return
  */
-SARibbonCustomizeData::ActionType SARibbonCustomizeData::actionType() const
-{
+SARibbonCustomizeData::ActionType SARibbonCustomizeData::actionType() const {
 	return (m_type);
 }
 
@@ -12936,8 +12102,7 @@ SARibbonCustomizeData::ActionType SARibbonCustomizeData::actionType() const
  * @brief 设置CustomizeData的action type
  * @param a
  */
-void SARibbonCustomizeData::setActionType(SARibbonCustomizeData::ActionType a)
-{
+void SARibbonCustomizeData::setActionType(SARibbonCustomizeData::ActionType a) {
 	m_type = a;
 }
 
@@ -12947,8 +12112,7 @@ void SARibbonCustomizeData::setActionType(SARibbonCustomizeData::ActionType a)
  * 实际逻辑actionType() != UnknowActionType
  * @return 有用的CustomizeData返回true
  */
-bool SARibbonCustomizeData::isValid() const
-{
+bool SARibbonCustomizeData::isValid() const {
 	return (actionType() != UnknowActionType);
 }
 
@@ -12957,8 +12121,7 @@ bool SARibbonCustomizeData::isValid() const
  * @param m
  * @return 如果应用失败，返回false,如果actionType==UnknowActionType直接返回false
  */
-bool SARibbonCustomizeData::apply(SARibbonBar* bar) const
-{
+bool SARibbonCustomizeData::apply(SARibbonBar* bar) const {
 	if (nullptr == bar) {
 		return (false);
 	}
@@ -12967,7 +12130,7 @@ bool SARibbonCustomizeData::apply(SARibbonBar* bar) const
 		return (false);
 
 	case AddCategoryActionType: {
-		//添加标签
+		// 添加标签
 		SARibbonCategory* c = bar->insertCategoryPage(keyValue, indexValue);
 		if (nullptr == c) {
 			return (false);
@@ -12978,7 +12141,7 @@ bool SARibbonCustomizeData::apply(SARibbonBar* bar) const
 	}
 
 	case AddPannelActionType: {
-		//添加pannel
+		// 添加pannel
 		SARibbonCategory* c = bar->categoryByObjectName(categoryObjNameValue);
 		if (nullptr == c) {
 			return (false);
@@ -13146,8 +12309,7 @@ bool SARibbonCustomizeData::apply(SARibbonBar* bar) const
  * @brief 获取actionmanager指针
  * @return
  */
-SARibbonActionsManager* SARibbonCustomizeData::actionManager()
-{
+SARibbonActionsManager* SARibbonCustomizeData::actionManager() {
 	return (m_actionsManagerPointer);
 }
 
@@ -13155,8 +12317,7 @@ SARibbonActionsManager* SARibbonCustomizeData::actionManager()
  * @brief 设置ActionsManager
  * @param mgr
  */
-void SARibbonCustomizeData::setActionsManager(SARibbonActionsManager* mgr)
-{
+void SARibbonCustomizeData::setActionsManager(SARibbonActionsManager* mgr) {
 	m_actionsManagerPointer = mgr;
 }
 
@@ -13167,12 +12328,11 @@ void SARibbonCustomizeData::setActionsManager(SARibbonActionsManager* mgr)
  * @param objName category的object name
  * @return 返回AddCategoryActionType的SARibbonCustomizeData
  */
-SARibbonCustomizeData SARibbonCustomizeData::makeAddCategoryCustomizeData(const QString& title, int index, const QString& objName)
-{
+SARibbonCustomizeData SARibbonCustomizeData::makeAddCategoryCustomizeData(const QString& title, int index, const QString& objName) {
 	SARibbonCustomizeData d(AddCategoryActionType);
 
-	d.indexValue           = index;
-	d.keyValue             = title;
+	d.indexValue = index;
+	d.keyValue = title;
 	d.categoryObjNameValue = objName;
 	return (d);
 }
@@ -13186,15 +12346,14 @@ SARibbonCustomizeData SARibbonCustomizeData::makeAddCategoryCustomizeData(const 
  * @return 返回AddPannelActionType的SARibbonCustomizeData
  */
 SARibbonCustomizeData SARibbonCustomizeData::makeAddPannelCustomizeData(const QString& title,
-																		int index,
-																		const QString& categoryobjName,
-																		const QString& objName)
-{
+	int index,
+	const QString& categoryobjName,
+	const QString& objName) {
 	SARibbonCustomizeData d(AddPannelActionType);
 
-	d.indexValue           = index;
-	d.keyValue             = title;
-	d.pannelObjNameValue   = objName;
+	d.indexValue = index;
+	d.keyValue = title;
+	d.pannelObjNameValue = objName;
 	d.categoryObjNameValue = categoryobjName;
 	return (d);
 }
@@ -13210,16 +12369,15 @@ SARibbonCustomizeData SARibbonCustomizeData::makeAddPannelCustomizeData(const QS
  * @return
  */
 SARibbonCustomizeData SARibbonCustomizeData::makeAddActionCustomizeData(const QString& key,
-																		SARibbonActionsManager* mgr,
-																		SARibbonPannelItem::RowProportion rp,
-																		const QString& categoryObjName,
-																		const QString& pannelObjName)
-{
+	SARibbonActionsManager* mgr,
+	SARibbonPannelItem::RowProportion rp,
+	const QString& categoryObjName,
+	const QString& pannelObjName) {
 	SARibbonCustomizeData d(AddActionActionType, mgr);
 
-	d.keyValue                 = key;
-	d.categoryObjNameValue     = categoryObjName;
-	d.pannelObjNameValue       = pannelObjName;
+	d.keyValue = key;
+	d.categoryObjNameValue = categoryObjName;
+	d.pannelObjNameValue = pannelObjName;
 	d.actionRowProportionValue = rp;
 
 	return (d);
@@ -13231,8 +12389,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeAddActionCustomizeData(const QS
  * @param index category的索引
  * @return 返回RenameCategoryActionType的SARibbonCustomizeData
  */
-SARibbonCustomizeData SARibbonCustomizeData::makeRenameCategoryCustomizeData(const QString& newname, const QString& categoryobjName)
-{
+SARibbonCustomizeData SARibbonCustomizeData::makeRenameCategoryCustomizeData(const QString& newname, const QString& categoryobjName) {
 	SARibbonCustomizeData d(RenameCategoryActionType);
 
 	if (categoryobjName.isEmpty()) {
@@ -13241,7 +12398,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRenameCategoryCustomizeData(con
 								"if you want to customize SARibbon,"
 								"please make sure every element has been set object name.");
 	}
-	d.keyValue             = newname;
+	d.keyValue = newname;
 	d.categoryObjNameValue = categoryobjName;
 	return (d);
 }
@@ -13254,9 +12411,8 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRenameCategoryCustomizeData(con
  * @return 返回RenamePannelActionType的SARibbonCustomizeData
  */
 SARibbonCustomizeData SARibbonCustomizeData::makeRenamePannelCustomizeData(const QString& newname,
-																		   const QString& categoryobjName,
-																		   const QString& pannelObjName)
-{
+	const QString& categoryobjName,
+	const QString& pannelObjName) {
 	SARibbonCustomizeData d(RenamePannelActionType);
 
 	if (pannelObjName.isEmpty() || categoryobjName.isEmpty()) {
@@ -13265,8 +12421,8 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRenamePannelCustomizeData(const
 								"if you want to customize SARibbon,"
 								"please make sure every element has been set object name.");
 	}
-	d.keyValue             = newname;
-	d.pannelObjNameValue   = pannelObjName;
+	d.keyValue = newname;
+	d.pannelObjNameValue = pannelObjName;
 	d.categoryObjNameValue = categoryobjName;
 	return (d);
 }
@@ -13277,8 +12433,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRenamePannelCustomizeData(const
  * @param moveindex 移动位置，-1代表向上（向左）移动一个位置，1带表向下（向右）移动一个位置
  * @return
  */
-SARibbonCustomizeData SARibbonCustomizeData::makeChangeCategoryOrderCustomizeData(const QString& categoryobjName, int moveindex)
-{
+SARibbonCustomizeData SARibbonCustomizeData::makeChangeCategoryOrderCustomizeData(const QString& categoryobjName, int moveindex) {
 	SARibbonCustomizeData d(ChangeCategoryOrderActionType);
 
 	if (categoryobjName.isEmpty()) {
@@ -13288,7 +12443,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeChangeCategoryOrderCustomizeDat
 								"please make sure every element has been set object name.");
 	}
 	d.categoryObjNameValue = categoryobjName;
-	d.indexValue           = moveindex;
+	d.indexValue = moveindex;
 	return (d);
 }
 
@@ -13300,9 +12455,8 @@ SARibbonCustomizeData SARibbonCustomizeData::makeChangeCategoryOrderCustomizeDat
  * @return
  */
 SARibbonCustomizeData SARibbonCustomizeData::makeChangePannelOrderCustomizeData(const QString& categoryobjName,
-																				const QString& pannelObjName,
-																				int moveindex)
-{
+	const QString& pannelObjName,
+	int moveindex) {
 	SARibbonCustomizeData d(ChangePannelOrderActionType);
 
 	if (categoryobjName.isEmpty() || pannelObjName.isEmpty()) {
@@ -13312,8 +12466,8 @@ SARibbonCustomizeData SARibbonCustomizeData::makeChangePannelOrderCustomizeData(
 								"please make sure every element has been set object name.");
 	}
 	d.categoryObjNameValue = categoryobjName;
-	d.pannelObjNameValue   = pannelObjName;
-	d.indexValue           = moveindex;
+	d.pannelObjNameValue = pannelObjName;
+	d.indexValue = moveindex;
 	return (d);
 }
 
@@ -13327,11 +12481,10 @@ SARibbonCustomizeData SARibbonCustomizeData::makeChangePannelOrderCustomizeData(
  * @return
  */
 SARibbonCustomizeData SARibbonCustomizeData::makeChangeActionOrderCustomizeData(const QString& categoryobjName,
-																				const QString& pannelObjName,
-																				const QString& key,
-																				SARibbonActionsManager* mgr,
-																				int moveindex)
-{
+	const QString& pannelObjName,
+	const QString& key,
+	SARibbonActionsManager* mgr,
+	int moveindex) {
 	SARibbonCustomizeData d(ChangeActionOrderActionType, mgr);
 
 	if (categoryobjName.isEmpty() || pannelObjName.isEmpty() || key.isEmpty()) {
@@ -13341,9 +12494,9 @@ SARibbonCustomizeData SARibbonCustomizeData::makeChangeActionOrderCustomizeData(
 								"please make sure every element has been set object name.");
 	}
 	d.categoryObjNameValue = categoryobjName;
-	d.pannelObjNameValue   = pannelObjName;
-	d.keyValue             = key;
-	d.indexValue           = moveindex;
+	d.pannelObjNameValue = pannelObjName;
+	d.keyValue = key;
+	d.indexValue = moveindex;
 	return (d);
 }
 
@@ -13352,8 +12505,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeChangeActionOrderCustomizeData(
  * @param categoryobjName 需要移除的objname
  * @return
  */
-SARibbonCustomizeData SARibbonCustomizeData::makeRemoveCategoryCustomizeData(const QString& categoryobjName)
-{
+SARibbonCustomizeData SARibbonCustomizeData::makeRemoveCategoryCustomizeData(const QString& categoryobjName) {
 	SARibbonCustomizeData d(RemoveCategoryActionType);
 
 	if (categoryobjName.isEmpty()) {
@@ -13372,8 +12524,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRemoveCategoryCustomizeData(con
  * @param pannelObjName pannel对应的 obj name
  * @return
  */
-SARibbonCustomizeData SARibbonCustomizeData::makeRemovePannelCustomizeData(const QString& categoryobjName, const QString& pannelObjName)
-{
+SARibbonCustomizeData SARibbonCustomizeData::makeRemovePannelCustomizeData(const QString& categoryobjName, const QString& pannelObjName) {
 	SARibbonCustomizeData d(RemovePannelActionType);
 
 	if (categoryobjName.isEmpty() || pannelObjName.isEmpty()) {
@@ -13383,7 +12534,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRemovePannelCustomizeData(const
 								"please make sure every element has been set object name.");
 	}
 	d.categoryObjNameValue = categoryobjName;
-	d.pannelObjNameValue   = pannelObjName;
+	d.pannelObjNameValue = pannelObjName;
 	return (d);
 }
 
@@ -13396,10 +12547,9 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRemovePannelCustomizeData(const
  * @return
  */
 SARibbonCustomizeData SARibbonCustomizeData::makeRemoveActionCustomizeData(const QString& categoryobjName,
-																		   const QString& pannelObjName,
-																		   const QString& key,
-																		   SARibbonActionsManager* mgr)
-{
+	const QString& pannelObjName,
+	const QString& key,
+	SARibbonActionsManager* mgr) {
 	SARibbonCustomizeData d(RemoveActionActionType, mgr);
 
 	if (categoryobjName.isEmpty() || pannelObjName.isEmpty() || key.isEmpty()) {
@@ -13409,8 +12559,8 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRemoveActionCustomizeData(const
 								"please make sure every element has been set object name.");
 	}
 	d.categoryObjNameValue = categoryobjName;
-	d.pannelObjNameValue   = pannelObjName;
-	d.keyValue             = key;
+	d.pannelObjNameValue = pannelObjName;
+	d.keyValue = key;
 	return (d);
 }
 
@@ -13420,8 +12570,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeRemoveActionCustomizeData(const
  * @param isShow
  * @return
  */
-SARibbonCustomizeData SARibbonCustomizeData::makeVisibleCategoryCustomizeData(const QString& categoryobjName, bool isShow)
-{
+SARibbonCustomizeData SARibbonCustomizeData::makeVisibleCategoryCustomizeData(const QString& categoryobjName, bool isShow) {
 	SARibbonCustomizeData d(VisibleCategoryActionType);
 
 	if (categoryobjName.isEmpty()) {
@@ -13431,7 +12580,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeVisibleCategoryCustomizeData(co
 								"please make sure every element has been set object name.");
 	}
 	d.categoryObjNameValue = categoryobjName;
-	d.indexValue           = isShow ? 1 : 0;
+	d.indexValue = isShow ? 1 : 0;
 	return (d);
 }
 
@@ -13440,8 +12589,7 @@ SARibbonCustomizeData SARibbonCustomizeData::makeVisibleCategoryCustomizeData(co
  * @param obj
  * @return
  */
-bool SARibbonCustomizeData::isCanCustomize(QObject* obj)
-{
+bool SARibbonCustomizeData::isCanCustomize(QObject* obj) {
 	QVariant v = obj->property(SA_RIBBON_BAR_PROP_CAN_CUSTOMIZE);
 
 	if (v.isValid()) {
@@ -13455,20 +12603,18 @@ bool SARibbonCustomizeData::isCanCustomize(QObject* obj)
  * @param obj
  * @param canbe
  */
-void SARibbonCustomizeData::setCanCustomize(QObject* obj, bool canbe)
-{
+void SARibbonCustomizeData::setCanCustomize(QObject* obj, bool canbe) {
 	obj->setProperty(SA_RIBBON_BAR_PROP_CAN_CUSTOMIZE, canbe);
 }
 
-QList< SARibbonCustomizeData > remove_indexs(const QList< SARibbonCustomizeData >& csd, const QList< int >& willremoveIndex);
+QList<SARibbonCustomizeData> remove_indexs(const QList<SARibbonCustomizeData>& csd, const QList<int>& willremoveIndex);
 
-QList< SARibbonCustomizeData > remove_indexs(const QList< SARibbonCustomizeData >& csd, const QList< int >& willremoveIndex)
-{
-	QList< SARibbonCustomizeData > res;
+QList<SARibbonCustomizeData> remove_indexs(const QList<SARibbonCustomizeData>& csd, const QList<int>& willremoveIndex) {
+	QList<SARibbonCustomizeData> res;
 
 	for (int i = 0; i < csd.size(); ++i) {
 		if (!willremoveIndex.contains(i)) {
-			res << csd[ i ];
+			res << csd[i];
 		}
 	}
 	return (res);
@@ -13490,30 +12636,29 @@ QList< SARibbonCustomizeData > remove_indexs(const QList< SARibbonCustomizeData 
  * @param csd
  * @return 返回简化的QList<SARibbonCustomizeData>
  */
-QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARibbonCustomizeData >& csd)
-{
+QList<SARibbonCustomizeData> SARibbonCustomizeData::simplify(const QList<SARibbonCustomizeData>& csd) {
 	int size = csd.size();
 
 	if (size <= 1) {
 		return (csd);
 	}
-	QList< SARibbonCustomizeData > res;
-	QList< int > willremoveIndex;  //记录要删除的index
+	QList<SARibbonCustomizeData> res;
+	QList<int> willremoveIndex; // 记录要删除的index
 
 	//! 首先针对连续出现的添加和删除操作进行优化
 	for (int i = 1; i < size; ++i) {
-		if ((csd[ i - 1 ].actionType() == AddCategoryActionType) && (csd[ i ].actionType() == RemoveCategoryActionType)) {
-			if (csd[ i - 1 ].categoryObjNameValue == csd[ i ].categoryObjNameValue) {
+		if ((csd[i - 1].actionType() == AddCategoryActionType) && (csd[i].actionType() == RemoveCategoryActionType)) {
+			if (csd[i - 1].categoryObjNameValue == csd[i].categoryObjNameValue) {
 				willremoveIndex << i - 1 << i;
 			}
-		} else if ((csd[ i - 1 ].actionType() == AddPannelActionType) && (csd[ i ].actionType() == RemovePannelActionType)) {
-			if ((csd[ i - 1 ].pannelObjNameValue == csd[ i ].pannelObjNameValue)
-				&& (csd[ i - 1 ].categoryObjNameValue == csd[ i ].categoryObjNameValue)) {
+		} else if ((csd[i - 1].actionType() == AddPannelActionType) && (csd[i].actionType() == RemovePannelActionType)) {
+			if ((csd[i - 1].pannelObjNameValue == csd[i].pannelObjNameValue)
+				&& (csd[i - 1].categoryObjNameValue == csd[i].categoryObjNameValue)) {
 				willremoveIndex << i - 1 << i;
 			}
-		} else if ((csd[ i - 1 ].actionType() == AddActionActionType) && (csd[ i ].actionType() == RemoveActionActionType)) {
-			if ((csd[ i - 1 ].keyValue == csd[ i ].keyValue) && (csd[ i - 1 ].pannelObjNameValue == csd[ i ].pannelObjNameValue)
-				&& (csd[ i - 1 ].categoryObjNameValue == csd[ i ].categoryObjNameValue)) {
+		} else if ((csd[i - 1].actionType() == AddActionActionType) && (csd[i].actionType() == RemoveActionActionType)) {
+			if ((csd[i - 1].keyValue == csd[i].keyValue) && (csd[i - 1].pannelObjNameValue == csd[i].pannelObjNameValue)
+				&& (csd[i - 1].categoryObjNameValue == csd[i].categoryObjNameValue)) {
 				willremoveIndex << i - 1 << i;
 			}
 		}
@@ -13524,10 +12669,10 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 	//! 筛选VisibleCategoryActionType，对于连续出现的操作只保留最后一步
 	size = res.size();
 	for (int i = 1; i < size; ++i) {
-		if ((res[ i - 1 ].actionType() == VisibleCategoryActionType) && (res[ i ].actionType() == VisibleCategoryActionType)) {
-			if (res[ i - 1 ].categoryObjNameValue == res[ i ].categoryObjNameValue) {
-				//要保证操作的是同一个内容
-				willremoveIndex << i - 1;  //删除前一个只保留最后一个
+		if ((res[i - 1].actionType() == VisibleCategoryActionType) && (res[i].actionType() == VisibleCategoryActionType)) {
+			if (res[i - 1].categoryObjNameValue == res[i].categoryObjNameValue) {
+				// 要保证操作的是同一个内容
+				willremoveIndex << i - 1; // 删除前一个只保留最后一个
 			}
 		}
 	}
@@ -13537,19 +12682,19 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 	//! 针对RenameCategoryActionType和RenamePannelActionType操作，只需保留最后一个
 	size = res.size();
 	for (int i = 0; i < size; ++i) {
-		if (res[ i ].actionType() == RenameCategoryActionType) {
-			//向后查询，如果查询到有同一个Category改名，把这个索引加入删除队列
+		if (res[i].actionType() == RenameCategoryActionType) {
+			// 向后查询，如果查询到有同一个Category改名，把这个索引加入删除队列
 			for (int j = i + 1; j < size; ++j) {
-				if ((res[ j ].actionType() == RenameCategoryActionType)
-					&& (res[ i ].categoryObjNameValue == res[ j ].categoryObjNameValue)) {
+				if ((res[j].actionType() == RenameCategoryActionType)
+					&& (res[i].categoryObjNameValue == res[j].categoryObjNameValue)) {
 					willremoveIndex << i;
 				}
 			}
-		} else if (res[ i ].actionType() == RenamePannelActionType) {
-			//向后查询，如果查询到有同一个pannel改名，把这个索引加入删除队列
+		} else if (res[i].actionType() == RenamePannelActionType) {
+			// 向后查询，如果查询到有同一个pannel改名，把这个索引加入删除队列
 			for (int j = i + 1; j < size; ++j) {
-				if ((res[ j ].actionType() == RenamePannelActionType) && (res[ i ].pannelObjNameValue == res[ j ].pannelObjNameValue)
-					&& (res[ i ].categoryObjNameValue == res[ j ].categoryObjNameValue)) {
+				if ((res[j].actionType() == RenamePannelActionType) && (res[i].pannelObjNameValue == res[j].pannelObjNameValue)
+					&& (res[i].categoryObjNameValue == res[j].categoryObjNameValue)) {
 					willremoveIndex << i;
 				}
 			}
@@ -13561,23 +12706,23 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 	//! 针对连续的ChangeCategoryOrderActionType，ChangePannelOrderActionType，ChangeActionOrderActionType进行合并
 	size = res.size();
 	for (int i = 1; i < size; ++i) {
-		if ((res[ i - 1 ].actionType() == ChangeCategoryOrderActionType) && (res[ i ].actionType() == ChangeCategoryOrderActionType)
-			&& (res[ i - 1 ].categoryObjNameValue == res[ i ].categoryObjNameValue)) {
-			//说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
-			res[ i ].indexValue += res[ i - 1 ].indexValue;
+		if ((res[i - 1].actionType() == ChangeCategoryOrderActionType) && (res[i].actionType() == ChangeCategoryOrderActionType)
+			&& (res[i - 1].categoryObjNameValue == res[i].categoryObjNameValue)) {
+			// 说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
+			res[i].indexValue += res[i - 1].indexValue;
 			willremoveIndex << i - 1;
-		} else if ((res[ i - 1 ].actionType() == ChangePannelOrderActionType) && (res[ i ].actionType() == ChangePannelOrderActionType)
-				   && (res[ i - 1 ].pannelObjNameValue == res[ i ].pannelObjNameValue)
-				   && (res[ i - 1 ].categoryObjNameValue == res[ i ].categoryObjNameValue)) {
-			//说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
-			res[ i ].indexValue += res[ i - 1 ].indexValue;
+		} else if ((res[i - 1].actionType() == ChangePannelOrderActionType) && (res[i].actionType() == ChangePannelOrderActionType)
+			&& (res[i - 1].pannelObjNameValue == res[i].pannelObjNameValue)
+			&& (res[i - 1].categoryObjNameValue == res[i].categoryObjNameValue)) {
+			// 说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
+			res[i].indexValue += res[i - 1].indexValue;
 			willremoveIndex << i - 1;
-		} else if ((res[ i - 1 ].actionType() == ChangeActionOrderActionType)
-				   && (res[ i ].actionType() == ChangeActionOrderActionType) && (res[ i - 1 ].keyValue == res[ i ].keyValue)
-				   && (res[ i - 1 ].pannelObjNameValue == res[ i ].pannelObjNameValue)
-				   && (res[ i - 1 ].categoryObjNameValue == res[ i ].categoryObjNameValue)) {
-			//说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
-			res[ i ].indexValue += res[ i - 1 ].indexValue;
+		} else if ((res[i - 1].actionType() == ChangeActionOrderActionType)
+			&& (res[i].actionType() == ChangeActionOrderActionType) && (res[i - 1].keyValue == res[i].keyValue)
+			&& (res[i - 1].pannelObjNameValue == res[i].pannelObjNameValue)
+			&& (res[i - 1].categoryObjNameValue == res[i].categoryObjNameValue)) {
+			// 说明连续两个顺序调整，把前一个indexvalue和后一个indexvalue相加，前一个删除
+			res[i].indexValue += res[i - 1].indexValue;
 			willremoveIndex << i - 1;
 		}
 	}
@@ -13587,9 +12732,9 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 	//! 上一步操作可能会产生indexvalue为0的情况，此操作把indexvalue为0的删除
 	size = res.size();
 	for (int i = 0; i < size; ++i) {
-		if ((res[ i ].actionType() == ChangeCategoryOrderActionType) || (res[ i ].actionType() == ChangePannelOrderActionType)
-			|| (res[ i ].actionType() == ChangeActionOrderActionType)) {
-			if (0 == res[ i ].indexValue) {
+		if ((res[i].actionType() == ChangeCategoryOrderActionType) || (res[i].actionType() == ChangePannelOrderActionType)
+			|| (res[i].actionType() == ChangeActionOrderActionType)) {
+			if (0 == res[i].indexValue) {
 				willremoveIndex << i;
 			}
 		}
@@ -13601,11 +12746,10 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 
 /*** End of inlined file: SARibbonCustomizeData.cpp ***/
 
-
 /*** Start of inlined file: SARibbonCustomizeWidget.cpp ***/
+#include <QAction>
 #include <QDebug>
 #include <QtCore/QVariant>
-#include <QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
@@ -13613,21 +12757,21 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListView>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QTreeView>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
-#include <QStandardItemModel>
 #include <QButtonGroup>
+#include <QDateTime>
 #include <QInputDialog>
 #include <QLineEdit>
-#include <QDateTime>
-#include <QXmlStreamWriter>
+#include <QStandardItemModel>
 #include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 
 #include <QFile>
 #include <QMessageBox>
@@ -13636,8 +12780,7 @@ QList< SARibbonCustomizeData > SARibbonCustomizeData::simplify(const QList< SARi
 /// SARibbonCustomizeWidget
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool sa_customize_datas_to_xml(QXmlStreamWriter* xml, const QList< SARibbonCustomizeData >& cds)
-{
+bool sa_customize_datas_to_xml(QXmlStreamWriter* xml, const QList<SARibbonCustomizeData>& cds) {
 	if (cds.size() <= 0) {
 		return (false);
 	}
@@ -13661,8 +12804,7 @@ bool sa_customize_datas_to_xml(QXmlStreamWriter* xml, const QList< SARibbonCusto
 	return (true);
 }
 
-QList< SARibbonCustomizeData > sa_customize_datas_from_xml(QXmlStreamReader* xml, SARibbonActionsManager* mgr)
-{
+QList<SARibbonCustomizeData> sa_customize_datas_from_xml(QXmlStreamReader* xml, SARibbonActionsManager* mgr) {
 	// 先找到"sa-ribbon-customize"
 	while (!xml->atEnd()) {
 
@@ -13671,7 +12813,7 @@ QList< SARibbonCustomizeData > sa_customize_datas_from_xml(QXmlStreamReader* xml
 		}
 		xml->readNext();
 	}
-	QList< SARibbonCustomizeData > res;
+	QList<SARibbonCustomizeData> res;
 
 	// 开始遍历"customize-data"
 	while (!xml->atEnd()) {
@@ -13685,13 +12827,13 @@ QList< SARibbonCustomizeData > sa_customize_datas_from_xml(QXmlStreamReader* xml
 				continue;
 			}
 			bool isOk = false;
-			int v     = xml->attributes().value("type").toInt(&isOk);
+			int v = xml->attributes().value("type").toInt(&isOk);
 			if (!isOk) {
 				// 说明异常，跳过这个
 				xml->readNextStartElement();
 				continue;
 			}
-			d.setActionType(static_cast< SARibbonCustomizeData::ActionType >(v));
+			d.setActionType(static_cast<SARibbonCustomizeData::ActionType>(v));
 			// 开始读取子对象
 			if (attrs.hasAttribute("index")) {
 				v = xml->attributes().value("index").toInt(&isOk);
@@ -13711,7 +12853,7 @@ QList< SARibbonCustomizeData > sa_customize_datas_from_xml(QXmlStreamReader* xml
 			if (attrs.hasAttribute("row-prop")) {
 				v = xml->attributes().value("row-prop").toInt(&isOk);
 				if (isOk) {
-					d.actionRowProportionValue = static_cast< SARibbonPannelItem::RowProportion >(v);
+					d.actionRowProportionValue = static_cast<SARibbonPannelItem::RowProportion>(v);
 				}
 			}
 			d.setActionsManager(mgr);
@@ -13725,8 +12867,7 @@ QList< SARibbonCustomizeData > sa_customize_datas_from_xml(QXmlStreamReader* xml
 	return (res);
 }
 
-int sa_customize_datas_apply(const QList< SARibbonCustomizeData >& cds, SARibbonBar* bar)
-{
+int sa_customize_datas_apply(const QList<SARibbonCustomizeData>& cds, SARibbonBar* bar) {
 	int c = 0;
 
 	for (const SARibbonCustomizeData& d : cds) {
@@ -13737,15 +12878,13 @@ int sa_customize_datas_apply(const QList< SARibbonCustomizeData >& cds, SARibbon
 	return (c);
 }
 
-int sa_customize_datas_reverse(const QList< SARibbonCustomizeData >& cds, SARibbonBar* bar)
-{
+int sa_customize_datas_reverse(const QList<SARibbonCustomizeData>& cds, SARibbonBar* bar) {
 	int c = 0;
 	// todo 支持反向操作
 	return (c);
 }
 
-bool sa_apply_customize_from_xml_file(const QString& filePath, SARibbonBar* bar, SARibbonActionsManager* mgr)
-{
+bool sa_apply_customize_from_xml_file(const QString& filePath, SARibbonBar* bar, SARibbonActionsManager* mgr) {
 	QFile f(filePath);
 
 	if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -13760,8 +12899,7 @@ bool sa_apply_customize_from_xml_file(const QString& filePath, SARibbonBar* bar,
 /**
  * @brief 构建SARibbonCustomizeWidget的Ui
  */
-class SARibbonCustomizeWidgetUi
-{
+class SARibbonCustomizeWidgetUi {
 public:
 	QHBoxLayout* horizontalLayoutMain;
 	QVBoxLayout* verticalLayoutSelect;
@@ -13795,8 +12933,7 @@ public:
 	QToolButton* toolButtonDown;
 	QSpacerItem* verticalSpacerDown2;
 
-	void setupUi(QWidget* customizeWidget)
-	{
+	void setupUi(QWidget* customizeWidget) {
 		if (customizeWidget->objectName().isEmpty()) {
 			customizeWidget->setObjectName(QStringLiteral("SARibbonCustomizeWidget"));
 		}
@@ -13895,8 +13032,8 @@ public:
 		treeViewResult->setObjectName(QStringLiteral("treeViewResult"));
 		treeViewResult->setHeaderHidden(true);
 		treeViewResult->setSelectionMode(QAbstractItemView::SingleSelection);
-		treeViewResult->setAnimated(true);                                   // 支持动画
-		treeViewResult->setEditTriggers(QAbstractItemView::NoEditTriggers);  // 不允许直接在item上重命名
+		treeViewResult->setAnimated(true); // 支持动画
+		treeViewResult->setEditTriggers(QAbstractItemView::NoEditTriggers); // 不允许直接在item上重命名
 
 		verticalLayoutResult->addWidget(treeViewResult);
 
@@ -13952,51 +13089,49 @@ public:
 		horizontalLayoutMain->addLayout(verticalLayoutRightButtons);
 
 		retranslateUi(customizeWidget);
-	}  // setupUi
+	} // setupUi
 
-	void retranslateUi(QWidget* customizeWidget)
-	{
+	void retranslateUi(QWidget* customizeWidget) {
 		customizeWidget->setWindowTitle(QApplication::translate("SARibbonCustomizeWidget", "Customize Widget", Q_NULLPTR));
-		labelSelectAction->setText(QApplication::translate("SARibbonCustomizeWidget", "Please Select", Q_NULLPTR));  // cn:请选择
+		labelSelectAction->setText(QApplication::translate("SARibbonCustomizeWidget", "Please Select", Q_NULLPTR)); // cn:请选择
 		lineEditSearchAction->setInputMask(QString());
 		lineEditSearchAction->setText(QString());
 		lineEditSearchAction->setPlaceholderText(
-			QApplication::translate("SARibbonCustomizeWidget", "Find Command", Q_NULLPTR));  // cn:查找命令
-		pushButtonAdd->setText(QApplication::translate("SARibbonCustomizeWidget", "Add >>", Q_NULLPTR));  // cn:添加 >>
-		pushButtonDelete->setText(QApplication::translate("SARibbonCustomizeWidget", "<< Remove", Q_NULLPTR));  // cn:<< 移除
+			QApplication::translate("SARibbonCustomizeWidget", "Find Command", Q_NULLPTR)); // cn:查找命令
+		pushButtonAdd->setText(QApplication::translate("SARibbonCustomizeWidget", "Add >>", Q_NULLPTR)); // cn:添加 >>
+		pushButtonDelete->setText(QApplication::translate("SARibbonCustomizeWidget", "<< Remove", Q_NULLPTR)); // cn:<< 移除
 		labelCustomize->setText(
-			QApplication::translate("SARibbonCustomizeWidget", "Customize the Ribbon", Q_NULLPTR));  // cn:自定义功能区
-		radioButtonMainCategory->setText(QApplication::translate("SARibbonCustomizeWidget", "Main Category", Q_NULLPTR));  // cn:主选项卡
-		radioButtonAllCategory->setText(QApplication::translate("SARibbonCustomizeWidget", "All Category", Q_NULLPTR));  // cn:所有选项卡
-		pushButtonNewCategory->setText(QApplication::translate("SARibbonCustomizeWidget", "New Category", Q_NULLPTR));  // cn:新建选项卡
-		pushButtonNewPannel->setText(QApplication::translate("SARibbonCustomizeWidget", "New Group", Q_NULLPTR));  // cn:新建组
-		pushButtonRename->setText(QApplication::translate("SARibbonCustomizeWidget", "Rename", Q_NULLPTR));  // cn:重命名
-		pushButtonReset->setText(QApplication::translate("SARibbonCustomizeWidget", "reset", Q_NULLPTR));  // cn:重置
-		labelProportion->setText(QApplication::translate("SARibbonCustomizeWidget", "proportion:", Q_NULLPTR));  // cn:比例
-	}  // retranslateUi
+			QApplication::translate("SARibbonCustomizeWidget", "Customize the Ribbon", Q_NULLPTR)); // cn:自定义功能区
+		radioButtonMainCategory->setText(QApplication::translate("SARibbonCustomizeWidget", "Main Category", Q_NULLPTR)); // cn:主选项卡
+		radioButtonAllCategory->setText(QApplication::translate("SARibbonCustomizeWidget", "All Category", Q_NULLPTR)); // cn:所有选项卡
+		pushButtonNewCategory->setText(QApplication::translate("SARibbonCustomizeWidget", "New Category", Q_NULLPTR)); // cn:新建选项卡
+		pushButtonNewPannel->setText(QApplication::translate("SARibbonCustomizeWidget", "New Group", Q_NULLPTR)); // cn:新建组
+		pushButtonRename->setText(QApplication::translate("SARibbonCustomizeWidget", "Rename", Q_NULLPTR)); // cn:重命名
+		pushButtonReset->setText(QApplication::translate("SARibbonCustomizeWidget", "reset", Q_NULLPTR)); // cn:重置
+		labelProportion->setText(QApplication::translate("SARibbonCustomizeWidget", "proportion:", Q_NULLPTR)); // cn:比例
+	} // retranslateUi
 };
 
 /**
  * @brief 管理SARibbonCustomizeWidget的业务逻辑
  */
-class SARibbonCustomizeWidget::PrivateData
-{
+class SARibbonCustomizeWidget::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonCustomizeWidget)
 public:
-	SARibbonCustomizeWidget::RibbonTreeShowType mShowType { SARibbonCustomizeWidget::ShowAllCategory };  ///< 显示类型
-	SARibbonBar* mRibbonBar { nullptr };                   ///< 保存SARibbonMainWindow的指针
-	SARibbonActionsManager* mActionMgr { nullptr };        ///< action管理器
-	SARibbonActionsManagerModel* mAcionModel { nullptr };  ///< action管理器对应的model
-	QStandardItemModel* mRibbonModel { nullptr };          ///< 用于很成ribbon的树
-	int mCustomizeCategoryCount { 0 };                     ///< 记录自定义Category的个数
-	int mCustomizePannelCount { 0 };                       ///< 记录自定义Pannel的个数
+	SARibbonCustomizeWidget::RibbonTreeShowType mShowType { SARibbonCustomizeWidget::ShowAllCategory }; ///< 显示类型
+	SARibbonBar* mRibbonBar { nullptr }; ///< 保存SARibbonMainWindow的指针
+	SARibbonActionsManager* mActionMgr { nullptr }; ///< action管理器
+	SARibbonActionsManagerModel* mAcionModel { nullptr }; ///< action管理器对应的model
+	QStandardItemModel* mRibbonModel { nullptr }; ///< 用于很成ribbon的树
+	int mCustomizeCategoryCount { 0 }; ///< 记录自定义Category的个数
+	int mCustomizePannelCount { 0 }; ///< 记录自定义Pannel的个数
 public:
 	PrivateData(SARibbonCustomizeWidget* p);
 	void updateModel();
 
-	QList< SARibbonCustomizeData > mCustomizeDatasCache;    ///< 缓存记录所有的自定义动作
-	QList< SARibbonCustomizeData > mCustomizeDatasApplied;  ///< 应用后的所有的自定义动作
-	QList< SARibbonCustomizeData > mOldCustomizeDatas;      ///< 记录旧的自定义动作,本地文件缓存
+	QList<SARibbonCustomizeData> mCustomizeDatasCache; ///< 缓存记录所有的自定义动作
+	QList<SARibbonCustomizeData> mCustomizeDatasApplied; ///< 应用后的所有的自定义动作
+	QList<SARibbonCustomizeData> mOldCustomizeDatas; ///< 记录旧的自定义动作,本地文件缓存
 	// 创建一个随机id，形如：pre_QDateTime::currentMSecsSinceEpoch_suf
 	static QString makeRandomObjName(const QString& pre);
 
@@ -14022,18 +13157,18 @@ public:
 };
 
 SARibbonCustomizeWidget::PrivateData::PrivateData(SARibbonCustomizeWidget* p)
-	: q_ptr(p), mAcionModel(new SARibbonActionsManagerModel(p)), mRibbonModel(new QStandardItemModel(p))
-{
+	: q_ptr(p)
+	, mAcionModel(new SARibbonActionsManagerModel(p))
+	, mRibbonModel(new QStandardItemModel(p)) {
 }
 
-void SARibbonCustomizeWidget::PrivateData::updateModel()
-{
+void SARibbonCustomizeWidget::PrivateData::updateModel() {
 	if (mRibbonBar == nullptr) {
 		return;
 	}
 	mRibbonModel->clear();
-	SARibbonBar* ribbonbar               = mRibbonBar;
-	QList< SARibbonCategory* > categorys = ribbonbar->categoryPages();
+	SARibbonBar* ribbonbar = mRibbonBar;
+	QList<SARibbonCategory*> categorys = ribbonbar->categoryPages();
 
 	for (const SARibbonCategory* c : qAsConst(categorys)) {
 		if ((mShowType == SARibbonCustomizeWidget::ShowMainCategory) && c->isContextCategory()) {
@@ -14050,20 +13185,20 @@ void SARibbonCustomizeWidget::PrivateData::updateModel()
 			// 上下文标签不做显示隐藏处理
 			ci->setCheckable(true);
 			ci->setCheckState(ribbonbar->isCategoryVisible(c) ? Qt::Checked : Qt::Unchecked);
-			ci->setData(true, SARibbonCustomizeWidget::CanCustomizeRole);  // 标记这个是可以自定义的
+			ci->setData(true, SARibbonCustomizeWidget::CanCustomizeRole); // 标记这个是可以自定义的
 		}
 		ci->setData(0, SARibbonCustomizeWidget::LevelRole);
-		ci->setData(QVariant::fromValue< qintptr >(qintptr(c)), SARibbonCustomizeWidget::PointerRole);
-		QList< SARibbonPannel* > pannels = c->pannelList();
+		ci->setData(QVariant::fromValue<qintptr>(qintptr(c)), SARibbonCustomizeWidget::PointerRole);
+		QList<SARibbonPannel*> pannels = c->pannelList();
 		for (const SARibbonPannel* p : qAsConst(pannels)) {
 			QStandardItem* pi = new QStandardItem(p->pannelName());
 			pi->setData(1, SARibbonCustomizeWidget::LevelRole);
-			pi->setData(QVariant::fromValue< qintptr >(qintptr(p)), SARibbonCustomizeWidget::PointerRole);
+			pi->setData(QVariant::fromValue<qintptr>(qintptr(p)), SARibbonCustomizeWidget::PointerRole);
 			if (p->isCanCustomize()) {
-				pi->setData(true, SARibbonCustomizeWidget::CanCustomizeRole);  // 标记这个是可以自定义的
+				pi->setData(true, SARibbonCustomizeWidget::CanCustomizeRole); // 标记这个是可以自定义的
 			}
 			ci->appendRow(pi);
-			const QList< SARibbonPannelItem* >& items = p->ribbonPannelItem();
+			const QList<SARibbonPannelItem*>& items = p->ribbonPannelItem();
 			for (SARibbonPannelItem* i : qAsConst(items)) {
 				if (i->action->isSeparator()) {
 					continue;
@@ -14091,10 +13226,10 @@ void SARibbonCustomizeWidget::PrivateData::updateModel()
 				ii->setText(i->action->text());
 				ii->setIcon(i->action->icon());
 				if (SARibbonCustomizeData::isCanCustomize(i->action)) {
-					ii->setData(true, SARibbonCustomizeWidget::CanCustomizeRole);  // 标记这个是可以自定义的
+					ii->setData(true, SARibbonCustomizeWidget::CanCustomizeRole); // 标记这个是可以自定义的
 				}
 				ii->setData(2, SARibbonCustomizeWidget::LevelRole);
-				ii->setData(QVariant::fromValue< qintptr >(qintptr(i)), SARibbonCustomizeWidget::PointerRole);
+				ii->setData(QVariant::fromValue<qintptr>(qintptr(i)), SARibbonCustomizeWidget::PointerRole);
 				pi->appendRow(ii);
 			}
 		}
@@ -14107,8 +13242,7 @@ void SARibbonCustomizeWidget::PrivateData::updateModel()
  * @param pre 前缀
  * @return
  */
-QString SARibbonCustomizeWidget::PrivateData::makeRandomObjName(const QString& pre)
-{
+QString SARibbonCustomizeWidget::PrivateData::makeRandomObjName(const QString& pre) {
 	return (QString("%1_%2").arg(pre).arg(QDateTime::currentMSecsSinceEpoch()));
 }
 
@@ -14117,8 +13251,7 @@ QString SARibbonCustomizeWidget::PrivateData::makeRandomObjName(const QString& p
  * @param item
  * @return
  */
-int SARibbonCustomizeWidget::PrivateData::itemLevel(QStandardItem* item) const
-{
+int SARibbonCustomizeWidget::PrivateData::itemLevel(QStandardItem* item) const {
 	return (item->data(SARibbonCustomizeWidget::LevelRole).toInt());
 }
 
@@ -14127,8 +13260,7 @@ int SARibbonCustomizeWidget::PrivateData::itemLevel(QStandardItem* item) const
  * @param item
  * @return
  */
-bool SARibbonCustomizeWidget::PrivateData::isCustomizeItem(QStandardItem* item) const
-{
+bool SARibbonCustomizeWidget::PrivateData::isCustomizeItem(QStandardItem* item) const {
 	if (nullptr == item) {
 		return (false);
 	}
@@ -14140,16 +13272,15 @@ bool SARibbonCustomizeWidget::PrivateData::isCustomizeItem(QStandardItem* item) 
  * @param item
  * @return无法转换返回nullptr
  */
-SARibbonCategory* SARibbonCustomizeWidget::PrivateData::itemToCategory(QStandardItem* item) const
-{
+SARibbonCategory* SARibbonCustomizeWidget::PrivateData::itemToCategory(QStandardItem* item) const {
 	int level = item->data(SARibbonCustomizeWidget::LevelRole).toInt();
 
 	if (level != 0) {
 		return (nullptr);
 	}
-	qintptr p = item->data(SARibbonCustomizeWidget::PointerRole).value< qintptr >();
+	qintptr p = item->data(SARibbonCustomizeWidget::PointerRole).value<qintptr>();
 
-	return (reinterpret_cast< SARibbonCategory* >(p));
+	return (reinterpret_cast<SARibbonCategory*>(p));
 }
 
 /**
@@ -14157,16 +13288,15 @@ SARibbonCategory* SARibbonCustomizeWidget::PrivateData::itemToCategory(QStandard
  * @param item
  * @return 无法转换返回nullptr
  */
-SARibbonPannel* SARibbonCustomizeWidget::PrivateData::itemToPannel(QStandardItem* item) const
-{
+SARibbonPannel* SARibbonCustomizeWidget::PrivateData::itemToPannel(QStandardItem* item) const {
 	int level = item->data(SARibbonCustomizeWidget::LevelRole).toInt();
 
 	if (level != 1) {
 		return (nullptr);
 	}
-	qintptr p = item->data(SARibbonCustomizeWidget::PointerRole).value< qintptr >();
+	qintptr p = item->data(SARibbonCustomizeWidget::PointerRole).value<qintptr>();
 
-	return (reinterpret_cast< SARibbonPannel* >(p));
+	return (reinterpret_cast<SARibbonPannel*>(p));
 }
 
 /**
@@ -14174,8 +13304,7 @@ SARibbonPannel* SARibbonCustomizeWidget::PrivateData::itemToPannel(QStandardItem
  * @param item
  * @return 如果无法获取，返回一个空的QString
  */
-QString SARibbonCustomizeWidget::PrivateData::itemObjectName(QStandardItem* item) const
-{
+QString SARibbonCustomizeWidget::PrivateData::itemObjectName(QStandardItem* item) const {
 	QString objName;
 
 	if (isCustomizeItem(item)) {
@@ -14204,8 +13333,7 @@ QString SARibbonCustomizeWidget::PrivateData::itemObjectName(QStandardItem* item
  * @param item
  * @return
  */
-bool SARibbonCustomizeWidget::PrivateData::isItemCanCustomize(QStandardItem* item) const
-{
+bool SARibbonCustomizeWidget::PrivateData::isItemCanCustomize(QStandardItem* item) const {
 	if (nullptr == item) {
 		return (false);
 	}
@@ -14222,8 +13350,7 @@ bool SARibbonCustomizeWidget::PrivateData::isItemCanCustomize(QStandardItem* ite
  * @param item
  * @return
  */
-QAction* SARibbonCustomizeWidget::PrivateData::itemToAction(QStandardItem* item) const
-{
+QAction* SARibbonCustomizeWidget::PrivateData::itemToAction(QStandardItem* item) const {
 	if (2 != itemLevel(item)) {
 		return (nullptr);
 	}
@@ -14232,10 +13359,10 @@ QAction* SARibbonCustomizeWidget::PrivateData::itemToAction(QStandardItem* item)
 	QAction* act = nullptr;
 
 	if (item->data(SARibbonCustomizeWidget::CustomizeRole).toBool()) {
-		act = reinterpret_cast< QAction* >(item->data(SARibbonCustomizeWidget::PointerRole).value< qintptr >());
+		act = reinterpret_cast<QAction*>(item->data(SARibbonCustomizeWidget::PointerRole).value<qintptr>());
 	} else {
-		SARibbonPannelItem* pi = reinterpret_cast< SARibbonPannelItem* >(
-			item->data(SARibbonCustomizeWidget::PointerRole).value< qintptr >());
+		SARibbonPannelItem* pi = reinterpret_cast<SARibbonPannelItem*>(
+			item->data(SARibbonCustomizeWidget::PointerRole).value<qintptr>());
 		act = (pi->action);
 	}
 	return (act);
@@ -14251,19 +13378,20 @@ QAction* SARibbonCustomizeWidget::PrivateData::itemToAction(QStandardItem* item)
  * @param f 同QWidget::QWidget的第二个参数
  */
 SARibbonCustomizeWidget::SARibbonCustomizeWidget(SARibbonMainWindow* ribbonWindow, QWidget* parent, Qt::WindowFlags f)
-	: QWidget(parent, f), d_ptr(new SARibbonCustomizeWidget::PrivateData(this)), ui(new SARibbonCustomizeWidgetUi)
-{
+	: QWidget(parent, f)
+	, d_ptr(new SARibbonCustomizeWidget::PrivateData(this))
+	, ui(new SARibbonCustomizeWidgetUi) {
 	init(ribbonWindow->ribbonBar());
 }
 
 SARibbonCustomizeWidget::SARibbonCustomizeWidget(SARibbonBar* ribbonbar, QWidget* parent, Qt::WindowFlags f)
-	: QWidget(parent, f), d_ptr(new SARibbonCustomizeWidget::PrivateData(this)), ui(new SARibbonCustomizeWidgetUi)
-{
+	: QWidget(parent, f)
+	, d_ptr(new SARibbonCustomizeWidget::PrivateData(this))
+	, ui(new SARibbonCustomizeWidgetUi) {
 	init(ribbonbar);
 }
 
-void SARibbonCustomizeWidget::init(SARibbonBar* ribbonbar)
-{
+void SARibbonCustomizeWidget::init(SARibbonBar* ribbonbar) {
 	d_ptr->mRibbonBar = ribbonbar;
 	ui->setupUi(this);
 	ui->listViewSelect->setModel(d_ptr->mAcionModel);
@@ -14272,27 +13400,25 @@ void SARibbonCustomizeWidget::init(SARibbonBar* ribbonbar)
 	updateModel();
 }
 
-SARibbonCustomizeWidget::~SARibbonCustomizeWidget()
-{
+SARibbonCustomizeWidget::~SARibbonCustomizeWidget() {
 	delete ui;
 }
 
-void SARibbonCustomizeWidget::initConnection()
-{
+void SARibbonCustomizeWidget::initConnection() {
 	//    这个需要qt5.8以上支持
 	//    connect(ui->comboBoxActionIndex, QOverload<int>::of(&QComboBox::currentIndexChanged)
 	//        , this, &SARibbonCustomizeWidget::onComboBoxActionIndexCurrentIndexChanged);
 	connect(ui->comboBoxActionIndex,
-			static_cast< void (QComboBox::*)(int) >(&QComboBox::currentIndexChanged),
-			this,
-			&SARibbonCustomizeWidget::onComboBoxActionIndexCurrentIndexChanged);
+		static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+		this,
+		&SARibbonCustomizeWidget::onComboBoxActionIndexCurrentIndexChanged);
 	//    这个需要qt5.8以上支持
 	//    connect(ui->radioButtonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked)
 	//        , this, &SARibbonCustomizeWidget::onRadioButtonGroupButtonClicked);
 	connect(ui->radioButtonGroup,
-			static_cast< void (QButtonGroup::*)(QAbstractButton*) >(&QButtonGroup::buttonClicked),
-			this,
-			&SARibbonCustomizeWidget::onRadioButtonGroupButtonClicked);
+		static_cast<void (QButtonGroup::*)(QAbstractButton*)>(&QButtonGroup::buttonClicked),
+		this,
+		&SARibbonCustomizeWidget::onRadioButtonGroupButtonClicked);
 	connect(ui->pushButtonNewCategory, &QPushButton::clicked, this, &SARibbonCustomizeWidget::onPushButtonNewCategoryClicked);
 	connect(ui->pushButtonNewPannel, &QPushButton::clicked, this, &SARibbonCustomizeWidget::onPushButtonNewPannelClicked);
 	connect(ui->pushButtonRename, &QPushButton::clicked, this, &SARibbonCustomizeWidget::onPushButtonRenameClicked);
@@ -14311,15 +13437,14 @@ void SARibbonCustomizeWidget::initConnection()
  * @brief 设置action管理器
  * @param mgr
  */
-void SARibbonCustomizeWidget::setupActionsManager(SARibbonActionsManager* mgr)
-{
+void SARibbonCustomizeWidget::setupActionsManager(SARibbonActionsManager* mgr) {
 	d_ptr->mActionMgr = mgr;
 	if (d_ptr->mActionMgr) {
 		d_ptr->mAcionModel->uninstallActionsManager();
 	}
 	d_ptr->mAcionModel->setupActionsManager(mgr);
 	// 更新左边复选框
-	QList< int > tags = mgr->actionTags();
+	QList<int> tags = mgr->actionTags();
 
 	ui->comboBoxActionIndex->clear();
 	for (int tag : qAsConst(tags)) {
@@ -14333,8 +13458,7 @@ void SARibbonCustomizeWidget::setupActionsManager(SARibbonActionsManager* mgr)
  * @brief //判断用户是否有要存储的内容，对应save动作
  * @return
  */
-bool SARibbonCustomizeWidget::isApplied() const
-{
+bool SARibbonCustomizeWidget::isApplied() const {
 	return (d_ptr->mCustomizeDatasApplied.size() > 0);
 }
 
@@ -14342,8 +13466,7 @@ bool SARibbonCustomizeWidget::isApplied() const
  * @brief 判断用户是否有改动内容，对应apply动作
  * @return
  */
-bool SARibbonCustomizeWidget::isCached() const
-{
+bool SARibbonCustomizeWidget::isCached() const {
 	return (d_ptr->mCustomizeDatasCache.size() > 0);
 }
 
@@ -14351,16 +13474,14 @@ bool SARibbonCustomizeWidget::isCached() const
  * @brief 获取model
  * @return
  */
-const QStandardItemModel* SARibbonCustomizeWidget::model() const
-{
+const QStandardItemModel* SARibbonCustomizeWidget::model() const {
 	return (d_ptr->mRibbonModel);
 }
 
 /**
  * @brief 根据当前的radiobutton选项来更新model
  */
-void SARibbonCustomizeWidget::updateModel()
-{
+void SARibbonCustomizeWidget::updateModel() {
 	updateModel(ui->radioButtonAllCategory->isChecked() ? ShowAllCategory : ShowMainCategory);
 	if (d_ptr->mRibbonBar) {
 		SARibbonBar* bar = d_ptr->mRibbonBar;
@@ -14381,8 +13502,7 @@ void SARibbonCustomizeWidget::updateModel()
 /**
  * @brief 更新model
  */
-void SARibbonCustomizeWidget::updateModel(RibbonTreeShowType type)
-{
+void SARibbonCustomizeWidget::updateModel(RibbonTreeShowType type) {
 	d_ptr->mShowType = type;
 	d_ptr->updateModel();
 }
@@ -14392,8 +13512,7 @@ void SARibbonCustomizeWidget::updateModel(RibbonTreeShowType type)
  * @return 应用成功返回true
  * @note 所有设定有一个应用成功都会返回true
  */
-bool SARibbonCustomizeWidget::applys()
-{
+bool SARibbonCustomizeWidget::applys() {
 	simplify();
 	if (sa_customize_datas_apply(d_ptr->mCustomizeDatasCache, d_ptr->mRibbonBar) > 0) {
 		// 将临时操作存入已应用操作，并清空临时操作
@@ -14443,9 +13562,8 @@ bool SARibbonCustomizeWidget::applys()
  * @return 如果出现异常，返回false,如果没有自定义数据也会返回false
  * @see sa_customize_datas_to_xml
  */
-bool SARibbonCustomizeWidget::toXml(QXmlStreamWriter* xml) const
-{
-	QList< SARibbonCustomizeData > res = d_ptr->mOldCustomizeDatas;
+bool SARibbonCustomizeWidget::toXml(QXmlStreamWriter* xml) const {
+	QList<SARibbonCustomizeData> res = d_ptr->mOldCustomizeDatas;
 
 	if (isApplied())
 		res << d_ptr->mCustomizeDatasApplied;
@@ -14461,8 +13579,7 @@ bool SARibbonCustomizeWidget::toXml(QXmlStreamWriter* xml) const
  * @param xmlpath
  * @return
  */
-bool SARibbonCustomizeWidget::toXml(const QString& xmlpath) const
-{
+bool SARibbonCustomizeWidget::toXml(const QString& xmlpath) const {
 	QFile f(xmlpath);
 
 	if (!f.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
@@ -14472,8 +13589,8 @@ bool SARibbonCustomizeWidget::toXml(const QString& xmlpath) const
 
 	xml.setAutoFormatting(true);
 	xml.setAutoFormattingIndent(2);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)  // QXmlStreamWriter always encodes XML in UTF-8.
-	xml.setCodec("utf-8");                  // 在writeStartDocument之前指定编码
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) // QXmlStreamWriter always encodes XML in UTF-8.
+	xml.setCodec("utf-8"); // 在writeStartDocument之前指定编码
 #endif
 	xml.writeStartDocument();
 	bool isOK = toXml(&xml);
@@ -14491,9 +13608,8 @@ bool SARibbonCustomizeWidget::toXml(const QString& xmlpath) const
  * @return
  * @note 此函数要在@ref setupActionsManager 函数之后调用
  */
-void SARibbonCustomizeWidget::fromXml(QXmlStreamReader* xml)
-{
-	QList< SARibbonCustomizeData > cds = sa_customize_datas_from_xml(xml, d_ptr->mActionMgr);
+void SARibbonCustomizeWidget::fromXml(QXmlStreamReader* xml) {
+	QList<SARibbonCustomizeData> cds = sa_customize_datas_from_xml(xml, d_ptr->mActionMgr);
 
 	d_ptr->mOldCustomizeDatas = cds;
 }
@@ -14507,8 +13623,7 @@ void SARibbonCustomizeWidget::fromXml(QXmlStreamReader* xml)
  * @note 如果程序启动后加载了自定义配置，再调用此窗口时需要调用此函数，把原来的配置加载进来，
  * 在生成新动作时会把旧动作保存，但在调用applys时不会调用此加载的动作
  */
-void SARibbonCustomizeWidget::fromXml(const QString& xmlpath)
-{
+void SARibbonCustomizeWidget::fromXml(const QString& xmlpath) {
 	QFile f(xmlpath);
 
 	if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -14542,10 +13657,9 @@ void SARibbonCustomizeWidget::fromXml(const QString& xmlpath)
  * @return 所有设定有一个应用成功都会返回true
  * @see sa_customize_datas_from_xml sa_customize_datas_apply sa_apply_customize_from_xml_file
  */
-bool SARibbonCustomizeWidget::fromXml(QXmlStreamReader* xml, SARibbonBar* bar, SARibbonActionsManager* mgr)
-{
+bool SARibbonCustomizeWidget::fromXml(QXmlStreamReader* xml, SARibbonBar* bar, SARibbonActionsManager* mgr) {
 	// 先找到sa-ribbon-customize标签
-	QList< SARibbonCustomizeData > cds = sa_customize_datas_from_xml(xml, mgr);
+	QList<SARibbonCustomizeData> cds = sa_customize_datas_from_xml(xml, mgr);
 
 	return (sa_customize_datas_apply(cds, bar) > 0);
 }
@@ -14553,16 +13667,14 @@ bool SARibbonCustomizeWidget::fromXml(QXmlStreamReader* xml, SARibbonBar* bar, S
 /**
  * @brief 清除已应用的动作
  */
-void SARibbonCustomizeWidget::makeActionsApplied()
-{
+void SARibbonCustomizeWidget::makeActionsApplied() {
 	d_ptr->mCustomizeDatasApplied << d_ptr->mCustomizeDatasCache;
 }
 
 /**
  * @brief 清除applied的动作，cancel操作后需要清空已应用的动作
  */
-void SARibbonCustomizeWidget::clearApplied()
-{
+void SARibbonCustomizeWidget::clearApplied() {
 	d_ptr->mCustomizeDatasApplied.clear();
 }
 
@@ -14571,16 +13683,14 @@ void SARibbonCustomizeWidget::clearApplied()
  *
  * 在执行applys函数后，如果要继续调用，应该clear，否则会导致异常
  */
-void SARibbonCustomizeWidget::clearCache()
-{
+void SARibbonCustomizeWidget::clearCache() {
 	d_ptr->mCustomizeDatasCache.clear();
 }
 
 /**
  * @brief 清除所有动作，不包含本地读取的数据
  */
-void SARibbonCustomizeWidget::clear()
-{
+void SARibbonCustomizeWidget::clear() {
 	clearApplied();
 	clearCache();
 }
@@ -14588,8 +13698,7 @@ void SARibbonCustomizeWidget::clear()
 /**
  * @brief 精简
  */
-void SARibbonCustomizeWidget::simplify()
-{
+void SARibbonCustomizeWidget::simplify() {
 	d_ptr->mCustomizeDatasCache = SARibbonCustomizeData::simplify(d_ptr->mCustomizeDatasCache);
 }
 
@@ -14597,9 +13706,8 @@ void SARibbonCustomizeWidget::simplify()
  * @brief 获取当前界面选中的行属性
  * @return
  */
-SARibbonPannelItem::RowProportion SARibbonCustomizeWidget::selectedRowProportion() const
-{
-	return (static_cast< SARibbonPannelItem::RowProportion >(ui->comboBoxActionProportion->currentData().toInt()));
+SARibbonPannelItem::RowProportion SARibbonCustomizeWidget::selectedRowProportion() const {
+	return (static_cast<SARibbonPannelItem::RowProportion>(ui->comboBoxActionProportion->currentData().toInt()));
 }
 
 /**
@@ -14607,8 +13715,7 @@ SARibbonPannelItem::RowProportion SARibbonCustomizeWidget::selectedRowProportion
  * @return 如果没有选中action，返回nullptr
  * @note 如果要获取treeview选中的action，使用@ref itemToAction 函数
  */
-QAction* SARibbonCustomizeWidget::selectedAction() const
-{
+QAction* SARibbonCustomizeWidget::selectedAction() const {
 	QItemSelectionModel* m = ui->listViewSelect->selectionModel();
 
 	if ((nullptr == m) || !m->hasSelection()) {
@@ -14624,8 +13731,7 @@ QAction* SARibbonCustomizeWidget::selectedAction() const
  * @param item
  * @return 如果没有action可转换，返回nullptr
  */
-QAction* SARibbonCustomizeWidget::itemToAction(QStandardItem* item) const
-{
+QAction* SARibbonCustomizeWidget::itemToAction(QStandardItem* item) const {
 	return (d_ptr->itemToAction(item));
 }
 
@@ -14633,8 +13739,7 @@ QAction* SARibbonCustomizeWidget::itemToAction(QStandardItem* item) const
  * @brief 获取ribbon tree选中的item
  * @return
  */
-QStandardItem* SARibbonCustomizeWidget::selectedItem() const
-{
+QStandardItem* SARibbonCustomizeWidget::selectedItem() const {
 	QItemSelectionModel* m = ui->treeViewResult->selectionModel();
 
 	if ((nullptr == m) || !m->hasSelection()) {
@@ -14649,8 +13754,7 @@ QStandardItem* SARibbonCustomizeWidget::selectedItem() const
  * @brief 获取选中的ribbon tree 的level
  * @return -1为选中异常，0代表选中了category 1代表选中了pannel 2代表选中了action
  */
-int SARibbonCustomizeWidget::selectedRibbonLevel() const
-{
+int SARibbonCustomizeWidget::selectedRibbonLevel() const {
 	QStandardItem* item = selectedItem();
 
 	if (item) {
@@ -14664,8 +13768,7 @@ int SARibbonCustomizeWidget::selectedRibbonLevel() const
  * @param item
  * @return
  */
-int SARibbonCustomizeWidget::itemLevel(QStandardItem* item) const
-{
+int SARibbonCustomizeWidget::itemLevel(QStandardItem* item) const {
 	return (d_ptr->itemLevel(item));
 }
 
@@ -14673,8 +13776,7 @@ int SARibbonCustomizeWidget::itemLevel(QStandardItem* item) const
  * @brief 设置某个item被选中
  * @param item
  */
-void SARibbonCustomizeWidget::setSelectItem(QStandardItem* item, bool ensureVisible)
-{
+void SARibbonCustomizeWidget::setSelectItem(QStandardItem* item, bool ensureVisible) {
 	QItemSelectionModel* m = ui->treeViewResult->selectionModel();
 
 	if (nullptr == m) {
@@ -14694,13 +13796,11 @@ void SARibbonCustomizeWidget::setSelectItem(QStandardItem* item, bool ensureVisi
  * @param item
  * @return
  */
-bool SARibbonCustomizeWidget::isItemCanCustomize(QStandardItem* item) const
-{
+bool SARibbonCustomizeWidget::isItemCanCustomize(QStandardItem* item) const {
 	return (d_ptr->isItemCanCustomize(item));
 }
 
-bool SARibbonCustomizeWidget::isSelectedItemCanCustomize() const
-{
+bool SARibbonCustomizeWidget::isSelectedItemCanCustomize() const {
 	return (isItemCanCustomize(selectedItem()));
 }
 
@@ -14709,18 +13809,15 @@ bool SARibbonCustomizeWidget::isSelectedItemCanCustomize() const
  * @param item
  * @return
  */
-bool SARibbonCustomizeWidget::isCustomizeItem(QStandardItem* item) const
-{
+bool SARibbonCustomizeWidget::isCustomizeItem(QStandardItem* item) const {
 	return (d_ptr->isCustomizeItem(item));
 }
 
-bool SARibbonCustomizeWidget::isSelectedItemIsCustomize() const
-{
+bool SARibbonCustomizeWidget::isSelectedItemIsCustomize() const {
 	return (isCustomizeItem(selectedItem()));
 }
 
-void SARibbonCustomizeWidget::removeItem(QStandardItem* item)
-{
+void SARibbonCustomizeWidget::removeItem(QStandardItem* item) {
 	if (item->parent()) {
 		item->parent()->removeRow(item->row());
 	} else {
@@ -14728,21 +13825,18 @@ void SARibbonCustomizeWidget::removeItem(QStandardItem* item)
 	}
 }
 
-void SARibbonCustomizeWidget::onComboBoxActionIndexCurrentIndexChanged(int index)
-{
+void SARibbonCustomizeWidget::onComboBoxActionIndexCurrentIndexChanged(int index) {
 	int tag = ui->comboBoxActionIndex->itemData(index).toInt();
 
 	d_ptr->mAcionModel->setFilter(tag);
 }
 
-void SARibbonCustomizeWidget::onRadioButtonGroupButtonClicked(QAbstractButton* b)
-{
+void SARibbonCustomizeWidget::onRadioButtonGroupButtonClicked(QAbstractButton* b) {
 	updateModel(b == ui->radioButtonAllCategory ? ShowAllCategory : ShowMainCategory);
 }
 
-void SARibbonCustomizeWidget::onPushButtonNewCategoryClicked()
-{
-	int row                = d_ptr->mRibbonModel->rowCount();
+void SARibbonCustomizeWidget::onPushButtonNewCategoryClicked() {
+	int row = d_ptr->mRibbonModel->rowCount();
 	QItemSelectionModel* m = ui->treeViewResult->selectionModel();
 
 	if (m && m->hasSelection()) {
@@ -14761,18 +13855,17 @@ void SARibbonCustomizeWidget::onPushButtonNewCategoryClicked()
 	setSelectItem(ni);
 	// 把动作插入动作列表中
 	SARibbonCustomizeData d = SARibbonCustomizeData::makeAddCategoryCustomizeData(ni->text(),
-																				  ni->row(),
-																				  SARibbonCustomizeWidget::PrivateData::makeRandomObjName(
-																					  "category"));
+		ni->row(),
+		SARibbonCustomizeWidget::PrivateData::makeRandomObjName(
+			"category"));
 
 	d_ptr->mCustomizeDatasCache.append(d);
-	ni->setData(true, SARibbonCustomizeWidget::CanCustomizeRole);  // 有CustomizeRole，必有CanCustomizeRole
+	ni->setData(true, SARibbonCustomizeWidget::CanCustomizeRole); // 有CustomizeRole，必有CanCustomizeRole
 	ni->setData(true, SARibbonCustomizeWidget::CustomizeRole);
 	ni->setData(d.categoryObjNameValue, SARibbonCustomizeWidget::CustomizeObjNameRole);
 }
 
-void SARibbonCustomizeWidget::onPushButtonNewPannelClicked()
-{
+void SARibbonCustomizeWidget::onPushButtonNewPannelClicked() {
 	QStandardItem* item = selectedItem();
 
 	if (nullptr == item) {
@@ -14802,24 +13895,23 @@ void SARibbonCustomizeWidget::onPushButtonNewPannelClicked()
 	}
 	// 查找category的object name
 	QStandardItem* categoryItem = ni->parent();
-	QString categoryObjName     = "";
+	QString categoryObjName = "";
 
-	categoryObjName         = d_ptr->itemObjectName(categoryItem);
+	categoryObjName = d_ptr->itemObjectName(categoryItem);
 	SARibbonCustomizeData d = SARibbonCustomizeData::makeAddPannelCustomizeData(ni->text(),
-																				ni->row(),
-																				categoryObjName,
-																				SARibbonCustomizeWidget::PrivateData::makeRandomObjName(
-																					"pannel"));
+		ni->row(),
+		categoryObjName,
+		SARibbonCustomizeWidget::PrivateData::makeRandomObjName(
+			"pannel"));
 
 	d_ptr->mCustomizeDatasCache.append(d);
-	ni->setData(true, SARibbonCustomizeWidget::CanCustomizeRole);  // 有CustomizeRole，必有CanCustomizeRole
+	ni->setData(true, SARibbonCustomizeWidget::CanCustomizeRole); // 有CustomizeRole，必有CanCustomizeRole
 	ni->setData(true, SARibbonCustomizeWidget::CustomizeRole);
 	ni->setData(d.pannelObjNameValue, SARibbonCustomizeWidget::CustomizeObjNameRole);
 	setSelectItem(ni);
 }
 
-void SARibbonCustomizeWidget::onPushButtonRenameClicked()
-{
+void SARibbonCustomizeWidget::onPushButtonRenameClicked() {
 	QStandardItem* item = selectedItem();
 
 	if (nullptr == item) {
@@ -14837,11 +13929,11 @@ void SARibbonCustomizeWidget::onPushButtonRenameClicked()
 
 	if (0 == level) {
 		// 改Category名
-		QString cateObjName     = d_ptr->itemObjectName(item);
+		QString cateObjName = d_ptr->itemObjectName(item);
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeRenameCategoryCustomizeData(text, cateObjName);
 		d_ptr->mCustomizeDatasCache.append(d);
 	} else if (1 == level) {
-		QString cateObjName   = d_ptr->itemObjectName(item->parent());
+		QString cateObjName = d_ptr->itemObjectName(item->parent());
 		QString pannelObjName = d_ptr->itemObjectName(item);
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeRenamePannelCustomizeData(text, cateObjName, pannelObjName);
 		d_ptr->mCustomizeDatasCache.append(d);
@@ -14852,9 +13944,8 @@ void SARibbonCustomizeWidget::onPushButtonRenameClicked()
 	item->setText(text);
 }
 
-void SARibbonCustomizeWidget::onPushButtonAddClicked()
-{
-	QAction* act        = selectedAction();
+void SARibbonCustomizeWidget::onPushButtonAddClicked() {
+	QAction* act = selectedAction();
 	QStandardItem* item = selectedItem();
 
 	if ((nullptr == act) || (nullptr == item)) {
@@ -14869,30 +13960,29 @@ void SARibbonCustomizeWidget::onPushButtonAddClicked()
 		// 选中action，添加到这个action之后,把item设置为pannel
 		item = item->parent();
 	}
-	QString pannelObjName   = d_ptr->itemObjectName(item);
+	QString pannelObjName = d_ptr->itemObjectName(item);
 	QString categoryObjName = d_ptr->itemObjectName(item->parent());
-	QString key             = d_ptr->mActionMgr->key(act);
+	QString key = d_ptr->mActionMgr->key(act);
 
 	SARibbonCustomizeData d = SARibbonCustomizeData::makeAddActionCustomizeData(key,
-																				d_ptr->mActionMgr,
-																				selectedRowProportion(),
-																				categoryObjName,
-																				pannelObjName);
+		d_ptr->mActionMgr,
+		selectedRowProportion(),
+		categoryObjName,
+		pannelObjName);
 
 	d_ptr->mCustomizeDatasCache.append(d);
 
 	QStandardItem* actItem = new QStandardItem(act->icon(), act->text());
 
 	actItem->setData(2, SARibbonCustomizeWidget::LevelRole);
-	actItem->setData(true, SARibbonCustomizeWidget::CanCustomizeRole);  // 有CustomizeRole，必有CanCustomizeRole
+	actItem->setData(true, SARibbonCustomizeWidget::CanCustomizeRole); // 有CustomizeRole，必有CanCustomizeRole
 	actItem->setData(true, SARibbonCustomizeWidget::CustomizeRole);
 	actItem->setData(act->objectName(), SARibbonCustomizeWidget::CustomizeObjNameRole);
-	actItem->setData(qintptr(act), SARibbonCustomizeWidget::PointerRole);  // 把action指针传入
+	actItem->setData(qintptr(act), SARibbonCustomizeWidget::PointerRole); // 把action指针传入
 	item->appendRow(actItem);
 }
 
-void SARibbonCustomizeWidget::onPushButtonDeleteClicked()
-{
+void SARibbonCustomizeWidget::onPushButtonDeleteClicked() {
 	QStandardItem* item = selectedItem();
 
 	if (nullptr == item) {
@@ -14909,24 +13999,24 @@ void SARibbonCustomizeWidget::onPushButtonDeleteClicked()
 		d_ptr->mCustomizeDatasCache.append(d);
 	} else if (1 == level) {
 		// 删除pannel
-		QString catObjName      = d_ptr->itemObjectName(item->parent());
-		QString pannelObjName   = d_ptr->itemObjectName(item);
+		QString catObjName = d_ptr->itemObjectName(item->parent());
+		QString pannelObjName = d_ptr->itemObjectName(item);
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeRemovePannelCustomizeData(catObjName, pannelObjName);
 		d_ptr->mCustomizeDatasCache.append(d);
 	} else if (2 == level) {
 		// 删除Action
-		QString catObjName    = d_ptr->itemObjectName(item->parent()->parent());
+		QString catObjName = d_ptr->itemObjectName(item->parent()->parent());
 		QString pannelObjName = d_ptr->itemObjectName(item->parent());
-		QAction* act          = itemToAction(item);
-		QString key           = d_ptr->mActionMgr->key(act);
+		QAction* act = itemToAction(item);
+		QString key = d_ptr->mActionMgr->key(act);
 		if (key.isEmpty() || catObjName.isEmpty() || pannelObjName.isEmpty()) {
 			return;
 		}
 
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeRemoveActionCustomizeData(catObjName,
-																					   pannelObjName,
-																					   key,
-																					   d_ptr->mActionMgr);
+			pannelObjName,
+			key,
+			d_ptr->mActionMgr);
 		d_ptr->mCustomizeDatasCache.append(d);
 	}
 	// 执行删除操作
@@ -14936,8 +14026,7 @@ void SARibbonCustomizeWidget::onPushButtonDeleteClicked()
 	ui->pushButtonDelete->setEnabled(isSelectedItemIsCustomize());
 }
 
-void SARibbonCustomizeWidget::onListViewSelectClicked(const QModelIndex& index)
-{
+void SARibbonCustomizeWidget::onListViewSelectClicked(const QModelIndex& index) {
 	// 每次点击，判断是否可以进行操作，决定pushButtonAdd和pushButtonDelete的显示状态
 	// 点击了listview，判断treeview的状态
 	Q_UNUSED(index);
@@ -14945,8 +14034,7 @@ void SARibbonCustomizeWidget::onListViewSelectClicked(const QModelIndex& index)
 	ui->pushButtonDelete->setEnabled(isSelectedItemCanCustomize());
 }
 
-void SARibbonCustomizeWidget::onTreeViewResultClicked(const QModelIndex& index)
-{
+void SARibbonCustomizeWidget::onTreeViewResultClicked(const QModelIndex& index) {
 	Q_UNUSED(index);
 	// 每次点击，判断是否可以进行操作，决定pushButtonAdd和pushButtonDelete的显示状态
 	QStandardItem* item = selectedItem();
@@ -14957,13 +14045,12 @@ void SARibbonCustomizeWidget::onTreeViewResultClicked(const QModelIndex& index)
 	int level = itemLevel(item);
 
 	ui->pushButtonAdd->setEnabled(selectedAction() && (level > 0) && isItemCanCustomize(item));
-	ui->pushButtonDelete->setEnabled(isItemCanCustomize(item));  // 有CustomizeRole，必有CanCustomizeRole
+	ui->pushButtonDelete->setEnabled(isItemCanCustomize(item)); // 有CustomizeRole，必有CanCustomizeRole
 	ui->pushButtonRename->setEnabled(
-		level != 2 || isItemCanCustomize(item));  // QAction 不能改名 ， 有CustomizeRole，必有CanCustomizeRole
+		level != 2 || isItemCanCustomize(item)); // QAction 不能改名 ， 有CustomizeRole，必有CanCustomizeRole
 }
 
-void SARibbonCustomizeWidget::onToolButtonUpClicked()
-{
+void SARibbonCustomizeWidget::onToolButtonUpClicked() {
 	QStandardItem* item = selectedItem();
 
 	if ((nullptr == item) || (0 == item->row())) {
@@ -14974,38 +14061,38 @@ void SARibbonCustomizeWidget::onToolButtonUpClicked()
 	if (0 == level) {
 		// 移动category
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeChangeCategoryOrderCustomizeData(d_ptr->itemObjectName(item),
-																							  -1);
+			-1);
 		d_ptr->mCustomizeDatasCache.append(d);
 		int r = item->row();
-		item  = d_ptr->mRibbonModel->takeItem(r);
+		item = d_ptr->mRibbonModel->takeItem(r);
 		d_ptr->mRibbonModel->removeRow(r);
 		d_ptr->mRibbonModel->insertRow(r - 1, item);
 	} else if (1 == level) {
 		QStandardItem* paritem = item->parent();
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeChangePannelOrderCustomizeData(d_ptr->itemObjectName(paritem),
-																							d_ptr->itemObjectName(item),
-																							-1);
+			d_ptr->itemObjectName(item),
+			-1);
 		d_ptr->mCustomizeDatasCache.append(d);
 		int r = item->row();
-		item  = paritem->takeChild(r);
+		item = paritem->takeChild(r);
 		paritem->removeRow(r);
 		paritem->insertRow(r - 1, item);
 	} else if (2 == level) {
-		QStandardItem* pannelItem   = item->parent();
+		QStandardItem* pannelItem = item->parent();
 		QStandardItem* categoryItem = pannelItem->parent();
-		QAction* act                = itemToAction(item);
+		QAction* act = itemToAction(item);
 		if (!act) {
 			return;
 		}
 		QString key = d_ptr->mActionMgr->key(act);
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeChangeActionOrderCustomizeData(d_ptr->itemObjectName(categoryItem),
-																							d_ptr->itemObjectName(pannelItem),
-																							key,
-																							d_ptr->mActionMgr,
-																							-1);
+			d_ptr->itemObjectName(pannelItem),
+			key,
+			d_ptr->mActionMgr,
+			-1);
 		d_ptr->mCustomizeDatasCache.append(d);
 		int r = item->row();
-		item  = pannelItem->takeChild(r);
+		item = pannelItem->takeChild(r);
 		pannelItem->removeRow(r);
 		pannelItem->insertRow(r - 1, item);
 	}
@@ -15015,8 +14102,7 @@ void SARibbonCustomizeWidget::onToolButtonUpClicked()
 	onTreeViewResultClicked(item->index());
 }
 
-void SARibbonCustomizeWidget::onToolButtonDownClicked()
-{
+void SARibbonCustomizeWidget::onToolButtonDownClicked() {
 	QStandardItem* item = selectedItem();
 
 	if (item == nullptr) {
@@ -15037,38 +14123,38 @@ void SARibbonCustomizeWidget::onToolButtonDownClicked()
 	if (0 == level) {
 		// 移动category
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeChangeCategoryOrderCustomizeData(d_ptr->itemObjectName(item),
-																							  1);
+			1);
 		d_ptr->mCustomizeDatasCache.append(d);
 		int r = item->row();
-		item  = d_ptr->mRibbonModel->takeItem(item->row());
+		item = d_ptr->mRibbonModel->takeItem(item->row());
 		d_ptr->mRibbonModel->removeRow(r);
 		d_ptr->mRibbonModel->insertRow(r + 1, item);
 	} else if (1 == level) {
 		QStandardItem* paritem = item->parent();
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeChangePannelOrderCustomizeData(d_ptr->itemObjectName(paritem),
-																							d_ptr->itemObjectName(item),
-																							1);
+			d_ptr->itemObjectName(item),
+			1);
 		d_ptr->mCustomizeDatasCache.append(d);
 		int r = item->row();
-		item  = paritem->takeChild(r);
+		item = paritem->takeChild(r);
 		paritem->removeRow(r);
 		paritem->insertRow(r + 1, item);
 	} else if (2 == level) {
-		QStandardItem* pannelItem   = item->parent();
+		QStandardItem* pannelItem = item->parent();
 		QStandardItem* categoryItem = pannelItem->parent();
-		QAction* act                = itemToAction(item);
+		QAction* act = itemToAction(item);
 		if (!act) {
 			return;
 		}
 		QString key = d_ptr->mActionMgr->key(act);
 		SARibbonCustomizeData d = SARibbonCustomizeData::makeChangeActionOrderCustomizeData(d_ptr->itemObjectName(categoryItem),
-																							d_ptr->itemObjectName(pannelItem),
-																							key,
-																							d_ptr->mActionMgr,
-																							-1);
+			d_ptr->itemObjectName(pannelItem),
+			key,
+			d_ptr->mActionMgr,
+			-1);
 		d_ptr->mCustomizeDatasCache.append(d);
 		int r = item->row();
-		item  = pannelItem->takeChild(r);
+		item = pannelItem->takeChild(r);
 		pannelItem->removeRow(r);
 		pannelItem->insertRow(r + 1, item);
 	}
@@ -15078,8 +14164,7 @@ void SARibbonCustomizeWidget::onToolButtonDownClicked()
 	onTreeViewResultClicked(item->index());
 }
 
-void SARibbonCustomizeWidget::onItemChanged(QStandardItem* item)
-{
+void SARibbonCustomizeWidget::onItemChanged(QStandardItem* item) {
 	if (item == nullptr) {
 		return;
 	}
@@ -15087,27 +14172,25 @@ void SARibbonCustomizeWidget::onItemChanged(QStandardItem* item)
 
 	if (0 == level) {
 		if (item->isCheckable()) {
-			QString objname         = d_ptr->itemObjectName(item);
+			QString objname = d_ptr->itemObjectName(item);
 			SARibbonCustomizeData d = SARibbonCustomizeData::makeVisibleCategoryCustomizeData(objname,
-																							  item->checkState()
-																								  == Qt::Checked);
+				item->checkState()
+					== Qt::Checked);
 			d_ptr->mCustomizeDatasCache.append(d);
 		}
 	}
 }
 
-void SARibbonCustomizeWidget::onLineEditSearchActionTextEdited(const QString& text)
-{
+void SARibbonCustomizeWidget::onLineEditSearchActionTextEdited(const QString& text) {
 	d_ptr->mAcionModel->search(text);
 }
 
-void SARibbonCustomizeWidget::onPushButtonResetClicked()
-{
+void SARibbonCustomizeWidget::onPushButtonResetClicked() {
 	int btn = QMessageBox::warning(this,
-								   tr("Warning"),
-								   tr("Are you sure reset all customize setting?"),
-								   QMessageBox::Yes | QMessageBox::No,
-								   QMessageBox::No);
+		tr("Warning"),
+		tr("Are you sure reset all customize setting?"),
+		QMessageBox::Yes | QMessageBox::No,
+		QMessageBox::No);
 
 	if (btn == QMessageBox::Yes) {
 		clear();
@@ -15116,26 +14199,24 @@ void SARibbonCustomizeWidget::onPushButtonResetClicked()
 
 /*** End of inlined file: SARibbonCustomizeWidget.cpp ***/
 
-
 /*** Start of inlined file: SARibbonCustomizeDialog.cpp ***/
 #include <QApplication>
 #include <QPushButton>
-#include <QVBoxLayout>
 #include <QSpacerItem>
+#include <QVBoxLayout>
 
 /**
  * @brief The SARibbonCustomizeDialogUi class
  */
 class SARibbonCustomizeDialogUi {
 public:
-	SARibbonCustomizeWidget *customWidget;
-	QVBoxLayout *verticalLayoutMain;
-	QHBoxLayout *horizontalLayoutButtonGroup;
-	QPushButton *pushButtonCancel;
-	QPushButton *pushButtonOk;
-	QSpacerItem *spacerItemleft;
-	void setupUi(SARibbonMainWindow *ribbonWindow, QWidget *customizeDialog)
-	{
+	SARibbonCustomizeWidget* customWidget;
+	QVBoxLayout* verticalLayoutMain;
+	QHBoxLayout* horizontalLayoutButtonGroup;
+	QPushButton* pushButtonCancel;
+	QPushButton* pushButtonOk;
+	QSpacerItem* spacerItemleft;
+	void setupUi(SARibbonMainWindow* ribbonWindow, QWidget* customizeDialog) {
 		if (customizeDialog->objectName().isEmpty()) {
 			customizeDialog->setObjectName(QStringLiteral("SARibbonCustomizeDialog"));
 		}
@@ -15164,8 +14245,7 @@ public:
 		retranslateUi(customizeDialog);
 	}
 
-	void retranslateUi(QWidget *customizeDialog)
-	{
+	void retranslateUi(QWidget* customizeDialog) {
 		customizeDialog->setWindowTitle(QApplication::translate("SARibbonCustomizeDialog", "Customize Dialog", Q_NULLPTR));
 		pushButtonCancel->setText(QApplication::translate("SARibbonCustomizeDialog", "Cancel", Q_NULLPTR));
 		pushButtonOk->setText(QApplication::translate("SARibbonCustomizeDialog", "OK", Q_NULLPTR));
@@ -15174,10 +14254,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////
 
-SARibbonCustomizeDialog::SARibbonCustomizeDialog(SARibbonMainWindow *ribbonWindow, QWidget *p, Qt::WindowFlags f)
+SARibbonCustomizeDialog::SARibbonCustomizeDialog(SARibbonMainWindow* ribbonWindow, QWidget* p, Qt::WindowFlags f)
 	: QDialog(p, f)
-	, ui(new SARibbonCustomizeDialogUi)
-{
+	, ui(new SARibbonCustomizeDialogUi) {
 	ui->setupUi(ribbonWindow, this);
 	initConnection();
 }
@@ -15188,8 +14267,7 @@ SARibbonCustomizeDialog::SARibbonCustomizeDialog(SARibbonMainWindow *ribbonWindo
  * 等同@ref SARibbonCustomizeWidget::setupActionsManager
  * @param mgr
  */
-void SARibbonCustomizeDialog::setupActionsManager(SARibbonActionsManager *mgr)
-{
+void SARibbonCustomizeDialog::setupActionsManager(SARibbonActionsManager* mgr) {
 	ui->customWidget->setupActionsManager(mgr);
 }
 
@@ -15197,8 +14275,7 @@ void SARibbonCustomizeDialog::setupActionsManager(SARibbonActionsManager *mgr)
  * @brief //判断用户是否有要存储的内容，对应save动作
  * @return
  */
-bool SARibbonCustomizeDialog::isApplied() const
-{
+bool SARibbonCustomizeDialog::isApplied() const {
 	return ui->customWidget->isApplied();
 }
 
@@ -15206,13 +14283,11 @@ bool SARibbonCustomizeDialog::isApplied() const
  * @brief 判断用户是否有改动内容，对应apply动作
  * @return
  */
-bool SARibbonCustomizeDialog::isCached() const
-{
+bool SARibbonCustomizeDialog::isCached() const {
 	return ui->customWidget->isCached();
 }
 
-void SARibbonCustomizeDialog::initConnection()
-{
+void SARibbonCustomizeDialog::initConnection() {
 	connect(ui->pushButtonOk, &QPushButton::clicked, this, &QDialog::accept);
 	connect(ui->pushButtonCancel, &QPushButton::clicked, this, &QDialog::reject);
 }
@@ -15223,8 +14298,7 @@ void SARibbonCustomizeDialog::initConnection()
  * @ref SARibbonCustomizeWidget::applys
  * @return
  */
-bool SARibbonCustomizeDialog::applys()
-{
+bool SARibbonCustomizeDialog::applys() {
 	return ui->customWidget->applys();
 }
 
@@ -15233,8 +14307,7 @@ bool SARibbonCustomizeDialog::applys()
  *
  * @ref SARibbonCustomizeWidget::clear
  */
-void SARibbonCustomizeDialog::clear()
-{
+void SARibbonCustomizeDialog::clear() {
 	ui->customWidget->clear();
 }
 
@@ -15245,8 +14318,7 @@ void SARibbonCustomizeDialog::clear()
  * @param xml
  * @return
  */
-bool SARibbonCustomizeDialog::toXml(QXmlStreamWriter *xml) const
-{
+bool SARibbonCustomizeDialog::toXml(QXmlStreamWriter* xml) const {
 	return (ui->customWidget->toXml(xml));
 }
 
@@ -15256,8 +14328,7 @@ bool SARibbonCustomizeDialog::toXml(QXmlStreamWriter *xml) const
  * @param xmlpath
  * @return
  */
-bool SARibbonCustomizeDialog::toXml(const QString& xmlpath) const
-{
+bool SARibbonCustomizeDialog::toXml(const QString& xmlpath) const {
 	return (ui->customWidget->toXml(xmlpath));
 }
 
@@ -15265,8 +14336,7 @@ bool SARibbonCustomizeDialog::toXml(const QString& xmlpath) const
  * @brief 等同SARibbonCustomizeWidget::fromXml
  * @param xml
  */
-void SARibbonCustomizeDialog::fromXml(QXmlStreamReader *xml)
-{
+void SARibbonCustomizeDialog::fromXml(QXmlStreamReader* xml) {
 	ui->customWidget->fromXml(xml);
 }
 
@@ -15274,8 +14344,7 @@ void SARibbonCustomizeDialog::fromXml(QXmlStreamReader *xml)
  * @brief 等同SARibbonCustomizeWidget::fromXml
  * @param xmlpath
  */
-void SARibbonCustomizeDialog::fromXml(const QString& xmlpath)
-{
+void SARibbonCustomizeDialog::fromXml(const QString& xmlpath) {
 	ui->customWidget->fromXml(xmlpath);
 }
 
@@ -15286,21 +14355,19 @@ void SARibbonCustomizeDialog::fromXml(const QString& xmlpath)
  *
  * @return SARibbonCustomizeWidget指针，参考@ref SARibbonCustomizeWidget
  */
-SARibbonCustomizeWidget *SARibbonCustomizeDialog::customizeWidget() const
-{
+SARibbonCustomizeWidget* SARibbonCustomizeDialog::customizeWidget() const {
 	return (ui->customWidget);
 }
 
 /*** End of inlined file: SARibbonCustomizeDialog.cpp ***/
-
 
 /*** Start of inlined file: SARibbonMainWindow.cpp ***/
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
 #include <QHash>
-#include <QWindowStateChangeEvent>
 #include <QScreen>
+#include <QWindowStateChangeEvent>
 
 #if SARIBBON_USE_3RDPARTY_FRAMELESSHELPER
 #include <QWKWidgets/widgetwindowagent.h>
@@ -15312,8 +14379,7 @@ SARibbonCustomizeWidget *SARibbonCustomizeDialog::customizeWidget() const
 /**
  * @brief The SARibbonMainWindowPrivate class
  */
-class SARibbonMainWindow::PrivateData
-{
+class SARibbonMainWindow::PrivateData {
 	SA_RIBBON_DECLARE_PUBLIC(SARibbonMainWindow)
 public:
 	PrivateData(SARibbonMainWindow* p);
@@ -15329,12 +14395,11 @@ public:
 #endif
 };
 
-SARibbonMainWindow::PrivateData::PrivateData(SARibbonMainWindow* p) : q_ptr(p)
-{
+SARibbonMainWindow::PrivateData::PrivateData(SARibbonMainWindow* p)
+	: q_ptr(p) {
 }
 
-void SARibbonMainWindow::PrivateData::installFrameless(SARibbonMainWindow* p)
-{
+void SARibbonMainWindow::PrivateData::installFrameless(SARibbonMainWindow* p) {
 #if SARIBBON_USE_3RDPARTY_FRAMELESSHELPER
 	mFramelessHelper = new QWK::WidgetWindowAgent(p);
 	mFramelessHelper->setup(p);
@@ -15347,8 +14412,8 @@ void SARibbonMainWindow::PrivateData::installFrameless(SARibbonMainWindow* p)
 // SARibbonMainWindow
 //===================================================
 SARibbonMainWindow::SARibbonMainWindow(QWidget* parent, bool useRibbon, const Qt::WindowFlags flags)
-	: QMainWindow(parent, flags), d_ptr(new SARibbonMainWindow::PrivateData(this))
-{
+	: QMainWindow(parent, flags)
+	, d_ptr(new SARibbonMainWindow::PrivateData(this)) {
 	connect(qApp, &QApplication::primaryScreenChanged, this, &SARibbonMainWindow::onPrimaryScreenChanged);
 	if (useRibbon) {
 		d_ptr->installFrameless(this);
@@ -15357,25 +14422,22 @@ SARibbonMainWindow::SARibbonMainWindow(QWidget* parent, bool useRibbon, const Qt
 	}
 }
 
-SARibbonMainWindow::~SARibbonMainWindow()
-{
+SARibbonMainWindow::~SARibbonMainWindow() {
 }
 
 /**
  * @brief 返回ribbonbar，如果不是使用ribbon模式，返回nullptr
  * @return
  */
-SARibbonBar* SARibbonMainWindow::ribbonBar() const
-{
-	return qobject_cast< SARibbonBar* >(menuWidget());
+SARibbonBar* SARibbonMainWindow::ribbonBar() const {
+	return qobject_cast<SARibbonBar*>(menuWidget());
 }
 
 /**
  * @brief 设置ribbonbar
  * @param bar
  */
-void SARibbonMainWindow::setRibbonBar(SARibbonBar* bar)
-{
+void SARibbonMainWindow::setRibbonBar(SARibbonBar* bar) {
 	QWidget* old = QMainWindow::menuWidget();
 	if (old) {
 		// 如果之前已经设置了menubar，要把之前的删除
@@ -15395,12 +14457,12 @@ void SARibbonMainWindow::setRibbonBar(SARibbonBar* bar)
 	auto helper = d_ptr->mFramelessHelper;
 	helper->setTitleBar(bar);
 	// 以下这些窗口，需要允许点击
-	helper->setHitTestVisible(wg);                          // IMPORTANT!
-	helper->setHitTestVisible(bar->ribbonTabBar());         // IMPORTANT!
-	helper->setHitTestVisible(bar->rightButtonGroup());     // IMPORTANT!
-	helper->setHitTestVisible(bar->applicationButton());    // IMPORTANT!
-	helper->setHitTestVisible(bar->quickAccessBar());       // IMPORTANT!
-	helper->setHitTestVisible(bar->ribbonStackedWidget());  // IMPORTANT!
+	helper->setHitTestVisible(wg); // IMPORTANT!
+	helper->setHitTestVisible(bar->ribbonTabBar()); // IMPORTANT!
+	helper->setHitTestVisible(bar->rightButtonGroup()); // IMPORTANT!
+	helper->setHitTestVisible(bar->applicationButton()); // IMPORTANT!
+	helper->setHitTestVisible(bar->quickAccessBar()); // IMPORTANT!
+	helper->setHitTestVisible(bar->ribbonStackedWidget()); // IMPORTANT!
 	if (wg->closeButton()) {
 		helper->setSystemButton(QWK::WindowAgentBase::Close, wg->closeButton());
 	}
@@ -15425,22 +14487,19 @@ void SARibbonMainWindow::setRibbonBar(SARibbonBar* bar)
  * @param w
  * @param visible
  */
-void SARibbonMainWindow::setFramelessHitTestVisible(const QWidget* w, bool visible)
-{
+void SARibbonMainWindow::setFramelessHitTestVisible(const QWidget* w, bool visible) {
 	auto helper = d_ptr->mFramelessHelper;
 	helper->setHitTestVisible(w, visible);
 }
 #else
 
-SAFramelessHelper* SARibbonMainWindow::framelessHelper()
-{
+SAFramelessHelper* SARibbonMainWindow::framelessHelper() {
 	return (d_ptr->mFramelessHelper);
 }
 
 #endif
 
-bool SARibbonMainWindow::eventFilter(QObject* obj, QEvent* e)
-{
+bool SARibbonMainWindow::eventFilter(QObject* obj, QEvent* e) {
 #if SARIBBON_USE_3RDPARTY_FRAMELESSHELPER
 #else
 	// 这个过滤是为了把ribbonBar上的动作传递到mainwindow，再传递到frameless，
@@ -15469,16 +14528,14 @@ bool SARibbonMainWindow::eventFilter(QObject* obj, QEvent* e)
  * @brief 获取系统按钮组，可以在此基础上添加其他按钮
  * @return
  */
-SARibbonSystemButtonBar* SARibbonMainWindow::windowButtonBar() const
-{
+SARibbonSystemButtonBar* SARibbonMainWindow::windowButtonBar() const {
 	return d_ptr->mWindowButtonGroup;
 }
 
 /**
  * @brief 此函数仅用于控制最小最大化和关闭按钮的显示
  */
-void SARibbonMainWindow::updateWindowFlag(Qt::WindowFlags flags)
-{
+void SARibbonMainWindow::updateWindowFlag(Qt::WindowFlags flags) {
 	if (SARibbonSystemButtonBar* g = d_ptr->mWindowButtonGroup) {
 		g->updateWindowFlag(flags);
 	}
@@ -15493,8 +14550,7 @@ void SARibbonMainWindow::updateWindowFlag(Qt::WindowFlags flags)
  * @endcode
  * @param theme
  */
-void SARibbonMainWindow::setRibbonTheme(SARibbonTheme theme)
-{
+void SARibbonMainWindow::setRibbonTheme(SARibbonTheme theme) {
 	sa_set_ribbon_theme(this, theme);
 	d_ptr->mCurrentRibbonTheme = theme;
 	if (SARibbonBar* bar = ribbonBar()) {
@@ -15539,13 +14595,13 @@ void SARibbonMainWindow::setRibbonTheme(SARibbonTheme theme)
 		case SARibbonTheme::RibbonThemeWindows7:
 		case SARibbonTheme::RibbonThemeOffice2013:
 		case SARibbonTheme::RibbonThemeDark:
-			bar->setContextCategoryColorList(QList< QColor >());  //< 设置空颜色列表会重置为默认色系
+			bar->setContextCategoryColorList(QList<QColor>()); //< 设置空颜色列表会重置为默认色系
 			break;
 		case SARibbonTheme::RibbonThemeOffice2016Blue:
-			bar->setContextCategoryColorList(QList< QColor >() << QColor(18, 64, 120));  //< 设置空颜色列表会重置为默认色系
+			bar->setContextCategoryColorList(QList<QColor>() << QColor(18, 64, 120)); //< 设置空颜色列表会重置为默认色系
 			break;
 		case SARibbonTheme::RibbonThemeOffice2021Blue:
-			bar->setContextCategoryColorList(QList< QColor >() << QColor(209, 207, 209));  //< 设置空颜色列表会重置为默认色系
+			bar->setContextCategoryColorList(QList<QColor>() << QColor(209, 207, 209)); //< 设置空颜色列表会重置为默认色系
 			break;
 		default:
 			break;
@@ -15559,13 +14615,11 @@ void SARibbonMainWindow::setRibbonTheme(SARibbonTheme theme)
 	}
 }
 
-SARibbonTheme SARibbonMainWindow::ribbonTheme() const
-{
+SARibbonTheme SARibbonMainWindow::ribbonTheme() const {
 	return (d_ptr->mCurrentRibbonTheme);
 }
 
-bool SARibbonMainWindow::isUseRibbon() const
-{
+bool SARibbonMainWindow::isUseRibbon() const {
 	return (nullptr != ribbonBar());
 }
 
@@ -15573,17 +14627,15 @@ bool SARibbonMainWindow::isUseRibbon() const
  * @brief 创建ribbonbar的工厂函数
  * @return
  */
-SARibbonBar* SARibbonMainWindow::createRibbonBar()
-{
+SARibbonBar* SARibbonMainWindow::createRibbonBar() {
 	SARibbonBar* bar = new SARibbonBar(this);
 	bar->setContentsMargins(3, 0, 3, 0);
 	return bar;
 }
 
-void SARibbonMainWindow::resizeEvent(QResizeEvent* e)
-{
+void SARibbonMainWindow::resizeEvent(QResizeEvent* e) {
 	QMainWindow::resizeEvent(e);
-	SARibbonBar* bar            = ribbonBar();
+	SARibbonBar* bar = ribbonBar();
 	SARibbonSystemButtonBar* wg = d_ptr->mWindowButtonGroup;
 
 	if (wg) {
@@ -15606,8 +14658,7 @@ void SARibbonMainWindow::resizeEvent(QResizeEvent* e)
 	}
 }
 
-void SARibbonMainWindow::changeEvent(QEvent* e)
-{
+void SARibbonMainWindow::changeEvent(QEvent* e) {
 	if (e) {
 		switch (e->type()) {
 		case QEvent::WindowStateChange: {
@@ -15627,8 +14678,7 @@ void SARibbonMainWindow::changeEvent(QEvent* e)
  * @brief 主屏幕切换触发的信号
  * @param screen
  */
-void SARibbonMainWindow::onPrimaryScreenChanged(QScreen* screen)
-{
+void SARibbonMainWindow::onPrimaryScreenChanged(QScreen* screen) {
 	Q_UNUSED(screen);
 	// 主屏幕切换后，从新计算所有尺寸
 	if (SARibbonBar* bar = ribbonBar()) {
@@ -15637,30 +14687,29 @@ void SARibbonMainWindow::onPrimaryScreenChanged(QScreen* screen)
 	}
 }
 
-void sa_set_ribbon_theme(QWidget* w, SARibbonTheme theme)
-{
+void sa_set_ribbon_theme(QWidget* w, SARibbonTheme theme) {
 	QFile file;
 	switch (theme) {
 	case SARibbonTheme::RibbonThemeWindows7:
-		file.setFileName(":/theme/resource/theme-win7.qss");
+		file.setFileName(":/theme/themes/theme-win7.qss");
 		break;
 	case SARibbonTheme::RibbonThemeOffice2013:
-		file.setFileName(":/theme/resource/theme-office2013.qss");
+		file.setFileName(":/theme/themes/theme-office2013.qss");
 		break;
 	case SARibbonTheme::RibbonThemeOffice2016Blue:
-		file.setFileName(":/theme/resource/theme-office2016-blue.qss");
+		file.setFileName(":/theme/themes/theme-office2016-blue.qss");
 		break;
 	case SARibbonTheme::RibbonThemeOffice2021Blue:
-		file.setFileName(":/theme/resource/theme-office2021-blue.qss");
+		file.setFileName(":/theme/themes/theme-office2021-blue.qss");
 		break;
 	case SARibbonTheme::RibbonThemeDark:
-		file.setFileName(":/theme/resource/theme-dark.qss");
+		file.setFileName(":/theme/themes/theme-dark.qss");
 		break;
 	case SARibbonTheme::RibbonThemeDark2:
-		file.setFileName(":/theme/resource/theme-dark2.qss");
+		file.setFileName(":/theme/themes/theme-dark2.qss");
 		break;
 	default:
-		file.setFileName(":/theme/resource/theme-office2013.qss");
+		file.setFileName(":/theme/themes/theme-office2013.qss");
 		break;
 	}
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -15674,7 +14723,6 @@ void sa_set_ribbon_theme(QWidget* w, SARibbonTheme theme)
 /*** End of inlined file: SARibbonMainWindow.cpp ***/
 
 #ifdef _MSC_VER
-#pragma warning (pop)
-#pragma pop_macro ("_CRT_SECURE_NO_WARNINGS")
+#pragma warning(pop)
+#pragma pop_macro("_CRT_SECURE_NO_WARNINGS")
 #endif
-
