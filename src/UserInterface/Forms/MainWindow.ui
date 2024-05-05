@@ -21,23 +21,38 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
      <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <property name="spacing">
+     <number>2</number>
+    </property>
     <item row="0" column="0">
-     <widget class="QWidget" name="ribbonBar" native="true">
+     <widget class="RibbonBarWidget" name="ribbonBar" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>80</height>
+        <height>126</height>
        </size>
       </property>
      </widget>
@@ -156,6 +171,19 @@
         </property>
         <item row="0" column="0">
          <layout class="QGridLayout" name="toolBarLayout">
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="edgesSelectorButton">
             <property name="minimumSize">
@@ -197,18 +225,46 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+          <item row="0" column="2">
+           <widget class="QPushButton" name="volumeSelectorButton">
+            <property name="minimumSize">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>32</width>
+              <height>23</height>
              </size>
             </property>
-           </spacer>
+            <property name="maximumSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Select volumes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../../resources/resources.qrc">
+              <normaloff>:/icons/icons/volume_selector.svg</normaloff>:/icons/icons/volume_selector.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="facesSelectorButton">
@@ -236,47 +292,6 @@
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
               <normaloff>:/icons/icons/face_selector.svg</normaloff>:/icons/icons/face_selector.svg</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="volumeSelectorButton">
-            <property name="minimumSize">
-             <size>
-              <width>32</width>
-              <height>23</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Select volumes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/icons/volume_selector.svg</normaloff>:/icons/icons/volume_selector.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -441,6 +456,12 @@
    <class>PropertiesWidget</class>
    <extends>QTableView</extends>
    <header>PropertiesWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RibbonBarWidget</class>
+   <extends>QWidget</extends>
+   <header>RibbonBarWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

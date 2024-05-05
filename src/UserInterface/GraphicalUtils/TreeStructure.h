@@ -22,6 +22,9 @@
 
 #include "AppDefaults.h"
 #include "PropertiesModel.h"
+#include "TreeContextMenu.h"
+
+class TreeContextMenu;
 
 #include "document.h"
 #include "istreamwrapper.h"
@@ -187,6 +190,8 @@ private:
 	 * QMap that maps QTreeWidgetItem pointers to QDomElement pointers.
 	 */
 	QMap<QTreeWidgetItem*, QDomElement*> domElements;
+
+	TreeContextMenu* contextMenu;
 
 	/**
 	 * Enum class representing different types of tree roots.

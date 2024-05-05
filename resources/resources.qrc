@@ -1,9 +1,46 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/windowsflag-normal.svg</file>
+    <file>icons/useqss.svg</file>
+    <file>icons/undo.svg</file>
+    <file>icons/save.svg</file>
+    <file>icons/redo.svg</file>
+    <file>icons/hidePannel.svg</file>
+    <file>icons/folder-star.svg</file>
+    <file>icons/customize0.svg</file>
+    <file>icons/action2.svg</file>
+    <file>icons/action.svg</file>
     <file>icons/draft.svg</file>
     <file>icons/face_selector.svg</file>
     <file>icons/edge_selector.svg</file>
     <file>icons/volume_selector.svg</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>images/Titlebar_Unshade.png</file>
+    <file>images/Titlebar_Shade.png</file>
+    <file>images/Titlebar_Normal_Hover.svg</file>
+    <file>images/Titlebar_Normal.svg</file>
+    <file>images/Titlebar_Min_Hover.svg</file>
+    <file>images/Titlebar_Min.svg</file>
+    <file>images/Titlebar_Max_Hover.svg</file>
+    <file>images/Titlebar_Max.svg</file>
+    <file>images/Titlebar_Close_Hover.svg</file>
+    <file>images/Titlebar_Close.svg</file>
+    <file>images/ribbonPannelOptionButton.png</file>
+    <file>images/define-color.svg</file>
+    <file>images/ArrowUp.png</file>
+    <file>images/ArrowMore.png</file>
+    <file>images/ArrowDown.png</file>
+  </qresource>
+  <qresource prefix="theme">
+    <file>themes/theme-win7.qss</file>
+    <file>themes/theme-office2021-blue.qss</file>
+    <file>themes/theme-office2016-blue.qss</file>
+    <file>themes/theme-office2013-em.qss</file>
+    <file>themes/theme-office2013.qss</file>
+    <file>themes/theme-dark2.qss</file>
+    <file>themes/theme-dark.qss</file>
+    <file>themes/office2013-px.qss</file>
   </qresource>
   <qresource prefix="templates">
     <file>templates/ComboboxModels.json</file>
