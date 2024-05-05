@@ -1,7 +1,7 @@
 ﻿/*SARibbonBar*/
 SARibbonBar{
-  background-color: #24292e;
-  border: solid #24292e;
+  background-color: #2a2a2a;
+  border: solid #2a2a2a;
   color:#dadada;
 }
 
@@ -25,7 +25,7 @@ SARibbonSeparatorWidget {
 
 /*SARibbonCategory*/
 SARibbonCategory {
-  background-color: #24292e;
+  background-color: #2a2a2a;
   border-bottom: 1px solid #5d636a;
 }
 SARibbonCategory:focus {
@@ -39,7 +39,7 @@ SARibbonCategory > SARibbonSeparatorWidget {
 
 /*SARibbonPannel*/
 SARibbonPannel {
-  background-color: #24292e;
+  background-color: #2a2a2a;
   border: none;
 }
 
@@ -50,7 +50,7 @@ SARibbonPannel > SARibbonSeparatorWidget {
 
 /*SARibbonPannelLabel*/
 SARibbonPannelLabel {
-    background-color: #24292e;
+    background-color: #2a2a2a;
     color: #dadada;
 }
 
@@ -135,7 +135,7 @@ SARibbonTabBar::tab:hover:!selected {
 }
 
 SARibbonTabBar::tab:!selected {
-  color: #afafa6;
+  color: white;
 }
 
 /*SARibbonCheckBox*/
@@ -149,7 +149,7 @@ SARibbonCheckBox{
 SARibbonToolButton{
     border:none;
     color:#dadada;
-    background-color: #24292e;
+    background-color: #2a2a2a;
 } 
 
 SARibbonToolButton:focus {

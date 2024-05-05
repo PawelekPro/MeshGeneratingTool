@@ -34,7 +34,7 @@ RibbonBarWidget::~RibbonBarWidget() {
 
 void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	SARibbonCategory* page1 = new SARibbonCategory();
-	page1->setCategoryName("page1");
+	page1->setCategoryName("Home");
 	SARibbonPannel* pannel1 = new SARibbonPannel("pannel1", page1);
 	page1->addPannel(pannel1);
 	QAction* act = createAction("  save  ", ":/icons/icons/save.svg");
@@ -51,8 +51,16 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	bar->addCategoryPage(page1);
 
 	SARibbonCategory* page2 = new SARibbonCategory();
-	page2->setCategoryName("page2");
+	page2->setCategoryName("Mesh");
 	bar->addCategoryPage(page2);
+
+	SARibbonCategory* page3 = new SARibbonCategory();
+	page3->setCategoryName("Display");
+	bar->addCategoryPage(page3);
+
+	SARibbonCategory* page4 = new SARibbonCategory();
+	page4->setCategoryName("Selection");
+	bar->addCategoryPage(page4);
 
 	mComboTheme = new QComboBox();
 	mComboTheme->addItem("Theme Win7", static_cast<int>(SARibbonTheme::RibbonThemeWindows7));
