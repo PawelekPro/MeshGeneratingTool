@@ -70,8 +70,8 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel2->addSmallWidget(mComboTheme);
 
 	SARibbonQuickAccessBar* qbar = _ribbonBar->quickAccessBar();
-	qbar->addAction(createAction("undo", ":/icons/icons/undo.svg"));
-	qbar->addAction(createAction("redo", ":/icons/icons/redo.svg"));
+	// qbar->addAction(createAction("undo", ":/icons/icons/undo.svg"));
+	// qbar->addAction(createAction("redo", ":/icons/icons/redo.svg"));
 }
 
 QAction* RibbonBarWidget::createAction(const QString& text, const QString& iconurl) {
