@@ -23,7 +23,8 @@ const QString AppDefaults::_templatesPath = ":/templates/templates/ProjectSetup.
 const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/ComboboxModels.json";
 
 //--------------------------------------------------------------------------------------
-AppDefaults::AppDefaults() {
+AppDefaults::AppDefaults()
+	: settings("settingsFile.ini", QSettings::IniFormat) {
 	settings.beginGroup("ApplicationDefaults");
 	settings.setValue("Version", "1.0.0");
 	settings.setValue("ProjFileVersion", "1.0");
