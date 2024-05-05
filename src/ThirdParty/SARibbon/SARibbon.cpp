@@ -777,7 +777,7 @@ SAColorPaletteGridWidget::PrivateData::PrivateData(SAColorPaletteGridWidget* p)
 QList<QColor> SAColorPaletteGridWidget::PrivateData::makeColorPalette(const QList<QColor>& clrList) const {
 	QList<QColor> res;
 	for (int f : qAsConst(mFactor)) {
-		for (const QColor& c : qAsConst(clrList)) {
+		for (const QColor& c : std::as_const(clrList)) {
 			res.append(c.lighter(f));
 		}
 	}
