@@ -151,6 +151,31 @@ MESSAGE( STATUS "---------------------------------------------------------------
 INCLUDE_DIRECTORIES(${RAPIDJSON_PATH})
 
 
+# SARibbonBar library (ribbon bar widget)
+# https://github.com/czyt1988/SARibbon?tab=readme-ov-file
+######################################################################
+set(SARIBBON_PATH ${CMAKE_SOURCE_DIR}/src/ThirdParty/SARibbon)
+file(STRINGS ${SARIBBON_PATH}/SARibbon.h SA_RIBBON_BAR_VERSION_MAJ
+    REGEX "#define SA_RIBBON_BAR_VERSION_MAJ.*"
+  )
+  string(REGEX MATCH "[0-9]+" SA_RIBBON_BAR_VERSION_MAJ ${SA_RIBBON_BAR_VERSION_MAJ})
+
+file(STRINGS ${SARIBBON_PATH}/SARibbon.h SA_RIBBON_BAR_VERSION_MIN
+    REGEX "#define SA_RIBBON_BAR_VERSION_MIN.*"
+)
+string(REGEX MATCH "[0-9]+" SA_RIBBON_BAR_VERSION_MIN ${SA_RIBBON_BAR_VERSION_MIN})
+
+file(STRINGS ${SARIBBON_PATH}/SARibbon.h SA_RIBBON_BAR_VERSION_PAT
+    REGEX "#define SA_RIBBON_BAR_VERSION_PAT.*"
+)
+string(REGEX MATCH "[0-9]+" SA_RIBBON_BAR_VERSION_PAT ${SA_RIBBON_BAR_VERSION_PAT})
+
+MESSAGE( STATUS "SARibbonBar Library FOUND" )
+MESSAGE( STATUS "SARibbonBar VERSION: ${SA_RIBBON_BAR_VERSION_MAJ}.${SA_RIBBON_BAR_VERSION_MIN}.${SA_RIBBON_BAR_VERSION_PAT}")
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+INCLUDE_DIRECTORIES(${SARIBBON_PATH})
+
+
 # Modules
 ######################################################################
 ADD_SUBDIRECTORY(GeometryCore) 

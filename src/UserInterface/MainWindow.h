@@ -28,6 +28,8 @@
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
 
+#include "SARibbon.h"
+
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QFileInfo>
