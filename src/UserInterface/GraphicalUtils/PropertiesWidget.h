@@ -48,7 +48,7 @@ public:
 
 private:
 	// Container for temporary widgets existing between model selection change event
-	QList<QWidget*> m_createdWidgets;
+	QList<QWidget*> _createdWidgets;
 
 	/**
 	 * The height of a row in a table.
