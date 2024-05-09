@@ -204,7 +204,7 @@ public:
 
 	virtual void OnLeftButtonDown() {
 		// Set selection mode only here in order to have access to rendered actors
-		m_picker->SetSelectionMode(SM_Edge);
+		m_picker->SetSelectionMode(SM_Face);
 
 		// Invoke basic method
 		vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
@@ -355,6 +355,7 @@ int main(int, char**) {
 	vtkSmartPointer<vtkRenderWindowInteractor> aRenInter = vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	aRenInter->SetRenderWindow(CTX::RenderWindow);
 	aRenInter->SetInteractorStyle(aStylePick);
+	aRenderer->ResetCamera();
 
 	// Start rendering
 	CTX::RenderWindow->Render();
