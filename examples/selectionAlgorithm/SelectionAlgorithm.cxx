@@ -21,6 +21,7 @@
 
 // VIS includes
 #include <IVtkOCC_Shape.hxx>
+#include <IVtkTools_DisplayModeFilter.hxx>
 #include <IVtkTools_ShapeDataSource.hxx>
 #include <IVtkTools_ShapeObject.hxx>
 #include <IVtkTools_ShapePicker.hxx>
@@ -48,8 +49,8 @@ public:
 		this->Build();
 
 		if (m_bIsHili) {
-			m_actor->GetProperty()->SetColor(1.0, 1.0, 1.0);
-			m_actor->GetProperty()->SetLineWidth(4.0);
+			m_actor->GetProperty()->SetColor(0.5, 0.5, 0.5);
+			m_actor->GetProperty()->SetLineWidth(0.0);
 		}
 	}
 
@@ -84,12 +85,16 @@ public:
 		// Initialize Data Source with new wrapper
 		aShapeDS->SetShape(aShapeWrapper);
 
+		vtkSmartPointer<IVtkTools_DisplayModeFilter> DMFilter = vtkSmartPointer<IVtkTools_DisplayModeFilter>::New();
+		DMFilter->AddInputConnection(aShapeDS->GetOutputPort());
+		DMFilter->SetDisplayMode(DM_Shading);
+
 		// Establish filters connectivity
 		if (m_bIsHili) {
 			m_subDataFilter->SetInputConnection(aShapeDS->GetOutputPort());
 			m_mapper->SetInputConnection(m_subDataFilter->GetOutputPort());
 		} else
-			m_mapper->SetInputConnection(aShapeDS->GetOutputPort());
+			m_mapper->SetInputConnection(DMFilter->GetOutputPort());
 
 		// Bind DS to actor
 		IVtkTools_ShapeObject::SetShapeSource(aShapeDS, m_actor);
@@ -200,6 +205,51 @@ public:
 		vtkInteractorStyleTrackballCamera::OnRightButtonDown();
 		// Invoke observers
 		this->InvokeEvent(EVENT_TRANSFORM, NULL);
+	}
+
+	virtual void OnMouseMove() {
+		m_picker->SetSelectionMode(SM_Face);
+
+		Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
+			this->Interactor->GetEventPosition()[1] };
+		m_picker->Pick(aPos[0], aPos[1], 0);
+
+		// Traversing results
+		vtkActor* aPickedActor = NULL;
+		vtkSmartPointer<vtkActorCollection> anActorCollection = m_picker->GetPickedActors();
+		//
+		if (anActorCollection && anActorCollection->GetNumberOfItems() > 0) {
+			anActorCollection->InitTraversal();
+			while (vtkActor* anActor = anActorCollection->GetNextActor()) {
+				aPickedActor = anActor;
+				IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
+				if (!aDataSource)
+					continue;
+
+				// Access initial shape wrapper
+				IVtkOCC_Shape::Handle aShapeWrapper = aDataSource->GetShape();
+				if (aShapeWrapper.IsNull())
+					continue;
+
+				IVtk_IdType aShapeID = aShapeWrapper->GetId();
+				IVtk_ShapeIdList subShapeIds = m_picker->GetPickedSubShapesIds(aShapeID);
+
+				// Get IDs of cells for picked sub-shapes.
+				TColStd_PackedMapOfInteger aCellMask;
+				for (IVtk_ShapeIdList::Iterator sIt(subShapeIds); sIt.More(); sIt.Next()) {
+					aCellMask.Add((int)sIt.Value());
+					const TopoDS_Shape& aSubShape = aShapeWrapper->GetSubShape(sIt.Value());
+					cout << "--------------------------------------------------------------" << endl;
+					cout << "Sub-shape ID: " << sIt.Value() << endl;
+					cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
+				}
+
+				CTX::ShapeHiliPL->InitSubPolyFilter(aCellMask);
+				CTX::ShapeHiliPL->Update();
+				break;
+			}
+		}
+		vtkInteractorStyleTrackballCamera::OnMouseMove();
 	}
 
 	virtual void OnLeftButtonDown() {
