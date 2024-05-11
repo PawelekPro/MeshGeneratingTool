@@ -9,6 +9,7 @@
 #include <vtkCommand.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkLogger.h>
+#include <vtkLookupTable.h>
 #include <vtkNamedColors.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyDataMapper.h>
@@ -102,8 +103,13 @@ public:
 		// Initialize mapper
 		if (m_bIsHili)
 			m_mapper->ScalarVisibilityOff();
-		else
-			IVtkTools::InitShapeMapper(m_mapper);
+		else {
+			// Custom lookup table (optinal!)
+			vtkSmartPointer<vtkLookupTable> Table = IVtkTools::InitLookupTable();
+			IVtkTools::SetLookupTableColor(Table, MT_ShadedFace, 0.35, 0.45, 0.5);
+
+			IVtkTools::InitShapeMapper(m_mapper, Table);
+		}
 	}
 
 	void AddToRenderer(vtkRenderer* theRenderer) const {
