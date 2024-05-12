@@ -21,6 +21,7 @@
 #include <vtkTransform.h>
 
 // VIS includes
+#include <IVtkDraw_HighlightAndSelectionPipeline.hxx>
 #include <IVtkOCC_Shape.hxx>
 #include <IVtkTools_DisplayModeFilter.hxx>
 #include <IVtkTools_ShapeDataSource.hxx>

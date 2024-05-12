@@ -74,6 +74,7 @@ set(OCC_LIBS
     TKXmlXCAF
     TKXSBase
     TKIVtk
+    TKIVtkDraw
 )
 
 set(OCC_TYPE "OpenCASCADE Standard Edition")

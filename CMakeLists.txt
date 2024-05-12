@@ -7,6 +7,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 23)
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Define an option to include/exclude examples
+option(BUILD_EXAMPLES "Build examples" ON)
+
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -203,9 +206,10 @@ INCLUDE_DIRECTORIES(${SARIBBON_PATH})
 # Include the src directory
 add_subdirectory(src)
 
-# Include the examples directory
-add_subdirectory(examples)
-
+if(BUILD_EXAMPLES)
+    # Include the examples directory
+    add_subdirectory(examples)
+endif()
 
 # Print info
 ######################################################################

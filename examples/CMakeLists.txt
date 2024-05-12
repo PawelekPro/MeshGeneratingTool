@@ -1,1 +1,2 @@
 ADD_SUBDIRECTORY(selectionAlgorithm) 
+ADD_SUBDIRECTORY(highlightAlgorithm) 
