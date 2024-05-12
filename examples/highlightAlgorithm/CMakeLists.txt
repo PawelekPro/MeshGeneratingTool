@@ -1,7 +1,7 @@
 project(highlightAlgorithm)
 
 add_executable(highlightAlgorithm 
-    HighlightAlgorithm.cxx
+    IVtk_SelectionAlgorithm.cxx
     IVtk_CustomSelectionPipeline.cxx
     IVtk_CustomInteractorStyle.cxx
 )
