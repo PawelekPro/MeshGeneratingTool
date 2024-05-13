@@ -78,6 +78,10 @@ void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
 				aSubIds.Append(aSubSubIds);
+				const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
+				cout << "--------------------------------------------------------------" << endl;
+				cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
+				cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
 			}
 			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
 			aFilter->SetData(aSubIds);
