@@ -1,13 +1,8 @@
 ADD_LIBRARY(GraphicalUtils 
-  Configuration.h
   ProgressBar.cpp
-  ProgressBar.h
   PropertiesModel.cpp
-  PropertiesModel.h
   PropertiesWidget.cpp
-  PropertiesWidget.h
   TreeStructure.cpp
-  TreeStructure.h
 )
 
 TARGET_LINK_LIBRARIES(GraphicalUtils PRIVATE 
