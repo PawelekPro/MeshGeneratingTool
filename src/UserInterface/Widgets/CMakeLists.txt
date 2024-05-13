@@ -12,10 +12,6 @@ ADD_LIBRARY(Widgets
   ${SARIBBON_PATH}/SARibbonBar/resource.qrc
 )
 
-INCLUDE_DIRECTORIES(
-  ${PRJ_SOURCE_DIR}/src/UserInterface/Widgets
-)
-
 TARGET_LINK_LIBRARIES(Widgets PUBLIC 
   ${VTK_LIBRARIES}  
   Qt${QT_VERSION_MAJOR}::Widgets

@@ -20,28 +20,15 @@
 #ifndef QVTKINTERACTORSTYLE_H
 #define QVTKINTERACTORSTYLE_H
 
-#include "QIVtkSelectionPipeline.h"
 #include "QVTKRenderWindow.h"
 
-// VTK includes
 #include <vtkCellPicker.h>
 #include <vtkHardwarePicker.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNamedColors.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
 
-// VIS includes
-#include <IVtkOCC_Shape.hxx>
-#include <IVtkTools_DisplayModeFilter.hxx>
-#include <IVtkTools_ShapeDataSource.hxx>
-#include <IVtkTools_ShapeObject.hxx>
-#include <IVtkTools_ShapePicker.hxx>
-#include <IVtkTools_SubPolyDataFilter.hxx>
-
-// Qt includes
 #include <QAction>
 #include <QFont>
 #include <QMenu>
@@ -83,7 +70,6 @@ public:
 
 	virtual void OnKeyPress() override;
 	virtual void OnKeyRelease() override;
-
 	/**
 	 * @brief  Activate interactor style and set its default render window widget.
 	 *
@@ -98,19 +84,9 @@ public:
 	 */
 	Rendering::QVTKRenderWindow* getRenderWindow();
 
-	void setRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
-	vtkSmartPointer<vtkRenderer> getRenderer() const;
-	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker);
-	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
-	void setPipeline(const Handle(QIVtkSelectionPipeline) pipeline);
-
 protected:
 	QVTKInteractorStyle();
-	~QVTKInteractorStyle();
-
-private:
-	QVTKInteractorStyle(const QVTKInteractorStyle&);
-	void operator=(const QVTKInteractorStyle&);
+	~QVTKInteractorStyle() override;
 
 private:
 	/**
@@ -119,16 +95,26 @@ private:
 	 */
 	void createContextMenu();
 
-private:
 	Rendering::QVTKRenderWindow* _qvtkRenderWindow;
 	QPointer<QMenu> _contextMenu;
 	QPointer<QAction> _fitViewAction;
 	QPointer<QAction> _faceSizingAction;
 	QPointer<QAction> _edgeSizingAction;
 
-	vtkSmartPointer<vtkRenderer> m_renderer;
-	vtkSmartPointer<IVtkTools_ShapePicker> m_picker;
-	Handle(QIVtkSelectionPipeline) m_pipeline;
+	// Container for storing picked actor and its properties.
+	vtkSmartPointer<vtkPropPicker> LMBPicker;
+	vtkSmartPointer<vtkActor> LMBActor;
+	std::vector<vtkSmartPointer<vtkActor>> pickedActors;
+	std::vector<vtkSmartPointer<vtkProperty>> pickedProps;
+	vtkSmartPointer<vtkActor> prevLMBActor;
+	vtkSmartPointer<vtkProperty> prevLMBProperty;
+
+	bool shiftPressed = false;
+	// Container for storing hovered actor and its properties.
+	vtkSmartPointer<vtkCellPicker> hoverPicker;
+	vtkSmartPointer<vtkActor> hoveredActor;
+	vtkSmartPointer<vtkActor> prevHoveredActor;
+	vtkSmartPointer<vtkProperty> prevHoveredProperty;
 };
 };
 
