@@ -20,6 +20,8 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
+#include "QIVtkSelectionPipeline.h"
+
 #include "Geometry.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -51,23 +53,15 @@
 #include <vtkRenderer.h>
 #include <vtkTextProperty.h>
 
+// VIS includes
+#include <IVtkTools_ShapePicker.hxx>
+
 #include <QImage>
 #include <QPixmap>
 #include <QPointer>
 
 namespace Rendering {
-enum class Renderers {
-	Main,
-	Faces,
-	Edges,
-	Mesh,
-	Count // Count for definition of array size
-};
-enum class Layers {
-	Bottom,
-	Top,
-	Count // Count for definition of array size
-};
+
 /**
  * @brief  The QVTKRenderWindow provides class for rendering VTK objects inside Qt application.
  *
@@ -77,7 +71,7 @@ class QVTKRenderWindow {
 public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
-	std::shared_ptr<Model> model;
+
 	/**
 	 * @brief Generate global coordinate system.
 	 *
@@ -115,19 +109,6 @@ public:
 	void enableWaterMark();
 
 	/**
-	 * @brief  Set active renderer
-	 *
-	 * @param  {Renderers} layer : ID of renderer to be activated.
-	 */
-	void setActiveRenderer(Renderers rendererId);
-	/**
-	 * @brief  Get renderer representing currently active layer.
-	 *
-	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
-	 */
-	vtkSmartPointer<vtkRenderer> getActiveRenderer();
-	Renderers getActiveRendererId();
-	/**
 	 * @brief  Initialize and setup water mark widget.
 	 *
 	 */
@@ -138,21 +119,13 @@ public:
 	 * reload them from Geometry object
 	 *
 	 */
-	void updateGeometryActors(const GeometryCore::Geometry& geometry);
+	// void updateGeometryActors(const GeometryCore::Geometry& geometry);
 
-protected:
-	/**
-	 * @brief  Construct and initialize renderes at each layer.
-	 *
-	 */
-	void initializeRenderers();
+public:
+	// Custom implementation of IVtk selection pipeline
+	Handle(QIVtkSelectionPipeline) pipeline;
 
-	// Definition of array of pointers to VTK renderers
-	std::array<vtkSmartPointer<vtkRenderer>, static_cast<size_t>(Renderers::Count)> mRenderers;
-
-	// Attribute for storing the currently active renderer (layer)
-	vtkSmartPointer<vtkRenderer> activeRenderer;
-	Renderers activeRendererId;
+	std::shared_ptr<Model> model;
 
 private:
 	QPointer<QWidget> _widget;
@@ -163,8 +136,14 @@ private:
 	// The VTK renderer window
 	vtkSmartPointer<vtkRenderWindow> _rendererWindow;
 
+	// The VTK renderer
+	vtkSmartPointer<vtkRenderer> _renderer;
+
 	// The VTK render window interactor
 	vtkSmartPointer<vtkRenderWindowInteractor> _interactor;
+
+	// IVtk_ShapePicker from OCC VIS
+	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
 
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;

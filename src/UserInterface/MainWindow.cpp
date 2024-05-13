@@ -37,14 +37,14 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
-	this->buttonGroup.addButton(this->ui->volumeSelectorButton,
-		static_cast<int>(Rendering::Renderers::Main));
+	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
+	// 	static_cast<int>(Rendering::Renderers::Main));
 
-	this->buttonGroup.addButton(this->ui->facesSelectorButton,
-		static_cast<int>(Rendering::Renderers::Faces));
+	// this->buttonGroup.addButton(this->ui->facesSelectorButton,
+	// 	static_cast<int>(Rendering::Renderers::Faces));
 
-	this->buttonGroup.addButton(this->ui->edgesSelectorButton,
-		static_cast<int>(Rendering::Renderers::Edges));
+	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
+	// 	static_cast<int>(Rendering::Renderers::Edges));
 
 	this->setConnections();
 	this->initializeActions();
@@ -108,7 +108,7 @@ void MainWindow::importSTEP(QString fileName) {
 	try {
 		this->model->geometry.importSTEP(filePath, this->progressBar);
 		this->model->updateParts();
-		this->QVTKRender->updateGeometryActors(this->model->geometry);
+		// this->QVTKRender->updateGeometryActors(this->model->geometry);
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
@@ -126,7 +126,7 @@ void MainWindow::importSTL(QString fileName) {
 
 	const std::string& filePath = fileName.toStdString();
 	this->model->geometry.importSTL(filePath, this->progressBar);
-	this->QVTKRender->updateGeometryActors(this->model->geometry);
+	// this->QVTKRender->updateGeometryActors(this->model->geometry);
 
 	QVTKRender->fitView();
 }
@@ -151,9 +151,9 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	}
 	// std::cout<<"Button id: " << buttonGroup.id(button) << std::endl;
 	// Set active layer according to selected button
-	// qDebug() << "Button" << buttonGroup.id(button) << "clicked";
-	this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
-		buttonGroup.id(button)));
+	qDebug() << "Button" << buttonGroup.id(button) << "clicked";
+	// this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
+	// 	buttonGroup.id(button)));
 }
 
 void MainWindow::initializeActions() {
@@ -164,7 +164,7 @@ void MainWindow::initializeActions() {
 
 void MainWindow::showMesh() {
 	this->model->updateMeshActor();
-	this->QVTKRender->getActiveRenderer()->Render();
+	// this->QVTKRender->getActiveRenderer()->Render();
 }
 
 //----------------------------------------------------------------------------

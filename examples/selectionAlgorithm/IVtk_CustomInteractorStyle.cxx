@@ -48,7 +48,6 @@ void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
 	m_picker->Pick(aPos[0], aPos[1], 0);
 
 	// Traversing results
-	vtkActor* aPickedActor = NULL;
 	vtkSmartPointer<vtkActorCollection> anActorCollection = m_picker->GetPickedActors();
 
 	if (anActorCollection) {

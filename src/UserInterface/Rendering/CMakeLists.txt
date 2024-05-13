@@ -1,12 +1,12 @@
 ADD_LIBRARY(Rendering 
   QVTKInteractorStyle.cpp
-  QVTKInteractorStyle.h
   QVTKNavigationWidget.cpp
-  QVTKNavigationWidget.h
   QVTKRenderWindow.cpp
-  QVTKRenderWindow.h
-  QVTKToolBar.cpp
-  QVTKToolBar.h
+  QIVtkSelectionPipeline.cpp
+)
+
+INCLUDE_DIRECTORIES(
+  ${PRJ_SOURCE_DIR}/src/UserInterface/Rendering
 )
 
 if(WIN32)
