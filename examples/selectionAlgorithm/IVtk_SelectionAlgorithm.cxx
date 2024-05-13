@@ -2,7 +2,6 @@
 #include <filesystem>
 
 // VTK includes
-
 #include <vtkLogger.h>
 #include <vtkNamedColors.h>
 #include <vtkRenderWindow.h>
@@ -69,11 +68,6 @@ int main(int, char**) {
 	vtkSmartPointer<vtkRenderWindow> RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
 	RenderWindow->AddRenderer(aRenderer);
 
-	// Initialize Picker
-	vtkSmartPointer<IVtkTools_ShapePicker> aShapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();
-	aShapePicker->SetTolerance(0.025);
-	aShapePicker->SetRenderer(aRenderer);
-
 	vtkNew<vtkNamedColors> colors;
 	aRenderer->SetBackground(colors->GetColor3d("navy").GetData());
 	std::string filePath = "./geometrySample/Ref_XYZ.stp";
@@ -91,9 +85,12 @@ int main(int, char**) {
 
 	TopoDS_Shape Shape = readSTEP(CStringfilePath);
 
+	// Initialize Picker
+	vtkSmartPointer<IVtkTools_ShapePicker> aShapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();
+
+	aShapePicker->SetRenderer(aRenderer);
 	static Standard_Integer ShapeID = 0;
 	++ShapeID;
-
 	Handle(IVtk_CustomSelectionPipeline) pipeline
 		= new IVtk_CustomSelectionPipeline(Shape, ShapeID);
 	pipeline->AddToRenderer(aRenderer);

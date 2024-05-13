@@ -39,11 +39,9 @@ vtkSmartPointer<IVtkTools_ShapePicker> IVtk_CustomInteractorStyle::GetPicker() c
 	return m_picker;
 }
 
-void IVtk_CustomInteractorStyle::OnMouseMove() {
-	m_picker->SetSelectionMode(SM_Face); // ToDo: Write setter method
-
-	// Invoke basic method
-	vtkInteractorStyleTrackballCamera::OnMouseMove();
+void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
+	m_picker->SetSelectionMode(SM_Face);
+	m_picker->SetTolerance(0.025);
 
 	Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
 		this->Interactor->GetEventPosition()[1] };
@@ -90,9 +88,12 @@ void IVtk_CustomInteractorStyle::OnMouseMove() {
 		}
 	}
 	m_pipeline->Mapper()->Update();
-}
 
-void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
 	// Invoke basic method
 	vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+}
+
+void IVtk_CustomInteractorStyle::OnMouseMove() {
+	// Invoke basic method
+	vtkInteractorStyleTrackballCamera::OnMouseMove();
 }

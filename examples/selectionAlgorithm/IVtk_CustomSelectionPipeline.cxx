@@ -40,8 +40,7 @@ IVtk_CustomSelectionPipeline::IVtk_CustomSelectionPipeline(
 	vtkSmartPointer<IVtkTools_ShapeDataSource> aDataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
 	aDataSource->SetShape(anIVtkShape);
 
-	IVtkTools_DisplayModeFilter*
-		aDMFilter
+	IVtkTools_DisplayModeFilter* aDMFilter
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Shape));
 	aDMFilter->AddInputConnection(aDataSource->GetOutputPort());
 	aDMFilter->SetDisplayMode(DM_Shading);
@@ -64,12 +63,10 @@ IVtk_CustomSelectionPipeline::IVtk_CustomSelectionPipeline(
 	/* =================================
 	 *  Build pipeline for highlighting
 	 * ================================= */
-	IVtkTools_DisplayModeFilter*
-		aDMFilterH
+	IVtkTools_DisplayModeFilter* aDMFilterH
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Hili));
-	aDMFilterH->SetDisplayMode(DM_Shading);
-	IVtkTools_SubPolyDataFilter*
-		aSUBFilterH
+	aDMFilterH->SetDisplayMode(DM_Wireframe);
+	IVtkTools_SubPolyDataFilter* aSUBFilterH
 		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Hili));
 
 	// No highligthing exists initially
@@ -83,7 +80,7 @@ IVtk_CustomSelectionPipeline::IVtk_CustomSelectionPipeline(
 	myHiliActor = vtkSmartPointer<vtkActor>::New();
 	myHiliActor->SetPickable(0);
 	myHiliActor->SetVisibility(1);
-	myHiliActor->GetProperty()->SetColor(0, 1, 1);
+	myHiliActor->GetProperty()->SetColor(1, 1, 1);
 	myHiliActor->GetProperty()->SetOpacity(1);
 	myHiliActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 4);
 	myHiliActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 2);
@@ -95,11 +92,9 @@ IVtk_CustomSelectionPipeline::IVtk_CustomSelectionPipeline(
 	/* ==============================
 	 *  Build pipeline for selection
 	 * ============================== */
-	IVtkTools_DisplayModeFilter*
-		aDMFilterS
+	IVtkTools_DisplayModeFilter* aDMFilterS
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Sel));
-	IVtkTools_SubPolyDataFilter*
-		aSUBFilterS
+	IVtkTools_SubPolyDataFilter* aSUBFilterS
 		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Sel));
 
 	// No highligthing exists initially
