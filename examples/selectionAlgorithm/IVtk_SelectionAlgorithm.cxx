@@ -81,7 +81,7 @@ int main(int, char**) {
 	Standard_CString CStringfilePath(myCString);
 
 	// Create test OCCT shape
-	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	// TopoDS_Shape Shape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
 
 	TopoDS_Shape Shape = readSTEP(CStringfilePath);
 
