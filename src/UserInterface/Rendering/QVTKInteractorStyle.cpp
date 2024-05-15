@@ -128,11 +128,7 @@ void QVTKInteractorStyle::OnLeftButtonDown() {
 		std::cout << "Detected Shift key event." << std::endl;
 	}
 
-	Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
-		this->Interactor->GetEventPosition()[1] };
-
-	// Perform selection
-	this->MoveTo(aPos[0], aPos[1]);
+	this->OnSelection();
 
 	// Invoke base class event
 	this->Superclass::OnLeftButtonDown();
@@ -140,6 +136,10 @@ void QVTKInteractorStyle::OnLeftButtonDown() {
 
 //----------------------------------------------------------------------------
 void QVTKInteractorStyle::OnMouseMove() {
+	Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
+		this->Interactor->GetEventPosition()[1] };
+
+	this->MoveTo(aPos[0], aPos[1]);
 	this->Superclass::OnMouseMove();
 }
 
@@ -201,6 +201,49 @@ void QVTKInteractorStyle::MoveTo(
 				cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
 				cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
 			}
+			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
+			aFilter->SetData(aSubIds);
+			if (!aFilter->GetInput()) {
+				aFilter->SetInputConnection(aDataSource->GetOutputPort());
+			}
+			aFilter->Modified();
+		}
+		m_pipeline->Mapper()->Update();
+	}
+}
+
+void QVTKInteractorStyle::OnSelection() {
+	vtkSmartPointer<vtkActorCollection> anActorCollection = m_picker->GetPickedActors();
+
+	if (anActorCollection) {
+		// Highlight picked subshapes.
+		ClearHighlightAndSelection(m_pipeline, Standard_False, Standard_True);
+		anActorCollection->InitTraversal();
+		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
+			IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
+			if (!aDataSource) {
+				continue;
+			}
+
+			IVtkOCC_Shape::Handle anOccShape = aDataSource->GetShape();
+			if (anOccShape.IsNull()) {
+				continue;
+			}
+
+			IVtk_IdType aShapeID = anOccShape->GetId();
+			IVtkTools_SubPolyDataFilter* aFilter = m_pipeline->GetSelectionFilter();
+
+			// Set the selected sub-shapes ids to subpolydata filter.
+			IVtk_ShapeIdList aSubShapeIds = m_picker->GetPickedSubShapesIds(aShapeID);
+
+			// Get ids of cells for picked subshapes.
+			IVtk_ShapeIdList aSubIds;
+			IVtk_ShapeIdList::Iterator aMetaIds(aSubShapeIds);
+			for (; aMetaIds.More(); aMetaIds.Next()) {
+				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
+				aSubIds.Append(aSubSubIds);
+			}
+
 			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
 			aFilter->SetData(aSubIds);
 			if (!aFilter->GetInput()) {

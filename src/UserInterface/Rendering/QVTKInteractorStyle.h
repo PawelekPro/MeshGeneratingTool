@@ -109,6 +109,7 @@ private:
 	void createContextMenu();
 
 	void MoveTo(Standard_Integer theX, Standard_Integer theY);
+	void OnSelection();
 
 private:
 	QPointer<QMenu> _contextMenu;

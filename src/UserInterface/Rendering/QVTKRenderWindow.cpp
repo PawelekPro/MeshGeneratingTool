@@ -27,9 +27,6 @@
 #include <vtkCylinderSource.h>
 #include <vtkPolyDataMapper.h>
 
-#include <BRepPrimAPI_MakeSphere.hxx>
-#include <gp_Ax2.hxx>
-
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget)
@@ -64,7 +61,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	// Setup interactor style
 	_interactorStyle->setRenderer(_renderer);
 	_interactorStyle->setPicker(_shapePicker);
-	_interactorStyle->setSelectionMode(SM_Edge);
+	_interactorStyle->setSelectionMode(SM_Face);
 
 	_interactor->SetInteractorStyle(_interactorStyle);
 

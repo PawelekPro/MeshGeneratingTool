@@ -83,7 +83,7 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	myHiliActor->GetProperty()->SetColor(1, 1, 1);
 	myHiliActor->GetProperty()->SetOpacity(1);
 	myHiliActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 4);
-	myHiliActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 2);
+	myHiliActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 1);
 
 	// Set maper for actor
 	myHiliActor->SetMapper(myHiliMapper);
