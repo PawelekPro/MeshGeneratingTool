@@ -41,8 +41,6 @@
 typedef NCollection_DataMap<IVtk_IdType, vtkSmartPointer<IVtkTools_DisplayModeFilter>> DisplayModeFiltersMap;
 typedef NCollection_DataMap<IVtk_IdType, vtkSmartPointer<IVtkTools_SubPolyDataFilter>> SubShapesFiltersMap;
 
-class Prs3d_Drawer;
-
 class QIVtkSelectionPipeline;
 DEFINE_STANDARD_HANDLE(QIVtkSelectionPipeline, Standard_Transient)
 

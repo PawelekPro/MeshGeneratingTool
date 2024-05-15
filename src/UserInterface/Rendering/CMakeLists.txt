@@ -1,6 +1,5 @@
 ADD_LIBRARY(Rendering 
   QVTKInteractorStyle.cpp
-  QVTKNavigationWidget.cpp
   QVTKRenderWindow.cpp
   QIVtkSelectionPipeline.cpp
 )

@@ -20,7 +20,7 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-#include "QIVtkSelectionPipeline.h"
+#include "QVTKInteractorStyle.h"
 
 #include "Geometry.h"
 #include "Mesh.h"
@@ -31,6 +31,7 @@
 #include <numeric>
 
 #include <QVTKOpenGLNativeWidget.h>
+#include <QVTKOpenGLWindow.h>
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
@@ -77,18 +78,14 @@ public:
 	 *
 	 */
 	void generateCoordinateSystemAxes();
-	/**
-	 * @brief  Set interator style to customize interaction.
-	 *
-	 * @param  {vtkInteractorStyle*} interactorStyle : Custom interaction style.
-	 */
-	void setInteractorStyle(vtkInteractorStyle* interactorStyle);
 
 	/**
 	 * @brief  Adjust the displayed objects to the size of the rendering window.
 	 *
 	 */
 	void fitView();
+
+	void addActor(vtkActor* actor);
 
 	/**
 	 * @brief  Reset render view to update currently displayed state.
@@ -119,28 +116,31 @@ public:
 	 * reload them from Geometry object
 	 *
 	 */
-	// void updateGeometryActors(const GeometryCore::Geometry& geometry);
+	void updateGeometryActors(const GeometryCore::Geometry& geometry);
 
 public:
-	// Custom implementation of IVtk selection pipeline
-	Handle(QIVtkSelectionPipeline) pipeline;
-
 	std::shared_ptr<Model> model;
 
 private:
+	TopoDS_Shape theShape;
+	QIVtkSelectionPipeline* pipeline;
+
 	QPointer<QWidget> _widget;
 
 	// The Qt widget containing a VTK viewport
-	QVTKOpenGLNativeWidget* _vtkWidget;
+	QPointer<QVTKOpenGLNativeWidget> _vtkWidget;
 
 	// The VTK renderer window
-	vtkSmartPointer<vtkRenderWindow> _rendererWindow;
+	vtkGenericOpenGLRenderWindow* _rendererWindow;
 
 	// The VTK renderer
 	vtkSmartPointer<vtkRenderer> _renderer;
 
 	// The VTK render window interactor
-	vtkSmartPointer<vtkRenderWindowInteractor> _interactor;
+	QVTKInteractor* _interactor;
+
+	// Custom interactor style
+	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
 
 	// IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;

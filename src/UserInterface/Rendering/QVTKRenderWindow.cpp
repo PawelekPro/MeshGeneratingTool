@@ -18,49 +18,68 @@
  */
 
 #include "QVTKRenderWindow.h"
-#include "QVTKInteractorStyle.h"
-#include "QVTKNavigationWidget.h"
 
+#include <BRepPrimAPI_MakeBox.hxx>
 #include <QLayout>
+#include <TopoDS_Shape.hxx>
+
+#include <vtkActor.h>
+#include <vtkCylinderSource.h>
+#include <vtkPolyDataMapper.h>
+
+#include <BRepPrimAPI_MakeSphere.hxx>
+#include <gp_Ax2.hxx>
 
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget)
+	, _rendererWindow(vtkGenericOpenGLRenderWindow::New())
 	, _renderer(vtkSmartPointer<vtkRenderer>::New())
 	, _vtkWidget(new QVTKOpenGLNativeWidget())
-	, _shapePicker(vtkSmartPointer<IVtkTools_ShapePicker>::New()) {
+	, _shapePicker(vtkSmartPointer<IVtkTools_ShapePicker>::New())
+	, _interactorStyle(vtkSmartPointer<QVTKInteractorStyle>::New()) {
 
-	_vtkWidget->setRenderWindow(vtkGenericOpenGLRenderWindow::New());
-	_rendererWindow = _vtkWidget->renderWindow();
-	_interactor = _rendererWindow->GetInteractor();
+	_vtkWidget->setRenderWindow(_rendererWindow);
+	_interactor = _vtkWidget->interactor();
 
 	vtkNew<vtkNamedColors> colors;
-	_renderer->GetActiveCamera()->ParallelProjectionOn();
+	_renderer->GetActiveCamera()->ParallelProjectionOff();
 	_renderer->LightFollowCameraOn();
 	_rendererWindow->AddRenderer(_renderer);
 	_renderer->SetBackground(colors->GetColor3d("LightSlateGray").GetData());
 
-	_vtkWidget->setFocusPolicy(Qt::StrongFocus);
+	// _vtkWidget->setFocusPolicy(Qt::StrongFocus);
 
 	this->generateCoordinateSystemAxes();
 	this->setWaterMark();
-
-	_interactor->SetRenderWindow(_rendererWindow);
 
 	_camOrientManipulator->SetParentRenderer(_renderer);
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
 
+	// Setup IVtk Shape picker
 	_shapePicker->SetRenderer(_renderer);
-	vtkSmartPointer<Interactor::QVTKInteractorStyle>
-		interactorStyle = vtkSmartPointer<Interactor::QVTKInteractorStyle>::New();
-	interactorStyle->setRenderer(_renderer);
-	interactorStyle->setPicker(_shapePicker);
+	_shapePicker->SetTolerance(0.025);
 
-	this->setInteractorStyle(interactorStyle);
-	this->RenderScene();
+	// Setup interactor style
+	_interactorStyle->setRenderer(_renderer);
+	_interactorStyle->setPicker(_shapePicker);
+	_interactorStyle->setSelectionMode(SM_Edge);
 
+	_interactor->SetInteractorStyle(_interactorStyle);
+
+	_renderer->ResetCamera();
+	_rendererWindow->Render();
 	_widget->layout()->addWidget(_vtkWidget);
+
+	// Create test shape
+	TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	static Standard_Integer ShapeID = 0;
+	++ShapeID;
+	pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
+	pipeline->AddToRenderer(_renderer);
+	fitView();
+	_interactorStyle->setPipeline(pipeline);
 }
 
 //----------------------------------------------------------------------------
@@ -70,14 +89,12 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 }
 
 //----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
+	_renderer->AddActor(actor);
+}
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::RenderScene() {
 	_renderer->Render();
-	// _rendererWindow->Render();
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interactorStyle) {
-	this->_interactor->SetInteractorStyle(interactorStyle);
 }
 
 //----------------------------------------------------------------------------
@@ -155,26 +172,21 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ManagesCursorOff();
 }
 
-// void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry) {
+void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry) {
 
-// 	this->mRenderers.at(static_cast<int>(Renderers::Main))->Clear();
-// 	this->mRenderers.at(static_cast<int>(Renderers::Faces))->Clear();
-// 	this->mRenderers.at(static_cast<int>(Renderers::Edges))->Clear();
+	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
+	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
+	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
 
-// 	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
-// 	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
-// 	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
-
-// 	for (const auto& actor : parts) {
-// 		this->mRenderers.at(static_cast<int>(Renderers::Main))->AddActor(actor.second);
-// 	}
-// 	for (const auto& actor : faces) {
-// 		this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
-// 	}
-// 	for (const auto& actor : edges) {
-// 		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
-// 		this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
-// 	}
-// 	this->setActiveRenderer(Renderers::Main);
-// 	this->RenderScene();
-// }
+	for (const auto& actor : parts) {
+		_renderer->AddActor(actor.second);
+	}
+	for (const auto& actor : faces) {
+		_renderer->AddActor(actor.second);
+	}
+	for (const auto& actor : edges) {
+		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
+		_renderer->AddActor(actor.second);
+	}
+	this->RenderScene();
+}

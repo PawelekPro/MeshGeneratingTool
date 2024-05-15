@@ -19,8 +19,6 @@
 
 #include "QVTKInteractorStyle.h"
 
-#include <QAction>
-
 //----------------------------------------------------------------------------
 static void ClearHighlightAndSelection(const Handle(QIVtkSelectionPipeline) & thePipeline,
 	const Standard_Boolean doHighlighting,
@@ -39,59 +37,59 @@ static void ClearHighlightAndSelection(const Handle(QIVtkSelectionPipeline) & th
 }
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(Interactor::QVTKInteractorStyle);
+vtkStandardNewMacro(QVTKInteractorStyle);
 
 //----------------------------------------------------------------------------
-Interactor::QVTKInteractorStyle::QVTKInteractorStyle()
-	: vtkInteractorStyleTrackballCamera() { }
+QVTKInteractorStyle::QVTKInteractorStyle()
+	: _contextMenu(nullptr)
+	, _selectionMode(SM_Face) { }
 
 //----------------------------------------------------------------------------
-Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
+QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
 
-	// lastPickedProperty->Delete();
-	// lastHoveredProperty->Delete();
+	m_pipeline->Delete();
+	m_picker->Delete();
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::setRenderer(
+void QVTKInteractorStyle::setRenderer(
 	const vtkSmartPointer<vtkRenderer>& theRenderer) {
 	m_renderer = theRenderer;
 }
 
 //----------------------------------------------------------------------------
-Rendering::QVTKRenderWindow*
-Interactor::QVTKInteractorStyle::getRenderWindow() {
-	return this->_qvtkRenderWindow;
-}
-
-//----------------------------------------------------------------------------
-vtkSmartPointer<vtkRenderer>
-Interactor::QVTKInteractorStyle::getRenderer() const {
+vtkSmartPointer<vtkRenderer> QVTKInteractorStyle::getRenderer() const {
 	return m_renderer;
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::setPicker(
+void QVTKInteractorStyle::setPicker(
 	const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker) {
 	m_picker = thePicker;
 }
 
 //----------------------------------------------------------------------------
 vtkSmartPointer<IVtkTools_ShapePicker>
-Interactor::QVTKInteractorStyle::getPicker() const {
+QVTKInteractorStyle::getPicker() const {
 	return m_picker;
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::setPipeline(
+void QVTKInteractorStyle::setPipeline(
 	const Handle(QIVtkSelectionPipeline) pipeline) {
 	m_pipeline = pipeline;
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::createContextMenu() {
+void QVTKInteractorStyle::setSelectionMode(
+	IVtk_SelectionMode mode) {
+	_selectionMode = mode;
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::createContextMenu() {
 	if (!_contextMenu) {
 		_contextMenu = new QMenu;
 
@@ -100,23 +98,23 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 		font.setPointSize(10);
 		_contextMenu->setFont(font);
 
-		_fitViewAction = new QAction("Fit view", _contextMenu);
-		_faceSizingAction = new QAction("Add face sizing", _contextMenu);
-		_edgeSizingAction = new QAction("Add edge sizing", _contextMenu);
+		// _fitViewAction = new QAction("Fit view", _contextMenu);
+		// _faceSizingAction = new QAction("Add face sizing", _contextMenu);
+		// _edgeSizingAction = new QAction("Add edge sizing", _contextMenu);
 
-		QObject::connect(_fitViewAction, &QAction::triggered, [this]() {
-			this->_qvtkRenderWindow->fitView();
-		});
-		_contextMenu->addAction(_fitViewAction);
-		_contextMenu->addAction(_faceSizingAction);
-		_contextMenu->addAction(_edgeSizingAction);
+		// QObject::connect(_fitViewAction, &QAction::triggered, [this]() {
+		// 	this->_qvtkRenderWindow->fitView();
+		// });
+		// _contextMenu->addAction(_fitViewAction);
+		// _contextMenu->addAction(_faceSizingAction);
+		// _contextMenu->addAction(_edgeSizingAction);
 	}
-	_edgeSizingAction->setDisabled(true);
-	_faceSizingAction->setDisabled(true);
+	// _edgeSizingAction->setDisabled(true);
+	// _faceSizingAction->setDisabled(true);
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
+void QVTKInteractorStyle::OnRightButtonDown() {
 	this->createContextMenu();
 	_contextMenu->exec(QCursor::pos());
 
@@ -124,33 +122,92 @@ void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
+void QVTKInteractorStyle::OnLeftButtonDown() {
 
 	if (this->Interactor->GetShiftKey()) {
 		std::cout << "Detected Shift key event." << std::endl;
 	}
 
+	Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
+		this->Interactor->GetEventPosition()[1] };
+
+	// Perform selection
+	this->MoveTo(aPos[0], aPos[1]);
+
+	// Invoke base class event
 	this->Superclass::OnLeftButtonDown();
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnMouseMove() {
+void QVTKInteractorStyle::OnMouseMove() {
 	this->Superclass::OnMouseMove();
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnKeyPress() {
+void QVTKInteractorStyle::OnKeyPress() {
 	this->Superclass::OnKeyPress();
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnKeyRelease() {
+void QVTKInteractorStyle::OnKeyRelease() {
 	this->Superclass::OnKeyRelease();
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
-	_qvtkRenderWindow = qvtkRenderWindow;
-	_contextMenu = nullptr;
-	_fitViewAction = nullptr;
+void QVTKInteractorStyle::MoveTo(
+	Standard_Integer theX, Standard_Integer theY) {
+
+	m_picker->SetSelectionMode(_selectionMode);
+	m_picker->Pick(theX, theY, 0);
+
+	// Traversing results
+	vtkSmartPointer<vtkActorCollection> anActorCollection = m_picker->GetPickedActors();
+
+	if (anActorCollection) {
+
+		// Highlight picked subshapes
+		if (m_pipeline.IsNull())
+			return;
+
+		ClearHighlightAndSelection(m_pipeline, Standard_True, Standard_False);
+
+		anActorCollection->InitTraversal();
+		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
+
+			IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
+			if (!aDataSource) {
+				continue;
+			}
+
+			IVtkOCC_Shape::Handle anOccShape = aDataSource->GetShape();
+			if (anOccShape.IsNull()) {
+				continue;
+			}
+
+			IVtk_IdType aShapeID = anOccShape->GetId();
+			IVtkTools_SubPolyDataFilter* aFilter = m_pipeline->GetHighlightFilter();
+
+			// Set the selected sub-shapes ids to subpolydata filter.
+			IVtk_ShapeIdList aSubShapeIds = m_picker->GetPickedSubShapesIds(aShapeID);
+
+			// Get ids of cells for picked subshapes.
+			IVtk_ShapeIdList aSubIds;
+			IVtk_ShapeIdList::Iterator aMetaIds(aSubShapeIds);
+			for (; aMetaIds.More(); aMetaIds.Next()) {
+				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
+				aSubIds.Append(aSubSubIds);
+				const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
+				cout << "--------------------------------------------------------------" << endl;
+				cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
+				cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
+			}
+			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
+			aFilter->SetData(aSubIds);
+			if (!aFilter->GetInput()) {
+				aFilter->SetInputConnection(aDataSource->GetOutputPort());
+			}
+			aFilter->Modified();
+		}
+		m_pipeline->Mapper()->Update();
+	}
 }

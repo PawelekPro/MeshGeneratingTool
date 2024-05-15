@@ -21,7 +21,6 @@
 #define QVTKINTERACTORSTYLE_H
 
 #include "QIVtkSelectionPipeline.h"
-#include "QVTKRenderWindow.h"
 
 // VTK includes
 #include <vtkCellPicker.h>
@@ -30,6 +29,7 @@
 #include <vtkNamedColors.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
@@ -45,8 +45,7 @@
 #include <QAction>
 #include <QFont>
 #include <QMenu>
-
-namespace Interactor {
+#include <QPointer>
 
 /**
  * @brief  The QVTKInteractorStyle provides class for define custom interactions with render window.
@@ -63,6 +62,16 @@ public:
 	static QVTKInteractorStyle* New();
 	vtkTypeMacro(QVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
 
+public:
+	void setRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
+	vtkSmartPointer<vtkRenderer> getRenderer() const;
+	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker);
+	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
+	void setPipeline(const Handle(QIVtkSelectionPipeline) pipeline);
+	void setSelectionMode(IVtk_SelectionMode mode);
+
+	// Overriding
+public:
 	/**
 	 * @brief  Handle the right mouse button press event.
 	 *
@@ -84,26 +93,6 @@ public:
 	virtual void OnKeyPress() override;
 	virtual void OnKeyRelease() override;
 
-	/**
-	 * @brief  Activate interactor style and set its default render window widget.
-	 *
-	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window to set interactor style
-	 */
-	void Initialize(Rendering::QVTKRenderWindow* renWin);
-
-	/**
-	 * @brief  Get rendering window instance.
-	 *
-	 * @return {Rendering::QVTKRenderWindow*}  : Rendering window instance
-	 */
-	Rendering::QVTKRenderWindow* getRenderWindow();
-
-	void setRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
-	vtkSmartPointer<vtkRenderer> getRenderer() const;
-	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker);
-	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
-	void setPipeline(const Handle(QIVtkSelectionPipeline) pipeline);
-
 protected:
 	QVTKInteractorStyle();
 	~QVTKInteractorStyle();
@@ -119,17 +108,18 @@ private:
 	 */
 	void createContextMenu();
 
+	void MoveTo(Standard_Integer theX, Standard_Integer theY);
+
 private:
-	Rendering::QVTKRenderWindow* _qvtkRenderWindow;
 	QPointer<QMenu> _contextMenu;
-	QPointer<QAction> _fitViewAction;
-	QPointer<QAction> _faceSizingAction;
-	QPointer<QAction> _edgeSizingAction;
+	// QPointer<QAction> _fitViewAction;
+	// QPointer<QAction> _faceSizingAction;
+	// QPointer<QAction> _edgeSizingAction;
 
 	vtkSmartPointer<vtkRenderer> m_renderer;
 	vtkSmartPointer<IVtkTools_ShapePicker> m_picker;
 	Handle(QIVtkSelectionPipeline) m_pipeline;
-};
+	IVtk_SelectionMode _selectionMode;
 };
 
 #endif
