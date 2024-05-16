@@ -262,7 +262,21 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			if (!appendId) {
 				_selectedSubShapeIds.Clear();
 			}
-			_selectedSubShapeIds.Append(aSubShapeIds);
+
+			for (auto shapeID : aSubShapeIds) {
+				if (!_selectedSubShapeIds.Contains(shapeID)) {
+					// If selected Ids list does not contain shape then append it.
+					_selectedSubShapeIds.Append(aSubShapeIds);
+				} else {
+					// Selecting the shape again causes deselecting it.
+					_selectedSubShapeIds.Remove(shapeID);
+				}
+			}
+
+			// If selected Ids list is empty then any selection will not be made
+			if (_selectedSubShapeIds.IsEmpty()) {
+				return;
+			}
 
 			// Get ids of cells for picked subshapes.
 			IVtk_ShapeIdList aSubIds;
