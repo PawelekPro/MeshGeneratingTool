@@ -43,19 +43,21 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	IVtkTools_DisplayModeFilter* aDMFilter
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Shape));
 	aDMFilter->AddInputConnection(aDataSource->GetOutputPort());
-	aDMFilter->SetDisplayMode(DM_Shading);
+	aDMFilter->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
 
 	myMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	myMapper->AddInputConnection(aDMFilter->GetOutputPort());
 	myActor->SetMapper(myMapper);
 	IVtkTools_ShapeObject::SetShapeSource(aDataSource, myActor);
 
-	myMapper->ScalarVisibilityOff();
-	// myMapper->SetScalarModeToUseCellFieldData();
+	myMapper->ScalarVisibilityOn();
+	myMapper->SetScalarModeToUseCellFieldData();
 
-	// Custom lookup table (optinal!)
+	// Custom lookup table (Optional!)
 	vtkSmartPointer<vtkLookupTable> Table = IVtkTools::InitLookupTable();
 	IVtkTools::SetLookupTableColor(Table, MT_ShadedFace, 0.35, 0.45, 0.5);
+	// FIXME: It seems that setting MT_BoundaryEdge doesnt change anything
+	IVtkTools::SetLookupTableColor(Table, MT_BoundaryEdge, 0.0, 0.0, 0.0);
 
 	IVtkTools::InitShapeMapper(myMapper, Table);
 	myMapper->Update();

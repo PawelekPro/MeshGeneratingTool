@@ -42,7 +42,8 @@ vtkStandardNewMacro(QVTKInteractorStyle);
 //----------------------------------------------------------------------------
 QVTKInteractorStyle::QVTKInteractorStyle()
 	: _contextMenu(nullptr)
-	, _selectionMode(SM_Face) { }
+	, _selectionMode(SM_Face)
+	, _selectedSubShapeIds(IVtk_ShapeIdList()) { }
 
 //----------------------------------------------------------------------------
 QVTKInteractorStyle::~QVTKInteractorStyle() {
@@ -126,9 +127,10 @@ void QVTKInteractorStyle::OnLeftButtonDown() {
 
 	if (this->Interactor->GetShiftKey()) {
 		std::cout << "Detected Shift key event." << std::endl;
+		this->OnSelection(Standard_True);
+	} else {
+		this->OnSelection(Standard_False);
 	}
-
-	this->OnSelection();
 
 	// Invoke base class event
 	this->Superclass::OnLeftButtonDown();
@@ -145,6 +147,15 @@ void QVTKInteractorStyle::OnMouseMove() {
 
 //----------------------------------------------------------------------------
 void QVTKInteractorStyle::OnKeyPress() {
+	vtkRenderWindowInteractor* rwi = this->Interactor;
+	std::string key = rwi->GetKeySym();
+
+	// Clear current selection when Escape is pressed
+	if (key == "Escape") {
+		ClearHighlightAndSelection(m_pipeline, Standard_False, Standard_True);
+		m_pipeline->Mapper()->Update();
+	}
+
 	this->Superclass::OnKeyPress();
 }
 
@@ -196,10 +207,10 @@ void QVTKInteractorStyle::MoveTo(
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
 				aSubIds.Append(aSubSubIds);
-				const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
-				cout << "--------------------------------------------------------------" << endl;
-				cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
-				cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
+				// const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
+				// cout << "--------------------------------------------------------------" << endl;
+				// cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
+				// cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
 			}
 			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
 			aFilter->SetData(aSubIds);
@@ -212,14 +223,20 @@ void QVTKInteractorStyle::MoveTo(
 	}
 }
 
-void QVTKInteractorStyle::OnSelection() {
+void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 	vtkSmartPointer<vtkActorCollection> anActorCollection = m_picker->GetPickedActors();
 
 	if (anActorCollection) {
-		// Highlight picked subshapes.
-		ClearHighlightAndSelection(m_pipeline, Standard_False, Standard_True);
+		if (anActorCollection->GetNumberOfItems() != 0) {
+			qDebug() << "Yes";
+			// Highlight picked subshapes.
+			ClearHighlightAndSelection(m_pipeline, Standard_False, Standard_True);
+		}
+
 		anActorCollection->InitTraversal();
 		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
+			qDebug() << anActor;
+
 			IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
 			if (!aDataSource) {
 				continue;
@@ -235,10 +252,17 @@ void QVTKInteractorStyle::OnSelection() {
 
 			// Set the selected sub-shapes ids to subpolydata filter.
 			IVtk_ShapeIdList aSubShapeIds = m_picker->GetPickedSubShapesIds(aShapeID);
+			if (!appendId) {
+				_selectedSubShapeIds.Clear();
+			}
+			_selectedSubShapeIds.Append(aSubShapeIds);
+			for (auto it : _selectedSubShapeIds) {
+				qDebug() << it;
+			}
 
 			// Get ids of cells for picked subshapes.
 			IVtk_ShapeIdList aSubIds;
-			IVtk_ShapeIdList::Iterator aMetaIds(aSubShapeIds);
+			IVtk_ShapeIdList::Iterator aMetaIds(_selectedSubShapeIds);
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
 				aSubIds.Append(aSubSubIds);

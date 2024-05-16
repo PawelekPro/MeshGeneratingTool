@@ -109,7 +109,7 @@ private:
 	void createContextMenu();
 
 	void MoveTo(Standard_Integer theX, Standard_Integer theY);
-	void OnSelection();
+	void OnSelection(const Standard_Boolean = Standard_False);
 
 private:
 	QPointer<QMenu> _contextMenu;
@@ -121,6 +121,7 @@ private:
 	vtkSmartPointer<IVtkTools_ShapePicker> m_picker;
 	Handle(QIVtkSelectionPipeline) m_pipeline;
 	IVtk_SelectionMode _selectionMode;
+	IVtk_ShapeIdList _selectedSubShapeIds;
 };
 
 #endif
