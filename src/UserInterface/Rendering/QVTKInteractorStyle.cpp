@@ -126,9 +126,10 @@ void QVTKInteractorStyle::OnRightButtonDown() {
 void QVTKInteractorStyle::OnLeftButtonDown() {
 
 	if (this->Interactor->GetShiftKey()) {
-		std::cout << "Detected Shift key event." << std::endl;
+		// Append new selection to the current one
 		this->OnSelection(Standard_True);
 	} else {
+		// Clear previous selection
 		this->OnSelection(Standard_False);
 	}
 
@@ -201,6 +202,13 @@ void QVTKInteractorStyle::MoveTo(
 			// Set the selected sub-shapes ids to subpolydata filter.
 			IVtk_ShapeIdList aSubShapeIds = m_picker->GetPickedSubShapesIds(aShapeID);
 
+			// If picked shape is in selected shapes then do not highlight it
+			for (auto shapeID : aSubShapeIds) {
+				if (_selectedSubShapeIds.Contains(shapeID)) {
+					return;
+				}
+			}
+
 			// Get ids of cells for picked subshapes.
 			IVtk_ShapeIdList aSubIds;
 			IVtk_ShapeIdList::Iterator aMetaIds(aSubShapeIds);
@@ -228,16 +236,15 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 
 	if (anActorCollection) {
 		if (anActorCollection->GetNumberOfItems() != 0) {
-			qDebug() << "Yes";
-			// Highlight picked subshapes.
+			// Clear previous selection.
 			ClearHighlightAndSelection(m_pipeline, Standard_False, Standard_True);
 		}
 
 		anActorCollection->InitTraversal();
 		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
-			qDebug() << anActor;
 
-			IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
+			IVtkTools_ShapeDataSource* aDataSource
+				= IVtkTools_ShapeObject::GetShapeSource(anActor);
 			if (!aDataSource) {
 				continue;
 			}
@@ -256,9 +263,6 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 				_selectedSubShapeIds.Clear();
 			}
 			_selectedSubShapeIds.Append(aSubShapeIds);
-			for (auto it : _selectedSubShapeIds) {
-				qDebug() << it;
-			}
 
 			// Get ids of cells for picked subshapes.
 			IVtk_ShapeIdList aSubIds;
