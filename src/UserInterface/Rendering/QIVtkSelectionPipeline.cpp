@@ -82,9 +82,9 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	myHiliActor = vtkSmartPointer<vtkActor>::New();
 	myHiliActor->SetPickable(0);
 	myHiliActor->SetVisibility(1);
-	myHiliActor->GetProperty()->SetColor(1, 1, 1);
+	myHiliActor->GetProperty()->SetColor(1.0, 1.0, 1.0);
 	myHiliActor->GetProperty()->SetOpacity(1);
-	myHiliActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 4);
+	myHiliActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 2);
 	myHiliActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 1);
 
 	// Set maper for actor
@@ -110,10 +110,10 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	mySelActor = vtkSmartPointer<vtkActor>::New();
 	mySelActor->SetPickable(0);
 	mySelActor->SetVisibility(1);
-	mySelActor->GetProperty()->SetColor(1, 1, 1);
+	mySelActor->GetProperty()->SetColor(0, 1.0, 0); // Green color for selection
 	mySelActor->GetProperty()->SetOpacity(1);
-	mySelActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 4);
-	mySelActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 2);
+	mySelActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 2);
+	mySelActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 1);
 
 	// Set maper for actor
 	mySelActor->SetMapper(mySelMapper);
