@@ -117,9 +117,9 @@ private:
 	// QPointer<QAction> _faceSizingAction;
 	// QPointer<QAction> _edgeSizingAction;
 
-	vtkSmartPointer<vtkRenderer> m_renderer;
-	vtkSmartPointer<IVtkTools_ShapePicker> m_picker;
-	Handle(QIVtkSelectionPipeline) m_pipeline;
+	vtkSmartPointer<vtkRenderer> _renderer;
+	vtkSmartPointer<IVtkTools_ShapePicker> _picker;
+	Handle(QIVtkSelectionPipeline) _pipeline;
 	IVtk_SelectionMode _selectionMode;
 	IVtk_ShapeIdList _selectedSubShapeIds;
 };

@@ -4,7 +4,7 @@ An example of using an algorithm from the OpenCascade VIS (VTK integration servi
 
 The current selection method is set using the function:
 ```
-m_picker->SetSelectionMode(SM_Face);
+_picker->SetSelectionMode(SM_Face);
 ```
 where the function argument is the IVtk_SelectionMode enum (see [IVtk_Types.hxx File Reference](https://dev.opencascade.org/doc/occt-7.6.0/refman/html/_i_vtk___types_8hxx.html#acc7068231bfa08df9dc6c6ac9e26df02)).
 
