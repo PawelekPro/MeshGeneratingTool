@@ -83,6 +83,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 	_renderer->Delete();
 	_vtkWidget->deleteLater();
+	delete pipeline;
 }
 
 //----------------------------------------------------------------------------
