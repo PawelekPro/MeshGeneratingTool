@@ -20,7 +20,6 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 #endif
 
 	this->verticalLayout->setMenuBar(_ribbonBar);
-
 	buildRibbon(_ribbonBar);
 }
 

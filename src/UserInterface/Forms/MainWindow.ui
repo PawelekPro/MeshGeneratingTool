@@ -209,7 +209,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/icons/edge_selector.svg</normaloff>:/icons/icons/edge_selector.svg</iconset>
+              <normaloff>:/icons/icons/Selection_edge.svg</normaloff>:/icons/icons/Selection_edge.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -250,7 +250,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/icons/volume_selector.svg</normaloff>:/icons/icons/volume_selector.svg</iconset>
+              <normaloff>:/icons/icons/Selection_volume.svg</normaloff>:/icons/icons/Selection_volume.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -291,7 +291,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/icons/face_selector.svg</normaloff>:/icons/icons/face_selector.svg</iconset>
+              <normaloff>:/icons/icons/Selection_face.svg</normaloff>:/icons/icons/Selection_face.svg</iconset>
             </property>
             <property name="iconSize">
              <size>

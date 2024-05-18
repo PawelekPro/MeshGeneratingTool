@@ -20,7 +20,6 @@
 #ifndef QIVtkSelectionPipeline_H
 #define QIVtkSelectionPipeline_H
 
-#include <NCollection_DataMap.hxx>
 #include <NCollection_Shared.hxx>
 #include <Standard_Transient.hxx>
 #include <TopoDS_Shape.hxx>

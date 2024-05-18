@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 16.933333 16.933333"
+   version="1.1"
+   id="svg5"
+   xml:space="preserve"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="Selection_vertex.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="6.0221661"
+     inkscape:cx="30.55379"
+     inkscape:cy="31.55011"
+     inkscape:window-width="1872"
+     inkscape:window-height="1011"
+     inkscape:window-x="48"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" /><defs
+     id="defs2">
+	
+	
+	
+</defs><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"><polygon
+       style="fill:#434c6d"
+       points="29,26 29,58 3,45 3,13 "
+       id="polygon2724"
+       transform="matrix(0.29511218,0,0,0.26458333,-0.09158684,0.79374991)" /><polygon
+       style="fill:#556080"
+       points="29,26 29,58 55,45 55,13 "
+       id="polygon2726"
+       transform="matrix(0.29511218,0,0,0.26458333,-0.09158684,0.79374991)" /><polygon
+       style="fill:#7383bf"
+       points="29,26 3,13 28,0 55,13 "
+       id="polygon2728"
+       transform="matrix(0.29511218,0,0,0.26458333,-0.09158684,0.79374991)" /><path
+       style="fill:#00a4ff;fill-opacity:0;stroke:#0093ff;stroke-width:1.36662;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path5406"
+       sodipodi:type="arc"
+       sodipodi:cx="8.3978586"
+       sodipodi:cy="7.7043476"
+       sodipodi:rx="0.039190676"
+       sodipodi:ry="0.096308991"
+       sodipodi:start="5.7307219"
+       sodipodi:end="5.7595865"
+       sodipodi:arc-type="slice"
+       d="m 8.4312191,7.653806 a 0.03919068,0.09630899 0 0 1 5.796e-4,0.00239 l -0.03394,0.048154 z"
+       inkscape:transform-center-x="-1.0093122"
+       inkscape:transform-center-y="0.18281947" /></g></svg>
