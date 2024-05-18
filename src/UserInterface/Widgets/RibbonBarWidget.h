@@ -3,6 +3,7 @@
 
 #include "SARibbon.h"
 
+#include <QButtonGroup>
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QVBoxLayout>

@@ -54,10 +54,35 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	page3->setCategoryName("Display");
 	bar->addCategoryPage(page3);
 
+	/* ================================================================
+	Selection page
+	===================================================================*/
 	SARibbonCategory* page4 = new SARibbonCategory();
 	page4->setCategoryName("Selection");
 	bar->addCategoryPage(page4);
 
+	SARibbonPannel* selectionPanel = new SARibbonPannel("Selection type", page4);
+	page4->addPannel(selectionPanel);
+
+	QAction* vertexSelAct = createAction("Vertex", ":/icons/icons/Selection_vertex.svg");
+	vertexSelAct->setIconText("Vertex");
+	selectionPanel->addLargeAction(vertexSelAct);
+
+	QAction* edgeSelAct = createAction("Edge", ":/icons/icons/Selection_edge.svg");
+	edgeSelAct->setIconText("Edge");
+	selectionPanel->addLargeAction(edgeSelAct);
+
+	QAction* faceSelAct = createAction("Face", ":/icons/icons/Selection_face.svg");
+	faceSelAct->setIconText("Face");
+	selectionPanel->addLargeAction(faceSelAct);
+
+	QAction* volSelAct = createAction("Volume", ":/icons/icons/Selection_volume.svg");
+	volSelAct->setIconText("Volume");
+	selectionPanel->addLargeAction(volSelAct);
+
+	/* ================================================================
+	Ribbon bar theme selection
+	===================================================================*/
 	mComboTheme = new QComboBox();
 	mComboTheme->addItem("Theme Win7", static_cast<int>(SARibbonTheme::RibbonThemeWindows7));
 	mComboTheme->addItem("Theme Office2013", static_cast<int>(SARibbonTheme::RibbonThemeOffice2013));
