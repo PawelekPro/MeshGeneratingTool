@@ -73,6 +73,8 @@ public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
 
+	void setSelectionMode(IVtk_SelectionMode);
+
 	/**
 	 * @brief Generate global coordinate system.
 	 *

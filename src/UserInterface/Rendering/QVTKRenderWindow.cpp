@@ -27,6 +27,37 @@
 #include <vtkCylinderSource.h>
 #include <vtkPolyDataMapper.h>
 
+#include <STEPControl_Reader.hxx>
+#include <filesystem>
+
+TopoDS_Shape readSTEP(Standard_CString filePath) {
+	STEPControl_Reader aReader;
+	TopoDS_Shape aShape;
+	IFSelect_ReturnStatus statSTEP = aReader.ReadFile(filePath);
+
+	Standard_Integer nbr = aReader.NbRootsForTransfer();
+
+	for (Standard_Integer n = 1; n <= nbr; n++) {
+		std::cout << "STEP: Transferring Root " << n << std::endl;
+		aReader.TransferRoot(n);
+	}
+
+	Standard_Integer nbs = aReader.NbShapes();
+	if (nbs == 0) {
+		throw std::runtime_error("No shapes found in file");
+	} else {
+		for (Standard_Integer i = 1; i <= nbs; i++) {
+			aShape = aReader.Shape(i);
+		}
+	}
+
+	return aShape;
+}
+
+bool fileExists(const std::string& filename) {
+	return std::filesystem::exists(filename);
+}
+
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	: _widget(widget)
@@ -61,7 +92,6 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	// Setup interactor style
 	_interactorStyle->setRenderer(_renderer);
 	_interactorStyle->setPicker(_shapePicker);
-	_interactorStyle->setSelectionMode(SM_Face);
 
 	_interactor->SetInteractorStyle(_interactorStyle);
 
@@ -70,7 +100,18 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_widget->layout()->addWidget(_vtkWidget);
 
 	// Create test shape
+
 	TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	std::string filePath = "/home/pgilewicz/geometrySample/Ref_XYZ.stp";
+	if (fileExists(filePath)) {
+		vtkLogF(INFO, "Geometry file is valid: \"%s\"", filePath.c_str());
+	} else {
+		vtkLogF(ERROR, "Invalid geometry file");
+	}
+	const char* myCString = filePath.c_str();
+	Standard_CString CStringfilePath(myCString);
+
+	// TopoDS_Shape theShape = readSTEP(CStringfilePath);
 	static Standard_Integer ShapeID = 0;
 	++ShapeID;
 	pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
@@ -169,7 +210,9 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ManagesCursorOff();
 }
 
-void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry) {
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::updateGeometryActors(
+	const GeometryCore::Geometry& geometry) {
 
 	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
 	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
@@ -186,4 +229,9 @@ void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geome
 		_renderer->AddActor(actor.second);
 	}
 	this->RenderScene();
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setSelectionMode(IVtk_SelectionMode mode) {
+	_interactorStyle->setSelectionMode(mode);
 }

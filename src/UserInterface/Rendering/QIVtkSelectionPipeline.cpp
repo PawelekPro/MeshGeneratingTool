@@ -55,11 +55,11 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 
 	// Custom lookup table (Optional!)
 	vtkSmartPointer<vtkLookupTable> Table = IVtkTools::InitLookupTable();
-	IVtkTools::SetLookupTableColor(Table, MT_ShadedFace, 0.35, 0.45, 0.5);
+	// IVtkTools::SetLookupTableColor(Table, MT_ShadedFace, 0.35, 0.45, 0.5);
 	// FIXME: It seems that setting MT_BoundaryEdge doesnt change anything
-	IVtkTools::SetLookupTableColor(Table, MT_BoundaryEdge, 0.0, 0.0, 0.0);
+	// IVtkTools::SetLookupTableColor(Table, MT_BoundaryEdge, 0.0, 0.0, 0.0);
 
-	IVtkTools::InitShapeMapper(myMapper, Table);
+	IVtkTools::InitShapeMapper(myMapper);
 	myMapper->Update();
 
 	/* =================================
@@ -67,7 +67,7 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	 * ================================= */
 	IVtkTools_DisplayModeFilter* aDMFilterH
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Hili));
-	aDMFilterH->SetDisplayMode(DM_Wireframe);
+	aDMFilterH->SetDisplayMode(IVtk_DisplayMode::DM_Wireframe);
 	IVtkTools_SubPolyDataFilter* aSUBFilterH
 		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Hili));
 
@@ -96,6 +96,7 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	 * ============================== */
 	IVtkTools_DisplayModeFilter* aDMFilterS
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Sel));
+	aDMFilterH->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
 	IVtkTools_SubPolyDataFilter* aSUBFilterS
 		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Sel));
 
