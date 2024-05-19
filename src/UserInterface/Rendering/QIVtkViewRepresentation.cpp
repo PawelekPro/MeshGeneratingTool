@@ -19,6 +19,16 @@
 
 #include "QIVtkViewRepresentation.h"
 
-QIVtkViewRepresentation::QIVtkViewRepresentation() { }
+QIVtkViewRepresentation::QIVtkViewRepresentation()
+	: _colorTable(vtkSmartPointer<vtkLookupTable>::New()) {
+	double aRange[2];
+	aRange[0] = QIVtkEntityType::ET_IsoLine;
+	aRange[1] = QIVtkEntityType::ET_SeamEdge;
+
+	_colorTable->Allocate(9);
+	_colorTable->SetNumberOfTableValues(9);
+	_colorTable->SetTableRange(aRange);
+	_colorTable->SetValueRange(0, 1);
+}
 
 QIVtkViewRepresentation::~QIVtkViewRepresentation() { }
