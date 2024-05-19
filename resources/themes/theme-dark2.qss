@@ -48,6 +48,29 @@ SARibbonPannel > SARibbonSeparatorWidget {
   color: #5d636a;
 }
 
+SARibbonPannel > QToolButton:hover {
+  background-color: #435c76;
+  border-radius: 5px;
+}
+
+SARibbonPannel > QToolButton:pressed {
+  background-color: #4a4f61;
+  border-radius: 5px;
+}
+
+SARibbonPannel > QToolButton {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QActionGroup:pressed {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QActionGroup {
+  border-radius: 5px;
+}
+
+
 /*SARibbonPannelLabel*/
 SARibbonPannelLabel {
     background-color: #2a2a2a;
