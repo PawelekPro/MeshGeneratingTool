@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2024 Paweł Gilewicz
+ *
+ * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "QIVtkSelectionPipeline.h"
 
 // prevent disabling some MSVC warning messages by VTK headers
@@ -40,13 +59,14 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	vtkSmartPointer<IVtkTools_ShapeDataSource> aDataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
 	aDataSource->SetShape(anIVtkShape);
 
-	IVtkTools_DisplayModeFilter* aDMFilter
-		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Shape));
-	aDMFilter->AddInputConnection(aDataSource->GetOutputPort());
-	aDMFilter->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
+	// Shading / Wireframe display
+	// IVtkTools_DisplayModeFilter* aDMFilter
+	// 	= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Shape));
+	// aDMFilter->AddInputConnection(aDataSource->GetOutputPort());
+	// aDMFilter->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
 
 	myMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	myMapper->AddInputConnection(aDMFilter->GetOutputPort());
+	myMapper->AddInputConnection(aDataSource->GetOutputPort());
 	myActor->SetMapper(myMapper);
 	IVtkTools_ShapeObject::SetShapeSource(aDataSource, myActor);
 
@@ -54,12 +74,28 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	myMapper->SetScalarModeToUseCellFieldData();
 
 	// Custom lookup table (Optional!)
-	vtkSmartPointer<vtkLookupTable> Table = IVtkTools::InitLookupTable();
-	// IVtkTools::SetLookupTableColor(Table, MT_ShadedFace, 0.35, 0.45, 0.5);
-	// FIXME: It seems that setting MT_BoundaryEdge doesnt change anything
-	// IVtkTools::SetLookupTableColor(Table, MT_BoundaryEdge, 0.0, 0.0, 0.0);
+	// Set colors table for 3D shapes
+	vtkSmartPointer<vtkLookupTable> aColorTable = vtkSmartPointer<vtkLookupTable>::New();
+	double aRange[2];
+	aRange[0] = IVtk_MeshType::MT_Undefined;
+	aRange[1] = IVtk_MeshType::MT_ShadedFace;
+	aColorTable->Allocate(9);
+	aColorTable->SetNumberOfTableValues(9);
+	aColorTable->SetTableRange(aRange);
+	aColorTable->SetValueRange(0, 1);
 
-	IVtkTools::InitShapeMapper(myMapper);
+	// Custom colors
+	aColorTable->SetTableValue(0, 0, 0, 0); // Undefined
+	aColorTable->SetTableValue(1, 0.5, 0.5, 0.5); // gray for IsoLine
+	aColorTable->SetTableValue(2, 1, 0, 0); // red for Free vertex
+	aColorTable->SetTableValue(3, 0, 0, 0); // Shared vertex
+	aColorTable->SetTableValue(4, 1, 0, 0); // red for Free edge
+	aColorTable->SetTableValue(5, 0, 1, 0); // green for Boundary edge (related to a single face)
+	aColorTable->SetTableValue(6, 0, 0, 0); // Shared edge (related to several faces)
+	aColorTable->SetTableValue(7, 1, 1, 0); // yellow for Wireframe face
+	aColorTable->SetTableValue(8, 0.35, 0.35, 0.35); // Shaded face
+
+	IVtkTools::InitShapeMapper(myMapper, aColorTable);
 	myMapper->Update();
 
 	/* =================================
@@ -96,7 +132,7 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	 * ============================== */
 	IVtkTools_DisplayModeFilter* aDMFilterS
 		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Sel));
-	aDMFilterH->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
+	aDMFilterH->SetDisplayMode(IVtk_DisplayMode::DM_Wireframe);
 	IVtkTools_SubPolyDataFilter* aSUBFilterS
 		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Sel));
 
