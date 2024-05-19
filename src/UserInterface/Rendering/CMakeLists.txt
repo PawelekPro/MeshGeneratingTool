@@ -2,6 +2,7 @@ ADD_LIBRARY(Rendering
   QVTKInteractorStyle.cpp
   QVTKRenderWindow.cpp
   QIVtkSelectionPipeline.cpp
+  QIVtkViewRepresentation.cpp
 )
 
 INCLUDE_DIRECTORIES(
