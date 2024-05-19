@@ -11,13 +11,10 @@
     <file>icons/action2.svg</file>
     <file>icons/action.svg</file>
     <file>icons/draft.svg</file>
-    <file>icons/face_selector.svg</file>
     <file>icons/Selection_volume.svg</file>
     <file>icons/Selection_vertex.svg</file>
     <file>icons/Selection_face.svg</file>
     <file>icons/Selection_edge.svg</file>
-    <file>icons/edge_selector.svg</file>
-    <file>icons/volume_selector.svg</file>
   </qresource>
   <qresource prefix="images">
     <file>images/Titlebar_Unshade.png</file>
