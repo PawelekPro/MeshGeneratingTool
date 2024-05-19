@@ -23,7 +23,6 @@ namespace GeometryCore {
     class STLImporter : public GeometryImporter{
         public:
             void import(const std::string& filename, QWidget* parent) override;
-            const ActorsMap getPartsActorMap() override;
         private:
     };
 }
