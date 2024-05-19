@@ -18,6 +18,7 @@
  */
 
 #include "MainWindow.h"
+#include "./ui_MainWindow.h"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget* parent)
@@ -33,6 +34,7 @@ MainWindow::MainWindow(QWidget* parent)
 	this->QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	this->QVTKRender->enableCameraOrientationWidget();
 	this->QVTKRender->enableWaterMark();
+	this->ui->ribbonBar->initialize();
 
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);

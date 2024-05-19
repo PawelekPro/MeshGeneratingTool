@@ -22,7 +22,6 @@
 
 #include <functional>
 
-#include "./ui_MainWindow.h"
 #include "Configuration.h"
 #include "Model.h"
 #include "ProgressBar.h"
@@ -104,6 +103,11 @@ public:
 
 	// Progress bar widget
 	ProgressBar* progressBar;
+
+public:
+	Rendering::QVTKRenderWindow* getRenderWindow() {
+		return this->QVTKRender;
+	}
 
 private:
 	Ui::MainWindow* ui;
