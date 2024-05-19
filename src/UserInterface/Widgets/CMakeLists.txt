@@ -22,8 +22,12 @@ TARGET_LINK_LIBRARIES(Widgets PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Core5Compat
   GraphicalUtils
+  Rendering
   Defaults
+  Core
 )
 
 TARGET_INCLUDE_DIRECTORIES(Widgets PUBLIC
+    ${PRJ_SOURCE_DIR}/src/UserInterface/
     ${PRJ_SOURCE_DIR}/src/UserInterface/Widgets)
+

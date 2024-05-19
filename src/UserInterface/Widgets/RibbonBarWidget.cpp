@@ -6,6 +6,9 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 
 	this->setupUi();
 
+	// Getting acces to main window instance
+	_mainWindow = qobject_cast<MainWindow*>(parent->window());
+
 	_ribbonBar = new SARibbonBar(parent);
 	_ribbonBar->setTitleVisible(false);
 	_ribbonBar->setRibbonStyle(SARibbonBar::RibbonStyleCompactThreeRow);
@@ -64,21 +67,35 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	SARibbonPannel* selectionPanel = new SARibbonPannel("Selection type", page4);
 	page4->addPannel(selectionPanel);
 
+	QActionGroup* selectionGroup = new QActionGroup(this);
+	selectionGroup->setExclusive(true);
+
 	QAction* vertexSelAct = createAction("Vertex", ":/icons/icons/Selection_vertex.svg");
 	vertexSelAct->setIconText("Vertex");
+	vertexSelAct->setCheckable(true); // Ustawienie akcji jako checkable
+	selectionGroup->addAction(vertexSelAct); // Dodanie akcji do grupy
 	selectionPanel->addLargeAction(vertexSelAct);
 
 	QAction* edgeSelAct = createAction("Edge", ":/icons/icons/Selection_edge.svg");
 	edgeSelAct->setIconText("Edge");
+	edgeSelAct->setCheckable(true);
+	selectionGroup->addAction(edgeSelAct);
 	selectionPanel->addLargeAction(edgeSelAct);
 
 	QAction* faceSelAct = createAction("Face", ":/icons/icons/Selection_face.svg");
 	faceSelAct->setIconText("Face");
+	faceSelAct->setCheckable(true);
+	selectionGroup->addAction(faceSelAct);
 	selectionPanel->addLargeAction(faceSelAct);
 
 	QAction* volSelAct = createAction("Volume", ":/icons/icons/Selection_volume.svg");
 	volSelAct->setIconText("Volume");
+	volSelAct->setCheckable(true);
+	selectionGroup->addAction(volSelAct);
 	selectionPanel->addLargeAction(volSelAct);
+
+	connect(selectionGroup, &QActionGroup::triggered, this,
+		&RibbonBarWidget::onEntitySelectionChanged);
 
 	/* ================================================================
 	Ribbon bar theme selection
@@ -117,6 +134,7 @@ void RibbonBarWidget::onRibbonThemeComboBoxCurrentIndexChanged(int index) {
 	_ribbonBar->updateRibbonGeometry();
 }
 
+//----------------------------------------------------------------------------
 void RibbonBarWidget::setupUi() {
 
 	this->verticalLayout = new QVBoxLayout(this);
@@ -125,4 +143,19 @@ void RibbonBarWidget::setupUi() {
 	this->verticalLayout->setContentsMargins(0, 0, 0, 0);
 
 	QMetaObject::connectSlotsByName(this);
+}
+
+//----------------------------------------------------------------------------
+void RibbonBarWidget::onEntitySelectionChanged(QAction* action) {
+	const QString& actionText = action->text();
+
+	if (actionText == "Vertex") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Vertex);
+	} else if (actionText == "Edge") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Edge);
+	} else if (actionText == "Face") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Face);
+	} else if (actionText == "Volume") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Shape);
+	}
 }

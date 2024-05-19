@@ -1,9 +1,10 @@
 #ifndef RIBBONBARWIDGET_H
 #define RIBBONBARWIDGET_H
 
+#include "MainWindow.h"
 #include "SARibbon.h"
 
-#include <QButtonGroup>
+#include <QActionGroup>
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QVBoxLayout>
@@ -16,19 +17,26 @@ class RibbonBarWidget : public QWidget {
 public:
 	RibbonBarWidget(QWidget* parent = nullptr);
 	~RibbonBarWidget();
+	void initialize() {
+		_QVTKRender = _mainWindow->getRenderWindow();
+	};
 
 public:
 	QVBoxLayout* verticalLayout;
 
 private:
 	void buildRibbon(SARibbonBar* bar);
-	QAction* createAction(const QString& text, const QString& iconurl);
 	void setupUi();
+
+	QAction* createAction(const QString& text, const QString& iconurl);
 
 private slots:
 	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
+	void onEntitySelectionChanged(QAction*);
 
 private:
+	MainWindow* _mainWindow;
+	Rendering::QVTKRenderWindow* _QVTKRender;
 	SARibbonBar* _ribbonBar { nullptr };
 	QComboBox* mComboTheme { nullptr };
 };
