@@ -47,6 +47,8 @@
 #include <QMenu>
 #include <QPointer>
 
+typedef NCollection_DataMap<IVtk_IdType, Handle(QIVtkSelectionPipeline)> ShapePipelineMap;
+
 /**
  * @brief  The QVTKInteractorStyle provides class for define custom interactions with render window.
  *
@@ -120,6 +122,7 @@ private:
 	vtkSmartPointer<vtkRenderer> m_renderer;
 	vtkSmartPointer<IVtkTools_ShapePicker> m_picker;
 	Handle(QIVtkSelectionPipeline) m_pipeline;
+	ShapePipelineMap _shapePipelineMap;
 	IVtk_ShapeIdList _selectedSubShapeIds;
 	IVtk_SelectionMode _currentSelection;
 };
