@@ -18,7 +18,6 @@ namespace GeometryCore {
     };
 
     using namespace std::string_literals;
-    using ActorsMap = std::map<std::string, vtkSmartPointer<vtkActor>>;
     using PartsMap = std::map<std::string, TopoDS_Shape>;
 
     class Geometry {

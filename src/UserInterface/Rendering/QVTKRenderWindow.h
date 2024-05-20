@@ -110,14 +110,6 @@ public:
 	 *
 	 */
 	void setWaterMark();
-
-	/**
-	 * @brief  Clear all geometry actors from faces, edges and parts layers and
-	 * reload them from Geometry object
-	 *
-	 */
-	void updateGeometryActors(const GeometryCore::Geometry& geometry);
-
 public:
 	std::shared_ptr<Model> model;
 

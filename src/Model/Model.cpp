@@ -33,7 +33,7 @@ Model::~Model(){
 }
 
 void Model::updateParts() { 
-    GeometryCore::PartsMap partsMap = this->geometry.getPartsMap();
+    GeometryCore::PartsMap partsMap = this->geometry.getShapesMap();
     for (const auto& it : partsMap) {
         std::cout << it.first << std::endl;
         const auto& shape = it.second;

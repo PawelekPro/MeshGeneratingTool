@@ -4,7 +4,7 @@ void GeometryCore::Geometry::importSTEP(const std::string& filePath, QWidget* pr
 
     GeometryCore::STEPImporter importer;
     importer.import(filePath, progressBar);
-    this->shapesMap = std::move(importer.getPartsMap());
+    this->_shapesMap = std::move(importer.getPartsMap());
 };
 void GeometryCore::Geometry::importSTL(const std::string& filePath, QWidget* progressBar){
     GeometryCore::STLImporter importer;

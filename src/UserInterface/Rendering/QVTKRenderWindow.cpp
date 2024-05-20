@@ -70,13 +70,13 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_widget->layout()->addWidget(_vtkWidget);
 
 	// Create test shape
-	TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
-	static Standard_Integer ShapeID = 0;
-	++ShapeID;
-	pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
-	pipeline->AddToRenderer(_renderer);
-	fitView();
-	_interactorStyle->setPipeline(pipeline);
+	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	// static Standard_Integer ShapeID = 0;
+	// ++ShapeID;
+	// pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
+	// pipeline->AddToRenderer(_renderer);
+	// fitView();
+	// _interactorStyle->setPipeline(pipeline);
 }
 
 //----------------------------------------------------------------------------
@@ -168,23 +168,4 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->SetRepresentation(logoRepresentation);
 	this->_logoWidget->ProcessEventsOff();
 	this->_logoWidget->ManagesCursorOff();
-}
-
-void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry) {
-
-	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
-	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
-	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
-
-	for (const auto& actor : parts) {
-		_renderer->AddActor(actor.second);
-	}
-	for (const auto& actor : faces) {
-		_renderer->AddActor(actor.second);
-	}
-	for (const auto& actor : edges) {
-		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
-		_renderer->AddActor(actor.second);
-	}
-	this->RenderScene();
 }

@@ -108,7 +108,6 @@ void MainWindow::importSTEP(QString fileName) {
 	try {
 		this->model->geometry.importSTEP(filePath, this->progressBar);
 		this->model->updateParts();
-		this->QVTKRender->updateGeometryActors(this->model->geometry);
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
