@@ -169,3 +169,14 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ProcessEventsOff();
 	this->_logoWidget->ManagesCursorOff();
 }
+
+void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape){
+
+	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	static Standard_Integer ShapeID = 0;
+	++ShapeID;
+	pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
+	pipeline->AddToRenderer(_renderer);
+	fitView();
+	_interactorStyle->setPipeline(pipeline);
+}

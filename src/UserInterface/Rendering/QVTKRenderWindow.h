@@ -110,6 +110,14 @@ public:
 	 *
 	 */
 	void setWaterMark();
+
+
+	/**
+	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window
+	 *
+	 */
+	void addShapeToRenderer(const TopoDS_Shape& shape);
+
 public:
 	std::shared_ptr<Model> model;
 
@@ -145,6 +153,9 @@ private:
 
 	// Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;
+
+	// Geometry selecion pipelines
+	std::vector<QIVtkSelectionPipeline> _geometryImportPipelines;
 };
 };
 
