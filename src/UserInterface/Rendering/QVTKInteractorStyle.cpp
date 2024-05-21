@@ -29,8 +29,9 @@ static void ClearHighlightAndSelection(ShapePipelinesMap& theMap,
 		return;
 	}
 
-	for (ShapePipelinesMap::Iterator anIt(theMap); anIt.More(); anIt.Next()) {
-		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+	ShapePipelinesMap::Iterator pIt(theMap);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 
 		if (doHighlighting) {
 			pipeline->ClearHighlightFilters();
@@ -54,13 +55,15 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
 
-	for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
-		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+	ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 		pipeline->Delete();
 	}
 
-	for (SelectedSubShapeIdsMap::Iterator anIt(_selectedSubShapeIdsMap); anIt.More(); anIt.Next()) {
-		const IVtk_ShapeIdList* shapeIdList = anIt.Value();
+	SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
+	for (; sIt.More(); sIt.Next()) {
+		const IVtk_ShapeIdList* shapeIdList = sIt.Value();
 		delete shapeIdList;
 	}
 
@@ -105,16 +108,19 @@ void QVTKInteractorStyle::setSelectionMode(
 		return;
 
 	// Clear current selection
-	for (SelectedSubShapeIdsMap::Iterator anIt(_selectedSubShapeIdsMap); anIt.More(); anIt.Next()) {
-		IVtk_ShapeIdList* selectedSubShapeIds = anIt.Value();
+	SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
+	for (; sIt.More(); sIt.Next()) {
+		IVtk_ShapeIdList* selectedSubShapeIds = sIt.Value();
 		selectedSubShapeIds->Clear();
 	}
 
 	ClearHighlightAndSelection(
 		_shapePipelinesMap, Standard_True, Standard_True);
 
-	for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
-		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+	ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+
 		// Deactivate all current selection modes
 		IVtk_SelectionModeList modeList
 			= _picker->GetSelectionModes(pipeline->Actor());
@@ -192,15 +198,17 @@ void QVTKInteractorStyle::OnKeyPress() {
 
 	// Clear current selection when Escape is pressed
 	if (key == "Escape") {
-		for (SelectedSubShapeIdsMap::Iterator anIt(_selectedSubShapeIdsMap); anIt.More(); anIt.Next()) {
-			IVtk_ShapeIdList* selectedSubShapeIds = anIt.Value();
+		SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
+		for (; sIt.More(); sIt.Next()) {
+			IVtk_ShapeIdList* selectedSubShapeIds = sIt.Value();
 			selectedSubShapeIds->Clear();
 		}
 
 		ClearHighlightAndSelection(_shapePipelinesMap, Standard_False, Standard_True);
 
-		for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
-			const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+		ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
+		for (; pIt.More(); pIt.Next()) {
+			const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 			pipeline->Mapper()->Update();
 		}
 	}
@@ -295,7 +303,8 @@ void QVTKInteractorStyle::MoveTo(
 
 //----------------------------------------------------------------------------
 void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
-	vtkSmartPointer<vtkActorCollection> anActorCollection = _picker->GetPickedActors();
+	vtkSmartPointer<vtkActorCollection> anActorCollection
+		= _picker->GetPickedActors();
 
 	if (anActorCollection) {
 		if (anActorCollection->GetNumberOfItems() != 0) {
@@ -361,7 +370,7 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 				return;
 			}
 
-			// Get ids of cells for picked subshapes.
+			// Get ids of cells for picked subshapes
 			IVtk_ShapeIdList aSubIds;
 			IVtk_ShapeIdList::Iterator aMetaIds(*selectedSubShapeIds);
 			for (; aMetaIds.More(); aMetaIds.Next()) {

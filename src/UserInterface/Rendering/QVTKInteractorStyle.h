@@ -112,7 +112,7 @@ private:
 	 */
 	void createContextMenu();
 
-	void MoveTo(Standard_Integer theX, Standard_Integer theY);
+	void MoveTo(Standard_Integer, Standard_Integer);
 	void OnSelection(const Standard_Boolean = Standard_False);
 
 private:
