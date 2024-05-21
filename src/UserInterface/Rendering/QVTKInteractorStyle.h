@@ -20,7 +20,13 @@
 #ifndef QVTKINTERACTORSTYLE_H
 #define QVTKINTERACTORSTYLE_H
 
+// Forward declaration
+namespace Rendering {
+class QVTKRenderWindow;
+};
+
 #include "QIVtkSelectionPipeline.h"
+#include "QVTKRenderWindow.h"
 
 // VTK includes
 #include <vtkCellPicker.h>
@@ -67,6 +73,7 @@ public:
 
 public:
 	void setRenderer(const vtkSmartPointer<vtkRenderer>&);
+	void setQVTKRenderWindow(const Rendering::QVTKRenderWindow* qvtkRenderWindow) { _qvtkRenderWindow = qvtkRenderWindow; }
 	vtkSmartPointer<vtkRenderer> getRenderer() const;
 	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>&);
 	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
@@ -117,12 +124,12 @@ private:
 
 private:
 	QPointer<QMenu> _contextMenu;
-	// QPointer<QAction> _fitViewAction;
-	// QPointer<QAction> _faceSizingAction;
+	QPointer<QAction> _fitViewAction;
 	// QPointer<QAction> _edgeSizingAction;
 
 	vtkSmartPointer<vtkRenderer> _renderer;
 	vtkSmartPointer<IVtkTools_ShapePicker> _picker;
+	const Rendering::QVTKRenderWindow* _qvtkRenderWindow;
 
 	ShapePipelinesMap _shapePipelinesMap;
 	SelectedSubShapeIdsMap _selectedSubShapeIdsMap;

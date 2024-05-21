@@ -20,6 +20,9 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
+// forward declaration
+class QVTKInteractorStyle;
+
 #include "QVTKInteractorStyle.h"
 
 #include "Geometry.h"
@@ -85,7 +88,7 @@ public:
 	 * @brief  Adjust the displayed objects to the size of the rendering window.
 	 *
 	 */
-	void fitView();
+	void fitView() const;
 
 	void addActor(vtkActor* actor);
 
@@ -122,6 +125,7 @@ public:
 	 *
 	 */
 	void clearRenderer();
+
 public:
 	std::shared_ptr<Model> model;
 

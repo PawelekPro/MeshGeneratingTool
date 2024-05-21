@@ -18,45 +18,10 @@
  */
 
 #include "QVTKRenderWindow.h"
-
 #include <BRepPrimAPI_MakeBox.hxx>
-#include <QLayout>
 #include <TopoDS_Shape.hxx>
 
-#include <vtkActor.h>
-#include <vtkCylinderSource.h>
-#include <vtkPolyDataMapper.h>
-
-#include <STEPControl_Reader.hxx>
-#include <filesystem>
-
-TopoDS_Shape readSTEP(Standard_CString filePath) {
-	STEPControl_Reader aReader;
-	TopoDS_Shape aShape;
-	IFSelect_ReturnStatus statSTEP = aReader.ReadFile(filePath);
-
-	Standard_Integer nbr = aReader.NbRootsForTransfer();
-
-	for (Standard_Integer n = 1; n <= nbr; n++) {
-		std::cout << "STEP: Transferring Root " << n << std::endl;
-		aReader.TransferRoot(n);
-	}
-
-	Standard_Integer nbs = aReader.NbShapes();
-	if (nbs == 0) {
-		throw std::runtime_error("No shapes found in file");
-	} else {
-		for (Standard_Integer i = 1; i <= nbs; i++) {
-			aShape = aReader.Shape(i);
-		}
-	}
-
-	return aShape;
-}
-
-bool fileExists(const std::string& filename) {
-	return std::filesystem::exists(filename);
-}
+#include <QLayout>
 
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
@@ -91,6 +56,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 
 	// Setup interactor style
 	_interactorStyle->setRenderer(_renderer);
+	_interactorStyle->setQVTKRenderWindow(this);
 	_interactorStyle->setPicker(_shapePicker);
 
 	_interactor->SetInteractorStyle(_interactorStyle);
@@ -120,7 +86,7 @@ void Rendering::QVTKRenderWindow::RenderScene() {
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::fitView() {
+void Rendering::QVTKRenderWindow::fitView() const {
 	_renderer->ResetCamera();
 	_rendererWindow->Render();
 }

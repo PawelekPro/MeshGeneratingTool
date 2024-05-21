@@ -53,7 +53,7 @@ QVTKInteractorStyle::QVTKInteractorStyle()
 //----------------------------------------------------------------------------
 QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
-		delete _contextMenu;
+		_contextMenu->deleteLater();
 
 	ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
 	for (; pIt.More(); pIt.Next()) {
@@ -144,19 +144,12 @@ void QVTKInteractorStyle::createContextMenu() {
 		font.setPointSize(10);
 		_contextMenu->setFont(font);
 
-		// _fitViewAction = new QAction("Fit view", _contextMenu);
-		// _faceSizingAction = new QAction("Add face sizing", _contextMenu);
-		// _edgeSizingAction = new QAction("Add edge sizing", _contextMenu);
+		_fitViewAction = new QAction("Fit view", _contextMenu);
+		QObject::connect(_fitViewAction, &QAction::triggered,
+			[this]() { _qvtkRenderWindow->fitView(); });
 
-		// QObject::connect(_fitViewAction, &QAction::triggered, [this]() {
-		// 	this->_qvtkRenderWindow->fitView();
-		// });
-		// _contextMenu->addAction(_fitViewAction);
-		// _contextMenu->addAction(_faceSizingAction);
-		// _contextMenu->addAction(_edgeSizingAction);
+		_contextMenu->addAction(_fitViewAction);
 	}
-	// _edgeSizingAction->setDisabled(true);
-	// _faceSizingAction->setDisabled(true);
 }
 
 //----------------------------------------------------------------------------
