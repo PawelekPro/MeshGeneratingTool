@@ -28,8 +28,8 @@ Model::Model(std::string modelName) : _modelName(modelName) {
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
         };
-    Model::~Model(){
-        gmsh::finalize();
+Model::~Model(){
+    gmsh::finalize();
 }
 
 void Model::updateParts() { 
