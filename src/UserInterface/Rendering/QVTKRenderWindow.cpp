@@ -72,6 +72,9 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 
 	if (_vtkWidget)
 		_vtkWidget->deleteLater();
+
+	if (_shapePicker)
+		_shapePicker->Delete();
 }
 
 //----------------------------------------------------------------------------

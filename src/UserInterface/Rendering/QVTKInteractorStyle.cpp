@@ -74,9 +74,6 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 		if (shapeIdList)
 			delete shapeIdList;
 	}
-
-	if (_picker)
-		_picker->Delete();
 }
 
 //----------------------------------------------------------------------------
