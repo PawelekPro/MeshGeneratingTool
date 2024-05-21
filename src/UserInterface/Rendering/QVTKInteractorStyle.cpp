@@ -51,8 +51,6 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 
 	_pipeline->Delete();
 	_picker->Delete();
-	_pipeline->Delete();
-	_picker->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -87,8 +85,17 @@ void QVTKInteractorStyle::setPipeline(
 //----------------------------------------------------------------------------
 void QVTKInteractorStyle::setSelectionMode(
 	IVtk_SelectionMode mode) {
+
+	// Set given selection mode
+	_picker->SetSelectionMode(mode, true);
+	_currentSelection = mode;
+
+	if (_pipeline.IsNull())
+		return;
+
 	// Clear current selection
 	_selectedSubShapeIds.Clear();
+
 	ClearHighlightAndSelection(
 		_pipeline, Standard_True, Standard_True);
 
@@ -98,10 +105,6 @@ void QVTKInteractorStyle::setSelectionMode(
 	for (IVtk_SelectionMode selMode : modeList) {
 		_picker->SetSelectionMode(selMode, false);
 	}
-
-	// Set given selection mode
-	_picker->SetSelectionMode(mode, true);
-	_currentSelection = mode;
 }
 
 //----------------------------------------------------------------------------
@@ -314,6 +317,9 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			}
 			aFilter->Modified();
 		}
-		_pipeline->Mapper()->Update();
+
+		if (!_pipeline.IsNull()) {
+			_pipeline->Mapper()->Update();
+		}
 	}
 }
