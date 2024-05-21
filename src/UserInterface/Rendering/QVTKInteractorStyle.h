@@ -80,6 +80,7 @@ public:
 	void addPipeline(const Handle(QIVtkSelectionPipeline), IVtk_IdType);
 	void setSelectionMode(IVtk_SelectionMode);
 	Standard_Integer getPipelinesMapSize() { return _shapePipelinesMap.Size(); };
+	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines();
 
 	// Overriding
 public:

@@ -58,16 +58,19 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 	ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
 	for (; pIt.More(); pIt.Next()) {
 		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
-		pipeline->Delete();
+		if (pipeline)
+			pipeline->Delete();
 	}
 
 	SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
 	for (; sIt.More(); sIt.Next()) {
 		const IVtk_ShapeIdList* shapeIdList = sIt.Value();
-		delete shapeIdList;
+		if (shapeIdList)
+			delete shapeIdList;
 	}
 
-	_picker->Delete();
+	if (_picker)
+		_picker->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -91,6 +94,18 @@ void QVTKInteractorStyle::setPicker(
 vtkSmartPointer<IVtkTools_ShapePicker>
 QVTKInteractorStyle::getPicker() const {
 	return _picker;
+}
+
+//----------------------------------------------------------------------------
+NCollection_List<Handle(QIVtkSelectionPipeline)> QVTKInteractorStyle::getPipelines() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelineList;
+	for (ShapePipelinesMap::Iterator it(_shapePipelinesMap); it.More(); it.Next()) {
+
+		const Handle(QIVtkSelectionPipeline)& pipeline = it.Value();
+		pipelineList.Append(pipeline);
+	}
+
+	return pipelineList;
 }
 
 //----------------------------------------------------------------------------

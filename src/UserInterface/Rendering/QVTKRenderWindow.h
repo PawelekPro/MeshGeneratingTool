@@ -115,13 +115,15 @@ public:
 	 *
 	 */
 	void setWaterMark();
+
 	/**
-	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window
+	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window.
 	 *
 	 */
 	void addShapeToRenderer(const TopoDS_Shape& shape);
+
 	/**
-	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window
+	 * @brief  Clear rendering window.
 	 *
 	 */
 	void clearRenderer();
@@ -130,9 +132,7 @@ public:
 	std::shared_ptr<Model> model;
 
 private:
-	TopoDS_Shape theShape;
-	QIVtkSelectionPipeline* pipeline;
-
+	// Container widget
 	QPointer<QWidget> _widget;
 
 	// The Qt widget containing a VTK viewport
@@ -145,7 +145,7 @@ private:
 	vtkSmartPointer<vtkRenderer> _renderer;
 
 	// The VTK render window interactor
-	QVTKInteractor* _interactor;
+	vtkSmartPointer<QVTKInteractor> _interactor;
 
 	// Custom interactor style
 	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
@@ -161,9 +161,6 @@ private:
 
 	// Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;
-
-	// Geometry selecion pipelines
-	std::vector<vtkSmartPointer<QIVtkSelectionPipeline>> _geometryImportPipelines;
 };
 };
 

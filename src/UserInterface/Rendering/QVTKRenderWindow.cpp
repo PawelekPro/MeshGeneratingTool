@@ -18,8 +18,6 @@
  */
 
 #include "QVTKRenderWindow.h"
-#include <BRepPrimAPI_MakeBox.hxx>
-#include <TopoDS_Shape.hxx>
 
 #include <QLayout>
 
@@ -64,16 +62,16 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_renderer->ResetCamera();
 	_rendererWindow->Render();
 	_widget->layout()->addWidget(_vtkWidget);
-
-	TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
-	addShapeToRenderer(theShape);
 }
 
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
-	_renderer->Delete();
-	_vtkWidget->deleteLater();
-	delete pipeline;
+
+	if (_renderer)
+		_renderer->Delete();
+
+	if (_vtkWidget)
+		_vtkWidget->deleteLater();
 }
 
 //----------------------------------------------------------------------------
@@ -132,10 +130,20 @@ void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 void Rendering::QVTKRenderWindow::enableWaterMark() {
 	this->_logoWidget->On();
 }
+
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::clearRenderer() {
 	this->_renderer->Clear();
-	this->pipeline->RemoveFromRenderer(this->_renderer);
+
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator pIt(pipelinesList);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+		pipeline->RemoveFromRenderer(_renderer);
+	}
 }
+
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setWaterMark() {
 	QPixmap pixmap(":/uiSetup/icons/watermark.png");
@@ -163,15 +171,17 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ManagesCursorOff();
 }
 
+//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape) {
 
 	static Standard_Integer ShapeID
 		= _interactorStyle->getPipelinesMapSize();
 	++ShapeID;
-	pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
+	QIVtkSelectionPipeline* pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
 	pipeline->AddToRenderer(_renderer);
-	fitView();
+
 	_interactorStyle->addPipeline(pipeline, ShapeID);
+	fitView();
 }
 
 //----------------------------------------------------------------------------
