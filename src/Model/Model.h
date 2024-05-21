@@ -42,6 +42,9 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkDataSetMapper.h>
+#include <vtkIdTypeArray.h>
 
 class Model {
 public:
@@ -70,7 +73,7 @@ private:
 		LINE = 1,
 		POINT = 15,
 	};
-
+	vtkSmartPointer<vtkUnstructuredGrid> gridData;
 	vtkSmartPointer<vtkPolyData> polyData;
 };
 
