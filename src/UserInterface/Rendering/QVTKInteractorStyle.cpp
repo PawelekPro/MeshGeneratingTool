@@ -51,6 +51,12 @@ QVTKInteractorStyle::QVTKInteractorStyle()
 	: _contextMenu(nullptr) { }
 
 //----------------------------------------------------------------------------
+void QVTKInteractorStyle::setQVTKRenderWindow(
+	const Rendering::QVTKRenderWindow* qvtkRenderWindow) {
+	_qvtkRenderWindow = qvtkRenderWindow;
+}
+
+//----------------------------------------------------------------------------
 QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		_contextMenu->deleteLater();
@@ -106,6 +112,11 @@ NCollection_List<Handle(QIVtkSelectionPipeline)> QVTKInteractorStyle::getPipelin
 	}
 
 	return pipelineList;
+}
+
+//----------------------------------------------------------------------------
+Standard_Integer QVTKInteractorStyle::getPipelinesMapSize() {
+	return _shapePipelinesMap.Size();
 }
 
 //----------------------------------------------------------------------------

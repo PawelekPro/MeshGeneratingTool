@@ -73,13 +73,13 @@ public:
 
 public:
 	void setRenderer(const vtkSmartPointer<vtkRenderer>&);
-	void setQVTKRenderWindow(const Rendering::QVTKRenderWindow* qvtkRenderWindow) { _qvtkRenderWindow = qvtkRenderWindow; }
+	void setQVTKRenderWindow(const Rendering::QVTKRenderWindow*);
 	vtkSmartPointer<vtkRenderer> getRenderer() const;
 	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>&);
 	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
 	void addPipeline(const Handle(QIVtkSelectionPipeline), IVtk_IdType);
 	void setSelectionMode(IVtk_SelectionMode);
-	Standard_Integer getPipelinesMapSize() { return _shapePipelinesMap.Size(); };
+	Standard_Integer getPipelinesMapSize();
 	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines();
 
 	// Overriding
