@@ -28,14 +28,13 @@ Model::Model(std::string modelName) : _modelName(modelName) {
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
         };
-Model::~Model(){
-    gmsh::finalize();
+    Model::~Model(){
+        gmsh::finalize();
 }
 
 void Model::updateParts() { 
     GeometryCore::PartsMap partsMap = this->geometry.getShapesMap();
     for (const auto& it : partsMap) {
-        std::cout << it.first << std::endl;
         const auto& shape = it.second;
         const void *shape_ptr = &shape;
         std::vector< std::pair<int, int>> outDimTags;
@@ -84,7 +83,6 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
                                     nodeCoords[zNodeId]);
     }
 
-
     // extract 3D elements from gmsh model, and transfer them to vtkCellArray container
     // elementTypes is a vector containing types of elemnts in the mesh
     // elementTags is a vevtor of length equal to elementTypes. It holds a vector of element
@@ -106,64 +104,73 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
     std::vector<std::vector<unsigned long>> elementNodeTags;
     #endif
 
-
     gmsh::model::mesh::getElements(_elementTypes, elementTags, elementNodeTags, -1);
-    vtkSmartPointer<vtkCellArray> vtkElements = vtkSmartPointer<vtkCellArray>::New();
 
     elementTypes.reserve(_elementTypes.size());
     std::transform(_elementTypes.begin(), _elementTypes.end(), std::back_inserter(elementTypes),
     [](int& elem){return static_cast<ElementType>(elem);});
 
+    struct ElementData {
+        ElementData() 
+            : nCellNodes(0), 
+            vtkCellType(0), 
+            vtkCells(vtkSmartPointer<vtkCellArray>::New()) {}
+
+        ElementData(int nNodes, int vtkType)
+            : nCellNodes(nNodes),
+            vtkCellType(vtkType),
+            vtkCells(vtkSmartPointer<vtkCellArray>::New()) {}
+
+    int nCellNodes;
+    vtkSmartPointer<vtkCellArray> vtkCells;
+    int vtkCellType;
+    };
+
+    std::map<ElementType, ElementData> elementDataMap = {
+        {ElementType::TETRA, {4, VTK_TETRA}},
+        {ElementType::TRIANGLE, {3, VTK_TRIANGLE}},
+        {ElementType::LINE, {2, VTK_LINE}}
+    };
+
+    this->gridData = vtkSmartPointer<vtkUnstructuredGrid>::New();
+    this->gridData->SetPoints(vtkNodes);
     std::vector<vtkIdType> currentElementNodeTags;
-    currentElementNodeTags.reserve(4);
-
-    vtkSmartPointer<vtkCellArray> vtkLines = vtkSmartPointer<vtkCellArray>::New();
-    std::vector<vtkIdType> currentLineNodeTags;
-    currentLineNodeTags.reserve(2);
-
     for(size_t i = 0; i < elementTypes.size(); ++i)
     {
-            if (elementTypes[i] == ElementType::TETRA)
-            {
-                for(size_t j = 0; j < elementTags[i].size(); ++j)
-                {
-                    auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 4);
-                    auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (j + 1) * 4);
+        if(elementTypes[i]!=ElementType::POINT){
+        ElementData elementData = elementDataMap.at(elementTypes[i]);
+        auto nElements = elementTags[i].size();
+        auto nNodes = elementData.nCellNodes;
+        auto cellArray = elementData.vtkCells;
+        auto cellType = elementData.vtkCellType;
 
-                    std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentElementNodeTags),
-                    [](unsigned long long nodeId) { return static_cast<vtkIdType>(nodeId);});
-                    vtkElements->InsertNextCell(4, currentElementNodeTags.data());
-                    currentElementNodeTags.clear();
-                }
-            }else if (elementTypes[i] == ElementType::LINE)
-            {
-                for(size_t j = 0; j < elementTags[i].size(); ++j)
-                {
-                    auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + j * 2);
-                    auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (j + 1) * 2);
+        for(size_t elementId = 0; elementId < 1; ++elementId){
+            auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + elementId * nNodes);
+            auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (elementId + 1) * nNodes);
 
-                    std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentLineNodeTags),
-                    [](unsigned long long nodeId) { return static_cast<vtkIdType>(nodeId);});
-                    vtkLines->InsertNextCell(2, currentLineNodeTags.data());
-                    currentLineNodeTags.clear();
-                }
-            }
+            std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentElementNodeTags),
+                [](auto nodeId) { return static_cast<vtkIdType>(nodeId - 1);});
+            std::cout<<endl;
+            cellArray->InsertNextCell(nNodes, currentElementNodeTags.data());
+            currentElementNodeTags.clear(); 
+        }
+        gridData->SetCells(cellType, cellArray);
+        }
     }
-
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-
     polyData->SetPoints(vtkNodes);
-    polyData->SetLines(vtkLines);
-    polyData->SetPolys(vtkElements);
-    
-    std::cout << "Succesively created vtkPolyData object!" << std::endl;
+    polyData->SetLines(elementDataMap.at(ElementType::LINE).vtkCells);
+    polyData->SetPolys(elementDataMap.at(ElementType::TRIANGLE).vtkCells);
+    std::cout << "Succesfully created vtkPolyData object!" << std::endl;
     return polyData;
 }
 
 
 void Model::updateMeshActor()
 {
+    // vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    // gridMapper->SetInputData(this->gridData);
     mapper->SetInputData(this->polyData);
     this->meshActor = vtkSmartPointer<vtkActor>::New();
     this->meshActor->SetMapper(mapper);

@@ -66,7 +66,9 @@ public:
 private:
 	enum class ElementType : int {
 		TETRA = 4,
+		TRIANGLE = 2,
 		LINE = 1,
+		POINT = 15,
 	};
 
 	vtkSmartPointer<vtkPolyData> polyData;
