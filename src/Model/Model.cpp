@@ -46,8 +46,8 @@ void Model::updateParts() {
 }
 
 void Model::meshParts() {
-            gmsh::option::setNumber("Mesh.MeshSizeMin", 3);
-            gmsh::option::setNumber("Mesh.MeshSizeMax", 3);
+            gmsh::option::setNumber("Mesh.MeshSizeMin", 1);
+            gmsh::option::setNumber("Mesh.MeshSizeMax", 1);
             gmsh::model::mesh::generate(3);
             gmsh::write(_modelName + ".msh");
             this->polyData = createMeshVtkPolyData();
@@ -144,7 +144,7 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
         auto cellArray = elementData.vtkCells;
         auto cellType = elementData.vtkCellType;
 
-        for(size_t elementId = 0; elementId < 1; ++elementId){
+        for(size_t elementId = 0; elementId < nElements; ++elementId){
             auto startNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + elementId * nNodes);
             auto endNodeIterator = std::make_move_iterator(elementNodeTags[i].begin() + (elementId + 1) * nNodes);
 
@@ -168,13 +168,13 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
 
 void Model::updateMeshActor()
 {
-    // vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    // gridMapper->SetInputData(this->gridData);
     mapper->SetInputData(this->polyData);
     this->meshActor = vtkSmartPointer<vtkActor>::New();
     this->meshActor->SetMapper(mapper);
-};
+    this->meshActor->GetProperty()->EdgeVisibilityOn();
+    this->meshActor->GetProperty()->SetEdgeColor(0.0, 0.0, 0.0);
+}
 
 void Model::addEdgeSizing(vtkSmartPointer<vtkActor> edgeActor){
 

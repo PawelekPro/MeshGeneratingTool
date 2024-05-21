@@ -142,7 +142,10 @@ void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 void Rendering::QVTKRenderWindow::enableWaterMark() {
 	this->_logoWidget->On();
 }
-
+void Rendering::QVTKRenderWindow::clearRenderer() {
+	this->_renderer->Clear();
+	this->pipeline->RemoveFromRenderer(this->_renderer);
+}
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setWaterMark() {
 	QPixmap pixmap(":/uiSetup/icons/watermark.png");
