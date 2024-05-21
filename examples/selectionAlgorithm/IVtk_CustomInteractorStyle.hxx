@@ -41,7 +41,7 @@ public:
 	void SetPicker(const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker);
 	vtkSmartPointer<IVtkTools_ShapePicker> GetPicker() const;
 	void setPipeline(const Handle(IVtk_CustomSelectionPipeline) pipeline) {
-		m_pipeline = pipeline;
+		_pipeline = pipeline;
 	}
 
 	// Overriding:
@@ -59,9 +59,9 @@ private:
 	~IVtk_CustomInteractorStyle() { }
 
 private:
-	vtkSmartPointer<vtkRenderer> m_renderer;
-	vtkSmartPointer<IVtkTools_ShapePicker> m_picker;
-	Handle(IVtk_CustomSelectionPipeline) m_pipeline;
+	vtkSmartPointer<vtkRenderer> _renderer;
+	vtkSmartPointer<IVtkTools_ShapePicker> _picker;
+	Handle(IVtk_CustomSelectionPipeline) _pipeline;
 };
 
 #endif

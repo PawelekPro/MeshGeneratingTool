@@ -110,9 +110,6 @@ endif()
 if(WIN32)
     find_path(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
     find_path(GMSH_LIB_DIR gmsh.lib PATHS ${GMSH_ROOT}/lib)
-    find_library(GMSH_LIB gmsh)
-    find_path(GMSH_INC gmsh.h_cwrap)
-
 else()
     FIND_PATH(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
     SET(GMSH_LIB_DIR ${GMSH_ROOT}/lib)
@@ -124,22 +121,21 @@ endif()
 if(NOT GMSH_LIB)
     MESSAGE(FATAL_ERROR "Could not find libgmsh")
 else()
-    set(GMSH_INC ${GMSH_ROOT}/include)
     # Read the content of gmsh.h into a variable
-    file(READ "${GMSH_INC}/gmsh.h" GMSH_H_CONTENT)
+    file(READ "${GMSH_INCLUDE_DIR}/gmsh.h" GMSH_H_CONTENT)
     # Extract version information using regular expressions
     # Major version
-    file(STRINGS ${GMSH_INC}/gmsh.h GMSH_API_VERSION_MAJOR
+    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MAJOR
         REGEX "#define GMSH_API_VERSION_MAJOR.*"
     )
     string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MAJOR ${GMSH_API_VERSION_MAJOR})
     # Minor version
-    file(STRINGS ${GMSH_INC}/gmsh.h GMSH_API_VERSION_MINOR
+    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MINOR
         REGEX "#define GMSH_API_VERSION_MINOR.*"
     )
     string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MINOR ${GMSH_API_VERSION_MINOR})
     # Patch version
-    file(STRINGS ${GMSH_INC}/gmsh.h GMSH_API_VERSION_PATCH
+    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_PATCH
         REGEX "#define GMSH_API_VERSION_PATCH.*"
     )
     string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_PATCH ${GMSH_API_VERSION_PATCH})

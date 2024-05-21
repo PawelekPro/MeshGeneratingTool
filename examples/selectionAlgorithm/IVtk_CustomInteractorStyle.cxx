@@ -24,35 +24,35 @@ IVtk_CustomInteractorStyle::IVtk_CustomInteractorStyle()
 	: vtkInteractorStyleTrackballCamera() { }
 
 void IVtk_CustomInteractorStyle::SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer) {
-	m_renderer = theRenderer;
+	_renderer = theRenderer;
 }
 
 vtkSmartPointer<vtkRenderer> IVtk_CustomInteractorStyle::GetRenderer() const {
-	return m_renderer;
+	return _renderer;
 }
 
 void IVtk_CustomInteractorStyle::SetPicker(const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker) {
-	m_picker = thePicker;
+	_picker = thePicker;
 }
 
 vtkSmartPointer<IVtkTools_ShapePicker> IVtk_CustomInteractorStyle::GetPicker() const {
-	return m_picker;
+	return _picker;
 }
 
 void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
-	m_picker->SetSelectionMode(SM_Face);
-	m_picker->SetTolerance(0.025);
+	_picker->SetSelectionMode(SM_Face);
+	_picker->SetTolerance(0.025);
 
 	Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
 		this->Interactor->GetEventPosition()[1] };
-	m_picker->Pick(aPos[0], aPos[1], 0);
+	_picker->Pick(aPos[0], aPos[1], 0);
 
 	// Traversing results
-	vtkSmartPointer<vtkActorCollection> anActorCollection = m_picker->GetPickedActors();
+	vtkSmartPointer<vtkActorCollection> anActorCollection = _picker->GetPickedActors();
 
 	if (anActorCollection) {
 		// Highlight picked subshapes
-		ClearHighlightAndSelection(m_pipeline, Standard_True, Standard_False);
+		ClearHighlightAndSelection(_pipeline, Standard_True, Standard_False);
 		anActorCollection->InitTraversal();
 		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
 
@@ -67,9 +67,9 @@ void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
 			}
 
 			IVtk_IdType aShapeID = anOccShape->GetId();
-			IVtkTools_SubPolyDataFilter* aFilter = m_pipeline->GetHighlightFilter();
+			IVtkTools_SubPolyDataFilter* aFilter = _pipeline->GetHighlightFilter();
 			// Set the selected sub-shapes ids to subpolydata filter.
-			IVtk_ShapeIdList aSubShapeIds = m_picker->GetPickedSubShapesIds(aShapeID);
+			IVtk_ShapeIdList aSubShapeIds = _picker->GetPickedSubShapesIds(aShapeID);
 
 			// Get ids of cells for picked subshapes.
 			IVtk_ShapeIdList aSubIds;
@@ -90,7 +90,7 @@ void IVtk_CustomInteractorStyle::OnLeftButtonDown() {
 			aFilter->Modified();
 		}
 	}
-	m_pipeline->Mapper()->Update();
+	_pipeline->Mapper()->Update();
 
 	// Invoke basic method
 	vtkInteractorStyleTrackballCamera::OnLeftButtonDown();

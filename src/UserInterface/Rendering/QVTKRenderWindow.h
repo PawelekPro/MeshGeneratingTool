@@ -112,14 +112,16 @@ public:
 	 *
 	 */
 	void setWaterMark();
-
 	/**
-	 * @brief  Clear all geometry actors from faces, edges and parts layers and
-	 * reload them from Geometry object
+	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window
 	 *
 	 */
-	void updateGeometryActors(const GeometryCore::Geometry& geometry);
-
+	void addShapeToRenderer(const TopoDS_Shape& shape);
+	/**
+	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window
+	 *
+	 */
+	void clearRenderer();
 public:
 	std::shared_ptr<Model> model;
 
@@ -155,6 +157,9 @@ private:
 
 	// Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;
+
+	// Geometry selecion pipelines
+	std::vector<vtkSmartPointer<QIVtkSelectionPipeline>> _geometryImportPipelines;
 };
 };
 

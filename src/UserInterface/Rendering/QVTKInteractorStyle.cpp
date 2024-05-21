@@ -51,6 +51,8 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 
 	_pipeline->Delete();
 	_picker->Delete();
+	_pipeline->Delete();
+	_picker->Delete();
 }
 
 //----------------------------------------------------------------------------

@@ -100,30 +100,20 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_widget->layout()->addWidget(_vtkWidget);
 
 	// Create test shape
-
-	TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
-	std::string filePath = "/home/pgilewicz/geometrySample/Ref_XYZ.stp";
-	if (fileExists(filePath)) {
-		vtkLogF(INFO, "Geometry file is valid: \"%s\"", filePath.c_str());
-	} else {
-		vtkLogF(ERROR, "Invalid geometry file");
-	}
-	const char* myCString = filePath.c_str();
-	Standard_CString CStringfilePath(myCString);
-
-	// TopoDS_Shape theShape = readSTEP(CStringfilePath);
-	static Standard_Integer ShapeID = 0;
-	++ShapeID;
-	pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
-	pipeline->AddToRenderer(_renderer);
-	fitView();
-	_interactorStyle->setPipeline(pipeline);
+	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	// static Standard_Integer ShapeID = 0;
+	// ++ShapeID;
+	// pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
+	// pipeline->AddToRenderer(_renderer);
+	// fitView();
+	// _interactorStyle->setPipeline(pipeline);
 }
 
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 	_renderer->Delete();
 	_vtkWidget->deleteLater();
+	delete pipeline;
 }
 
 //----------------------------------------------------------------------------
@@ -182,7 +172,10 @@ void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 void Rendering::QVTKRenderWindow::enableWaterMark() {
 	this->_logoWidget->On();
 }
-
+void Rendering::QVTKRenderWindow::clearRenderer() {
+	this->_renderer->Clear();
+	this->pipeline->RemoveFromRenderer(this->_renderer);
+}
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setWaterMark() {
 	QPixmap pixmap(":/uiSetup/icons/watermark.png");
@@ -210,25 +203,15 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ManagesCursorOff();
 }
 
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::updateGeometryActors(
-	const GeometryCore::Geometry& geometry) {
+void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape) {
 
-	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
-	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
-	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
-
-	for (const auto& actor : parts) {
-		_renderer->AddActor(actor.second);
-	}
-	for (const auto& actor : faces) {
-		_renderer->AddActor(actor.second);
-	}
-	for (const auto& actor : edges) {
-		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
-		_renderer->AddActor(actor.second);
-	}
-	this->RenderScene();
+	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	static Standard_Integer ShapeID = 0;
+	++ShapeID;
+	pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
+	pipeline->AddToRenderer(_renderer);
+	fitView();
+	_interactorStyle->setPipeline(pipeline);
 }
 
 //----------------------------------------------------------------------------

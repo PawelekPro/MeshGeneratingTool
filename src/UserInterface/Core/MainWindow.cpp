@@ -110,7 +110,10 @@ void MainWindow::importSTEP(QString fileName) {
 	try {
 		this->model->geometry.importSTEP(filePath, this->progressBar);
 		this->model->updateParts();
-		this->QVTKRender->updateGeometryActors(this->model->geometry);
+		GeometryCore::PartsMap shapesMap = this->model->geometry.getShapesMap();
+		for(auto shape : shapesMap){
+			this->QVTKRender->addShapeToRenderer(shape.second);
+		}
 	} catch (std::filesystem::filesystem_error) {
 		this->progressBar->setTerminateIndicator(false);
 		std::cout << "Display some message or dialog box..." << std::endl;
@@ -166,6 +169,9 @@ void MainWindow::initializeActions() {
 
 void MainWindow::showMesh() {
 	this->model->updateMeshActor();
+	this->QVTKRender->clearRenderer();
+	this->QVTKRender->addActor(this->model->meshActor);
+	this->QVTKRender->RenderScene();
 	// this->QVTKRender->getActiveRenderer()->Render();
 }
 
