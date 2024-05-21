@@ -47,7 +47,7 @@
 #include <QMenu>
 #include <QPointer>
 
-typedef NCollection_DataMap<IVtk_IdType, Handle(QIVtkSelectionPipeline)> ShapePipelineMap;
+typedef NCollection_DataMap<IVtk_IdType, Handle(QIVtkSelectionPipeline)> ShapePipelinesMap;
 
 /**
  * @brief  The QVTKInteractorStyle provides class for define custom interactions with render window.
@@ -65,12 +65,13 @@ public:
 	vtkTypeMacro(QVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
 
 public:
-	void setRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
+	void setRenderer(const vtkSmartPointer<vtkRenderer>&);
 	vtkSmartPointer<vtkRenderer> getRenderer() const;
-	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker);
+	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>&);
 	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
-	void setPipeline(const Handle(QIVtkSelectionPipeline) pipeline);
-	void setSelectionMode(IVtk_SelectionMode mode);
+	void addPipeline(const Handle(QIVtkSelectionPipeline), IVtk_IdType);
+	void setSelectionMode(IVtk_SelectionMode);
+	Standard_Integer getPipelinesMapSize() { return _shapePipelinesMap.Size(); };
 
 	// Overriding
 public:
@@ -121,8 +122,8 @@ private:
 
 	vtkSmartPointer<vtkRenderer> _renderer;
 	vtkSmartPointer<IVtkTools_ShapePicker> _picker;
-	Handle(QIVtkSelectionPipeline) _pipeline;
-	ShapePipelineMap _shapePipelineMap;
+
+	ShapePipelinesMap _shapePipelinesMap;
 	IVtk_ShapeIdList _selectedSubShapeIds;
 	IVtk_SelectionMode _currentSelection;
 };

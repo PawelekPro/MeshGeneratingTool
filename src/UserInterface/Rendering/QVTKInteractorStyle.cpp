@@ -19,20 +19,26 @@
 
 #include "QVTKInteractorStyle.h"
 
+#include <Message.hxx>
+#include <Message_Messenger.hxx>
+
 //----------------------------------------------------------------------------
-static void ClearHighlightAndSelection(const Handle(QIVtkSelectionPipeline) & thePipeline,
-	const Standard_Boolean doHighlighting,
-	const Standard_Boolean doSelection) {
+static void ClearHighlightAndSelection(ShapePipelinesMap& theMap,
+	const Standard_Boolean doHighlighting, const Standard_Boolean doSelection) {
 	if (!doHighlighting && !doSelection) {
 		return;
 	}
 
-	if (doHighlighting) {
-		thePipeline->ClearHighlightFilters();
-	}
+	for (ShapePipelinesMap::Iterator anIt(theMap); anIt.More(); anIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
 
-	if (doSelection) {
-		thePipeline->ClearSelectionFilters();
+		if (doHighlighting) {
+			pipeline->ClearHighlightFilters();
+		}
+
+		if (doSelection) {
+			pipeline->ClearSelectionFilters();
+		}
 	}
 }
 
@@ -49,7 +55,10 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
 		delete _contextMenu;
 
-	_pipeline->Delete();
+	for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+		pipeline->Delete();
+	}
 	_picker->Delete();
 }
 
@@ -77,34 +86,37 @@ QVTKInteractorStyle::getPicker() const {
 }
 
 //----------------------------------------------------------------------------
-void QVTKInteractorStyle::setPipeline(
-	const Handle(QIVtkSelectionPipeline) pipeline) {
-	_pipeline = pipeline;
+void QVTKInteractorStyle::addPipeline(
+	const Handle(QIVtkSelectionPipeline) pipeline, IVtk_IdType shapeID) {
+	_shapePipelinesMap.Bind(shapeID, pipeline);
 }
 
 //----------------------------------------------------------------------------
 void QVTKInteractorStyle::setSelectionMode(
 	IVtk_SelectionMode mode) {
 
-	// Set given selection mode
-	_picker->SetSelectionMode(mode, true);
-	_currentSelection = mode;
-
-	if (_pipeline.IsNull())
+	if (_shapePipelinesMap.IsEmpty())
 		return;
 
 	// Clear current selection
 	_selectedSubShapeIds.Clear();
 
 	ClearHighlightAndSelection(
-		_pipeline, Standard_True, Standard_True);
+		_shapePipelinesMap, Standard_True, Standard_True);
 
-	// Deactivate all current selection modes
-	IVtk_SelectionModeList modeList
-		= _picker->GetSelectionModes(_pipeline->Actor());
-	for (IVtk_SelectionMode selMode : modeList) {
-		_picker->SetSelectionMode(selMode, false);
+	for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+		// Deactivate all current selection modes
+		IVtk_SelectionModeList modeList
+			= _picker->GetSelectionModes(pipeline->Actor());
+
+		for (IVtk_SelectionMode selMode : modeList) {
+			_picker->SetSelectionMode(selMode, false);
+		}
 	}
+	// Set given selection mode
+	_picker->SetSelectionMode(mode, true);
+	_currentSelection = mode;
 }
 
 //----------------------------------------------------------------------------
@@ -172,8 +184,12 @@ void QVTKInteractorStyle::OnKeyPress() {
 	// Clear current selection when Escape is pressed
 	if (key == "Escape") {
 		_selectedSubShapeIds.Clear();
-		ClearHighlightAndSelection(_pipeline, Standard_False, Standard_True);
-		_pipeline->Mapper()->Update();
+		ClearHighlightAndSelection(_shapePipelinesMap, Standard_False, Standard_True);
+
+		for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
+			const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
+			pipeline->Mapper()->Update();
+		}
 	}
 
 	this->Superclass::OnKeyPress();
@@ -196,10 +212,10 @@ void QVTKInteractorStyle::MoveTo(
 	if (anActorCollection) {
 
 		// Highlight picked subshapes
-		if (_pipeline.IsNull())
+		if (_shapePipelinesMap.IsEmpty())
 			return;
 
-		ClearHighlightAndSelection(_pipeline, Standard_True, Standard_False);
+		ClearHighlightAndSelection(_shapePipelinesMap, Standard_True, Standard_False);
 
 		anActorCollection->InitTraversal();
 		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
@@ -215,7 +231,19 @@ void QVTKInteractorStyle::MoveTo(
 			}
 
 			IVtk_IdType aShapeID = anOccShape->GetId();
-			IVtkTools_SubPolyDataFilter* aFilter = _pipeline->GetHighlightFilter();
+
+			Handle(Message_Messenger) anOutput = Message::DefaultMessenger();
+			if (!_shapePipelinesMap.IsBound(aShapeID)) {
+				anOutput->SendWarning()
+					<< "Warning: there is no VTK pipeline registered for picked shape"
+					<< std::endl;
+				continue;
+			}
+
+			const Handle(QIVtkSelectionPipeline)& pipeline
+				= _shapePipelinesMap.Find(aShapeID);
+
+			IVtkTools_SubPolyDataFilter* aFilter = pipeline->GetHighlightFilter();
 
 			// Set the selected sub-shapes ids to subpolydata filter.
 			IVtk_ShapeIdList aSubShapeIds = _picker->GetPickedSubShapesIds(aShapeID);
@@ -244,8 +272,9 @@ void QVTKInteractorStyle::MoveTo(
 				aFilter->SetInputConnection(aDataSource->GetOutputPort());
 			}
 			aFilter->Modified();
+
+			pipeline->Mapper()->Update();
 		}
-		_pipeline->Mapper()->Update();
 	}
 }
 
@@ -256,7 +285,8 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 	if (anActorCollection) {
 		if (anActorCollection->GetNumberOfItems() != 0) {
 			// Clear previous selection.
-			ClearHighlightAndSelection(_pipeline, Standard_False, Standard_True);
+			ClearHighlightAndSelection(
+				_shapePipelinesMap, Standard_False, Standard_True);
 		}
 
 		anActorCollection->InitTraversal();
@@ -272,14 +302,26 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 				continue;
 			}
 
-			IVtkTools_SubPolyDataFilter* aFilter = _pipeline->GetSelectionFilter();
+			IVtk_IdType aShapeID = anOccShape->GetId();
+
+			Handle(Message_Messenger) anOutput = Message::DefaultMessenger();
+			if (!_shapePipelinesMap.IsBound(aShapeID)) {
+				anOutput->SendWarning()
+					<< "Warning: there is no VTK pipeline registered for picked shape"
+					<< std::endl;
+				continue;
+			}
+
+			const Handle(QIVtkSelectionPipeline)& pipeline
+				= _shapePipelinesMap.Find(aShapeID);
+
+			IVtkTools_SubPolyDataFilter* aFilter = pipeline->GetSelectionFilter();
 
 			// Set the selected sub-shapes ids to subpolydata filter.
 			IVtk_ShapeIdList aSubShapeIds;
 			if (_currentSelection == IVtk_SelectionMode::SM_Shape) {
 				aSubShapeIds = _picker->GetPickedShapesIds(Standard_True);
 			} else {
-				IVtk_IdType aShapeID = anOccShape->GetId();
 				aSubShapeIds = _picker->GetPickedSubShapesIds(aShapeID);
 			}
 
@@ -316,10 +358,9 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 				aFilter->SetInputConnection(aDataSource->GetOutputPort());
 			}
 			aFilter->Modified();
-		}
 
-		if (!_pipeline.IsNull()) {
-			_pipeline->Mapper()->Update();
+			if (!pipeline.IsNull())
+				pipeline->Mapper()->Update();
 		}
 	}
 }

@@ -99,14 +99,8 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_rendererWindow->Render();
 	_widget->layout()->addWidget(_vtkWidget);
 
-	// Create test shape
-	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
-	// static Standard_Integer ShapeID = 0;
-	// ++ShapeID;
-	// pipeline = new QIVtkSelectionPipeline(theShape, ShapeID);
-	// pipeline->AddToRenderer(_renderer);
-	// fitView();
-	// _interactorStyle->setPipeline(pipeline);
+	TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
+	addShapeToRenderer(theShape);
 }
 
 //----------------------------------------------------------------------------
@@ -205,13 +199,13 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 
 void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape) {
 
-	// TopoDS_Shape theShape = BRepPrimAPI_MakeBox(60, 80, 90).Shape();
-	static Standard_Integer ShapeID = 0;
+	static Standard_Integer ShapeID
+		= _interactorStyle->getPipelinesMapSize();
 	++ShapeID;
 	pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
 	pipeline->AddToRenderer(_renderer);
 	fitView();
-	_interactorStyle->setPipeline(pipeline);
+	_interactorStyle->addPipeline(pipeline, ShapeID);
 }
 
 //----------------------------------------------------------------------------
