@@ -317,9 +317,12 @@
           <property name="tabPosition">
            <enum>QTabWidget::South</enum>
           </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
           <widget class="QWidget" name="modelView">
            <attribute name="title">
-            <string>Model view</string>
+            <string>Geometry</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="leftMargin">
@@ -335,6 +338,11 @@
              <number>0</number>
             </property>
            </layout>
+          </widget>
+          <widget class="QWidget" name="meshView">
+           <attribute name="title">
+            <string>Mesh</string>
+           </attribute>
           </widget>
          </widget>
         </item>
