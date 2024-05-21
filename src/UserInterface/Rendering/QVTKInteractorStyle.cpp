@@ -47,8 +47,7 @@ vtkStandardNewMacro(QVTKInteractorStyle);
 
 //----------------------------------------------------------------------------
 QVTKInteractorStyle::QVTKInteractorStyle()
-	: _contextMenu(nullptr)
-	, _selectedSubShapeIds(IVtk_ShapeIdList()) { }
+	: _contextMenu(nullptr) { }
 
 //----------------------------------------------------------------------------
 QVTKInteractorStyle::~QVTKInteractorStyle() {
@@ -59,6 +58,12 @@ QVTKInteractorStyle::~QVTKInteractorStyle() {
 		const Handle(QIVtkSelectionPipeline)& pipeline = anIt.Value();
 		pipeline->Delete();
 	}
+
+	for (SelectedSubShapeIdsMap::Iterator anIt(_selectedSubShapeIdsMap); anIt.More(); anIt.Next()) {
+		const IVtk_ShapeIdList* shapeIdList = anIt.Value();
+		delete shapeIdList;
+	}
+
 	_picker->Delete();
 }
 
@@ -89,6 +94,7 @@ QVTKInteractorStyle::getPicker() const {
 void QVTKInteractorStyle::addPipeline(
 	const Handle(QIVtkSelectionPipeline) pipeline, IVtk_IdType shapeID) {
 	_shapePipelinesMap.Bind(shapeID, pipeline);
+	_selectedSubShapeIdsMap.Bind(shapeID, new IVtk_ShapeIdList());
 }
 
 //----------------------------------------------------------------------------
@@ -99,7 +105,10 @@ void QVTKInteractorStyle::setSelectionMode(
 		return;
 
 	// Clear current selection
-	_selectedSubShapeIds.Clear();
+	for (SelectedSubShapeIdsMap::Iterator anIt(_selectedSubShapeIdsMap); anIt.More(); anIt.Next()) {
+		IVtk_ShapeIdList* selectedSubShapeIds = anIt.Value();
+		selectedSubShapeIds->Clear();
+	}
 
 	ClearHighlightAndSelection(
 		_shapePipelinesMap, Standard_True, Standard_True);
@@ -183,7 +192,11 @@ void QVTKInteractorStyle::OnKeyPress() {
 
 	// Clear current selection when Escape is pressed
 	if (key == "Escape") {
-		_selectedSubShapeIds.Clear();
+		for (SelectedSubShapeIdsMap::Iterator anIt(_selectedSubShapeIdsMap); anIt.More(); anIt.Next()) {
+			IVtk_ShapeIdList* selectedSubShapeIds = anIt.Value();
+			selectedSubShapeIds->Clear();
+		}
+
 		ClearHighlightAndSelection(_shapePipelinesMap, Standard_False, Standard_True);
 
 		for (ShapePipelinesMap::Iterator anIt(_shapePipelinesMap); anIt.More(); anIt.Next()) {
@@ -242,6 +255,8 @@ void QVTKInteractorStyle::MoveTo(
 
 			const Handle(QIVtkSelectionPipeline)& pipeline
 				= _shapePipelinesMap.Find(aShapeID);
+			IVtk_ShapeIdList* selectedSubShapeIds
+				= _selectedSubShapeIdsMap.Find(aShapeID);
 
 			IVtkTools_SubPolyDataFilter* aFilter = pipeline->GetHighlightFilter();
 
@@ -250,7 +265,7 @@ void QVTKInteractorStyle::MoveTo(
 
 			// If picked shape is in selected shapes then do not highlight it
 			for (auto shapeID : aSubShapeIds) {
-				if (_selectedSubShapeIds.Contains(shapeID)) {
+				if (selectedSubShapeIds->Contains(shapeID)) {
 					return;
 				}
 			}
@@ -314,6 +329,8 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 
 			const Handle(QIVtkSelectionPipeline)& pipeline
 				= _shapePipelinesMap.Find(aShapeID);
+			IVtk_ShapeIdList* selectedSubShapeIds
+				= _selectedSubShapeIdsMap.Find(aShapeID);
 
 			IVtkTools_SubPolyDataFilter* aFilter = pipeline->GetSelectionFilter();
 
@@ -326,27 +343,27 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			}
 
 			if (!appendId) {
-				_selectedSubShapeIds.Clear();
+				selectedSubShapeIds->Clear();
 			}
 
 			for (auto shapeID : aSubShapeIds) {
-				if (!_selectedSubShapeIds.Contains(shapeID)) {
+				if (!selectedSubShapeIds->Contains(shapeID)) {
 					// If selected Ids list does not contain shape then append it.
-					_selectedSubShapeIds.Append(aSubShapeIds);
+					selectedSubShapeIds->Append(aSubShapeIds);
 				} else {
 					// Selecting the shape again causes deselecting it.
-					_selectedSubShapeIds.Remove(shapeID);
+					selectedSubShapeIds->Remove(shapeID);
 				}
 			}
 
 			// If selected Ids list is empty then any selection will not be made
-			if (_selectedSubShapeIds.IsEmpty()) {
+			if (selectedSubShapeIds->IsEmpty()) {
 				return;
 			}
 
 			// Get ids of cells for picked subshapes.
 			IVtk_ShapeIdList aSubIds;
-			IVtk_ShapeIdList::Iterator aMetaIds(_selectedSubShapeIds);
+			IVtk_ShapeIdList::Iterator aMetaIds(*selectedSubShapeIds);
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
 				aSubIds.Append(aSubSubIds);
