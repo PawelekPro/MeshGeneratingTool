@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2024 Paweł Gilewicz
+ *
+ * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "RibbonBarWidget.h"
 
@@ -5,6 +23,9 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 	: QWidget(parent) {
 
 	this->setupUi();
+
+	// Getting acces to main window instance
+	_mainWindow = qobject_cast<MainWindow*>(parent->window());
 
 	_ribbonBar = new SARibbonBar(parent);
 	_ribbonBar->setTitleVisible(false);
@@ -20,7 +41,6 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 #endif
 
 	this->verticalLayout->setMenuBar(_ribbonBar);
-
 	buildRibbon(_ribbonBar);
 }
 
@@ -55,10 +75,49 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	page3->setCategoryName("Display");
 	bar->addCategoryPage(page3);
 
+	/* ================================================================
+	Selection page
+	===================================================================*/
 	SARibbonCategory* page4 = new SARibbonCategory();
 	page4->setCategoryName("Selection");
 	bar->addCategoryPage(page4);
 
+	SARibbonPannel* selectionPanel = new SARibbonPannel("Selection type", page4);
+	page4->addPannel(selectionPanel);
+
+	QActionGroup* selectionGroup = new QActionGroup(this);
+	selectionGroup->setExclusive(true);
+
+	QAction* vertexSelAct = createAction("Vertex", ":/icons/icons/Selection_vertex.svg");
+	vertexSelAct->setIconText("Vertex");
+	vertexSelAct->setCheckable(true); // Ustawienie akcji jako checkable
+	selectionGroup->addAction(vertexSelAct); // Dodanie akcji do grupy
+	selectionPanel->addLargeAction(vertexSelAct);
+
+	QAction* edgeSelAct = createAction("Edge", ":/icons/icons/Selection_edge.svg");
+	edgeSelAct->setIconText("Edge");
+	edgeSelAct->setCheckable(true);
+	selectionGroup->addAction(edgeSelAct);
+	selectionPanel->addLargeAction(edgeSelAct);
+
+	QAction* faceSelAct = createAction("Face", ":/icons/icons/Selection_face.svg");
+	faceSelAct->setIconText("Face");
+	faceSelAct->setCheckable(true);
+	selectionGroup->addAction(faceSelAct);
+	selectionPanel->addLargeAction(faceSelAct);
+
+	QAction* volSelAct = createAction("Volume", ":/icons/icons/Selection_volume.svg");
+	volSelAct->setIconText("Volume");
+	volSelAct->setCheckable(true);
+	selectionGroup->addAction(volSelAct);
+	selectionPanel->addLargeAction(volSelAct);
+
+	connect(selectionGroup, &QActionGroup::triggered, this,
+		&RibbonBarWidget::onEntitySelectionChanged);
+
+	/* ================================================================
+	Ribbon bar theme selection
+	===================================================================*/
 	mComboTheme = new QComboBox();
 	mComboTheme->addItem("Theme Win7", static_cast<int>(SARibbonTheme::RibbonThemeWindows7));
 	mComboTheme->addItem("Theme Office2013", static_cast<int>(SARibbonTheme::RibbonThemeOffice2013));
@@ -93,6 +152,7 @@ void RibbonBarWidget::onRibbonThemeComboBoxCurrentIndexChanged(int index) {
 	_ribbonBar->updateRibbonGeometry();
 }
 
+//----------------------------------------------------------------------------
 void RibbonBarWidget::setupUi() {
 
 	this->verticalLayout = new QVBoxLayout(this);
@@ -101,4 +161,19 @@ void RibbonBarWidget::setupUi() {
 	this->verticalLayout->setContentsMargins(0, 0, 0, 0);
 
 	QMetaObject::connectSlotsByName(this);
+}
+
+//----------------------------------------------------------------------------
+void RibbonBarWidget::onEntitySelectionChanged(QAction* action) {
+	const QString& actionText = action->text();
+
+	if (actionText == "Vertex") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Vertex);
+	} else if (actionText == "Edge") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Edge);
+	} else if (actionText == "Face") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Face);
+	} else if (actionText == "Volume") {
+		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Shape);
+	}
 }

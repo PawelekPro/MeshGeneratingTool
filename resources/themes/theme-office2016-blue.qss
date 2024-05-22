@@ -1,76 +1,4 @@
-﻿/*
-这是模仿office2016的主题模板
-通过替换占位符实现主题的设置
-{Ribbon.BKColor} : ribbon的背景颜色，决定标题栏等位置的颜色
-
-{Category.BKColor} : Category的背景颜色，SARibbonStackedWidget的背景颜色应该和SARibbonCategory的背景颜色一致
-{Category.BorderColor}:Category的边框颜色，默认{Category.BKColor}一致
-
-{CategoryScrollButton.BorderColor}:Category的移动按钮的边框颜色，建议等于{ToolButton.BorderColor:hover}
-{CategoryScrollButton.BKColor}:Category的移动按钮的背景颜色，建议等于{ToolButton.BKColor}
-{CategoryScrollButton.BKColor:hover}:Category的移动按钮hover下的背景颜色，建议等于{ToolButton.BKColor:hover}
-
-{ApplicationButton.BKColor}:建议和{Ribbon.BKColor}一致
-{ApplicationButton.BKColor:hover}:{ApplicationButton.BKColor}hover状态的颜色
-{ApplicationButton.BKColor:pressed}:{ApplicationButton.BKColor}pressed状态的颜色
-
-{Tab.Color} : Tab的文字颜色，建议和{Ribbon.BKColor}颜色的反色，区分度要高
-{Tab.Color:selected}: 选中Tab的文字颜色，建议和{Ribbon.BKColor}一致
-{Tab.BorderColor:selected}:选中Tab的边框颜色，建议和{Tab.Color:selected}一致
-{Tab.BKColor:selected}:选中Tab的背景颜色，建议和{Category.BKColor}一致
-{Tab.BorderColor:hover:!selected}:tab没被选中，但出于hover状态下的边框颜色，建议和{Tab.Color}一致
-{Tab.Color:hover:!selected}:tab没被选中，但出于hover状态下的文字颜色，建议和{Tab.Color}一致
-{Tab.BKColor:hover:!selected}:tab没被选中，但出于hover状态下的背景颜色
-
-{ToolButton.BKColor}:按钮的背景颜色，应该和{Category.BKColor}一致
-{ToolButton.Color}:按钮的文字色
-{ToolButton.Color:pressed}:按钮按下状态的文字色
-{ToolButton.BorderColor:pressed}:按钮按下状态的边框颜色
-{ToolButton.BKColor:pressed}:按钮按下状态的背景颜色
-{ToolButton.Color:checked}:按钮选中状态的文字色
-{ToolButton.BorderColor:checked}:按钮选中状态的边框颜色
-{ToolButton.BKColor:checked}:按钮选中状态的背景颜色
-{ToolButton.Color:hover}:按钮hover状态的文字色
-{ToolButton.BorderColor:hover}:按钮hover状态的边框颜色
-{ToolButton.BKColor:hover}:按钮hover状态的背景颜色
-
-{PannelButtonGroup.BorderColor}:Pannel下的buttongroup的边框颜色，建议和{ToolButton.BorderColor:hover}一致
-
-{ControlButton.BKColor}:工具栏按钮的背景颜色，建议为透明
-{ControlButton.BorderColor}:工具栏按钮的边框颜色，建议为透明
-{ControlButton.BorderColor:pressed}:工具栏按钮按下后的边框颜色
-{ControlButton.BKColor:pressed}:工具栏按钮按下后的背景颜色
-{ControlButton.BorderColor:checked}:工具栏按钮checked状态的背景颜色
-{ControlButton.BKColor:checked}:工具栏按钮checked状态的背景颜色
-{ControlButton.BorderColor:hover}:工具栏按钮hover状态的背景颜色
-{ControlButton.BKColor:hover}:工具栏按钮hover状态的背景颜色
-
-{GalleryButton.BKColor}:GalleryButton按钮的背景颜色，建议为透明
-{GalleryButton.BorderColor}:GalleryButton按钮的边框颜色，建议为透明
-{GalleryButton.BorderColor:hover}:GalleryButton按钮hover状态的背景颜色
-{GalleryButton.BKColor:hover}:GalleryButton按钮hover状态的背景颜色
-{Gallery.BorderColor}:Gallery的边框颜色，建议为{ToolButton.BKColor:hover}
-{Gallery.BKColor}:Gallery的背景颜色，建议为transparent
-{Gallery.Color}:Gallery的文字颜色，建议为{ToolButton.Color}
-{GalleryGroup.BKColor}:GalleryGroup的背景颜色，建议为transparent
-{GalleryGroup.BorderColor}:GalleryGroup的BorderColor，建议为{Gallery.BorderColor}
-{GalleryGroup.BKColor:selected}:GalleryGroup选中的条目的背景颜色建议为{ToolButton.BKColor:selected}
-{GalleryGroup.Color:selected}:GalleryGroup选中的条目的文字颜色建议为{ToolButton.Color}
-
-{Menu.Color}:菜单文字颜色，建议为{ToolButton.Color}
-{Menu.BKColor}:菜单背景颜色，建议为{ToolButton.Color}
-{Menu.BorderColor}:菜单边框颜色，建议为{Menu.BKColor}
-{Menu.BKColor:selected}菜单选中条目的背景颜色，建议为{ToolButton.BKColor:checked}
-{Menu.BKColor:hover}菜单hover条目的背景颜色，建议为 {ToolButton.BKColor:hover}
-
-{OptionButton.BKColor}:pannel下的OptionButton的背景颜色，建议为transparent
-{OptionButton.Color}:pannel下的OptionButton的文字颜色，建议为{ToolButton.Color}
-{OptionButton.BKColor:hover}:pannel下的OptionButton在hover状态下的背景颜色，建议为{ToolButton.BKColor:hover}
-*/
-
-
-
-/*SARibbonBar*/
+﻿/*SARibbonBar*/
 SARibbonBar {
   background-color: #225497;/* {Ribbon.BKColor} */
   border: solid #707070;
@@ -91,15 +19,12 @@ SARibbonCtrlContainer {
 
 /*
 SARibbonSeparatorWidget
-注意，SARibbonSeparatorWidget的背景颜色是使用color
-如果想给不同的部件下的分割线设置不同风格，可以使用如SARibbonCategory > SARibbonSeparatorWidget的方式，参考theme-dark2.qss
 */
 SARibbonSeparatorWidget {
   color: #bec0c2;
 }
 
 /*SARibbonCategory*/
-
 SARibbonCategory {
   background-color: #f1f1f1;/* {Category.BKColor} */
 }
@@ -107,10 +32,7 @@ SARibbonCategory:focus {
   outline: none;
 }
 
-/*
-SARibbonCategory下的SARibbonSeparatorWidget
-注意，SARibbonSeparatorWidget的背景颜色是使用color
-*/
+
 SARibbonCategory > SARibbonSeparatorWidget {
   color: #bec0c2;
   margin-top:3px;
@@ -118,14 +40,31 @@ SARibbonCategory > SARibbonSeparatorWidget {
 }
 
 /*SARibbonPannel*/
-
 SARibbonPannel {
   background-color: #f1f1f1;
   border: none;
   color: #666666;
 }
 
-/*SARibbonPannelLabel Pannel下标题栏*/
+SARibbonPannel > QToolButton:hover {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QToolButton:pressed {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QToolButton {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QActionGroup:pressed {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QActionGroup {
+  border-radius: 5px;
+}
 
 SARibbonPannelLabel {
     background-color: transparent;

@@ -18,91 +18,78 @@
  */
 
 #include "QVTKRenderWindow.h"
-#include "QVTKInteractorStyle.h"
-#include "QVTKNavigationWidget.h"
 
 #include <QLayout>
 
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
-	: _widget(widget) {
+	: _widget(widget)
+	, _rendererWindow(vtkGenericOpenGLRenderWindow::New())
+	, _renderer(vtkSmartPointer<vtkRenderer>::New())
+	, _vtkWidget(new QVTKOpenGLNativeWidget())
+	, _shapePicker(vtkSmartPointer<IVtkTools_ShapePicker>::New())
+	, _interactorStyle(vtkSmartPointer<QVTKInteractorStyle>::New()) {
 
-	_vtkWidget = new QVTKOpenGLNativeWidget();
-	_vtkWidget->setRenderWindow(vtkGenericOpenGLRenderWindow::New());
+	_vtkWidget->setRenderWindow(_rendererWindow);
+	_interactor = _vtkWidget->interactor();
 
-	_rendererWindow = _vtkWidget->renderWindow();
+	vtkNew<vtkNamedColors> colors;
+	_renderer->GetActiveCamera()->ParallelProjectionOff();
+	_renderer->LightFollowCameraOn();
+	_rendererWindow->AddRenderer(_renderer);
+	_renderer->SetBackground(colors->GetColor3d("LightSlateGray").GetData());
 
-	// Create renderers and add them to render window
-	this->initializeRenderers();
+	// _vtkWidget->setFocusPolicy(Qt::StrongFocus);
 
-	_interactor = _rendererWindow->GetInteractor();
-
-	_vtkWidget->setFocusPolicy(Qt::StrongFocus);
 	this->generateCoordinateSystemAxes();
 	this->setWaterMark();
 
-	_interactor->SetRenderWindow(_rendererWindow);
-
-	_camOrientManipulator->SetParentRenderer(this->mRenderers.at(0));
+	_camOrientManipulator->SetParentRenderer(_renderer);
 	_camOrientManipulator->SetAnimate(true);
 	_camOrientManipulator->AnimateOn();
-	vtkSmartPointer<Interactor::QVTKInteractorStyle>
-		interactorStyle
-		= vtkSmartPointer<Interactor::QVTKInteractorStyle>::New();
-	interactorStyle->Initialize(this);
-	this->setInteractorStyle(interactorStyle);
 
-	this->RenderScene();
+	// Setup IVtk Shape picker
+	_shapePicker->SetRenderer(_renderer);
+	_shapePicker->SetTolerance(0.025);
+
+	// Setup interactor style
+	_interactorStyle->setRenderer(_renderer);
+	_interactorStyle->setQVTKRenderWindow(this);
+	_interactorStyle->setPicker(_shapePicker);
+
+	_interactor->SetInteractorStyle(_interactorStyle);
+
+	_renderer->ResetCamera();
+	_rendererWindow->Render();
 	_widget->layout()->addWidget(_vtkWidget);
 }
 
 //----------------------------------------------------------------------------
 Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
-	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
-		this->mRenderers.at(i)->Delete();
-	}
 
-	_vtkWidget->deleteLater();
+	if (_renderer)
+		_renderer->Delete();
+
+	if (_vtkWidget)
+		_vtkWidget->deleteLater();
+
+	if (_shapePicker)
+		_shapePicker->Delete();
 }
 
 //----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::initializeRenderers() {
-	// Background color
-	vtkNew<vtkNamedColors> colors;
-	this->_rendererWindow->SetNumberOfLayers(static_cast<int>(Layers::Count));
-	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
-		// Create new renderers
-		this->mRenderers.at(i) = vtkSmartPointer<vtkRenderer>::New();
-		this->mRenderers.at(i)->SetLayer(static_cast<int>(Layers::Bottom));
-		this->mRenderers.at(i)->SetBackground(colors->GetColor3d("SlateGray").GetData()
-		);
-		this->_rendererWindow->AddRenderer(this->mRenderers.at(i));
-		if (i != static_cast<int>(Renderers::Main)) {
-			this->mRenderers.at(i)->SetActiveCamera(
-				this->mRenderers.at(static_cast<int>(Renderers::Main))->GetActiveCamera());
-			this->mRenderers.at(i)->SetInteractive(false);
-		}
-	}
-	this->setActiveRenderer(Renderers::Main);
+void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
+	_renderer->AddActor(actor);
 }
-
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::RenderScene() {
-	for (size_t i = 0; i < static_cast<size_t>(Renderers::Count); i++) {
-		this->mRenderers.at(i)->Render();
-	}
+	_renderer->Render();
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::fitView() const {
+	_renderer->ResetCamera();
 	_rendererWindow->Render();
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::setInteractorStyle(vtkInteractorStyle* interactorStyle) {
-	this->_interactor->SetInteractorStyle(interactorStyle);
-}
-
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::fitView() {
-	this->activeRenderer->ResetCamera();
-	this->_rendererWindow->Render();
 }
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
@@ -138,36 +125,26 @@ void Rendering::QVTKRenderWindow::generateCoordinateSystemAxes() {
 };
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkRenderer> Rendering::QVTKRenderWindow::getActiveRenderer() {
-	return this->activeRenderer;
-}
-Rendering::Renderers Rendering::QVTKRenderWindow::getActiveRendererId(){
-	return this->activeRendererId;
-};
-
-//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::enableCameraOrientationWidget() {
 	this->_camOrientManipulator->On();
 }
 
 //----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-void Rendering::QVTKRenderWindow::setActiveRenderer(Rendering::Renderers rendererId) {
-	if (this->activeRenderer){
-	this->activeRenderer->SetInteractive(false);
-	this->activeRenderer->SetLayer(static_cast<int>(Rendering::Layers::Bottom));
-	}
-	this->activeRenderer = this->mRenderers.at(static_cast<int>(rendererId));
-	this->activeRenderer->SetInteractive(true);
-	this->activeRenderer->SetLayer(static_cast<int>(Rendering::Layers::Top));
-	this->activeRendererId = rendererId;
-	this->RenderScene();
-}
-
-
-//----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::enableWaterMark() {
 	this->_logoWidget->On();
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::clearRenderer() {
+	this->_renderer->Clear();
+
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator pIt(pipelinesList);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+		pipeline->RemoveFromRenderer(_renderer);
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -197,27 +174,20 @@ void Rendering::QVTKRenderWindow::setWaterMark() {
 	this->_logoWidget->ManagesCursorOff();
 }
 
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape) {
 
-void Rendering::QVTKRenderWindow::updateGeometryActors(const GeometryCore::Geometry& geometry){
+	static Standard_Integer ShapeID
+		= _interactorStyle->getPipelinesMapSize();
+	++ShapeID;
+	QIVtkSelectionPipeline* pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
+	pipeline->AddToRenderer(_renderer);
 
-	this->mRenderers.at(static_cast<int>(Renderers::Main))->Clear();
-	this->mRenderers.at(static_cast<int>(Renderers::Faces))->Clear();
-	this->mRenderers.at(static_cast<int>(Renderers::Edges))->Clear();
+	_interactorStyle->addPipeline(pipeline, ShapeID);
+	fitView();
+}
 
-	const GeometryCore::ActorsMap parts = geometry.getPartsActorMap();
-	const GeometryCore::ActorsMap faces = geometry.getFacesActorMap();
-	const GeometryCore::ActorsMap edges = geometry.getEdgesActorMap();
-
-    for(const auto& actor : parts) {
-        this->mRenderers.at(static_cast<int>(Renderers::Main))->AddActor(actor.second);
-    }
-    for(const auto& actor : faces) {
-        this->mRenderers.at(static_cast<int>(Renderers::Faces))->AddActor(actor.second);
-    }
-    for(const auto& actor : edges) {
-		actor.second->GetProperty()->SetColor(0.0, 1.0, 0.0);
-        this->mRenderers.at(static_cast<int>(Renderers::Edges))->AddActor(actor.second);
-    }
-	this->setActiveRenderer(Renderers::Main);
-	this->RenderScene();
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setSelectionMode(IVtk_SelectionMode mode) {
+	_interactorStyle->setSelectionMode(mode);
 }

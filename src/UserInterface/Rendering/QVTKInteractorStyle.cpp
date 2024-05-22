@@ -19,66 +19,146 @@
 
 #include "QVTKInteractorStyle.h"
 
-#include <QAction>
+#include <Message.hxx>
+#include <Message_Messenger.hxx>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(Interactor::QVTKInteractorStyle);
+static void ClearHighlightAndSelection(ShapePipelinesMap& theMap,
+	const Standard_Boolean doHighlighting, const Standard_Boolean doSelection) {
+	if (!doHighlighting && !doSelection) {
+		return;
+	}
 
-// Interactor::QVTKInteractorStyle* Interactor::QVTKInteractorStyle::New() {
-// 	return new Interactor::QVTKInteractorStyle(renWin);
-// }
+	ShapePipelinesMap::Iterator pIt(theMap);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+
+		if (doHighlighting) {
+			pipeline->ClearHighlightFilters();
+		}
+
+		if (doSelection) {
+			pipeline->ClearSelectionFilters();
+		}
+	}
+}
 
 //----------------------------------------------------------------------------
-Interactor::QVTKInteractorStyle::QVTKInteractorStyle() = default;
+vtkStandardNewMacro(QVTKInteractorStyle);
 
 //----------------------------------------------------------------------------
-Interactor::QVTKInteractorStyle::~QVTKInteractorStyle() {
+QVTKInteractorStyle::QVTKInteractorStyle()
+	: _contextMenu(nullptr) { }
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::setQVTKRenderWindow(
+	const Rendering::QVTKRenderWindow* qvtkRenderWindow) {
+	_qvtkRenderWindow = qvtkRenderWindow;
+}
+
+//----------------------------------------------------------------------------
+QVTKInteractorStyle::~QVTKInteractorStyle() {
 	if (_contextMenu)
-		delete _contextMenu;
+		_contextMenu->deleteLater();
 
-	// lastPickedProperty->Delete();
-	// lastHoveredProperty->Delete();
+	ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+		if (pipeline)
+			pipeline->Delete();
+	}
+
+	SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
+	for (; sIt.More(); sIt.Next()) {
+		const IVtk_ShapeIdList* shapeIdList = sIt.Value();
+		if (shapeIdList)
+			delete shapeIdList;
+	}
 }
 
 //----------------------------------------------------------------------------
-Rendering::QVTKRenderWindow* Interactor::QVTKInteractorStyle::getRenderWindow() {
-	return this->_qvtkRenderWindow;
+void QVTKInteractorStyle::setRenderer(
+	const vtkSmartPointer<vtkRenderer>& theRenderer) {
+	_renderer = theRenderer;
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnRightButtonDown() {
-	this->createContextMenu();
-	_contextMenu->exec(QCursor::pos());
-
-	// this->Superclass::OnRightButtonDown();
+vtkSmartPointer<vtkRenderer> QVTKInteractorStyle::getRenderer() const {
+	return _renderer;
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnLeftButtonDown() {
-
-	int* clickPos = this->GetInteractor()->GetEventPosition();
-	LMBPicker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
-	LMBActor = this->LMBPicker->GetActor();
-    if (LMBActor != prevLMBActor) {
-        if (LMBActor) {
-            if (prevLMBActor) {
-                prevLMBActor->SetProperty(prevLMBProperty);
-            }
-            prevLMBProperty->DeepCopy(prevHoveredProperty);
-            LMBActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
-            LMBActor->GetProperty()->SetLineWidth(5);
-        } else {
-            if (prevLMBActor) {
-                prevLMBActor->SetProperty(prevLMBProperty);
-                prevLMBProperty = nullptr;
-            }
-        }
-    }
-	prevLMBActor = LMBActor;
-    this->Superclass::OnLeftButtonDown();
+void QVTKInteractorStyle::setPicker(
+	const vtkSmartPointer<IVtkTools_ShapePicker>& thePicker) {
+	_picker = thePicker;
 }
+
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::createContextMenu() {
+vtkSmartPointer<IVtkTools_ShapePicker>
+QVTKInteractorStyle::getPicker() const {
+	return _picker;
+}
+
+//----------------------------------------------------------------------------
+NCollection_List<Handle(QIVtkSelectionPipeline)> QVTKInteractorStyle::getPipelines() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelineList;
+	for (ShapePipelinesMap::Iterator it(_shapePipelinesMap); it.More(); it.Next()) {
+
+		const Handle(QIVtkSelectionPipeline)& pipeline = it.Value();
+		pipelineList.Append(pipeline);
+	}
+
+	return pipelineList;
+}
+
+//----------------------------------------------------------------------------
+Standard_Integer QVTKInteractorStyle::getPipelinesMapSize() {
+	return _shapePipelinesMap.Size();
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::addPipeline(
+	const Handle(QIVtkSelectionPipeline) pipeline, IVtk_IdType shapeID) {
+	_shapePipelinesMap.Bind(shapeID, pipeline);
+	_selectedSubShapeIdsMap.Bind(shapeID, new IVtk_ShapeIdList());
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::setSelectionMode(
+	IVtk_SelectionMode mode) {
+
+	if (_shapePipelinesMap.IsEmpty())
+		return;
+
+	// Clear current selection
+	SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
+	for (; sIt.More(); sIt.Next()) {
+		IVtk_ShapeIdList* selectedSubShapeIds = sIt.Value();
+		selectedSubShapeIds->Clear();
+	}
+
+	ClearHighlightAndSelection(
+		_shapePipelinesMap, Standard_True, Standard_True);
+
+	ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+
+		// Deactivate all current selection modes
+		IVtk_SelectionModeList modeList
+			= _picker->GetSelectionModes(pipeline->Actor());
+
+		for (IVtk_SelectionMode selMode : modeList) {
+			_picker->SetSelectionMode(selMode, false);
+		}
+	}
+	// Set given selection mode
+	_picker->SetSelectionMode(mode, true);
+	_currentSelection = mode;
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::createContextMenu() {
 	if (!_contextMenu) {
 		_contextMenu = new QMenu;
 
@@ -88,99 +168,241 @@ void Interactor::QVTKInteractorStyle::createContextMenu() {
 		_contextMenu->setFont(font);
 
 		_fitViewAction = new QAction("Fit view", _contextMenu);
-		_faceSizingAction = new QAction("Add face sizing", _contextMenu);
-		_edgeSizingAction = new QAction("Add edge sizing", _contextMenu);
+		QObject::connect(_fitViewAction, &QAction::triggered,
+			[this]() { _qvtkRenderWindow->fitView(); });
 
-		QObject::connect(_fitViewAction, &QAction::triggered, [this]() {
-			this->_qvtkRenderWindow->fitView();
-			this->_qvtkRenderWindow->model->addFaceSizing(LMBActor);
-			this->_qvtkRenderWindow->model->addEdgeSizing(LMBActor);
-		});
 		_contextMenu->addAction(_fitViewAction);
-		_contextMenu->addAction(_faceSizingAction);
-		_contextMenu->addAction(_edgeSizingAction);				
-	}
-	_edgeSizingAction->setDisabled(true);
-	_faceSizingAction->setDisabled(true);
-	std::cout<<static_cast<int>(this->_qvtkRenderWindow->getActiveRendererId());
-	switch (this->_qvtkRenderWindow->getActiveRendererId()) {
-		case Rendering::Renderers::Edges: {
-			_edgeSizingAction->setDisabled(false);
-			break;
-		}
-		case Rendering::Renderers::Faces: {
-			_faceSizingAction->setDisabled(false);
-			break;
-		}
-		default: {
-			break;
-		}
 	}
 }
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::OnMouseMove() {
-	this->hoverPicker->SetTolerance(0.001);
-    int* clickPos = this->GetInteractor()->GetEventPosition();
-    hoverPicker->Pick(clickPos[0], clickPos[1], 0, this->_qvtkRenderWindow->getActiveRenderer());
-    hoveredActor = this->hoverPicker->GetActor();
-    if (hoveredActor != prevHoveredActor) {
-        if (hoveredActor) {
-            if (prevHoveredActor) {
-				if(prevHoveredActor != prevLMBActor){
-                	prevHoveredActor->SetProperty(prevHoveredProperty);
-				}
-            }
-			if (hoveredActor!= prevLMBActor){
-				hoveredActor->GetProperty()->DeepCopy(prevHoveredProperty);
-				hoveredActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
-				hoveredActor->GetProperty()->SetLineWidth(5);
+void QVTKInteractorStyle::OnRightButtonDown() {
+	this->createContextMenu();
+	_contextMenu->exec(QCursor::pos());
+
+	// this->Superclass::OnRightButtonDown();
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::OnLeftButtonDown() {
+
+	if (this->Interactor->GetShiftKey()) {
+		// Append new selection to the current one
+		this->OnSelection(Standard_True);
+	} else {
+		// Clear previous selection
+		this->OnSelection(Standard_False);
+	}
+
+	// Invoke base class event
+	this->Superclass::OnLeftButtonDown();
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::OnMouseMove() {
+	Standard_Integer aPos[2] = { this->Interactor->GetEventPosition()[0],
+		this->Interactor->GetEventPosition()[1] };
+
+	this->MoveTo(aPos[0], aPos[1]);
+	this->Superclass::OnMouseMove();
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::OnKeyPress() {
+	vtkRenderWindowInteractor* rwi = this->Interactor;
+	std::string key = rwi->GetKeySym();
+
+	// Clear current selection when Escape is pressed
+	if (key == "Escape") {
+		SelectedSubShapeIdsMap::Iterator sIt(_selectedSubShapeIdsMap);
+		for (; sIt.More(); sIt.Next()) {
+			IVtk_ShapeIdList* selectedSubShapeIds = sIt.Value();
+			selectedSubShapeIds->Clear();
+		}
+
+		ClearHighlightAndSelection(_shapePipelinesMap, Standard_False, Standard_True);
+
+		ShapePipelinesMap::Iterator pIt(_shapePipelinesMap);
+		for (; pIt.More(); pIt.Next()) {
+			const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+			pipeline->Mapper()->Update();
+		}
+	}
+
+	this->Superclass::OnKeyPress();
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::OnKeyRelease() {
+	this->Superclass::OnKeyRelease();
+}
+
+//----------------------------------------------------------------------------
+void QVTKInteractorStyle::MoveTo(
+	Standard_Integer theX, Standard_Integer theY) {
+
+	_picker->Pick(theX, theY, 0);
+
+	// Traversing results
+	vtkSmartPointer<vtkActorCollection> anActorCollection = _picker->GetPickedActors();
+
+	if (anActorCollection) {
+
+		// Highlight picked subshapes
+		if (_shapePipelinesMap.IsEmpty())
+			return;
+
+		ClearHighlightAndSelection(_shapePipelinesMap, Standard_True, Standard_False);
+
+		anActorCollection->InitTraversal();
+		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
+
+			IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
+			if (!aDataSource) {
+				continue;
 			}
-        } else {
-            if (prevHoveredActor) {
-				if(prevHoveredActor != prevLMBActor){
-					prevHoveredActor->SetProperty(prevHoveredProperty);
+
+			IVtkOCC_Shape::Handle anOccShape = aDataSource->GetShape();
+			if (anOccShape.IsNull()) {
+				continue;
+			}
+
+			IVtk_IdType aShapeID = anOccShape->GetId();
+
+			Handle(Message_Messenger) anOutput = Message::DefaultMessenger();
+			if (!_shapePipelinesMap.IsBound(aShapeID)) {
+				anOutput->SendWarning()
+					<< "Warning: there is no VTK pipeline registered for picked shape"
+					<< std::endl;
+				continue;
+			}
+
+			const Handle(QIVtkSelectionPipeline)& pipeline
+				= _shapePipelinesMap.Find(aShapeID);
+			IVtk_ShapeIdList* selectedSubShapeIds
+				= _selectedSubShapeIdsMap.Find(aShapeID);
+
+			IVtkTools_SubPolyDataFilter* aFilter = pipeline->GetHighlightFilter();
+
+			// Set the selected sub-shapes ids to subpolydata filter.
+			IVtk_ShapeIdList aSubShapeIds = _picker->GetPickedSubShapesIds(aShapeID);
+
+			// If picked shape is in selected shapes then do not highlight it
+			for (auto shapeID : aSubShapeIds) {
+				if (selectedSubShapeIds->Contains(shapeID)) {
+					return;
 				}
-				prevHoveredProperty = nullptr;
-            }
-        }
-    }
-    this->prevHoveredActor = hoveredActor ? hoveredActor : nullptr;
-    this->Superclass::OnMouseMove();
-}
+			}
 
-void Interactor::QVTKInteractorStyle::OnKeyPress() {
-    std::string key = this->GetInteractor()->GetKeySym();
-    if (key == "Shift_L" || key == "Shift_R") {
-        this->shiftPressed = true;
-    }
-    this->Superclass::OnKeyPress();
-}
+			// Get ids of cells for picked subshapes.
+			IVtk_ShapeIdList aSubIds;
+			IVtk_ShapeIdList::Iterator aMetaIds(aSubShapeIds);
+			for (; aMetaIds.More(); aMetaIds.Next()) {
+				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
+				aSubIds.Append(aSubSubIds);
+				// const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
+				// cout << "--------------------------------------------------------------" << endl;
+				// cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
+				// cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
+			}
+			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
+			aFilter->SetData(aSubIds);
+			if (!aFilter->GetInput()) {
+				aFilter->SetInputConnection(aDataSource->GetOutputPort());
+			}
+			aFilter->Modified();
 
-void Interactor::QVTKInteractorStyle::OnKeyRelease() {
-    std::string key = this->GetInteractor()->GetKeySym();
-    if (key == "Shift_L" || key == "Shift_R") {
-        this->shiftPressed = false;
-    }
-    this->Superclass::OnKeyRelease();
+			pipeline->Mapper()->Update();
+		}
+	}
 }
-
 
 //----------------------------------------------------------------------------
-void Interactor::QVTKInteractorStyle::Initialize(Rendering::QVTKRenderWindow* qvtkRenderWindow) {
-	_qvtkRenderWindow = qvtkRenderWindow;
-	_contextMenu = nullptr;
-	_fitViewAction = nullptr;
+void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
+	vtkSmartPointer<vtkActorCollection> anActorCollection
+		= _picker->GetPickedActors();
 
+	if (anActorCollection) {
+		if (anActorCollection->GetNumberOfItems() != 0) {
+			// Clear previous selection.
+			ClearHighlightAndSelection(
+				_shapePipelinesMap, Standard_False, Standard_True);
+		}
 
-	LMBActor = nullptr;
-	prevLMBActor = nullptr;
-	prevLMBProperty  = vtkProperty::New();
-	LMBPicker = vtkPropPicker::New();;
+		anActorCollection->InitTraversal();
+		while (vtkActor* anActor = anActorCollection->GetNextActor()) {
+			IVtkTools_ShapeDataSource* aDataSource
+				= IVtkTools_ShapeObject::GetShapeSource(anActor);
+			if (!aDataSource) {
+				continue;
+			}
 
+			IVtkOCC_Shape::Handle anOccShape = aDataSource->GetShape();
+			if (anOccShape.IsNull()) {
+				continue;
+			}
 
-	hoveredActor = nullptr;
-	prevHoveredActor = nullptr;
-	prevHoveredProperty = vtkProperty::New();
-	hoverPicker = vtkCellPicker::New();
+			IVtk_IdType aShapeID = anOccShape->GetId();
+
+			Handle(Message_Messenger) anOutput = Message::DefaultMessenger();
+			if (!_shapePipelinesMap.IsBound(aShapeID)) {
+				anOutput->SendWarning()
+					<< "Warning: there is no VTK pipeline registered for picked shape"
+					<< std::endl;
+				continue;
+			}
+
+			const Handle(QIVtkSelectionPipeline)& pipeline
+				= _shapePipelinesMap.Find(aShapeID);
+			IVtk_ShapeIdList* selectedSubShapeIds
+				= _selectedSubShapeIdsMap.Find(aShapeID);
+
+			IVtkTools_SubPolyDataFilter* aFilter = pipeline->GetSelectionFilter();
+
+			// Set the selected sub-shapes ids to subpolydata filter.
+			IVtk_ShapeIdList aSubShapeIds;
+			if (_currentSelection == IVtk_SelectionMode::SM_Shape) {
+				aSubShapeIds = _picker->GetPickedShapesIds(Standard_True);
+			} else {
+				aSubShapeIds = _picker->GetPickedSubShapesIds(aShapeID);
+			}
+
+			if (!appendId) {
+				selectedSubShapeIds->Clear();
+			}
+
+			for (auto shapeID : aSubShapeIds) {
+				if (!selectedSubShapeIds->Contains(shapeID)) {
+					// If selected Ids list does not contain shape then append it.
+					selectedSubShapeIds->Append(aSubShapeIds);
+				} else {
+					// Selecting the shape again causes deselecting it.
+					selectedSubShapeIds->Remove(shapeID);
+				}
+			}
+
+			// If selected Ids list is empty then any selection will not be made
+			if (selectedSubShapeIds->IsEmpty()) {
+				return;
+			}
+
+			// Get ids of cells for picked subshapes
+			IVtk_ShapeIdList aSubIds;
+			IVtk_ShapeIdList::Iterator aMetaIds(*selectedSubShapeIds);
+			for (; aMetaIds.More(); aMetaIds.Next()) {
+				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
+				aSubIds.Append(aSubSubIds);
+			}
+
+			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
+			aFilter->SetData(aSubIds);
+			if (!aFilter->GetInput()) {
+				aFilter->SetInputConnection(aDataSource->GetOutputPort());
+			}
+			aFilter->Modified();
+
+			if (!pipeline.IsNull())
+				pipeline->Mapper()->Update();
+		}
+	}
 }

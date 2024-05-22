@@ -42,6 +42,9 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkDataSetMapper.h>
+#include <vtkIdTypeArray.h>
 
 class Model {
 public:
@@ -66,9 +69,11 @@ public:
 private:
 	enum class ElementType : int {
 		TETRA = 4,
+		TRIANGLE = 2,
 		LINE = 1,
+		POINT = 15,
 	};
-
+	vtkSmartPointer<vtkUnstructuredGrid> gridData;
 	vtkSmartPointer<vtkPolyData> polyData;
 };
 

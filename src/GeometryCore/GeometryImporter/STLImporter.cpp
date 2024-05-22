@@ -70,9 +70,9 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
 		counter++;
-		std::string uniqueName = getUniqueObjectName("ShellPart", this->_partsMap);
+		std::string uniqueName = getUniqueObjectName("ShellShape", this->_shapesMap);
         // std::cout << "Added shell part: " << uniqueName << std::endl;
-		this->_partsMap[uniqueName] = shell;
+		this->_shapesMap[uniqueName] = shell;
 	}
 
 	std::cout << " -> shells found: " << counter << std::endl;
@@ -84,15 +84,4 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 	std::cout << " -> done." << std::endl;
 
 	progressBar->finish();
-}
-
-
-const GeometryCore::ActorsMap GeometryCore::STLImporter::getPartsActorMap(){
-	GeometryCore::ActorsMap actorsMap {};
-	for (const auto& it : this->_partsMap) {
-		const auto& shape = it.second;
-		vtkSmartPointer<vtkActor> actor = createVTKActor(shape);
-		actorsMap[it.first] = actor;
-	}
-	return actorsMap;
 }

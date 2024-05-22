@@ -20,20 +20,41 @@
 #ifndef QVTKINTERACTORSTYLE_H
 #define QVTKINTERACTORSTYLE_H
 
+// Forward declaration
+namespace Rendering {
+class QVTKRenderWindow;
+};
+
+#include "QIVtkSelectionPipeline.h"
 #include "QVTKRenderWindow.h"
 
+// VTK includes
 #include <vtkCellPicker.h>
 #include <vtkHardwarePicker.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNamedColors.h>
 #include <vtkPropPicker.h>
 #include <vtkProperty.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
+// VIS includes
+#include <IVtkOCC_Shape.hxx>
+#include <IVtkTools_DisplayModeFilter.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
+#include <IVtkTools_ShapeObject.hxx>
+#include <IVtkTools_ShapePicker.hxx>
+#include <IVtkTools_SubPolyDataFilter.hxx>
+
+// Qt includes
 #include <QAction>
 #include <QFont>
 #include <QMenu>
+#include <QPointer>
 
-namespace Interactor {
+typedef NCollection_DataMap<IVtk_IdType, Handle(QIVtkSelectionPipeline)> ShapePipelinesMap;
+typedef NCollection_DataMap<IVtk_IdType, IVtk_ShapeIdList*> SelectedSubShapeIdsMap;
 
 /**
  * @brief  The QVTKInteractorStyle provides class for define custom interactions with render window.
@@ -50,6 +71,19 @@ public:
 	static QVTKInteractorStyle* New();
 	vtkTypeMacro(QVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
 
+public:
+	void setRenderer(const vtkSmartPointer<vtkRenderer>&);
+	void setQVTKRenderWindow(const Rendering::QVTKRenderWindow*);
+	vtkSmartPointer<vtkRenderer> getRenderer() const;
+	void setPicker(const vtkSmartPointer<IVtkTools_ShapePicker>&);
+	vtkSmartPointer<IVtkTools_ShapePicker> getPicker() const;
+	void addPipeline(const Handle(QIVtkSelectionPipeline), IVtk_IdType);
+	void setSelectionMode(IVtk_SelectionMode);
+	Standard_Integer getPipelinesMapSize();
+	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines();
+
+	// Overriding
+public:
 	/**
 	 * @brief  Handle the right mouse button press event.
 	 *
@@ -70,23 +104,14 @@ public:
 
 	virtual void OnKeyPress() override;
 	virtual void OnKeyRelease() override;
-	/**
-	 * @brief  Activate interactor style and set its default render window widget.
-	 *
-	 * @param  {Rendering::QVTKRenderWindow*} renWin : Render window to set interactor style
-	 */
-	void Initialize(Rendering::QVTKRenderWindow* renWin);
-
-	/**
-	 * @brief  Get rendering window instance.
-	 *
-	 * @return {Rendering::QVTKRenderWindow*}  : Rendering window instance
-	 */
-	Rendering::QVTKRenderWindow* getRenderWindow();
 
 protected:
 	QVTKInteractorStyle();
-	~QVTKInteractorStyle() override;
+	~QVTKInteractorStyle();
+
+private:
+	QVTKInteractorStyle(const QVTKInteractorStyle&);
+	void operator=(const QVTKInteractorStyle&);
 
 private:
 	/**
@@ -95,27 +120,21 @@ private:
 	 */
 	void createContextMenu();
 
-	Rendering::QVTKRenderWindow* _qvtkRenderWindow;
+	void MoveTo(Standard_Integer, Standard_Integer);
+	void OnSelection(const Standard_Boolean = Standard_False);
+
+private:
 	QPointer<QMenu> _contextMenu;
 	QPointer<QAction> _fitViewAction;
-	QPointer<QAction> _faceSizingAction;
-	QPointer<QAction> _edgeSizingAction;
+	// QPointer<QAction> _edgeSizingAction;
 
-	// Container for storing picked actor and its properties.
-	vtkSmartPointer<vtkPropPicker> LMBPicker;
-	vtkSmartPointer<vtkActor> LMBActor;
-	std::vector<vtkSmartPointer<vtkActor>> pickedActors;
-	std::vector<vtkSmartPointer<vtkProperty>> pickedProps;
-	vtkSmartPointer<vtkActor> prevLMBActor;
-	vtkSmartPointer<vtkProperty> prevLMBProperty;
+	vtkSmartPointer<vtkRenderer> _renderer;
+	vtkSmartPointer<IVtkTools_ShapePicker> _picker;
+	const Rendering::QVTKRenderWindow* _qvtkRenderWindow;
 
-	bool shiftPressed = false;
-	// Container for storing hovered actor and its properties.
-	vtkSmartPointer<vtkCellPicker> hoverPicker;
-	vtkSmartPointer<vtkActor> hoveredActor;
-	vtkSmartPointer<vtkActor> prevHoveredActor;
-	vtkSmartPointer<vtkProperty> prevHoveredProperty;
-};
+	ShapePipelinesMap _shapePipelinesMap;
+	SelectedSubShapeIdsMap _selectedSubShapeIdsMap;
+	IVtk_SelectionMode _currentSelection;
 };
 
 #endif

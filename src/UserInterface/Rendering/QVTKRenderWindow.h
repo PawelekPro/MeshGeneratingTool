@@ -20,6 +20,11 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
+// forward declaration
+class QVTKInteractorStyle;
+
+#include "QVTKInteractorStyle.h"
+
 #include "Geometry.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -29,6 +34,7 @@
 #include <numeric>
 
 #include <QVTKOpenGLNativeWidget.h>
+#include <QVTKOpenGLWindow.h>
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
@@ -51,23 +57,15 @@
 #include <vtkRenderer.h>
 #include <vtkTextProperty.h>
 
+// VIS includes
+#include <IVtkTools_ShapePicker.hxx>
+
 #include <QImage>
 #include <QPixmap>
 #include <QPointer>
 
 namespace Rendering {
-enum class Renderers {
-	Main,
-	Faces,
-	Edges,
-	Mesh,
-	Count // Count for definition of array size
-};
-enum class Layers {
-	Bottom,
-	Top,
-	Count // Count for definition of array size
-};
+
 /**
  * @brief  The QVTKRenderWindow provides class for rendering VTK objects inside Qt application.
  *
@@ -77,24 +75,22 @@ class QVTKRenderWindow {
 public:
 	QVTKRenderWindow(QWidget* widget);
 	~QVTKRenderWindow();
-	std::shared_ptr<Model> model;
+
+	void setSelectionMode(IVtk_SelectionMode);
+
 	/**
 	 * @brief Generate global coordinate system.
 	 *
 	 */
 	void generateCoordinateSystemAxes();
-	/**
-	 * @brief  Set interator style to customize interaction.
-	 *
-	 * @param  {vtkInteractorStyle*} interactorStyle : Custom interaction style.
-	 */
-	void setInteractorStyle(vtkInteractorStyle* interactorStyle);
 
 	/**
 	 * @brief  Adjust the displayed objects to the size of the rendering window.
 	 *
 	 */
-	void fitView();
+	void fitView() const;
+
+	void addActor(vtkActor* actor);
 
 	/**
 	 * @brief  Reset render view to update currently displayed state.
@@ -115,56 +111,47 @@ public:
 	void enableWaterMark();
 
 	/**
-	 * @brief  Set active renderer
-	 *
-	 * @param  {Renderers} layer : ID of renderer to be activated.
-	 */
-	void setActiveRenderer(Renderers rendererId);
-	/**
-	 * @brief  Get renderer representing currently active layer.
-	 *
-	 * @return {vtkRenderer*}  : vtkRenderer instance representing active layer
-	 */
-	vtkSmartPointer<vtkRenderer> getActiveRenderer();
-	Renderers getActiveRendererId();
-	/**
 	 * @brief  Initialize and setup water mark widget.
 	 *
 	 */
 	void setWaterMark();
 
 	/**
-	 * @brief  Clear all geometry actors from faces, edges and parts layers and
-	 * reload them from Geometry object
+	 * @brief  Create pipeline based on TopoDS_Shape and add it to render window.
 	 *
 	 */
-	void updateGeometryActors(const GeometryCore::Geometry& geometry);
+	void addShapeToRenderer(const TopoDS_Shape& shape);
 
-protected:
 	/**
-	 * @brief  Construct and initialize renderes at each layer.
+	 * @brief  Clear rendering window.
 	 *
 	 */
-	void initializeRenderers();
+	void clearRenderer();
 
-	// Definition of array of pointers to VTK renderers
-	std::array<vtkSmartPointer<vtkRenderer>, static_cast<size_t>(Renderers::Count)> mRenderers;
-
-	// Attribute for storing the currently active renderer (layer)
-	vtkSmartPointer<vtkRenderer> activeRenderer;
-	Renderers activeRendererId;
+public:
+	std::shared_ptr<Model> model;
 
 private:
+	// Container widget
 	QPointer<QWidget> _widget;
 
 	// The Qt widget containing a VTK viewport
-	QVTKOpenGLNativeWidget* _vtkWidget;
+	QPointer<QVTKOpenGLNativeWidget> _vtkWidget;
 
 	// The VTK renderer window
-	vtkSmartPointer<vtkRenderWindow> _rendererWindow;
+	vtkGenericOpenGLRenderWindow* _rendererWindow;
+
+	// The VTK renderer
+	vtkSmartPointer<vtkRenderer> _renderer;
 
 	// The VTK render window interactor
-	vtkSmartPointer<vtkRenderWindowInteractor> _interactor;
+	vtkSmartPointer<QVTKInteractor> _interactor;
+
+	// Custom interactor style
+	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
+
+	// IVtk_ShapePicker from OCC VIS
+	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
 
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;

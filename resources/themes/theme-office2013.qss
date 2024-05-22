@@ -71,6 +71,27 @@ SARibbonPannel {
 SARibbonPannel > SARibbonButtonGroupWidget {
   border: 1px solid #c2d0df;
 }
+
+SARibbonPannel > QToolButton:hover {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QToolButton:pressed {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QToolButton {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QActionGroup:pressed {
+  border-radius: 5px;
+}
+
+SARibbonPannel > QActionGroup {
+  border-radius: 5px;
+}
+
 /*SARibbonButtonGroupWidget*/
 SARibbonButtonGroupWidget {
   background-color: transparent;

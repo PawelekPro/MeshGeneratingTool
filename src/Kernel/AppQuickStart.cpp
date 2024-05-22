@@ -22,8 +22,15 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include <QVTKOpenGLNativeWidget.h>
 
 int main(int argc, char* argv[]) {
+	// Before initializing QApplication, set the default surface format
+	// (https://vtk.org/doc/nightly/html/classQVTKOpenGLNativeWidget.html#details)
+	auto format = QVTKOpenGLNativeWidget::defaultFormat();
+	format.setProfile(QSurfaceFormat::CompatibilityProfile);
+	QSurfaceFormat::setDefaultFormat(format);
+
 	QApplication application(argc, argv);
 
 	QTranslator translator;
