@@ -46,7 +46,7 @@ void Model::updateParts() {
 }
 
 void Model::meshParts() {
-            gmsh::option::setNumber("Mesh.MeshSizeMin", 0.05);
+            gmsh::option::setNumber("Mesh.MeshSizeMin", 0.1);
             gmsh::option::setNumber("Mesh.MeshSizeMax", 2);
             std::cout<<"sizing entities:" << std::endl;
             for(auto sizingTag : this->_sizingTags){
@@ -58,7 +58,7 @@ void Model::meshParts() {
             for(auto dimTag : dimTags){
                 std::cout << "Dim: " << dimTag.first << "Tag: " << dimTag.second << std::endl;
             } 
-            gmsh::model::mesh::setSize(this->_sizingTags, 0.05);
+            gmsh::model::mesh::setSize(this->_sizingTags, 0.1);
             std::cout << "Meshing..." << std::endl;
             gmsh::model::mesh::generate(3);
             // gmsh::write(_modelName + ".msh");
