@@ -12,33 +12,38 @@
 #include <algorithm>
 #include <vector>
 
+#include <vtkSmartPointer.h>
 #include <vtkActor.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkDataSetMapper.h>
-#include <vtkIdTypeArray.h>
-
+#include <vtkProperty.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
 
 namespace MeshCore{
+
+    struct MeshSizing{
+        
+        MeshSizing(std::vector<int> verticesTags, double size);
+
+        double elementSize;
+        std::vector<std::pair<int, int>> nodeTags;
+    };
 
     class Mesh{
         public:
 
-            Mesh(){};
-            ~Mesh(){};
-
             vtkSmartPointer<vtkActor> getMeshActor(){return this->_meshActor;};
 
-            void addSizing(std::vector<int> nodeToSizeTags);
+            void addSizing(std::vector<int> verticesTags, double size);
             void genereateSurfaceMesh();
-            void generateVolumeMesh();
 
         private:
             
-            void updateMeshActor();
+            vtkSmartPointer<vtkPolyData> createSurfaceMeshPolyData();
+
+            vtkSmartPointer<vtkActor> createMeshActor(vtkSmartPointer<vtkPolyData> polyData);
 
             enum class ElementType : int {
                 TETRA = 4,
@@ -46,15 +51,16 @@ namespace MeshCore{
                 LINE = 1,
                 POINT = 15,
             };
-
-            vtkSmartPointer<vtkActor> _meshActor;
-
-            std::vector<std::pair<int, int>> _sizingTags;
+            std::vector<MeshSizing> _meshSizings;
             
-            vtkSmartPointer<vtkUnstructuredGrid> _gridData;
             vtkSmartPointer<vtkPolyData> _polyData;
-
+            vtkSmartPointer<vtkActor> _meshActor;
     };
+
+
+
+
+
 };
 
 
