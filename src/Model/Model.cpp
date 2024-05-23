@@ -48,22 +48,10 @@ void Model::updateParts() {
 void Model::meshParts() {
             gmsh::option::setNumber("Mesh.MeshSizeMin", 0.1);
             gmsh::option::setNumber("Mesh.MeshSizeMax", 2);
-            std::cout<<"sizing entities:" << std::endl;
-            for(auto sizingTag : this->_sizingTags){
-                std::cout << "Dim: " << sizingTag.first << "Tag: " << sizingTag.second << std::endl;
-            }
-            std::vector<std::pair<int,int>> dimTags;
-            gmsh::model::occ::getEntities(dimTags);
-            std::cout<<"gmsh occ entities:" << std::endl;
-            for(auto dimTag : dimTags){
-                std::cout << "Dim: " << dimTag.first << "Tag: " << dimTag.second << std::endl;
-            } 
             gmsh::model::mesh::setSize(this->_sizingTags, 0.1);
-            std::cout << "Meshing..." << std::endl;
             gmsh::model::mesh::generate(3);
-            // gmsh::write(_modelName + ".msh");
+            gmsh::write(_modelName + ".msh");
             this->polyData = createMeshVtkPolyData();
-            std::cout << "Parts Meshed!" << std::endl;
 }
 
 vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
@@ -188,43 +176,14 @@ void Model::updateMeshActor()
 }
 
 void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
-    
-    TopoDS_Face face;
-    std::vector<int> vertexTags;
-    int vertex_tag;
-    int face_tag;
-
-    for (const auto& shapeRef : selectedShapes) {
-        const TopoDS_Shape& shape = shapeRef.get();
-
-        // Ensure shape is a face
-        if (shape.ShapeType() != TopAbs_FACE) {
-            std::cerr << "Shape is not a face." << std::endl;
-            continue;
-        }
-
-        // Get the tag for the face
-        face_tag = this->geometry._tagMap.getTag(TopoDS::Face(shape));
-        std::cout << "Face tag: " << face_tag << std::endl;
-
-        // Initialize shapeExplorer with the face
-        TopExp_Explorer shapeExplorer(shape, TopAbs_VERTEX);
-        for(; shapeExplorer.More(); shapeExplorer.Next()) {
-            const TopoDS_Vertex& vertex = TopoDS::Vertex(shapeExplorer.Current());
-            vertex_tag = this->geometry._tagMap.getTag(vertex);
-            vertexTags.push_back(vertex_tag);
-            std::cout << "Vertex tag: " << vertex_tag << std::endl;
-        }
-    }
-    std::sort(vertexTags.begin(), vertexTags.end());
-    vertexTags.erase(std::unique(vertexTags.begin(), vertexTags.end()), vertexTags.end());
-
     std::vector<std::pair<int, int>> sizingTags;
-    for(auto vertexTag : vertexTags){
-        std::pair<int, int> tagPair(0, vertexTag);
-        // cout << "vertexTag: " << tagPair.first << " dim: " << tagPair.second << std::endl;
-        sizingTags.push_back(tagPair);
+    for(const auto& shape : selectedShapes){
+        const TopoDS_Shape& shapeRef =  shape.get();
+        std::vector<int> vertexTags = geometry.getShapeVerticesTags(shape);
+        for(auto vertexTag : vertexTags){
+                std::pair<int, int> tagPair(0, vertexTag);
+                sizingTags.push_back(tagPair);
+            }
     }
     this->_sizingTags = sizingTags;
-    std::cout<<"Imposing sizing on shapes!" << std::endl;
 }

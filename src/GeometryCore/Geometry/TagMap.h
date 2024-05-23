@@ -45,12 +45,8 @@ namespace GeometryCore {
             const int& getTag(const TopoDS_Edge& shape);
             const int& getTag(const TopoDS_Vertex& shape);
 
-            TopExp_Explorer shapeExplorer;
-
         private:
             std::array<int, static_cast<size_t>(EntityType::EntityTypeCount)> _maxEntityTags;
-
-
 
             int getMaxTag(EntityType type);
             void setMaxTag(EntityType type, int tag);
