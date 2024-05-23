@@ -26,12 +26,13 @@ namespace GeometryCore {
         void importSTL(const std::string& filePath, QWidget* progressBar);
         TagMap _tagMap;
         
+        std::vector<std::reference_wrapper<const TopoDS_Vertex>> getShapeVertices(const TopoDS_Shape& shape);
+
     private:
         PartsMap _shapesMap;
     };
 
     // Geometry utils 
-    std::vector<std::reference_wrapper<const TopoDS_Vertex>> getShapeVertices(const TopoDS_Shape& shape);
 };
 
 

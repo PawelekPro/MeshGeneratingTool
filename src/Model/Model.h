@@ -80,6 +80,7 @@ private:
 		LINE = 1,
 		POINT = 15,
 	};
+	std::vector<std::pair<int, int>> _sizingTags;
 	vtkSmartPointer<vtkUnstructuredGrid> gridData;
 	vtkSmartPointer<vtkPolyData> polyData;
 };

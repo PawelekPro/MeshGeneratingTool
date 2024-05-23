@@ -25,6 +25,7 @@
 Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::initialize();
         gmsh::model::add(_modelName);
+        gmsh::option::setNumber("General.Terminal", 1);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
         };
@@ -42,14 +43,25 @@ void Model::updateParts() {
     }
     std::cout << "Loaded " << partsMap.size() << " parts into the model!" << std::endl;
     gmsh::model::occ::synchronize();
-    // meshParts();
 }
 
 void Model::meshParts() {
-            gmsh::option::setNumber("Mesh.MeshSizeMin", 1);
-            gmsh::option::setNumber("Mesh.MeshSizeMax", 1);
+            gmsh::option::setNumber("Mesh.MeshSizeMin", 0.05);
+            gmsh::option::setNumber("Mesh.MeshSizeMax", 2);
+            std::cout<<"sizing entities:" << std::endl;
+            for(auto sizingTag : this->_sizingTags){
+                std::cout << "Dim: " << sizingTag.first << "Tag: " << sizingTag.second << std::endl;
+            }
+            std::vector<std::pair<int,int>> dimTags;
+            gmsh::model::occ::getEntities(dimTags);
+            std::cout<<"gmsh occ entities:" << std::endl;
+            for(auto dimTag : dimTags){
+                std::cout << "Dim: " << dimTag.first << "Tag: " << dimTag.second << std::endl;
+            } 
+            gmsh::model::mesh::setSize(this->_sizingTags, 0.05);
+            std::cout << "Meshing..." << std::endl;
             gmsh::model::mesh::generate(3);
-            gmsh::write(_modelName + ".msh");
+            // gmsh::write(_modelName + ".msh");
             this->polyData = createMeshVtkPolyData();
             std::cout << "Parts Meshed!" << std::endl;
 }
@@ -150,7 +162,6 @@ vtkSmartPointer<vtkPolyData> Model::createMeshVtkPolyData() {
 
             std::transform(startNodeIterator, endNodeIterator, std::back_inserter(currentElementNodeTags),
                 [](auto nodeId) { return static_cast<vtkIdType>(nodeId - 1);});
-            std::cout<<endl;
             cellArray->InsertNextCell(nNodes, currentElementNodeTags.data());
             currentElementNodeTags.clear(); 
         }
@@ -176,30 +187,44 @@ void Model::updateMeshActor()
     this->meshActor->GetProperty()->SetEdgeColor(0.0, 0.0, 0.0);
 }
 
-void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapess){
+void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
     
-    TopoDS_Shape ds_shape;
     TopoDS_Face face;
-    std::vector<std::reference_wrapper<const TopoDS_Vertex>> vertices;
-    int tag;
-    for(const auto shape : selectedShapess){
-        std::cout<<"shape"<<std::endl;
-        switch (shape.get().ShapeType())
-        {
-        case TopAbs_FACE:
-            face = TopoDS::Face(shape.get());
-            vertices = GeometryCore::getShapeVertices(face);
-            for(auto vertex : vertices){
-                tag = this->geometry._tagMap.getTag(vertex.get());
-                std::cout<<"Vertex tag: "<< tag << std::endl;
-            }
-            break;
-        default:
-            tag = 0;
-            break;
+    std::vector<int> vertexTags;
+    int vertex_tag;
+    int face_tag;
+
+    for (const auto& shapeRef : selectedShapes) {
+        const TopoDS_Shape& shape = shapeRef.get();
+
+        // Ensure shape is a face
+        if (shape.ShapeType() != TopAbs_FACE) {
+            std::cerr << "Shape is not a face." << std::endl;
+            continue;
+        }
+
+        // Get the tag for the face
+        face_tag = this->geometry._tagMap.getTag(TopoDS::Face(shape));
+        std::cout << "Face tag: " << face_tag << std::endl;
+
+        // Initialize shapeExplorer with the face
+        TopExp_Explorer shapeExplorer(shape, TopAbs_VERTEX);
+        for(; shapeExplorer.More(); shapeExplorer.Next()) {
+            const TopoDS_Vertex& vertex = TopoDS::Vertex(shapeExplorer.Current());
+            vertex_tag = this->geometry._tagMap.getTag(vertex);
+            vertexTags.push_back(vertex_tag);
+            std::cout << "Vertex tag: " << vertex_tag << std::endl;
         }
     }
-   
-   
+    std::sort(vertexTags.begin(), vertexTags.end());
+    vertexTags.erase(std::unique(vertexTags.begin(), vertexTags.end()), vertexTags.end());
+
+    std::vector<std::pair<int, int>> sizingTags;
+    for(auto vertexTag : vertexTags){
+        std::pair<int, int> tagPair(0, vertexTag);
+        // cout << "vertexTag: " << tagPair.first << " dim: " << tagPair.second << std::endl;
+        sizingTags.push_back(tagPair);
+    }
+    this->_sizingTags = sizingTags;
     std::cout<<"Imposing sizing on shapes!" << std::endl;
 }
