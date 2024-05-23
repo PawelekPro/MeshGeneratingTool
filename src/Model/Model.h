@@ -46,6 +46,14 @@
 #include <vtkDataSetMapper.h>
 #include <vtkIdTypeArray.h>
 
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <BRep_Tool.hxx>
+
+
 class Model {
 public:
 	std::string _modelName;
@@ -60,8 +68,7 @@ public:
 	void meshParts();
 	void updateMeshActor();
 
-	void addFaceSizing(vtkSmartPointer<vtkActor> edgeActor);
-	void addEdgeSizing(vtkSmartPointer<vtkActor> faceActor);
+	void addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
 
 	vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
 	vtkSmartPointer<vtkActor> meshActor;

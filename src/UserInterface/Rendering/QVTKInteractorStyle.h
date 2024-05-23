@@ -25,6 +25,8 @@ namespace Rendering {
 class QVTKRenderWindow;
 };
 
+#include <functional>
+
 #include "QIVtkSelectionPipeline.h"
 #include "QVTKRenderWindow.h"
 
@@ -122,10 +124,12 @@ private:
 
 	void MoveTo(Standard_Integer, Standard_Integer);
 	void OnSelection(const Standard_Boolean = Standard_False);
+	std::vector<TopoDS_Shape> getVectorOfSelectedShapes();
 
 private:
 	QPointer<QMenu> _contextMenu;
 	QPointer<QAction> _fitViewAction;
+	QPointer<QAction> _addSizingAction;
 	// QPointer<QAction> _edgeSizingAction;
 
 	vtkSmartPointer<vtkRenderer> _renderer;
@@ -135,6 +139,8 @@ private:
 	ShapePipelinesMap _shapePipelinesMap;
 	SelectedSubShapeIdsMap _selectedSubShapeIdsMap;
 	IVtk_SelectionMode _currentSelection;
+
+	std::vector<std::reference_wrapper<const TopoDS_Shape>> _selectedShapes;
 };
 
 #endif

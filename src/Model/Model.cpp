@@ -176,10 +176,30 @@ void Model::updateMeshActor()
     this->meshActor->GetProperty()->SetEdgeColor(0.0, 0.0, 0.0);
 }
 
-void Model::addEdgeSizing(vtkSmartPointer<vtkActor> edgeActor){
-
-};
-
-void Model::addFaceSizing(vtkSmartPointer<vtkActor> faceActor){
-
-};
+void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapess){
+    
+    TopoDS_Shape ds_shape;
+    TopoDS_Face face;
+    std::vector<std::reference_wrapper<const TopoDS_Vertex>> vertices;
+    int tag;
+    for(const auto shape : selectedShapess){
+        std::cout<<"shape"<<std::endl;
+        switch (shape.get().ShapeType())
+        {
+        case TopAbs_FACE:
+            face = TopoDS::Face(shape.get());
+            vertices = GeometryCore::getShapeVertices(face);
+            for(auto vertex : vertices){
+                tag = this->geometry._tagMap.getTag(vertex.get());
+                std::cout<<"Vertex tag: "<< tag << std::endl;
+            }
+            break;
+        default:
+            tag = 0;
+            break;
+        }
+    }
+   
+   
+    std::cout<<"Imposing sizing on shapes!" << std::endl;
+}

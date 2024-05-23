@@ -82,6 +82,8 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	elementSizeAct->setIconText("Element Size");
 	sizeFieldGroup->addAction(elementSizeAct); // Dodanie akcji do grupy
 	sizeFieldPanel->addLargeAction(elementSizeAct);
+	connect(sizeFieldGroup, &QActionGroup::triggered, this,
+	&RibbonBarWidget::onPressedSizeField);
 
 	SARibbonCategory* page3 = new SARibbonCategory();
 	page3->setCategoryName("Display");
@@ -187,5 +189,13 @@ void RibbonBarWidget::onEntitySelectionChanged(QAction* action) {
 		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Face);
 	} else if (actionText == "Volume") {
 		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Shape);
+	}
+}
+
+void RibbonBarWidget::onPressedSizeField(QAction* action){
+	const QString& actionText = action->text();
+	
+	if (actionText == "elementSize"){
+		// this->_QVTKRender->model->addEdgeSizing()
 	}
 }

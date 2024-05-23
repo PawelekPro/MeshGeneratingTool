@@ -28,6 +28,9 @@ namespace GeometryCore {
     class TagMap{
 
         public:
+
+            TagMap();
+
             void tagEntities(const TopoDS_Shape& shape);
             
             void tagShape(const TopoDS_Solid& shape);

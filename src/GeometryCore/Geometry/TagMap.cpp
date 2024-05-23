@@ -1,5 +1,9 @@
 #include "TagMap.h"
 
+GeometryCore::TagMap::TagMap() {
+    std::fill(_maxEntityTags.begin(), _maxEntityTags.end(), 0);
+}
+
 int GeometryCore::TagMap::getMaxTag(EntityType type){
     return this->_maxEntityTags.at(static_cast<int>(type));
 }
@@ -13,7 +17,7 @@ void GeometryCore::TagMap::incrementMaxTag(EntityType type){
 void GeometryCore::TagMap::tagShape(const TopoDS_Vertex& shape){
     this->incrementMaxTag(EntityType::Vertex);
     int tag = this->getMaxTag(EntityType::Vertex);
-    // std::cout<<"Tagging vertex with tag: " << tag <<std::endl;
+    std::cout<<"Tagging vertex with tag: " << tag <<std::endl;
     this->_tagVertexMap.Bind(tag, shape);
     this->_vertexTagMap.Bind(shape, tag);
 }
@@ -27,7 +31,7 @@ void GeometryCore::TagMap::tagShape(const TopoDS_Edge& shape){
 void GeometryCore::TagMap::tagShape(const TopoDS_Face& shape){
     this->incrementMaxTag(EntityType::Face);
     int tag = this->getMaxTag(EntityType::Face);
-        // std::cout<<"Tagging face with tag: " << tag <<std::endl;
+    // std::cout<<"Tagging face with tag: " << tag <<std::endl;
     this->_tagFaceMap.Bind(tag, shape);
     this->_faceTagMap.Bind(shape, tag);
 }
@@ -39,7 +43,12 @@ void GeometryCore::TagMap::tagShape(const TopoDS_Solid& shape){
     this->_solidTagMap.Bind(shape, tag);
 }
 const int& GeometryCore::TagMap::getTag(const TopoDS_Vertex& shape){
-    return this->_vertexTagMap.Find(shape);
+    if (_vertexTagMap.IsBound(shape)){
+        return this->_vertexTagMap.Find(shape);
+    }else{
+        std::cout<<"Vertex not bound!";
+        return 0;
+    }
 }
 const int& GeometryCore::TagMap::getTag(const TopoDS_Edge& shape){
     return this->_edgeTagMap.Find(shape);
