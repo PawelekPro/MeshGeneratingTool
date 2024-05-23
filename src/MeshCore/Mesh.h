@@ -1,6 +1,8 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include "MeshContainers.hpp"
+
 #ifdef _WIN32
 #include <gmsh.h_cwrap>
 #endif
@@ -22,45 +24,39 @@
 #include <vtkPolyDataMapper.h>
 
 namespace MeshCore{
-
-    struct MeshSizing{
-        
-        MeshSizing(std::vector<int> verticesTags, double size);
-
-        double elementSize;
-        std::vector<std::pair<int, int>> nodeTags;
+    
+    enum class ElementType : int {
+        TETRA = 4,
+        TRIANGLE = 2,
+        LINE = 1,
+        POINT = 15,
     };
 
     class Mesh{
         public:
-
+            Mesh();
             vtkSmartPointer<vtkActor> getMeshActor(){return this->_meshActor;};
-
             void addSizing(std::vector<int> verticesTags, double size);
             void genereateSurfaceMesh();
 
         private:
             
-            vtkSmartPointer<vtkPolyData> createSurfaceMeshPolyData();
+            void fillElementDataMap(ElementType elementType);
+            void fillVtkNodes();
+            void updatePolyData();
 
             vtkSmartPointer<vtkActor> createMeshActor(vtkSmartPointer<vtkPolyData> polyData);
 
-            enum class ElementType : int {
-                TETRA = 4,
-                TRIANGLE = 2,
-                LINE = 1,
-                POINT = 15,
-            };
+
             std::vector<MeshSizing> _meshSizings;
             
+
+            std::map<ElementType, vtkElementData> _elementDataMap;
+
+            vtkSmartPointer<vtkPoints> _vtkNodes;
             vtkSmartPointer<vtkPolyData> _polyData;
             vtkSmartPointer<vtkActor> _meshActor;
     };
-
-
-
-
-
 };
 
 

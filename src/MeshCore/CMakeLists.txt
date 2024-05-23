@@ -1,5 +1,6 @@
 ADD_LIBRARY(MeshCore 
     Mesh.cpp
+    MeshContainers.hpp
 )
 
 if(WIN32)

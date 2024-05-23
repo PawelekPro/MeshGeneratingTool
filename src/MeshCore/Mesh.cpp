@@ -1,5 +1,13 @@
 #include "Mesh.h"
 
+MeshCore::Mesh::Mesh(){
+    _elementDataMap = { {ElementType::TETRA, {4, VTK_TETRA}},
+                        {ElementType::TRIANGLE, {3, VTK_TRIANGLE}},
+                        {ElementType::LINE, {2, VTK_LINE}}  };
+    _polyData = vtkSmartPointer<vtkPolyData>::New();
+}
+
+
 void MeshCore::Mesh::addSizing(std::vector<int> verticesTags, double size){
     MeshSizing meshSizing(verticesTags, size);
     _meshSizings.push_back(meshSizing);
@@ -14,8 +22,18 @@ void MeshCore::Mesh::genereateSurfaceMesh(){
                                    meshSizing.elementSize);
     }
     gmsh::model::mesh::generate(2);
-    this->_polyData = createSurfaceMeshPolyData();
+
+    fillVtkNodes();
+    fillElementDataMap(ElementType::LINE);
+    fillElementDataMap(ElementType::TRIANGLE);
+    updatePolyData();
     this->_meshActor = createMeshActor(_polyData);
+}
+
+void MeshCore::Mesh::updatePolyData(){
+    _polyData->SetPoints(_vtkNodes);
+    _polyData->SetLines(_elementDataMap.at(ElementType::LINE).vtkCells);
+    _polyData->SetPolys(_elementDataMap.at(ElementType::TRIANGLE).vtkCells);
 }
 
 vtkSmartPointer<vtkActor> MeshCore::Mesh::createMeshActor(vtkSmartPointer<vtkPolyData> polyData){
@@ -28,7 +46,7 @@ vtkSmartPointer<vtkActor> MeshCore::Mesh::createMeshActor(vtkSmartPointer<vtkPol
         return meshActor;
         }
         
-vtkSmartPointer<vtkPolyData> MeshCore::Mesh::createSurfaceMeshPolyData(){
+void MeshCore::Mesh::fillVtkNodes(){
     // extract nodes from gmsh model, and transfer them to vtkPoints container
     // nodeTags is a vector containing node numbering (tag - hence the name)
     // nodeCoords holds coordinates of each node [node_1_x, node_1_y, node_1_z, node_2_x, etc...]
@@ -54,6 +72,10 @@ vtkSmartPointer<vtkPolyData> MeshCore::Mesh::createSurfaceMeshPolyData(){
                                     nodeCoords[yNodeId],
                                     nodeCoords[zNodeId]);
     }
+    _vtkNodes = vtkNodes;
+}
+
+void MeshCore::Mesh::fillElementDataMap(ElementType elementType){
 
     // extract 3D elements from gmsh model, and transfer them to vtkCellArray container
     // elementTypes is a vector containing types of elemnts in the mesh
@@ -82,33 +104,11 @@ vtkSmartPointer<vtkPolyData> MeshCore::Mesh::createSurfaceMeshPolyData(){
     std::transform(_elementTypes.begin(), _elementTypes.end(), std::back_inserter(elementTypes),
     [](int& elem){return static_cast<ElementType>(elem);});
 
-    struct ElementData {
-        ElementData() 
-            : nCellNodes(0), 
-            vtkCellType(0), 
-            vtkCells(vtkSmartPointer<vtkCellArray>::New()) {}
-
-        ElementData(int nNodes, int vtkType)
-            : nCellNodes(nNodes),
-            vtkCellType(vtkType),
-            vtkCells(vtkSmartPointer<vtkCellArray>::New()) {}
-
-    int nCellNodes;
-    vtkSmartPointer<vtkCellArray> vtkCells;
-    int vtkCellType;
-    };
-
-    std::map<ElementType, ElementData> elementDataMap = {
-        {ElementType::TETRA, {4, VTK_TETRA}},
-        {ElementType::TRIANGLE, {3, VTK_TRIANGLE}},
-        {ElementType::LINE, {2, VTK_LINE}}
-    };
-
     std::vector<vtkIdType> currentElementNodeTags;
     for(size_t i = 0; i < elementTypes.size(); ++i)
     {
-        if(elementTypes[i]!=ElementType::POINT){
-            ElementData elementData = elementDataMap.at(elementTypes[i]);
+        if(elementTypes[i] == elementType){
+            vtkElementData elementData = _elementDataMap.at(elementTypes[i]);
             auto nElements = elementTags[i].size();
             auto nNodes = elementData.nCellNodes;
             auto cellArray = elementData.vtkCells;
@@ -125,11 +125,6 @@ vtkSmartPointer<vtkPolyData> MeshCore::Mesh::createSurfaceMeshPolyData(){
             }
         }
     }
-    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-    polyData->SetPoints(vtkNodes);
-    polyData->SetLines(elementDataMap.at(ElementType::LINE).vtkCells);
-    polyData->SetPolys(elementDataMap.at(ElementType::TRIANGLE).vtkCells);
-    return polyData;
 }
 
 MeshCore::MeshSizing::MeshSizing(std::vector<int> verticesTags, double size){
