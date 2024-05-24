@@ -54,7 +54,7 @@ void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> se
 }
 
 void Model::meshParts() {
-    this->mesh.genereateSurfaceMesh();
+    this->mesh.generateSurfaceMesh();
 }
 
 void Model::updateMeshActor(){
