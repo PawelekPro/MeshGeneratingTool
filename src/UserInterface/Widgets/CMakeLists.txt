@@ -7,6 +7,7 @@ ADD_LIBRARY(Widgets
   EntityPickWidget.cpp
   TreeContextMenu.cpp
   RibbonBarWidget.cpp
+  ColorPickerWidget.cpp
   ${SARIBBON_PATH}/SARibbon.h
   ${SARIBBON_PATH}/SARibbon.cpp
   ${SARIBBON_PATH}/SARibbonBar/resource.qrc
