@@ -26,6 +26,7 @@
 #include <vtkSmartPointer.h>
 
 #include <QColor>
+#include <QList>
 
 typedef enum {
 	ET_IsoLine = 0, //!< Isoline
@@ -49,7 +50,7 @@ public:
 	void setRepresentationToPoints(const Handle(QIVtkSelectionPipeline) pipeline) {};
 	void setRepresentationToSurfaceWithEdges(const Handle(QIVtkSelectionPipeline) pipeline) {};
 
-	void setEntityColor(QIVtkEntityType entity, QColor color) {};
+	void setColorsTable(QList<QColor>);
 
 private:
 	vtkSmartPointer<vtkLookupTable> _colorTable;
