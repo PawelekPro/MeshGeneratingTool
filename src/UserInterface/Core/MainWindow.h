@@ -24,6 +24,7 @@
 
 #include "Configuration.h"
 #include "Model.h"
+#include "PreferencesDialog.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
 
@@ -146,5 +147,8 @@ private slots:
 	 * @returns None
 	 */
 	void onItemSelectionChanged();
+
+public slots:
+	void onShowDialogButtonClicked();
 };
 #endif // MAINWINDOW_H

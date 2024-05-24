@@ -111,7 +111,7 @@ void MainWindow::importSTEP(QString fileName) {
 		this->model->geometry.importSTEP(filePath, this->progressBar);
 		this->model->updateParts();
 		GeometryCore::PartsMap shapesMap = this->model->geometry.getShapesMap();
-		for(auto shape : shapesMap){
+		for (auto shape : shapesMap) {
 			this->QVTKRender->addShapeToRenderer(shape.second);
 		}
 	} catch (std::filesystem::filesystem_error) {
@@ -199,4 +199,11 @@ void MainWindow::onItemSelectionChanged() {
 		header->setStretchLastSection(true);
 		header->setSectionResizeMode(QHeaderView::Interactive);
 	}
+}
+
+void MainWindow::onShowDialogButtonClicked() {
+	PreferencesDialog dialog(this);
+
+	// Show the dialog
+	dialog.exec();
 }

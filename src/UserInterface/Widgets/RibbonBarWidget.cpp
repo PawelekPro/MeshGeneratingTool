@@ -63,7 +63,13 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel1->addSmallAction(createAction("action2", ":/icons/icons/action2.svg"));
 	SARibbonPannel* pannel2 = new SARibbonPannel("pannel2", page1);
 	page1->addPannel(pannel2);
-	pannel2->addLargeAction(createAction("setting", ":/icons/icons/customize0.svg"));
+
+	QAction* settingsAct = createAction("setting", ":/icons/icons/customize0.svg");
+	connect(settingsAct, &QAction::triggered, _mainWindow,
+		&MainWindow::onShowDialogButtonClicked);
+
+	pannel2->addLargeAction(settingsAct);
+
 	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
 
