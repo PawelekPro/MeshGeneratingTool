@@ -5,35 +5,46 @@ MeshCore::Mesh::Mesh(){
                         {ElementType::TRIANGLE, {3, VTK_TRIANGLE}},
                         {ElementType::LINE, {2, VTK_LINE}}  };
     _polyData = vtkSmartPointer<vtkPolyData>::New();
+    _vtkPoints = vtkSmartPointer<vtkPoints>::New();
+    _meshActor = vtkSmartPointer<vtkActor>::New();
+    gmsh::option::setNumber("Mesh.MeshSizeMin", 0.1);
+    gmsh::option::setNumber("Mesh.MeshSizeMax", 1);
 }
-
 
 void MeshCore::Mesh::addSizing(std::vector<int> verticesTags, double size){
     MeshSizing meshSizing(verticesTags, size);
     _meshSizings.push_back(meshSizing);
 };
 
-void MeshCore::Mesh::genereateSurfaceMesh(){
-    gmsh::option::setNumber("Mesh.MeshSizeMin", 0.1);
-    gmsh::option::setNumber("Mesh.MeshSizeMax", 1);
-
+void MeshCore::Mesh::generateSurfaceMesh(){
     for(const auto& meshSizing : _meshSizings){
         gmsh::model::mesh::setSize(meshSizing.nodeTags,
                                    meshSizing.elementSize);
     }
     gmsh::model::mesh::generate(2);
 
-    fillVtkNodes();
-    fillElementDataMap(ElementType::LINE);
-    fillElementDataMap(ElementType::TRIANGLE);
-    updatePolyData();
+    vtkSmartPointer<vtkCellArray> lineArray = getVtkCellArray(ElementType::LINE);
+    vtkSmartPointer<vtkCellArray> triangeArray = getVtkCellArray(ElementType::TRIANGLE);
+    vtkSmartPointer<vtkPoints> points = getVtkPoints();
+
+    _polyData->SetPoints(points);
+    _polyData->SetLines(lineArray);
+    _polyData->SetPolys(triangeArray);
     this->_meshActor = createMeshActor(_polyData);
 }
+void MeshCore::Mesh::generateVolumeMesh(){
+    for(const auto& meshSizing : _meshSizings){
+        gmsh::model::mesh::setSize(meshSizing.nodeTags,
+                                   meshSizing.elementSize);
+    }
+    gmsh::model::mesh::generate(3);
 
-void MeshCore::Mesh::updatePolyData(){
-    _polyData->SetPoints(_vtkNodes);
-    _polyData->SetLines(_elementDataMap.at(ElementType::LINE).vtkCells);
-    _polyData->SetPolys(_elementDataMap.at(ElementType::TRIANGLE).vtkCells);
+    vtkSmartPointer<vtkCellArray> tetraArray = getVtkCellArray(ElementType::TETRA);
+    vtkSmartPointer<vtkPoints> points = getVtkPoints();
+
+    _gridData->SetPoints(points);
+    _gridData->SetCells(_elementDataMap.at(ElementType::TETRA).vtkCellType, tetraArray);
+    this->_meshActor = createMeshActor(_polyData);
 }
 
 vtkSmartPointer<vtkActor> MeshCore::Mesh::createMeshActor(vtkSmartPointer<vtkPolyData> polyData){
@@ -46,7 +57,7 @@ vtkSmartPointer<vtkActor> MeshCore::Mesh::createMeshActor(vtkSmartPointer<vtkPol
         return meshActor;
         }
         
-void MeshCore::Mesh::fillVtkNodes(){
+void MeshCore::Mesh::fillVtkPoints(){
     // extract nodes from gmsh model, and transfer them to vtkPoints container
     // nodeTags is a vector containing node numbering (tag - hence the name)
     // nodeCoords holds coordinates of each node [node_1_x, node_1_y, node_1_z, node_2_x, etc...]
@@ -61,19 +72,31 @@ void MeshCore::Mesh::fillVtkNodes(){
 
     gmsh::model::mesh::getNodes(nodeTags, nodeCoords, parametricCoord);
 
-    vtkSmartPointer<vtkPoints> vtkNodes = vtkSmartPointer<vtkPoints>::New();
     int xNodeId, yNodeId, zNodeId;
     for(size_t i = 0; i < nodeTags.size(); ++i)
     {
         xNodeId = i*3;
         yNodeId = xNodeId + 1;
         zNodeId = xNodeId + 2;
-        vtkNodes->InsertNextPoint(nodeCoords[xNodeId],
+        _vtkPoints->InsertNextPoint(nodeCoords[xNodeId],
                                     nodeCoords[yNodeId],
                                     nodeCoords[zNodeId]);
     }
-    _vtkNodes = vtkNodes;
+    
 }
+vtkSmartPointer<vtkCellArray> MeshCore::Mesh::getVtkCellArray(ElementType elementType) {
+    if (!_elementDataMap.at(elementType).filled) {
+        fillElementDataMap(elementType);
+    }
+    return _elementDataMap.at(elementType).vtkCells;
+}
+vtkSmartPointer<vtkPoints> MeshCore::Mesh::getVtkPoints(){
+    if(_vtkPoints->GetNumberOfPoints() == 0){
+        fillVtkPoints();
+    }
+    return _vtkPoints;
+}
+
 
 void MeshCore::Mesh::fillElementDataMap(ElementType elementType){
 

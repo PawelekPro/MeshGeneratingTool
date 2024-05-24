@@ -22,6 +22,7 @@
 #include <vtkProperty.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkUnstructuredGrid.h>
 
 namespace MeshCore{
     
@@ -35,29 +36,27 @@ namespace MeshCore{
     class Mesh{
         public:
             Mesh();
-            vtkSmartPointer<vtkActor> getMeshActor(){return this->_meshActor;};
             void addSizing(std::vector<int> verticesTags, double size);
-            void genereateSurfaceMesh();
+            void generateSurfaceMesh();
+            void generateVolumeMesh();
+
+            vtkSmartPointer<vtkPoints> getVtkPoints();
+            vtkSmartPointer<vtkCellArray> getVtkCellArray(ElementType ElementType);
+            vtkSmartPointer<vtkActor> getMeshActor(){return this->_meshActor;};
 
         private:
-            
+
+            void fillVtkPoints();
             void fillElementDataMap(ElementType elementType);
-            void fillVtkNodes();
-            void updatePolyData();
 
             vtkSmartPointer<vtkActor> createMeshActor(vtkSmartPointer<vtkPolyData> polyData);
-
-
             std::vector<MeshSizing> _meshSizings;
-            
-
             std::map<ElementType, vtkElementData> _elementDataMap;
 
-            vtkSmartPointer<vtkPoints> _vtkNodes;
+            vtkSmartPointer<vtkPoints> _vtkPoints;
             vtkSmartPointer<vtkPolyData> _polyData;
+            vtkSmartPointer<vtkUnstructuredGrid> _gridData;
             vtkSmartPointer<vtkActor> _meshActor;
     };
 };
-
-
 #endif
