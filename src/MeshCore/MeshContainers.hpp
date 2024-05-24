@@ -21,13 +21,16 @@ namespace MeshCore{
         vtkElementData() 
             : nCellNodes(0), 
             vtkCellType(0), 
-            vtkCells(vtkSmartPointer<vtkCellArray>::New()) {}
+            vtkCells(vtkSmartPointer<vtkCellArray>::New()),
+            filled(false) {}
 
         vtkElementData(int nNodes, int vtkType)
             : nCellNodes(nNodes),
             vtkCellType(vtkType),
-            vtkCells(vtkSmartPointer<vtkCellArray>::New()) {}
+            vtkCells(vtkSmartPointer<vtkCellArray>::New()),
+            filled(false) {}
 
+    bool filled;
     int nCellNodes;
     vtkSmartPointer<vtkCellArray> vtkCells;
     int vtkCellType;
