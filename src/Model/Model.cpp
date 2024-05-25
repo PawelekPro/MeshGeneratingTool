@@ -32,17 +32,14 @@ Model::~Model(){
     gmsh::finalize();
 }
 
-void Model::updateParts() { 
-    GeometryCore::PartsMap partsMap = this->geometry.getShapesMap();
-    for (const auto& it : partsMap) {
+void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) { 
+    for (const auto& it : shapesMap) {
         const auto& shape = it.second;
         const void *shape_ptr = &shape;
         std::vector< std::pair<int, int>> outDimTags;
         gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
     }
-    std::cout << "Loaded " << partsMap.size() << " parts into the model!" << std::endl;
     gmsh::model::occ::synchronize();
-
 }
 
 void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
@@ -53,10 +50,25 @@ void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> se
     }
 }
 
-void Model::meshParts() {
-    this->mesh.generateSurfaceMesh();
+void Model::meshSurface() {
+    mesh.generateSurfaceMesh();
+}
+void Model::meshVolume(){
+    mesh.generateVolumeMesh();
+}
+            
+vtkSmartPointer<vtkActor> Model::getMeshActor(){
+    return mesh.getMeshActor();
 }
 
-void Model::updateMeshActor(){
-    this->meshActor = this->mesh.getMeshActor();
+void Model::importSTL(const std::string& filePath, QWidget* progressBar){
+    geometry.importSTL(filePath, progressBar);
+    GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
+    addShapesToModel(shapesMap);
+}
+
+void Model::importSTEP(const std::string& filePath, QWidget* progressBar){
+    geometry.importSTEP(filePath, progressBar);
+    GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
+    addShapesToModel(shapesMap);
 }

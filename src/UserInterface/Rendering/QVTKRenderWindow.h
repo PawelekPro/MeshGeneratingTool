@@ -25,8 +25,6 @@ class QVTKInteractorStyle;
 
 #include "QVTKInteractorStyle.h"
 
-#include "Geometry.h"
-#include "Mesh.h"
 #include "Model.h"
 
 #include <algorithm>

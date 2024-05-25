@@ -42,16 +42,20 @@ class Model {
 	Model(std::string modelName);
 	~Model();
 
-	void updateParts();
-	void meshParts();
+	//--------Geometry interface-----// 
+    void importSTEP(const std::string& filePath, QWidget* progressBar);
+    void importSTL(const std::string& filePath, QWidget* progressBar);
+
+	//--------Meshing interface-----// 
+	void meshSurface();
+	void meshVolume();
+	vtkSmartPointer<vtkActor> getMeshActor();
 
 	void addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
-    void updateMeshActor();
-	vtkSmartPointer<vtkActor> meshActor;
+   
 
 	private:
-
-
+		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 
 #endif // MODEL_H
