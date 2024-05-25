@@ -117,7 +117,7 @@ void TreeStructure::loadGeometryFile(const QString fileName) {
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addNode(const QString& parentLabel, const QString& fileName) {
+void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName) {
 	QList<QTreeWidgetItem*> qlist
 		= this->findTreeWidgetItems(parentLabel, Qt::MatchExactly);
 
@@ -127,7 +127,7 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& fileName)
 	}
 
 	QDomElement element = this->docObjectModel->createElement("group");
-	element.setAttribute("label", fileName);
+	element.setAttribute("label", nodeName);
 
 	if (domElements.contains(parentItem)) {
 		QDomElement* node = domElements.value(parentItem);
@@ -137,7 +137,7 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& fileName)
 	}
 
 	auto item = this->createItem(&element, parentItem);
-	item->setText(static_cast<int>(Column::Label), fileName);
+	item->setText(static_cast<int>(Column::Label), nodeName);
 }
 
 //--------------------------------------------------------------------------------------

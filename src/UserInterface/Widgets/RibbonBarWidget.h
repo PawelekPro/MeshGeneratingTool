@@ -52,6 +52,7 @@ private:
 private slots:
 	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
 	void onEntitySelectionChanged(QAction*);
+	void onPressedSizeField(QAction* action);
 
 private:
 	MainWindow* _mainWindow;

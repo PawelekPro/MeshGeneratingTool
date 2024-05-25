@@ -110,7 +110,13 @@ NCollection_List<Handle(QIVtkSelectionPipeline)> QVTKInteractorStyle::getPipelin
 
 	return pipelineList;
 }
-
+void QVTKInteractorStyle::removePipelines() {
+    for (ShapePipelinesMap::Iterator it(_shapePipelinesMap); it.More(); it.Next()) {
+        const Handle(QIVtkSelectionPipeline)& pipeline = it.Value();
+		pipeline->Delete();
+    }
+    _shapePipelinesMap.Clear();
+}
 //----------------------------------------------------------------------------
 Standard_Integer QVTKInteractorStyle::getPipelinesMapSize() {
 	return _shapePipelinesMap.Size();
@@ -171,7 +177,13 @@ void QVTKInteractorStyle::createContextMenu() {
 		QObject::connect(_fitViewAction, &QAction::triggered,
 			[this]() { _qvtkRenderWindow->fitView(); });
 
+		_addSizingAction = new QAction("Add sizing", _contextMenu);
+		QObject::connect(_addSizingAction, &QAction::triggered, 
+			[this]() {_qvtkRenderWindow->model->addSizing(this->_selectedShapes);});
+
 		_contextMenu->addAction(_fitViewAction);
+		_contextMenu->addAction(_addSizingAction);
+
 	}
 }
 
@@ -343,7 +355,7 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			}
 
 			IVtk_IdType aShapeID = anOccShape->GetId();
-
+			
 			Handle(Message_Messenger) anOutput = Message::DefaultMessenger();
 			if (!_shapePipelinesMap.IsBound(aShapeID)) {
 				anOutput->SendWarning()
@@ -368,6 +380,7 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			}
 
 			if (!appendId) {
+				_selectedShapes.clear();
 				selectedSubShapeIds->Clear();
 			}
 
@@ -391,6 +404,8 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			IVtk_ShapeIdList::Iterator aMetaIds(*selectedSubShapeIds);
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
+				const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
+				_selectedShapes.push_back(aSubShape);
 				aSubIds.Append(aSubSubIds);
 			}
 

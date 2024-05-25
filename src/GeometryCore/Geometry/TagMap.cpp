@@ -1,5 +1,9 @@
 #include "TagMap.h"
 
+GeometryCore::TagMap::TagMap() {
+    std::fill(_maxEntityTags.begin(), _maxEntityTags.end(), 0);
+}
+
 int GeometryCore::TagMap::getMaxTag(EntityType type){
     return this->_maxEntityTags.at(static_cast<int>(type));
 }
@@ -11,35 +15,48 @@ void GeometryCore::TagMap::incrementMaxTag(EntityType type){
 }
 
 void GeometryCore::TagMap::tagShape(const TopoDS_Vertex& shape){
-    this->incrementMaxTag(EntityType::Vertex);
-    int tag = this->getMaxTag(EntityType::Vertex);
-    // std::cout<<"Tagging vertex with tag: " << tag <<std::endl;
-    this->_tagVertexMap.Bind(tag, shape);
-    this->_vertexTagMap.Bind(shape, tag);
+    if (!_vertexTagMap.IsBound(shape)){
+        this->incrementMaxTag(EntityType::Vertex);
+        int tag = this->getMaxTag(EntityType::Vertex);
+        // std::cout<<"Tagging vertex with tag: " << tag <<std::endl;
+        this->_tagVertexMap.Bind(tag, shape);
+        this->_vertexTagMap.Bind(shape, tag);
+    }
 }
 void GeometryCore::TagMap::tagShape(const TopoDS_Edge& shape){
-    this->incrementMaxTag(EntityType::Edge);
-    int tag = this->getMaxTag(EntityType::Edge);
-    // std::cout<<"Tagging edge with tag: " << tag <<std::endl;
-    this->_tagEdgeMap.Bind(tag, shape);
-    this->_edgeTagMap.Bind(shape, tag);
+    if (!_edgeTagMap.IsBound(shape)){
+        this->incrementMaxTag(EntityType::Edge);
+        int tag = this->getMaxTag(EntityType::Edge);
+        // std::cout<<"Tagging edge with tag: " << tag <<std::endl;
+        this->_tagEdgeMap.Bind(tag, shape);
+        this->_edgeTagMap.Bind(shape, tag);
+    }
 }
 void GeometryCore::TagMap::tagShape(const TopoDS_Face& shape){
-    this->incrementMaxTag(EntityType::Face);
-    int tag = this->getMaxTag(EntityType::Face);
+    if (!_faceTagMap.IsBound(shape)){
+        this->incrementMaxTag(EntityType::Face);
+        int tag = this->getMaxTag(EntityType::Face);
         // std::cout<<"Tagging face with tag: " << tag <<std::endl;
-    this->_tagFaceMap.Bind(tag, shape);
-    this->_faceTagMap.Bind(shape, tag);
+        this->_tagFaceMap.Bind(tag, shape);
+        this->_faceTagMap.Bind(shape, tag);
+    }
 }
 void GeometryCore::TagMap::tagShape(const TopoDS_Solid& shape){
-    this->incrementMaxTag(EntityType::Solid);
-    int tag = this->getMaxTag(EntityType::Solid);
-    // std::cout<<"Tagging solid with tag: " << tag <<std::endl;
-    this->_tagSolidMap.Bind(tag, shape);
-    this->_solidTagMap.Bind(shape, tag);
+    if (!_solidTagMap.IsBound(shape)){
+        this->incrementMaxTag(EntityType::Solid);
+        int tag = this->getMaxTag(EntityType::Solid);
+        // std::cout<<"Tagging solid with tag: " << tag <<std::endl;
+        this->_tagSolidMap.Bind(tag, shape);
+        this->_solidTagMap.Bind(shape, tag);
+    }
 }
 const int& GeometryCore::TagMap::getTag(const TopoDS_Vertex& shape){
-    return this->_vertexTagMap.Find(shape);
+    if (_vertexTagMap.IsBound(shape)){
+        return this->_vertexTagMap.Find(shape);
+    }else{
+        std::cout<<"Vertex not bound!";
+        return 0;
+    }
 }
 const int& GeometryCore::TagMap::getTag(const TopoDS_Edge& shape){
     return this->_edgeTagMap.Find(shape);
@@ -87,22 +104,22 @@ TopoDS_Shape GeometryCore::TagMap::getShape(EntityType type, int tag) {
 }
 
 void GeometryCore::TagMap::tagEntities(const TopoDS_Shape& shape){
-    TopExp_Explorer entityExp;
-
-    for(entityExp.Init(shape, TopAbs_SOLID); entityExp.More(); entityExp.Next()){
-        TopoDS_Solid solid = TopoDS::Solid(entityExp.Current());
+    
+    TopExp_Explorer shapeExplorer;
+    for(shapeExplorer.Init(shape, TopAbs_SOLID); shapeExplorer.More(); shapeExplorer.Next()){
+        const TopoDS_Solid& solid = TopoDS::Solid(shapeExplorer.Current());
         this->tagShape(solid);
     }
-    for(entityExp.Init(shape, TopAbs_FACE); entityExp.More(); entityExp.Next()){
-        TopoDS_Face face = TopoDS::Face(entityExp.Current());
+    for(shapeExplorer.Init(shape, TopAbs_FACE); shapeExplorer.More(); shapeExplorer.Next()){
+        const TopoDS_Face& face = TopoDS::Face(shapeExplorer.Current());
         this->tagShape(face);
     }
-    for(entityExp.Init(shape, TopAbs_EDGE); entityExp.More(); entityExp.Next()){
-        TopoDS_Edge edge = TopoDS::Edge(entityExp.Current());
+    for(shapeExplorer.Init(shape, TopAbs_EDGE); shapeExplorer.More(); shapeExplorer.Next()){
+        const TopoDS_Edge& edge = TopoDS::Edge(shapeExplorer.Current());
         this->tagShape(edge);
     }
-    for(entityExp.Init(shape, TopAbs_VERTEX); entityExp.More(); entityExp.Next()){
-        TopoDS_Vertex vertex = TopoDS::Vertex(entityExp.Current());
+    for(shapeExplorer.Init(shape, TopAbs_VERTEX); shapeExplorer.More(); shapeExplorer.Next()){
+        const TopoDS_Vertex& vertex = TopoDS::Vertex(shapeExplorer.Current());
         this->tagShape(vertex);
     }
 }
