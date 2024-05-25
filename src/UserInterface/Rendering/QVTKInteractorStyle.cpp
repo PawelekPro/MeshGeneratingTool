@@ -110,7 +110,13 @@ NCollection_List<Handle(QIVtkSelectionPipeline)> QVTKInteractorStyle::getPipelin
 
 	return pipelineList;
 }
-
+void QVTKInteractorStyle::removePipelines() {
+    for (ShapePipelinesMap::Iterator it(_shapePipelinesMap); it.More(); it.Next()) {
+        const Handle(QIVtkSelectionPipeline)& pipeline = it.Value();
+		pipeline->Delete();
+    }
+    _shapePipelinesMap.Clear();
+}
 //----------------------------------------------------------------------------
 Standard_Integer QVTKInteractorStyle::getPipelinesMapSize() {
 	return _shapePipelinesMap.Size();

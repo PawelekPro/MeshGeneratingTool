@@ -121,6 +121,12 @@ public:
 	void addShapeToRenderer(const TopoDS_Shape& shape);
 
 	/**
+	 * @brief  Add existing pipelines to renderer window
+	 *
+	 */
+	void addPipelinesToRenderer();
+
+	/**
 	 * @brief  Clear rendering window.
 	 *
 	 */
@@ -150,6 +156,7 @@ private:
 
 	// IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
+
 
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;

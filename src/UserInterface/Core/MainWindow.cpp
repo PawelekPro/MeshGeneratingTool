@@ -80,8 +80,12 @@ void MainWindow::setConnections() {
 	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
 		generateMesh();
 	});
-	connect(ui->actionShowMesh, &QAction::triggered, [this]() {
-		showMesh();
+	connect(ui->actionShowMesh, &QAction::toggled, [this](bool checked) {
+		if (checked) {
+			showMesh();
+		} else {
+			showGeometry();
+		}
 	});
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
@@ -169,6 +173,11 @@ void MainWindow::initializeActions() {
 void MainWindow::showMesh() {
 	this->QVTKRender->clearRenderer();
 	this->QVTKRender->addActor(this->model->getMeshActor());
+	this->QVTKRender->RenderScene();
+}
+void MainWindow::showGeometry(){
+	this->QVTKRender->clearRenderer();
+	this->QVTKRender->addPipelinesToRenderer();
 	this->QVTKRender->RenderScene();
 }
 

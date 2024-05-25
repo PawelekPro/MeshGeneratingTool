@@ -83,6 +83,7 @@ public:
 	void setSelectionMode(IVtk_SelectionMode);
 	Standard_Integer getPipelinesMapSize();
 	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines();
+	void removePipelines();
 
 	// Overriding
 public:
