@@ -1,12 +1,13 @@
 #include "Mesh.h"
 
-MeshCore::Mesh::Mesh(){
-    _elementDataMap = { {ElementType::TETRA, {4, VTK_TETRA}},
-                        {ElementType::TRIANGLE, {3, VTK_TRIANGLE}},
-                        {ElementType::LINE, {2, VTK_LINE}}  };
-    _polyData = vtkSmartPointer<vtkPolyData>::New();
-    _vtkPoints = vtkSmartPointer<vtkPoints>::New();
-    _meshActor = vtkSmartPointer<vtkActor>::New();
+MeshCore::Mesh::Mesh()
+    : _elementDataMap{ {ElementType::TETRA, {4, VTK_TETRA}},
+                       {ElementType::TRIANGLE, {3, VTK_TRIANGLE}},
+                       {ElementType::LINE, {2, VTK_LINE}} },
+      _polyData(vtkSmartPointer<vtkPolyData>::New()),
+      _vtkPoints(vtkSmartPointer<vtkPoints>::New()),
+      _meshActor(vtkSmartPointer<vtkActor>::New())
+{
     gmsh::option::setNumber("Mesh.MeshSizeMin", 0.1);
     gmsh::option::setNumber("Mesh.MeshSizeMax", 1);
 }
