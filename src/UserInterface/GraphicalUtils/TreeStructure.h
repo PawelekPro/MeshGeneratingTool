@@ -104,6 +104,23 @@ public:
 		Actor
 	};
 
+
+	/**
+	 * Enum class representing different types of tree roots.
+	 * TreeRoot can be one of the following:
+	 * - GeomImport
+	 * - GeomModel
+	 * - CSYS
+	 * - Mesh
+	 */
+	enum class TreeRoot {
+		GeomImport,
+		GeomModel,
+		CSYS,
+		Mesh
+	};
+
+
 	/**
 	 * Mapping of role names to corresponding Qt user roles.
 	 */
@@ -129,7 +146,7 @@ private:
 	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
 	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
 	 */
-	QTreeWidgetItem* createItem(QDomElement* element, QTreeWidgetItem* parent = nullptr);
+	QTreeWidgetItem* createTreeWidgetItem(QDomElement* element, QTreeWidgetItem* parent = nullptr);
 
 	/**
 	 * Finds tree widget items that match the specified text and flags.
@@ -140,6 +157,17 @@ private:
 	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
 	 */
 	QList<QTreeWidgetItem*> findTreeWidgetItems(const QString&, Qt::MatchFlags);
+
+	/**
+	 * Finds tree widget items that match the specified text and flags.
+	 *
+	 * @param text The text to match against.
+	 * @param flags The matching flags to use.
+	 *
+	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
+	 */
+	QTreeWidgetItem* getRootTreeWidgetItem(TreeRoot root);
+
 
 	/**
 	 * Adds a node to the data structure.
@@ -186,7 +214,7 @@ private:
 	 *
 	 * @return A RapidJSON Document containing the default properties.
 	 */
-	rapidjson::Document readDefaultProperties();
+	rapidjson::Document readJsonTemplateFile(const QString& jsonTemplatePath);
 
 	/**
 	 * Pointer to a QDomDocument object that represents an XML document object model.
@@ -199,21 +227,6 @@ private:
 	QMap<QTreeWidgetItem*, QDomElement*> domElements;
 
 	TreeContextMenu* contextMenu;
-
-	/**
-	 * Enum class representing different types of tree roots.
-	 * TreeRoot can be one of the following:
-	 * - GeomImport
-	 * - GeomModel
-	 * - CSYS
-	 * - Mesh
-	 */
-	enum class TreeRoot {
-		GeomImport,
-		GeomModel,
-		CSYS,
-		Mesh
-	};
 
 	/**
 	 * A QMap that maps TreeRoot enum values to corresponding QString descriptions.

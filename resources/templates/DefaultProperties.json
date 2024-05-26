@@ -1,37 +1,36 @@
-
 {
-"MeshSizing": {
-    "Properties": [
-        {
-            "value": "0",
-            "name": "id0",
-            "label": "Selection scope",
-            "widget": "ComboBoxWidget",
-            "hidden": "no",
-            "model": "SizeModelSelection"
-        },
-        {
-            "name": "id1",
-            "label": "Integer-type input",
-            "widget": "IntLineWidget",
-            "value": "420",
-            "hidden": "no",
-            "unit": "unit"
-        },
-        {
-            "name": "id2",
-            "label": "Double-type input",
-            "widget": "DoubleLineWidget",
-            "value": "2137.69",
-            "hidden": "no",
-            "unit": "unit"
-        },
-        {
-            "name": "id3",
-            "label": "Entity selection",
-            "widget": "EntityPickWidget",
-            "value": ""
-        }
-    ]
-},
+    "MeshSizing": {
+        "Properties": [
+            {
+                "value": "0",
+                "name": "id0",
+                "label": "Selection scope",
+                "widget": "ComboBoxWidget",
+                "hidden": "no",
+                "model": "SizeModelSelection"
+            },
+            {
+                "name": "id1",
+                "label": "Integer-type input",
+                "widget": "IntLineWidget",
+                "value": 420,
+                "hidden": "no",
+                "unit": "unit"
+            },
+            {
+                "name": "id2",
+                "label": "Double-type input",
+                "widget": "DoubleLineWidget",
+                "value": 2137.69,
+                "hidden": "no",
+                "unit": "unit"
+            },
+            {
+                "name": "id3",
+                "label": "Entity selection",
+                "widget": "EntityPickWidget",
+                "value": ""
+            }
+        ]
+    }
 }

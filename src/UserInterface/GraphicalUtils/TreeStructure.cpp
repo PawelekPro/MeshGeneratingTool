@@ -33,7 +33,14 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	this->contextMenu = new TreeContextMenu(this);
 
-	this->writeDataToXML("/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml");
+    #ifdef _WIN32
+	std::string xmlPath = "test.xml";
+    #endif
+    #ifdef linux
+	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
+    #endif
+    
+	this->writeDataToXML(xmlPath);
 }
 
 //--------------------------------------------------------------------------------------
@@ -61,7 +68,8 @@ TreeStructure::~TreeStructure() {
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::buildBaseObjectsRepresentation() {
-	rapidjson::Document doc = this->readDefaultProperties();
+	QString defaultPropsPath = AppDefaults::getInstance().getTemplatesPath();
+	rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
 
 	QDomElement root = this->docObjectModel->createElement(
 		AppDefaults::getInstance().getAppName());
@@ -75,12 +83,13 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		if (xmlTag.contains(" ")) {
 			xmlTag.remove(" ");
 		}
+		
 		QDomElement* rootElement = new QDomElement(this->docObjectModel->createElement(xmlTag));
 
 		PropertiesList propertiesList = this->parseDefaultProperties(doc, xmlTag);
 		this->addProperties(rootElement, propertiesList);
 
-		QTreeWidgetItem* rootItem = this->createItem(rootElement);
+		QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
 		rootItem->setText(static_cast<int>(Column::Label), rootName);
 
 		// This will parse only element with "Properties" tage name
@@ -96,8 +105,21 @@ QList<QTreeWidgetItem*> TreeStructure::findTreeWidgetItems(
 	return this->findItems(qString, flags);
 }
 
+QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(TreeRoot root){
+	
+	QString rootName = TreeRoots.value(root);
+	QList<QTreeWidgetItem*> itemList = this->findItems(rootName, Qt::MatchExactly); 
+
+	if(itemList.isEmpty()){
+		qErrnoWarning("Root TreeWidgetItem not initialized");
+	}else if(itemList.size()!=1){
+		qWarning("More than one elements with root name");
+	}
+	return itemList.first();
+}
+
 //--------------------------------------------------------------------------------------
-QTreeWidgetItem* TreeStructure::createItem(QDomElement* element, QTreeWidgetItem* parent) {
+QTreeWidgetItem* TreeStructure::createTreeWidgetItem(QDomElement* element, QTreeWidgetItem* parent) {
 	QTreeWidgetItem* item = nullptr;
 
 	if (parent) {
@@ -116,34 +138,19 @@ void TreeStructure::loadGeometryFile(const QString fileName) {
 }
 
 void TreeStructure::addMeshSizing() {
-    // Read the default properties
-    rapidjson::Document doc = this->readDefaultProperties();
+	QString defaultPropsPath = AppDefaults::getInstance().getDefaultPropertiesPath();
+    rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
     PropertiesList propList = parseDefaultProperties(doc, "MeshSizing");
-
-    // Create a new QDomElement for mesh sizing
     QDomElement meshSizingElement = this->docObjectModel->createElement("group");
     meshSizingElement.setAttribute("label", "MeshSizing");
 
     QDomElement* meshSizingElementPtr = &meshSizingElement;
-
-    // Find the parent QTreeWidgetItem for the Mesh root
-    QList<QTreeWidgetItem*> meshItems = findTreeWidgetItems(TreeRoots.value(TreeRoot::Mesh), Qt::MatchExactly);
-    QTreeWidgetItem* parentItem = nullptr;
-    if (!meshItems.isEmpty()) {
-        parentItem = meshItems.first();
-    } else {
-        qWarning() << "Parent item for 'Mesh' not found!";
-        return;
-    }
-
-    // Add properties to the mesh sizing element
     addProperties(meshSizingElementPtr, propList);
-
-    // Create the new tree widget item for mesh sizing and associate it with the parent item
-    QTreeWidgetItem* meshSizingItem = this->createItem(meshSizingElementPtr, parentItem);
+    
+	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
+	QTreeWidgetItem* meshSizingItem = this->createTreeWidgetItem(meshSizingElementPtr, parentItem);
     meshSizingItem->setText(static_cast<int>(Column::Label), "Mesh Sizing");
 
-    // Add the properties model to the tree widget item
 	auto propsChildElem = meshSizingElement.childNodes().at(0).toElement();
 	this->addPropertiesModel(&propsChildElem, meshSizingItem);
 }
@@ -166,14 +173,13 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName)
 			node->appendChild(element);
 		}
 	}
-	auto item = this->createItem(&element, parentItem);
+	auto item = this->createTreeWidgetItem(&element, parentItem);
 	item->setText(static_cast<int>(Column::Label), nodeName);
 }
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* item) {
 	const int role = Role.value(element->tagName());
-
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection
@@ -244,9 +250,8 @@ PropertiesList TreeStructure::parseDefaultProperties(const rapidjson::Document& 
 }
 
 //--------------------------------------------------------------------------------------
-rapidjson::Document TreeStructure::readDefaultProperties() {
-	QString defaultPropsPath = AppDefaults::getInstance().getTemplatesPath();
-	QFile jsonFile(defaultPropsPath);
+rapidjson::Document TreeStructure::readJsonTemplateFile(const QString& jsonTemplatePath) {
+	QFile jsonFile(jsonTemplatePath);
 
 	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		vtkLogF(ERROR, "Failed to open ProjectSetup.json file.");

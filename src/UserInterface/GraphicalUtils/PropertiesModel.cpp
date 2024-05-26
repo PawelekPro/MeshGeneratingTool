@@ -43,18 +43,22 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 
 //--------------------------------------------------------------------------------------
 PropertiesModel::PropertiesModel(QDomElement* element, QWidget* parent)
-	: QAbstractTableModel(parent)
-	, _element(element) {
+    : QAbstractTableModel(parent)
+    , _element(element) {
 
-	this->_header << "Property"
-				  << "Value";
+    this->_header << "Property"
+                  << "Value";
 
-	QDomNodeList props = this->_element->childNodes();
-	for (int i = 0; i < props.length(); ++i) {
-		if (!props.at(i).isComment()) {
-			this->_properties.append(props.at(i).toElement());
-		}
-	}
+    QDomNodeList props = this->_element->childNodes();
+
+    for (int i = 0; i < props.length(); ++i) {
+        if (!props.at(i).isComment()) {
+            QDomElement propertyElement = props.at(i).toElement();
+            QString propertyName = propertyElement.tagName();
+            QString propertyValue = propertyElement.text();
+            this->_properties.append(propertyElement);
+        }
+    }
 }
 
 //--------------------------------------------------------------------------------------
