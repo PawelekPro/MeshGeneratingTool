@@ -31,7 +31,7 @@ void MeshCore::Mesh::generateSurfaceMesh(){
     _polyData->SetPoints(points);
     _polyData->SetLines(lineArray);
     _polyData->SetPolys(triangeArray);
-    this->_meshActor = createMeshActor(_polyData);
+    _meshActor = createMeshActor(_polyData);
 }
 void MeshCore::Mesh::generateVolumeMesh(){
     for(const auto& meshSizing : _meshSizings){
@@ -45,7 +45,7 @@ void MeshCore::Mesh::generateVolumeMesh(){
 
     _gridData->SetPoints(points);
     _gridData->SetCells(_elementDataMap.at(ElementType::TETRA).vtkCellType, tetraArray);
-    this->_meshActor = createMeshActor(_polyData);
+    _meshActor = createMeshActor(_polyData);
 }
 
 vtkSmartPointer<vtkActor> MeshCore::Mesh::createMeshActor(vtkSmartPointer<vtkPolyData> polyData){
