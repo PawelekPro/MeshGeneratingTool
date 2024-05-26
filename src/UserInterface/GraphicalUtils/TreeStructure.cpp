@@ -93,7 +93,6 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 //--------------------------------------------------------------------------------------
 QList<QTreeWidgetItem*> TreeStructure::findTreeWidgetItems(
 	const QString& qString, Qt::MatchFlags flags) {
-
 	return this->findItems(qString, flags);
 }
 
@@ -115,10 +114,39 @@ void TreeStructure::loadGeometryFile(const QString fileName) {
 	this->addNode(TreeRoots.value(TreeRoot::GeomImport), fileName);
 	this->addNode(TreeRoots.value(TreeRoot::GeomModel), fileName);
 }
-void TreeStructure::addMeshSizing() {
-	this->addNode(TreeRoots.value(TreeRoot::Mesh), "Mesh sizing");
-}
 
+void TreeStructure::addMeshSizing() {
+    // Read the default properties
+    rapidjson::Document doc = this->readDefaultProperties();
+    PropertiesList propList = parseDefaultProperties(doc, "MeshSizing");
+
+    // Create a new QDomElement for mesh sizing
+    QDomElement meshSizingElement = this->docObjectModel->createElement("group");
+    meshSizingElement.setAttribute("label", "MeshSizing");
+
+    QDomElement* meshSizingElementPtr = &meshSizingElement;
+
+    // Find the parent QTreeWidgetItem for the Mesh root
+    QList<QTreeWidgetItem*> meshItems = findTreeWidgetItems(TreeRoots.value(TreeRoot::Mesh), Qt::MatchExactly);
+    QTreeWidgetItem* parentItem = nullptr;
+    if (!meshItems.isEmpty()) {
+        parentItem = meshItems.first();
+    } else {
+        qWarning() << "Parent item for 'Mesh' not found!";
+        return;
+    }
+
+    // Add properties to the mesh sizing element
+    addProperties(meshSizingElementPtr, propList);
+
+    // Create the new tree widget item for mesh sizing and associate it with the parent item
+    QTreeWidgetItem* meshSizingItem = this->createItem(meshSizingElementPtr, parentItem);
+    meshSizingItem->setText(static_cast<int>(Column::Label), "Mesh Sizing");
+
+    // Add the properties model to the tree widget item
+	auto propsChildElem = meshSizingElement.childNodes().at(0).toElement();
+	this->addPropertiesModel(&propsChildElem, meshSizingItem);
+}
 //--------------------------------------------------------------------------------------
 void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName) {
 	QList<QTreeWidgetItem*> qlist
@@ -138,7 +166,6 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName)
 			node->appendChild(element);
 		}
 	}
-
 	auto item = this->createItem(&element, parentItem);
 	item->setText(static_cast<int>(Column::Label), nodeName);
 }

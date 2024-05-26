@@ -150,6 +150,7 @@ void MainWindow::newModel() {
 }
 void MainWindow::generateMesh() {
 	this->model->meshSurface();
+	this->ui->treeWidget->addMeshSizing();
 }
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
