@@ -90,6 +90,13 @@ public:
 	 */
 	void loadGeometryFile(const QString);
 
+
+	/**
+	 * @brief  mesh sizing node and creates its input widgets in the tree.
+	 *
+	 */
+	void addMeshSizing();
+
 	// Container for handling content of columns
 	enum class Column {
 		Label,

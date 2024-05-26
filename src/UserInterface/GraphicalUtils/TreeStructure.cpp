@@ -115,6 +115,9 @@ void TreeStructure::loadGeometryFile(const QString fileName) {
 	this->addNode(TreeRoots.value(TreeRoot::GeomImport), fileName);
 	this->addNode(TreeRoots.value(TreeRoot::GeomModel), fileName);
 }
+void TreeStructure::addMeshSizing() {
+	this->addNode(TreeRoots.value(TreeRoot::Mesh), "Mesh sizing");
+}
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName) {

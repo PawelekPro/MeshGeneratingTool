@@ -157,3 +157,11 @@ MeshCore::MeshSizing::MeshSizing(std::vector<int> verticesTags, double size){
                 nodeTags.push_back(tagPair);
             }
 };
+
+void MeshCore::Mesh::setMaxElementSize(double maxSize){
+    gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
+}
+
+void MeshCore::Mesh::setMinElementSize(double minSize){
+    gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
+}
