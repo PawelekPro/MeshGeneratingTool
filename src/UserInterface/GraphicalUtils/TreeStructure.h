@@ -120,6 +120,14 @@ public:
 		Mesh
 	};
 
+	enum class XMLTag{
+		MeshSizing, 
+		GeometryImport,
+	};
+	QMap<XMLTag, QString> XMLTags = {
+		{XMLTag::MeshSizing, "MeshSizing"},
+		{XMLTag::GeometryImport, "GeometryImport"},
+	};
 
 	/**
 	 * Mapping of role names to corresponding Qt user roles.
@@ -157,7 +165,13 @@ private:
 	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
 	 */
 	QList<QTreeWidgetItem*> findTreeWidgetItems(const QString&, Qt::MatchFlags);
-
+	/**
+	 * Changes the name in QDomElment tied to QTreeWidgetItem.
+	 *
+	 * @param itemToRename Pointer to QTreeWidgetItem that is being renamed
+	 * @param newName New name assigned to QTReeWidgetItem
+	 */
+	void renameTreeWidgetItem(QTreeWidgetItem* itemToRename, const QString& newName);
 	/**
 	 * Finds tree widget items that match the specified text and flags.
 	 *
@@ -227,6 +241,8 @@ private:
 	QMap<QTreeWidgetItem*, QDomElement*> domElements;
 
 	TreeContextMenu* contextMenu;
+
+	QString getUniqueElementNameForTag(TreeRoot root, XMLTag tag, const QString& baseName);
 
 	/**
 	 * A QMap that maps TreeRoot enum values to corresponding QString descriptions.

@@ -77,6 +77,7 @@ void TreeContextMenu::buildGeometryModelMenu(QMenu* menu) {
 
 void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu) {
 	menu->addAction("Add coordiante system");
+	menu->addAction("Rename");
 }
 
 void TreeContextMenu::buildMeshMenu(QMenu* menu) {

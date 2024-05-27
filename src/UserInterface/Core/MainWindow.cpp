@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	this->setConnections();
 	this->initializeActions();
+	Model::initializeGmsh();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {

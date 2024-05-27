@@ -33,18 +33,17 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	this->contextMenu = new TreeContextMenu(this);
 
-    #ifdef _WIN32
-	std::string xmlPath = "test.xml";
-    #endif
-    #ifdef linux
-	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
-    #endif
-    
-	this->writeDataToXML(xmlPath);
 }
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
+	#ifdef _WIN32
+	std::string xmlPath = "test.xml";
+	#endif
+	#ifdef linux
+	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
+	#endif
+	this->writeDataToXML(xmlPath);
 	for (auto& treeItem : domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
 		QDomElement* element = domElements.value(treeItem);
@@ -140,19 +139,54 @@ void TreeStructure::loadGeometryFile(const QString fileName) {
 void TreeStructure::addMeshSizing() {
 	QString defaultPropsPath = AppDefaults::getInstance().getDefaultPropertiesPath();
     rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
-    PropertiesList propList = parseDefaultProperties(doc, "MeshSizing");
-    QDomElement meshSizingElement = this->docObjectModel->createElement("group");
-    meshSizingElement.setAttribute("label", "MeshSizing");
+	QString meshSizingTag = XMLTags.value(XMLTag::MeshSizing);
+    PropertiesList propList = parseDefaultProperties(doc, meshSizingTag);
+    QDomElement meshSizingElement = this->docObjectModel->createElement(meshSizingTag);
+	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
+
+	QDomElement* meshElement = domElements.value(parentItem);
+	QString baseName = "Mesh sizing";
+	QString meshElementName = getUniqueElementNameForTag(TreeRoot::Mesh, XMLTag::MeshSizing, baseName);
+
+	meshSizingElement.setAttribute("name", meshElementName);
 
     QDomElement* meshSizingElementPtr = &meshSizingElement;
     addProperties(meshSizingElementPtr, propList);
     
-	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
 	QTreeWidgetItem* meshSizingItem = this->createTreeWidgetItem(meshSizingElementPtr, parentItem);
-    meshSizingItem->setText(static_cast<int>(Column::Label), "Mesh Sizing");
+    meshSizingItem->setText(static_cast<int>(Column::Label), meshSizingElement.attribute("name"));
+	
+	domElements.value(parentItem)->appendChild(meshSizingElement);
 
 	auto propsChildElem = meshSizingElement.childNodes().at(0).toElement();
 	this->addPropertiesModel(&propsChildElem, meshSizingItem);
+}
+
+QString TreeStructure::getUniqueElementNameForTag(TreeRoot root, XMLTag tag, const QString& baseName){
+	QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
+	QDomNodeList rootElementChildNodes = domElements.value(rootItem)->childNodes();
+	QSet<QString> rootElementChildNames;
+	for(int i = 0; i < rootElementChildNodes.size(); ++i){
+		QDomElement child = rootElementChildNodes.at(i).toElement();
+        if (child.tagName() == XMLTags.value(tag)) {
+            QString name = child.attribute("name");
+            if (!name.isEmpty()) {
+                rootElementChildNames.insert(name);
+            }
+        }
+	}
+    int counter = 1;
+    QString uniqueName;
+    do {
+        uniqueName = baseName + " " + QString::number(counter);
+        counter++;
+    } while (rootElementChildNames.contains(uniqueName));
+	return uniqueName;
+}
+void TreeStructure::renameTreeWidgetItem(QTreeWidgetItem* itemToRename,const QString& newName){
+	QDomElement* elementToRename = domElements.value(itemToRename);
+	elementToRename->setAttribute("name", newName);
+	itemToRename->setText(static_cast<int>(Column::Label), newName);
 }
 //--------------------------------------------------------------------------------------
 void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName) {

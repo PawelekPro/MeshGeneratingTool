@@ -23,7 +23,6 @@
 
 
 Model::Model(std::string modelName) : _modelName(modelName) {
-        gmsh::initialize();
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
@@ -71,4 +70,20 @@ void Model::importSTEP(const std::string& filePath, QWidget* progressBar){
     geometry.importSTEP(filePath, progressBar);
     GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
     addShapesToModel(shapesMap);
+}
+
+void Model::initializeGmsh() {
+    static bool gmshInitialized = false;
+    if (!gmshInitialized) {
+        try {
+            gmsh::initialize();
+            gmshInitialized = true;
+        } catch (const std::exception &e) {
+            std::cerr << "Error initializing Gmsh: " << e.what() << std::endl;
+            throw;
+        } catch (...) {
+            std::cerr << "Unknown error initializing Gmsh" << std::endl;
+            throw;
+        }
+    }
 }
