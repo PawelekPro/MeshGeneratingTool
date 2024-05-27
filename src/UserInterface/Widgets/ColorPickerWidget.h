@@ -22,9 +22,15 @@
 
 #include "BaseWidget.h"
 
+#include <QAbstractItemModel>
+#include <QColor>
+#include <QColorDialog>
 #include <QHBoxLayout>
 #include <QModelIndex>
 #include <QPushButton>
+#include <QVariant>
+
+#include <tuple>
 
 class ColorPickerWidget : public BaseWidget {
 	Q_OBJECT
@@ -42,10 +48,14 @@ public:
 	~ColorPickerWidget();
 
 	void setIndex(const QModelIndex& index) override;
+	void setValue(const std::tuple<int, int, int>& color);
 
 private:
 	QPushButton* _selectionButton;
 	QModelIndex _index;
+
+private slots:
+	void onSelectColorClicked();
 };
 
 #endif
