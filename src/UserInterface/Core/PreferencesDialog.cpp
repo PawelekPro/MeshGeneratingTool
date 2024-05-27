@@ -20,12 +20,37 @@
 #include "PreferencesDialog.h"
 #include "./ui_PreferencesDialog.h"
 
+//--------------------------------------------------------------------------------------
 PreferencesDialog::PreferencesDialog(QWidget* parent)
 	: QDialog(parent)
 	, ui(new Ui::PreferencesDialog) {
 	ui->setupUi(this);
+	this->intitializeColorProperties();
 }
 
+//--------------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog() {
 	delete ui;
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::intitializeColorProperties() {
+	const AppDefaultColors::GeomColorsArray colorsArray
+		= AppDefaults::getInstance().getGeometryEntitiesColorArray();
+
+	QGridLayout* layout = qobject_cast<QGridLayout*>(ui->entityColorsWidget->layout());
+	if (!layout) {
+		qWarning() << "No QGridLayout found in QGroupBox!";
+	} else {
+		for (int i = 0; i < layout->count(); ++i) {
+			QWidget* widget = layout->itemAt(i)->widget();
+			ColorPickerWidget* colorPicker = qobject_cast<ColorPickerWidget*>(widget);
+
+			if (colorPicker) {
+				QColor color = colorsArray.at(i);
+				std::tuple<int, int, int> colorTuple(color.red(), color.green(), color.blue());
+				colorPicker->setValue(colorTuple);
+			}
+		}
+	}
 }

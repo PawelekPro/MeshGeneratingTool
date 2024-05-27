@@ -20,7 +20,12 @@
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
+#include "AppDefaults.h"
+#include "ColorPickerWidget.h"
+
+#include <QColor>
 #include <QDialog>
+#include <QGridLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,6 +41,7 @@ public:
 
 private:
 	Ui::PreferencesDialog* ui;
+	void intitializeColorProperties();
 };
 
 #endif

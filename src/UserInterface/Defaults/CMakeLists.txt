@@ -1,5 +1,6 @@
 ADD_LIBRARY(Defaults 
   AppDefaults.cpp
+  AppDefaultColors.cpp
 )
 
 TARGET_LINK_LIBRARIES(Defaults PRIVATE 
