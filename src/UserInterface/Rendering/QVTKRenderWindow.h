@@ -23,6 +23,7 @@
 // forward declaration
 class QVTKInteractorStyle;
 
+#include "QIVtkViewRepresentation.h"
 #include "QVTKInteractorStyle.h"
 
 #include "Geometry.h"
@@ -152,6 +153,8 @@ private:
 
 	// IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
+
+	QIVtkViewRepresentation* _qIVtkViewRepresentation;
 
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;

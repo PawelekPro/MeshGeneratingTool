@@ -20,6 +20,8 @@
 #ifndef QIVtkSelectionPipeline_H
 #define QIVtkSelectionPipeline_H
 
+#include "QIVtkUtils.h"
+
 #include <NCollection_Shared.hxx>
 #include <Standard_Transient.hxx>
 #include <TopoDS_Shape.hxx>
@@ -28,12 +30,15 @@
 #include <Standard_WarningsDisable.hxx>
 #include <Standard_WarningsRestore.hxx>
 #include <vtkActor.h>
+#include <vtkAlgorithmOutput.h>
+#include <vtkLookupTable.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
 #include <IVtkTools_DisplayModeFilter.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
 #include <IVtkTools_SubPolyDataFilter.hxx>
 #include <IVtk_Types.hxx>
 
@@ -62,9 +67,13 @@ public:
 	IVtkTools_DisplayModeFilter* GetHighlightDMFilter();
 	IVtkTools_DisplayModeFilter* GetSelectionDMFilter();
 
+	void updatePrimaryPipeline();
+	void updatePrimaryPipeline(IVtk_DisplayMode displayModeFilter);
+	void updatePrimaryPipeline(vtkLookupTable* colorsTable);
+
 public:
-	inline vtkActor* Actor() { return myActor; }
-	inline vtkMapper* Mapper() { return myMapper; }
+	inline vtkActor* Actor() { return _actor; }
+	inline vtkMapper* Mapper() { return _mapper; }
 
 public:
 	//! Filters comprising the pipeline.
@@ -81,26 +90,29 @@ private:
 	typedef NCollection_DataMap<FilterId, vtkSmartPointer<vtkAlgorithm>> FilterMap;
 
 private:
+	//! Shape data source.
+	vtkSmartPointer<IVtkTools_ShapeDataSource> _dataSource;
+
 	//! Actor.
-	vtkSmartPointer<vtkActor> myActor;
+	vtkSmartPointer<vtkActor> _actor;
 
 	//! Polygonal mapper.
-	vtkSmartPointer<vtkPolyDataMapper> myMapper;
+	vtkSmartPointer<vtkPolyDataMapper> _mapper;
 
 	//! Actor for highlighting.
-	vtkSmartPointer<vtkActor> myHiliActor;
+	vtkSmartPointer<vtkActor> _hiliActor;
 
 	//! Polygonal mapper for highlighting.
-	vtkSmartPointer<vtkPolyDataMapper> myHiliMapper;
+	vtkSmartPointer<vtkPolyDataMapper> _hiliMapper;
 
 	//! Actor for selection.
-	vtkSmartPointer<vtkActor> mySelActor;
+	vtkSmartPointer<vtkActor> _selActor;
 
 	//! Polygonal mapper for selection.
-	vtkSmartPointer<vtkPolyDataMapper> mySelMapper;
+	vtkSmartPointer<vtkPolyDataMapper> _selMapper;
 
 	//! Map of involved VTK filters.
-	FilterMap myFilterMap;
+	FilterMap _filterMap;
 };
 
 #endif

@@ -24,7 +24,6 @@
 #include <Standard_WarningsRestore.hxx>
 #include <vtkActor.h>
 #include <vtkAppendPolyData.h>
-#include <vtkLookupTable.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
@@ -33,177 +32,191 @@
 
 #include <IVtkOCC_Shape.hxx>
 #include <IVtkTools_DisplayModeFilter.hxx>
-#include <IVtkTools_ShapeDataSource.hxx>
 #include <IVtkTools_ShapeObject.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(QIVtkSelectionPipeline, Standard_Transient)
 
+//----------------------------------------------------------------------------
 QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	const TopoDS_Shape& theShape, const Standard_Integer theShapeID) {
 	/* ===========================
 	 *  Allocate involved filters
 	 * =========================== */
 
-	myFilterMap.Bind(Filter_DM_Shape, vtkSmartPointer<IVtkTools_DisplayModeFilter>::New());
-	myFilterMap.Bind(Filter_DM_Hili, vtkSmartPointer<IVtkTools_DisplayModeFilter>::New());
-	myFilterMap.Bind(Filter_DM_Sel, vtkSmartPointer<IVtkTools_DisplayModeFilter>::New());
-	myFilterMap.Bind(Filter_SUB_Hili, vtkSmartPointer<IVtkTools_SubPolyDataFilter>::New());
-	myFilterMap.Bind(Filter_SUB_Sel, vtkSmartPointer<IVtkTools_SubPolyDataFilter>::New());
+	_filterMap.Bind(Filter_DM_Shape, vtkSmartPointer<IVtkTools_DisplayModeFilter>::New());
+	_filterMap.Bind(Filter_DM_Hili, vtkSmartPointer<IVtkTools_DisplayModeFilter>::New());
+	_filterMap.Bind(Filter_DM_Sel, vtkSmartPointer<IVtkTools_DisplayModeFilter>::New());
+	_filterMap.Bind(Filter_SUB_Hili, vtkSmartPointer<IVtkTools_SubPolyDataFilter>::New());
+	_filterMap.Bind(Filter_SUB_Sel, vtkSmartPointer<IVtkTools_SubPolyDataFilter>::New());
 
 	/* ========================
 	 *  Build primary pipeline
 	 * ======================== */
-	myActor = vtkSmartPointer<vtkActor>::New();
+	_actor = vtkSmartPointer<vtkActor>::New();
 	IVtkOCC_Shape::Handle anIVtkShape = new IVtkOCC_Shape(theShape);
 	anIVtkShape->SetId(theShapeID);
-	vtkSmartPointer<IVtkTools_ShapeDataSource> aDataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
-	aDataSource->SetShape(anIVtkShape);
+	_dataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
+	_dataSource->SetShape(anIVtkShape);
 
 	// Shading / Wireframe display
 	// IVtkTools_DisplayModeFilter* aDMFilter
-	// 	= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Shape));
+	// 	= IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Shape));
 	// aDMFilter->AddInputConnection(aDataSource->GetOutputPort());
 	// aDMFilter->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
 
-	myMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	myMapper->AddInputConnection(aDataSource->GetOutputPort());
-	myActor->SetMapper(myMapper);
-	IVtkTools_ShapeObject::SetShapeSource(aDataSource, myActor);
+	_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	_mapper->SetInputConnection(_dataSource->GetOutputPort());
+	_actor->SetMapper(_mapper);
+	IVtkTools_ShapeObject::SetShapeSource(_dataSource, _actor);
 
-	myMapper->ScalarVisibilityOn();
-	myMapper->SetScalarModeToUseCellFieldData();
-
-	// Custom lookup table (Optional!)
-	// Set colors table for 3D shapes
-	vtkSmartPointer<vtkLookupTable> aColorTable = vtkSmartPointer<vtkLookupTable>::New();
-	double aRange[2];
-	aRange[0] = IVtk_MeshType::MT_Undefined;
-	aRange[1] = IVtk_MeshType::MT_ShadedFace;
-	aColorTable->Allocate(9);
-	aColorTable->SetNumberOfTableValues(9);
-	aColorTable->SetTableRange(aRange);
-	aColorTable->SetValueRange(0, 1);
-
-	// Custom colors
-	aColorTable->SetTableValue(0, 0, 0, 0); // Undefined
-	aColorTable->SetTableValue(1, 0.5, 0.5, 0.5); // gray for IsoLine
-	aColorTable->SetTableValue(2, 1, 0, 0); // red for Free vertex
-	aColorTable->SetTableValue(3, 0, 0, 0); // Shared vertex
-	aColorTable->SetTableValue(4, 1, 0, 0); // red for Free edge
-	aColorTable->SetTableValue(5, 0, 1, 0); // green for Boundary edge (related to a single face)
-	aColorTable->SetTableValue(6, 0, 0, 0); // Shared edge (related to several faces)
-	aColorTable->SetTableValue(7, 1, 1, 0); // yellow for Wireframe face
-	aColorTable->SetTableValue(8, 0.35, 0.35, 0.35); // Shaded face
-
-	IVtkTools::InitShapeMapper(myMapper, aColorTable);
-	myMapper->Update();
+	vtkSmartPointer<QIVtkLookupTable> aColorTable = vtkSmartPointer<QIVtkLookupTable>::New();
+	IVtkTools::InitShapeMapper(_mapper, aColorTable->GetAsBaseClass());
 
 	/* =================================
 	 *  Build pipeline for highlighting
 	 * ================================= */
 	IVtkTools_DisplayModeFilter* aDMFilterH
-		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Hili));
+		= IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Hili));
 	aDMFilterH->SetDisplayMode(IVtk_DisplayMode::DM_Wireframe);
 	IVtkTools_SubPolyDataFilter* aSUBFilterH
-		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Hili));
+		= IVtkTools_SubPolyDataFilter::SafeDownCast(_filterMap.Find(Filter_SUB_Hili));
 
 	// No highligthing exists initially
-	aSUBFilterH->SetInputConnection(aDataSource->GetOutputPort());
+	aSUBFilterH->SetInputConnection(_dataSource->GetOutputPort());
 	aDMFilterH->SetInputConnection(aSUBFilterH->GetOutputPort());
 
-	myHiliMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	myHiliMapper->SetInputConnection(aDMFilterH->GetOutputPort());
+	_hiliMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	_hiliMapper->SetInputConnection(aDMFilterH->GetOutputPort());
 
 	// Create non-pickable actor
-	myHiliActor = vtkSmartPointer<vtkActor>::New();
-	myHiliActor->SetPickable(0);
-	myHiliActor->SetVisibility(1);
-	myHiliActor->GetProperty()->SetColor(1.0, 1.0, 1.0);
-	myHiliActor->GetProperty()->SetOpacity(1);
-	myHiliActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 2);
-	myHiliActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 1);
+	_hiliActor = vtkSmartPointer<vtkActor>::New();
+	_hiliActor->SetPickable(0);
+	_hiliActor->SetVisibility(1);
+	_hiliActor->GetProperty()->SetColor(1.0, 1.0, 1.0);
+	_hiliActor->GetProperty()->SetOpacity(1);
+	_hiliActor->GetProperty()->SetPointSize(_hiliActor->GetProperty()->GetPointSize() + 2);
+	_hiliActor->GetProperty()->SetLineWidth(_hiliActor->GetProperty()->GetLineWidth() + 1);
 
 	// Set maper for actor
-	myHiliActor->SetMapper(myHiliMapper);
-	myHiliMapper->ScalarVisibilityOff();
+	_hiliActor->SetMapper(_hiliMapper);
+	_hiliMapper->ScalarVisibilityOff();
 
 	/* ==============================
 	 *  Build pipeline for selection
 	 * ============================== */
 	IVtkTools_DisplayModeFilter* aDMFilterS
-		= IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Sel));
+		= IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Sel));
 	aDMFilterH->SetDisplayMode(IVtk_DisplayMode::DM_Wireframe);
 	IVtkTools_SubPolyDataFilter* aSUBFilterS
-		= IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Sel));
+		= IVtkTools_SubPolyDataFilter::SafeDownCast(_filterMap.Find(Filter_SUB_Sel));
 
 	// No highligthing exists initially
-	aSUBFilterS->SetInputConnection(aDataSource->GetOutputPort());
+	aSUBFilterS->SetInputConnection(_dataSource->GetOutputPort());
 	aDMFilterS->SetInputConnection(aSUBFilterS->GetOutputPort());
 
-	mySelMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mySelMapper->SetInputConnection(aDMFilterS->GetOutputPort());
+	_selMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	_selMapper->SetInputConnection(aDMFilterS->GetOutputPort());
 
 	// Create non-pickable actor
-	mySelActor = vtkSmartPointer<vtkActor>::New();
-	mySelActor->SetPickable(0);
-	mySelActor->SetVisibility(1);
-	mySelActor->GetProperty()->SetColor(0, 1.0, 0); // Green color for selection
-	mySelActor->GetProperty()->SetOpacity(1);
-	mySelActor->GetProperty()->SetPointSize(myHiliActor->GetProperty()->GetPointSize() + 2);
-	mySelActor->GetProperty()->SetLineWidth(myHiliActor->GetProperty()->GetLineWidth() + 1);
+	_selActor = vtkSmartPointer<vtkActor>::New();
+	_selActor->SetPickable(0);
+	_selActor->SetVisibility(1);
+	_selActor->GetProperty()->SetColor(0, 1.0, 0); // Green color for selection
+	_selActor->GetProperty()->SetOpacity(1);
+	_selActor->GetProperty()->SetPointSize(_hiliActor->GetProperty()->GetPointSize() + 2);
+	_selActor->GetProperty()->SetLineWidth(_hiliActor->GetProperty()->GetLineWidth() + 1);
 
 	// Set maper for actor
-	mySelActor->SetMapper(mySelMapper);
-	mySelMapper->ScalarVisibilityOff();
+	_selActor->SetMapper(_selMapper);
+	_selMapper->ScalarVisibilityOff();
 }
 
+//----------------------------------------------------------------------------
 void QIVtkSelectionPipeline::AddToRenderer(vtkRenderer* theRenderer) {
-	theRenderer->AddActor(myActor);
-	theRenderer->AddActor(myHiliActor);
-	theRenderer->AddActor(mySelActor);
+	theRenderer->AddActor(_actor);
+	theRenderer->AddActor(_hiliActor);
+	theRenderer->AddActor(_selActor);
 }
 
+//----------------------------------------------------------------------------
 void QIVtkSelectionPipeline::RemoveFromRenderer(vtkRenderer* theRenderer) {
-	theRenderer->RemoveActor(myActor);
-	theRenderer->RemoveActor(myHiliActor);
-	theRenderer->RemoveActor(mySelActor);
+	theRenderer->RemoveActor(_actor);
+	theRenderer->RemoveActor(_hiliActor);
+	theRenderer->RemoveActor(_selActor);
 
 	vtkSmartPointer<vtkRenderWindow> aWin = theRenderer->GetRenderWindow();
 	if (aWin != NULL) {
-		myActor->ReleaseGraphicsResources(aWin);
-		myHiliActor->ReleaseGraphicsResources(aWin);
-		mySelActor->ReleaseGraphicsResources(aWin);
+		_actor->ReleaseGraphicsResources(aWin);
+		_hiliActor->ReleaseGraphicsResources(aWin);
+		_selActor->ReleaseGraphicsResources(aWin);
 	}
 }
 
+//----------------------------------------------------------------------------
 void QIVtkSelectionPipeline::ClearHighlightFilters() {
 	this->GetHighlightFilter()->Clear();
 	this->GetHighlightFilter()->SetDoFiltering(true);
 	this->GetHighlightFilter()->Modified();
 }
 
+//----------------------------------------------------------------------------
 void QIVtkSelectionPipeline::ClearSelectionFilters() {
 	this->GetSelectionFilter()->Clear();
 	this->GetSelectionFilter()->SetDoFiltering(true);
 	this->GetSelectionFilter()->Modified();
 }
 
-IVtkTools_DisplayModeFilter* QIVtkSelectionPipeline::GetDisplayModeFilter() {
-	return IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Shape));
+//----------------------------------------------------------------------------
+IVtkTools_DisplayModeFilter*
+QIVtkSelectionPipeline::GetDisplayModeFilter() {
+	return IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Shape));
 }
 
-IVtkTools_SubPolyDataFilter* QIVtkSelectionPipeline::GetHighlightFilter() {
-	return IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Hili));
+//----------------------------------------------------------------------------
+IVtkTools_SubPolyDataFilter*
+QIVtkSelectionPipeline::GetHighlightFilter() {
+	return IVtkTools_SubPolyDataFilter::SafeDownCast(_filterMap.Find(Filter_SUB_Hili));
 }
 
-IVtkTools_SubPolyDataFilter* QIVtkSelectionPipeline::GetSelectionFilter() {
-	return IVtkTools_SubPolyDataFilter::SafeDownCast(myFilterMap.Find(Filter_SUB_Sel));
+//----------------------------------------------------------------------------
+IVtkTools_SubPolyDataFilter*
+QIVtkSelectionPipeline::GetSelectionFilter() {
+	return IVtkTools_SubPolyDataFilter::SafeDownCast(_filterMap.Find(Filter_SUB_Sel));
 }
 
-IVtkTools_DisplayModeFilter* QIVtkSelectionPipeline::GetHighlightDMFilter() {
-	return IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Hili));
+//----------------------------------------------------------------------------
+IVtkTools_DisplayModeFilter*
+QIVtkSelectionPipeline::GetHighlightDMFilter() {
+	return IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Hili));
 }
 
-IVtkTools_DisplayModeFilter* QIVtkSelectionPipeline::GetSelectionDMFilter() {
-	return IVtkTools_DisplayModeFilter::SafeDownCast(myFilterMap.Find(Filter_DM_Sel));
+//----------------------------------------------------------------------------
+IVtkTools_DisplayModeFilter*
+QIVtkSelectionPipeline::GetSelectionDMFilter() {
+	return IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Sel));
+}
+
+//----------------------------------------------------------------------------
+void QIVtkSelectionPipeline::updatePrimaryPipeline() {
+	_mapper->SetInputConnection(_dataSource->GetOutputPort());
+	_mapper->Update();
+}
+
+//----------------------------------------------------------------------------
+void QIVtkSelectionPipeline::updatePrimaryPipeline(
+	IVtk_DisplayMode displayModeFilter) {
+
+	IVtkTools_DisplayModeFilter* aDMFilter
+		= IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Shape));
+	aDMFilter->AddInputConnection(_dataSource->GetOutputPort());
+	aDMFilter->SetDisplayMode(displayModeFilter);
+
+	_mapper->SetInputConnection(aDMFilter->GetOutputPort());
+	_mapper->Update();
+}
+
+//----------------------------------------------------------------------------
+void QIVtkSelectionPipeline::updatePrimaryPipeline(
+	vtkLookupTable* colorsTable) {
+	IVtkTools::InitShapeMapper(_mapper, colorsTable);
 }

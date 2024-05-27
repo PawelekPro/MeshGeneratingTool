@@ -28,7 +28,8 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	, _renderer(vtkSmartPointer<vtkRenderer>::New())
 	, _vtkWidget(new QVTKOpenGLNativeWidget())
 	, _shapePicker(vtkSmartPointer<IVtkTools_ShapePicker>::New())
-	, _interactorStyle(vtkSmartPointer<QVTKInteractorStyle>::New()) {
+	, _interactorStyle(vtkSmartPointer<QVTKInteractorStyle>::New())
+	, _qIVtkViewRepresentation(new QIVtkViewRepresentation()) {
 
 	_vtkWidget->setRenderWindow(_rendererWindow);
 	_interactor = _vtkWidget->interactor();
@@ -75,6 +76,8 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 
 	if (_shapePicker)
 		_shapePicker->Delete();
+
+	delete _qIVtkViewRepresentation;
 }
 
 //----------------------------------------------------------------------------

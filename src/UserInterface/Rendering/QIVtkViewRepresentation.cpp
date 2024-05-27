@@ -19,43 +19,10 @@
 
 #include "QIVtkViewRepresentation.h"
 
+//----------------------------------------------------------------------------
 QIVtkViewRepresentation::QIVtkViewRepresentation()
-	: _colorTable(vtkSmartPointer<vtkLookupTable>::New()) {
-	double aRange[2];
-	aRange[0] = QIVtkEntityType::ET_IsoLine;
-	aRange[1] = QIVtkEntityType::ET_SeamEdge;
-
-	_colorTable->Allocate(9);
-	_colorTable->SetNumberOfTableValues(9);
-	_colorTable->SetTableRange(aRange);
-	_colorTable->SetValueRange(0, 1);
+	: _colorTable(vtkSmartPointer<QIVtkLookupTable>::New()) {
 }
 
+//----------------------------------------------------------------------------
 QIVtkViewRepresentation::~QIVtkViewRepresentation() { }
-
-void convertQColorToRGBA(const QColor& color, double rgba[4]) {
-	rgba[0] = color.red() / 255.0;
-	rgba[1] = color.green() / 255.0;
-	rgba[2] = color.blue() / 255.0;
-	rgba[3] = color.alpha() / 255.0;
-}
-
-void QIVtkViewRepresentation::setColorsTable(QList<QColor> colorList) {
-	// Note: The order of elements in colorList is important
-
-	int index = 0;
-	double rgba[4];
-	for (const auto& color : colorList) {
-		convertQColorToRGBA(color, rgba);
-		_colorTable->SetTableValue(index, rgba);
-	}
-	// aColorTable->SetTableValue(0, 0, 0, 0); // Undefined
-	// aColorTable->SetTableValue(1, 0.5, 0.5, 0.5); // gray for IsoLine
-	// aColorTable->SetTableValue(2, 1, 0, 0); // red for Free vertex
-	// aColorTable->SetTableValue(3, 0, 0, 0); // Shared vertex
-	// aColorTable->SetTableValue(4, 1, 0, 0); // red for Free edge
-	// aColorTable->SetTableValue(5, 0, 1, 0); // green for Boundary edge (related to a single face)
-	// aColorTable->SetTableValue(6, 0, 0, 0); // Shared edge (related to several faces)
-	// aColorTable->SetTableValue(7, 1, 1, 0); // yellow for Wireframe face
-	// aColorTable->SetTableValue(8, 0.35, 0.35, 0.35); // Shaded face
-}

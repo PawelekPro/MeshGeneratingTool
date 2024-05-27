@@ -20,25 +20,16 @@
 #ifndef QIVTKVIEWREPRESENTATION_H
 #define QIVTKVIEWREPRESENTATION_H
 
+#include "AppDefaultColors.h"
+#include "AppDefaults.h"
 #include "QIVtkSelectionPipeline.h"
+#include "QIVtkUtils.h"
 
 #include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 
 #include <QColor>
 #include <QList>
-
-typedef enum {
-	ET_IsoLine = 0, //!< Isoline
-	ET_FreeVertex = 1, //!< Free vertex
-	ET_SharedVertex = 2, //!< Shared vertex
-	ET_FreeEdge = 3, //!< Free edge
-	ET_BoundaryEdge = 4, //!< Boundary edge (related to a single face)
-	ET_SharedEdge = 5, //!< Shared edge (related to several faces)
-	ET_WireFrameFace = 6, //!< Wireframe face
-	ET_ShadedFace = 7, //!< Shaded face
-	ET_SeamEdge = 8 //!< Seam edge between faces
-} QIVtkEntityType;
 
 class QIVtkViewRepresentation {
 public:
@@ -50,10 +41,8 @@ public:
 	void setRepresentationToPoints(const Handle(QIVtkSelectionPipeline) pipeline) {};
 	void setRepresentationToSurfaceWithEdges(const Handle(QIVtkSelectionPipeline) pipeline) {};
 
-	void setColorsTable(QList<QColor>);
-
 private:
-	vtkSmartPointer<vtkLookupTable> _colorTable;
+	vtkSmartPointer<QIVtkLookupTable> _colorTable;
 };
 
 #endif
