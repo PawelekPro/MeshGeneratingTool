@@ -77,9 +77,46 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	page2->setCategoryName("Mesh");
 	bar->addCategoryPage(page2);
 
+	/* ================================================================
+	Display page
+	===================================================================*/
 	SARibbonCategory* page3 = new SARibbonCategory();
 	page3->setCategoryName("Display");
 	bar->addCategoryPage(page3);
+
+	SARibbonPannel* viewRepPanel = new SARibbonPannel("View representation", page3);
+	page3->addPannel(viewRepPanel);
+
+	QActionGroup* viewRepGroup = new QActionGroup(this);
+	viewRepGroup->setExclusive(true);
+
+	QAction* shadedRepAction = createAction(
+		"Shaded", ":/icons/icons/Shaded_representation.svg");
+	shadedRepAction->setIconText("Shaded");
+	shadedRepAction->setCheckable(true);
+	viewRepGroup->addAction(shadedRepAction);
+	viewRepPanel->addLargeAction(shadedRepAction);
+
+	QAction* surfaceWithEdgesRepAction = createAction(
+		"Surface with edges", ":/icons/icons/Surface_with_edges_representation.svg");
+	surfaceWithEdgesRepAction->setIconText("Surface with edges");
+	surfaceWithEdgesRepAction->setCheckable(true);
+	viewRepGroup->addAction(surfaceWithEdgesRepAction);
+	viewRepPanel->addLargeAction(surfaceWithEdgesRepAction);
+
+	QAction* wireframeRepAction = createAction(
+		"Wireframe", ":/icons/icons/Wireframe_representation.svg");
+	wireframeRepAction->setIconText("Wireframe");
+	wireframeRepAction->setCheckable(true);
+	viewRepGroup->addAction(wireframeRepAction);
+	viewRepPanel->addLargeAction(wireframeRepAction);
+
+	QAction* pointsRepAction = createAction(
+		"Points", ":/icons/icons/Points_representation.svg");
+	pointsRepAction->setIconText("Points");
+	pointsRepAction->setCheckable(true);
+	viewRepGroup->addAction(pointsRepAction);
+	viewRepPanel->addLargeAction(pointsRepAction);
 
 	/* ================================================================
 	Selection page
@@ -96,8 +133,8 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 
 	QAction* vertexSelAct = createAction("Vertex", ":/icons/icons/Selection_vertex.svg");
 	vertexSelAct->setIconText("Vertex");
-	vertexSelAct->setCheckable(true); // Ustawienie akcji jako checkable
-	selectionGroup->addAction(vertexSelAct); // Dodanie akcji do grupy
+	vertexSelAct->setCheckable(true);
+	selectionGroup->addAction(vertexSelAct);
 	selectionPanel->addLargeAction(vertexSelAct);
 
 	QAction* edgeSelAct = createAction("Edge", ":/icons/icons/Selection_edge.svg");
