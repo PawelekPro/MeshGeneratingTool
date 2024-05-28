@@ -20,8 +20,9 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-// forward declaration
+// forward declarations
 class QVTKInteractorStyle;
+class QIVtkViewRepresentation;
 
 #include "QIVtkViewRepresentation.h"
 #include "QVTKInteractorStyle.h"
@@ -129,6 +130,8 @@ public:
 	 */
 	void clearRenderer();
 
+	QIVtkViewRepresentation* getViewRepresentation();
+
 public:
 	std::shared_ptr<Model> model;
 
@@ -154,8 +157,6 @@ private:
 	// IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
 
-	QIVtkViewRepresentation* _qIVtkViewRepresentation;
-
 	// Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
@@ -164,6 +165,9 @@ private:
 
 	// Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;
+
+	// Utility for controling view representation
+	QIVtkViewRepresentation* _qIVtkViewRepresentation;
 };
 };
 

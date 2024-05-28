@@ -58,12 +58,6 @@ QIVtkSelectionPipeline::QIVtkSelectionPipeline(
 	_dataSource = vtkSmartPointer<IVtkTools_ShapeDataSource>::New();
 	_dataSource->SetShape(anIVtkShape);
 
-	// Shading / Wireframe display
-	// IVtkTools_DisplayModeFilter* aDMFilter
-	// 	= IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Shape));
-	// aDMFilter->AddInputConnection(aDataSource->GetOutputPort());
-	// aDMFilter->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
-
 	_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	_mapper->SetInputConnection(_dataSource->GetOutputPort());
 	_actor->SetMapper(_mapper);
@@ -208,7 +202,7 @@ void QIVtkSelectionPipeline::updatePrimaryPipeline(
 
 	IVtkTools_DisplayModeFilter* aDMFilter
 		= IVtkTools_DisplayModeFilter::SafeDownCast(_filterMap.Find(Filter_DM_Shape));
-	aDMFilter->AddInputConnection(_dataSource->GetOutputPort());
+	aDMFilter->SetInputConnection(_dataSource->GetOutputPort());
 	aDMFilter->SetDisplayMode(displayModeFilter);
 
 	_mapper->SetInputConnection(aDMFilter->GetOutputPort());

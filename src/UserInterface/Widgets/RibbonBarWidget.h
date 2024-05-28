@@ -21,6 +21,7 @@
 #define RIBBONBARWIDGET_H
 
 #include "MainWindow.h"
+#include "QIVtkViewRepresentation.h"
 #include "SARibbon.h"
 
 #include <QActionGroup>
@@ -51,7 +52,8 @@ private:
 
 private slots:
 	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
-	void onEntitySelectionChanged(QAction*);
+	void onEntitySelectionChanged(QAction* action);
+	void onViewRepresentationChanged(QAction* action);
 
 private:
 	MainWindow* _mainWindow;

@@ -118,6 +118,9 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	viewRepGroup->addAction(pointsRepAction);
 	viewRepPanel->addLargeAction(pointsRepAction);
 
+	connect(viewRepGroup, &QActionGroup::triggered, this,
+		&RibbonBarWidget::onViewRepresentationChanged);
+
 	/* ================================================================
 	Selection page
 	===================================================================*/
@@ -219,4 +222,22 @@ void RibbonBarWidget::onEntitySelectionChanged(QAction* action) {
 	} else if (actionText == "Volume") {
 		_QVTKRender->setSelectionMode(IVtk_SelectionMode::SM_Shape);
 	}
+}
+
+//----------------------------------------------------------------------------
+void RibbonBarWidget::onViewRepresentationChanged(QAction* action) {
+	const QString& actionText = action->text();
+	QIVtkViewRepresentation* viewRep = _QVTKRender->getViewRepresentation();
+
+	if (actionText == "Shaded") {
+		viewRep->setRepresentationToShaded();
+	} else if (actionText == "Surface with edges") {
+		viewRep->setRepresentationToSurfaceWithEdges();
+	} else if (actionText == "Wireframe") {
+		viewRep->setRepresentationToWireframe();
+	} else if (actionText == "Points") {
+		viewRep->setRepresentationToPoints();
+	}
+
+	_QVTKRender->RenderScene();
 }

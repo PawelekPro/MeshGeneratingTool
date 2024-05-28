@@ -24,6 +24,7 @@
 #include "AppDefaults.h"
 #include "QIVtkSelectionPipeline.h"
 #include "QIVtkUtils.h"
+#include "QVTKInteractorStyle.h"
 
 #include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
@@ -36,12 +37,15 @@ public:
 	QIVtkViewRepresentation();
 	~QIVtkViewRepresentation();
 
-	void setRepresentationToShaded(const Handle(QIVtkSelectionPipeline) pipeline) {};
-	void setRepresentationToWireframe(const Handle(QIVtkSelectionPipeline) pipeline) {};
-	void setRepresentationToPoints(const Handle(QIVtkSelectionPipeline) pipeline) {};
-	void setRepresentationToSurfaceWithEdges(const Handle(QIVtkSelectionPipeline) pipeline) {};
+	void setInteractorStyle(QVTKInteractorStyle* interactorStyle);
+
+	void setRepresentationToShaded();
+	void setRepresentationToWireframe();
+	void setRepresentationToPoints();
+	void setRepresentationToSurfaceWithEdges();
 
 private:
+	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
 	vtkSmartPointer<QIVtkLookupTable> _colorTable;
 };
 

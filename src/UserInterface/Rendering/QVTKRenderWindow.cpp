@@ -59,6 +59,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_interactorStyle->setPicker(_shapePicker);
 
 	_interactor->SetInteractorStyle(_interactorStyle);
+	_qIVtkViewRepresentation->setInteractorStyle(_interactorStyle);
 
 	_renderer->ResetCamera();
 	_rendererWindow->Render();
@@ -86,7 +87,7 @@ void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
 }
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::RenderScene() {
-	_renderer->Render();
+	_rendererWindow->Render();
 }
 
 //----------------------------------------------------------------------------
@@ -193,4 +194,9 @@ void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape) 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setSelectionMode(IVtk_SelectionMode mode) {
 	_interactorStyle->setSelectionMode(mode);
+}
+
+//----------------------------------------------------------------------------
+QIVtkViewRepresentation* Rendering::QVTKRenderWindow::getViewRepresentation() {
+	return _qIVtkViewRepresentation;
 }
