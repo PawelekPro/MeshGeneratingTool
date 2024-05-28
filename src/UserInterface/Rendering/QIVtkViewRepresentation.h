@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -32,20 +32,64 @@
 #include <QColor>
 #include <QList>
 
+/**
+ * @class QIVtkViewRepresentation
+ * @brief A class to manage VTK view representations.
+ *
+ * The QIVtkViewRepresentation class encapsulates functionality to set and manage
+ * different representations (such as shaded, wireframe, points, and surface with edges)
+ * for VTK actors within a QIVtkSelectionPipeline pipeline. It also allows use of a color
+ * lookup table for managing colors.
+ */
 class QIVtkViewRepresentation {
 public:
+	/**
+	 * @brief Constructor for the QIVtkViewRepresentation class.
+	 * Initializes a new instance of the QIVtkViewRepresentation class.
+	 */
 	QIVtkViewRepresentation();
+
+	/**
+	 * @brief Destructor for the QIVtkViewRepresentation class.
+	 * Cleans up any resources used by the instance.
+	 */
 	~QIVtkViewRepresentation();
 
+	/**
+	 * @brief Sets the interactor style for the view representation.
+	 * @param interactorStyle A pointer to the QVTKInteractorStyle instance to be used.
+	 */
 	void setInteractorStyle(QVTKInteractorStyle* interactorStyle);
 
+	/**
+	 * @brief Sets the representation of the actor to shaded (surface).
+	 * Changes the current actor's representation to a shaded surface.
+	 */
 	void setRepresentationToShaded();
+
+	/**
+	 * @brief Sets the representation of the actor to wireframe.
+	 * Changes the current actor's representation to a wireframe.
+	 */
 	void setRepresentationToWireframe();
+
+	/**
+	 * @brief Sets the representation of the actor to points.
+	 * Changes the current actor's representation to points.
+	 */
 	void setRepresentationToPoints();
+
+	/**
+	 * @brief Sets the representation of the actor to surface with edges.
+	 * Changes the current actor's representation to display the surface with edges.
+	 */
 	void setRepresentationToSurfaceWithEdges();
 
 private:
+	// Pointer to the interactor style used by this representation.
 	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
+
+	// Pointer to the color lookup table used by this representation.
 	vtkSmartPointer<QIVtkLookupTable> _colorTable;
 };
 

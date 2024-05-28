@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -68,6 +68,7 @@ void QIVtkViewRepresentation::setRepresentationToWireframe() {
 	for (; it.More(); it.Next()) {
 		Handle(QIVtkSelectionPipeline) pipeline = it.Value();
 		pipeline->Actor()->GetProperty()->SetRepresentationToSurface();
+		pipeline->Actor()->GetProperty()->SetPointSize(0);
 		pipeline->updatePrimaryPipeline(IVtk_DisplayMode::DM_Wireframe);
 	}
 }

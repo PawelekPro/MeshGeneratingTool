@@ -25,14 +25,14 @@ AppDefaultColors::AppDefaultColors() {
 	// Initialize default colors for geometry entities
 	// https://doc.qt.io/qt-6/qcolorconstants.html
 	_geomEntitiesColors = {
-		Qt::red, //!< Isoline
+		QColor(200, 220, 230), //!< Isoline
 		Qt::green, //!< Free vertex
 		Qt::blue, //!< Shared vertex
 		Qt::yellow, //!< Free edge
 		Qt::cyan, //!< Boundary edge (related to a single face)
-		Qt::magenta, //!< Shared edge (related to several faces)
+		QColor(230, 240, 255), //!< Shared edge (related to several faces)
 		Qt::gray, //!< Wireframe face
-		Qt::darkRed, //!< Shaded face
+		QColor(85, 120, 170), //!< Shaded face
 		Qt::darkGreen, //!< Seam edge between faces
 	};
 }
