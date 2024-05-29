@@ -61,7 +61,7 @@ QMenu* TreeContextMenu::createContextMenu(QTreeWidgetItem* item) {
 		this->buildGeometryModelMenu(contextMenu);
 
 	} else {
-		this->buildCoordinateSystemMenu(contextMenu);
+		this->buildCoordinateSystemMenu(contextMenu, item);
 	}
 
 	return contextMenu;
@@ -75,14 +75,12 @@ void TreeContextMenu::buildGeometryModelMenu(QMenu* menu) {
 	menu->addAction("New model");
 }
 
-void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu) {
+void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu, QTreeWidgetItem* item) {
 	menu->addAction("Add coordiante system");
-	menu->addAction("Rename");
-}
+	renameAction = menu->addAction("Rename");
+    connect(renameAction, &QAction::triggered, [this, item]() {_treeWidget->renameItem(item); });}
 
 void TreeContextMenu::buildMeshMenu(QMenu* menu) {
 	menu->addAction("Update mesh");
 	menu->addAction("Generate mesh");
-
-	menu->addAction("Add sizing");
 }

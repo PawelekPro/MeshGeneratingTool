@@ -89,10 +89,14 @@ public:
 	 * @returns None
 	 */
 	void loadGeometryFile(const QString);
-
-	private slots:
-		void onItemChanged(QTreeWidgetItem* item, int column);
-	public:
+	/**
+	 * Open an editor in the Name column of a TreeWidgetItem
+	 *
+	 * @param item item to be renamed
+	 *
+	 * @returns None
+	 */
+	void renameItem(QTreeWidgetItem* item);
 	/**
 	 * @brief  mesh sizing node and creates its input widgets in the tree.
 	 *
@@ -196,7 +200,8 @@ private:
 	 *
 	 * @returns None
 	 */
-	void addNode(const QString&, const QString&);
+	void addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
+		Qt::ItemFlags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 	/**
 	 * Adds properties of a model to a tree widget item.
@@ -226,7 +231,7 @@ private:
 	 *
 	 * @returns A PropertiesList object containing the parsed default properties.
 	 */
-	PropertiesList parseDefaultProperties(const rapidjson::Document&, QString);
+	PropertiesList parseJsonDocument(const rapidjson::Document& document, QString prop);
 
 	/**
 	 * Reads and returns the default properties from a JSON document using RapidJSON.
@@ -247,7 +252,7 @@ private:
 
 	TreeContextMenu* contextMenu;
 
-	QString getUniqueElementNameForTag(TreeRoot root, XMLTag tag, const QString& baseName);
+	QString getUniqueElementNameForTag(QTreeWidgetItem* parentItem, XMLTag tag, const QString& baseName);
 
 	/**
 	 * A QMap that maps TreeRoot enum values to corresponding QString descriptions.
@@ -263,6 +268,9 @@ private:
 		{ TreeRoot::CSYS, "Coordinate System" },
 		{ TreeRoot::Mesh, "Mesh" }
 	};
+
+	private slots:
+		void onItemChanged(QTreeWidgetItem* item, int column);	
 };
 
 #endif
