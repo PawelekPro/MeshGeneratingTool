@@ -33,7 +33,6 @@ class TreeContextMenu : public QObject {
 	Q_OBJECT
 public:
 	explicit TreeContextMenu(TreeStructure* treeWidget, QObject* parent = nullptr);
-	QAction* renameAction;
 private slots:
 	void showContextMenu(const QPoint& pos);
 
@@ -50,6 +49,9 @@ private:
 
 	static const int fontSize = 10;
 
+	QAction* renameAction;
+	QAction* genereateMeshAction;
+	QAction* addSizingAction;
 };
 
 #endif
