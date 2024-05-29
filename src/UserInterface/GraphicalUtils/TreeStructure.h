@@ -159,7 +159,7 @@ private:
 	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
 	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
 	 */
-	QTreeWidgetItem* createTreeWidgetItem(QSharedPointer<QDomElement> element, QTreeWidgetItem* parent = nullptr);
+	QTreeWidgetItem* createTreeWidgetItem(const QDomElement&, QTreeWidgetItem* parent = nullptr);
 
 	/**
 	 * Finds tree widget items that match the specified text and flags.
@@ -206,7 +206,7 @@ private:
 	 *
 	 * @returns None
 	 */
-	void addPropertiesModel(QSharedPointer<QDomElement>, QTreeWidgetItem*);
+	void addPropertiesModel(const QDomElement&, QTreeWidgetItem*);
 
 	/**
 	 * Adds properties to a QDomElement.
@@ -216,7 +216,7 @@ private:
 	 *
 	 * @returns None
 	 */
-	void addProperties(QSharedPointer<QDomElement>, PropertiesList);
+	void addProperties(QDomElement&, PropertiesList);
 
 	/**
 	 * Parses the default properties from a RapidJSON document and a QString.
@@ -238,12 +238,12 @@ private:
 	/**
 	 * Pointer to a QDomDocument object that represents an XML document object model.
 	 */
-	QDomDocument* docObjectModel;
+	QDomDocument docObjectModel;
 
 	/**
 	 * QMap that maps QTreeWidgetItem pointers to QDomElement pointers.
 	 */
-	QMap<QTreeWidgetItem*, QSharedPointer<QDomElement>> domElements;
+	QMap<QTreeWidgetItem*, QDomElement> domElements;
 
 	TreeContextMenu* contextMenu;
 

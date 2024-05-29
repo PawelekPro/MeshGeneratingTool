@@ -26,8 +26,6 @@ TreeStructure::TreeStructure(QWidget* parent)
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
 
-	this->docObjectModel = new QDomDocument();
-
 	this->buildBaseObjectsRepresentation();
 
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -45,24 +43,20 @@ TreeStructure::~TreeStructure() {
 	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
 	this->writeDataToXML(xmlPath);
+
+	// error causing part of destructor
 	for (auto& treeItem : domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
-		QSharedPointer<QDomElement> element = domElements.value(treeItem);
-
-		int role = Role.value(element->firstChildElement("Properties").tagName());
-
+		QDomElement element = domElements.value(treeItem);
+		int role = Role.value(element.firstChildElement("Properties").tagName());
 		QVariant variantModel = item->data(0, role);
 		QSharedPointer<PropertiesModel> model
 			= variantModel.value<QSharedPointer<PropertiesModel>>();
-
 		if (!model.isNull()) {
 			model->deleteLater();
 		}
-
-		delete item;
 	}
-	delete this->docObjectModel;
-	delete this->contextMenu;
+	domElements.clear();
 }
 
 //--------------------------------------------------------------------------------------
@@ -70,12 +64,12 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 	QString defaultPropsPath = AppDefaults::getInstance().getTemplatesPath();
 	rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
 
-	QDomElement root = this->docObjectModel->createElement(
+	QDomElement root = this->docObjectModel.createElement(
 		AppDefaults::getInstance().getAppName());
 	root.setAttribute(
 		"version", AppDefaults::getInstance().getAppProjFileVersion());
 
-	this->docObjectModel->appendChild(root);
+	this->docObjectModel.appendChild(root);
 
 	for (const auto& rootName : TreeRoots) {
 		QString xmlTag = rootName;
@@ -83,7 +77,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 			xmlTag.remove(" ");
 		}
 		
-		QSharedPointer<QDomElement> rootElement(new QDomElement(this->docObjectModel->createElement(xmlTag)));
+		QDomElement rootElement = this->docObjectModel.createElement(xmlTag);
 
 		PropertiesList propertiesList = this->parseDefaultProperties(doc, xmlTag);
 		this->addProperties(rootElement, propertiesList);
@@ -92,10 +86,9 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		rootItem->setText(static_cast<int>(Column::Label), rootName);
 
 		// This will parse only element with "Properties" tage name
-		auto propsChildElem = rootElement->childNodes().at(0).toElement();
-		QSharedPointer<QDomElement> propsChildElemPtr(&propsChildElem);
-		this->addPropertiesModel(propsChildElemPtr, rootItem);
-		root.appendChild(*rootElement);
+		auto propsChildElem = rootElement.childNodes().at(0).toElement();
+		this->addPropertiesModel(propsChildElem, rootItem);
+		root.appendChild(rootElement);
 	}
 }
 
@@ -119,12 +112,14 @@ QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(TreeRoot root){
 }
 
 //--------------------------------------------------------------------------------------
-QTreeWidgetItem* TreeStructure::createTreeWidgetItem(QSharedPointer<QDomElement> element, QTreeWidgetItem* parent) {
+QTreeWidgetItem* TreeStructure::createTreeWidgetItem(const QDomElement& element, QTreeWidgetItem* parent) {
 	QTreeWidgetItem* item = nullptr;
 
 	if (parent) {
+		std::cout<<"Creating from parent!" << std::endl;
 		item = new QTreeWidgetItem(parent);
 	} else {
+		std::cout<<"Creating from this!" << std::endl;
 		item = new QTreeWidgetItem(this);
 	}
 	domElements[item] = element;
@@ -145,35 +140,34 @@ void TreeStructure::addMeshSizing() {
     
     QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
 
-	QSharedPointer<QDomElement> meshElement = domElements.value(parentItem);
+	QDomElement meshElement = domElements.value(parentItem);
 	QString baseName = "Mesh sizing";
 	QString meshElementName = getUniqueElementNameForTag(TreeRoot::Mesh, XMLTag::MeshSizing, baseName);
 
     // Create a new QDomElement dynamically
-    QSharedPointer<QDomElement> meshSizingElementPtr(new QDomElement(this->docObjectModel->createElement(meshSizingTag)));
-    meshSizingElementPtr->setAttribute("name", meshElementName);
+   	QDomElement meshSizingElement = this->docObjectModel.createElement(meshSizingTag);
+    meshSizingElement.setAttribute("name", meshElementName);
 
-    addProperties(meshSizingElementPtr, propList);
+    addProperties(meshSizingElement, propList);
     
-	QTreeWidgetItem* meshSizingItem = this->createTreeWidgetItem(meshSizingElementPtr, parentItem);
-    meshSizingItem->setText(static_cast<int>(Column::Label), meshSizingElementPtr->attribute("name"));
+	QTreeWidgetItem* meshSizingItem = this->createTreeWidgetItem(meshSizingElement, parentItem);
+    meshSizingItem->setText(static_cast<int>(Column::Label), meshSizingElement.attribute("name"));
 	meshSizingItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
 
-    domElements.value(parentItem)->appendChild(*meshSizingElementPtr);
+    domElements.value(parentItem).appendChild(meshSizingElement);
 
-	auto propsChildElem = meshSizingElementPtr->childNodes().at(0).toElement();
-    QSharedPointer<QDomElement> propsChildElemPtr(new QDomElement(propsChildElem));
-	this->addPropertiesModel(propsChildElemPtr, meshSizingItem);
+	auto propsChildElem = meshSizingElement.childNodes().at(0).toElement();
+	this->addPropertiesModel(propsChildElem, meshSizingItem);
 
     connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemChanged);
 
-	std::cout << "Name attribute in method: " << meshSizingElementPtr->attribute("name").toStdString() << std::endl;
+	std::cout << "Name attribute in method: " << meshSizingElement.attribute("name").toStdString() << std::endl;
 
     // Add the new mesh sizing element to the map
 }
 QString TreeStructure::getUniqueElementNameForTag(TreeRoot root, XMLTag tag, const QString& baseName){
 	QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
-	QDomNodeList rootElementChildNodes = domElements.value(rootItem)->childNodes();
+	QDomNodeList rootElementChildNodes = domElements.value(rootItem).childNodes();
 	QSet<QString> rootElementChildNames;
 	for(int i = 0; i < rootElementChildNodes.size(); ++i){
 		QDomElement child = rootElementChildNodes.at(i).toElement();
@@ -202,23 +196,20 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName)
 		parentItem = qlist.first();
 	}
 
-	QDomElement element = this->docObjectModel->createElement("group");
+	QDomElement element = this->docObjectModel.createElement("group");
 	element.setAttribute("label", nodeName);
 
 	if (domElements.contains(parentItem)) {
-		QSharedPointer<QDomElement> node = domElements.value(parentItem);
-		if (node) {
-			node->appendChild(element);
-		}
+		QDomElement node = domElements.value(parentItem);
+		node.appendChild(element);
 	}
-	QSharedPointer<QDomElement> elementPtr(&element);
-	auto item = this->createTreeWidgetItem(elementPtr, parentItem);
-	item->setText(static_cast<int>(Column::Label), nodeName);
+	auto item = this->createTreeWidgetItem(element, parentItem);
+	// item->setText(static_cast<int>(Column::Label), nodeName);
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addPropertiesModel(QSharedPointer<QDomElement> element, QTreeWidgetItem* item) {
-	const int role = Role.value(element->tagName());
+void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
+	const int role = Role.value(element.tagName());
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection
@@ -226,11 +217,11 @@ void TreeStructure::addPropertiesModel(QSharedPointer<QDomElement> element, QTre
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addProperties(QSharedPointer<QDomElement> parentElement, PropertiesList propertiesList) {
-	QDomElement propsElement = this->docObjectModel->createElement("Properties");
+void TreeStructure::addProperties(QDomElement& parentElement, PropertiesList propertiesList) {
+	QDomElement propsElement = this->docObjectModel.createElement("Properties");
 
 	for (const QMap<QString, QString>& propertyMap : propertiesList) {
-		QDomElement elem = this->docObjectModel->createElement("property");
+		QDomElement elem = this->docObjectModel.createElement("property");
 
 		// Iterate through QMap to set attributes
 		for (const auto& key : propertyMap.keys()) {
@@ -240,13 +231,12 @@ void TreeStructure::addProperties(QSharedPointer<QDomElement> parentElement, Pro
 		}
 
 		// Set the value of node
-		QDomText textNode = this->docObjectModel->createTextNode(propertyMap.value("value"));
+		QDomText textNode = this->docObjectModel.createTextNode(propertyMap.value("value"));
 		elem.appendChild(textNode);
 
 		propsElement.appendChild(elem);
 	}
-
-	parentElement->appendChild(propsElement);
+	parentElement.appendChild(propsElement);
 }
 
 //--------------------------------------------------------------------------------------
@@ -327,21 +317,15 @@ void TreeStructure::writeDataToXML(const std::string path) {
 	out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
 	// Indentation of 4 spaces
-	this->docObjectModel->save(out, 4);
+	this->docObjectModel.save(out, 4);
 
 	// Close the file
 	file.close();
 }
 
 void TreeStructure::treeWidgetItemRenamed(QTreeWidgetItem* renamedItem, QString newName) {
-    QSharedPointer<QDomElement> elementToRename = domElements.value(renamedItem, nullptr);
-    
-    if (elementToRename) {
-        std::cout << "Element valid, name: " << elementToRename->attribute("name").toStdString() << std::endl;
-        elementToRename->setAttribute("name", newName);
-    } else {
-        std::cout << "Element not found for the given QTreeWidgetItem" << std::endl;
-    }
+    QDomElement elementToRename = domElements.value(renamedItem);
+	elementToRename.setAttribute("name", newName);
 }
 
 void TreeStructure::onItemChanged(QTreeWidgetItem* item, int column) {

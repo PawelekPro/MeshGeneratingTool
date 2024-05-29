@@ -42,14 +42,14 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(QSharedPointer<QDomElement> element, QWidget* parent)
+PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
     : QAbstractTableModel(parent)
     , _element(element) {
 
     this->_header << "Property"
                   << "Value";
 
-    QDomNodeList props = this->_element->childNodes();
+    QDomNodeList props = this->_element.childNodes();
 
     for (int i = 0; i < props.length(); ++i) {
         if (!props.at(i).isComment()) {
