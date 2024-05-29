@@ -236,12 +236,12 @@ private:
 	rapidjson::Document readJsonTemplateFile(const QString& jsonTemplatePath);
 
 	/**
-	 * Pointer to a QDomDocument object that represents an XML document object model.
+	 * QDomDocument object that represents an XML document object model.
 	 */
 	QDomDocument docObjectModel;
 
 	/**
-	 * QMap that maps QTreeWidgetItem pointers to QDomElement pointers.
+	 * QMap that maps QTreeWidgetItem pointers to QDomElements.
 	 */
 	QMap<QTreeWidgetItem*, QDomElement> domElements;
 

@@ -116,10 +116,8 @@ QTreeWidgetItem* TreeStructure::createTreeWidgetItem(const QDomElement& element,
 	QTreeWidgetItem* item = nullptr;
 
 	if (parent) {
-		std::cout<<"Creating from parent!" << std::endl;
 		item = new QTreeWidgetItem(parent);
 	} else {
-		std::cout<<"Creating from this!" << std::endl;
 		item = new QTreeWidgetItem(this);
 	}
 	domElements[item] = element;
@@ -204,7 +202,7 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName)
 		node.appendChild(element);
 	}
 	auto item = this->createTreeWidgetItem(element, parentItem);
-	// item->setText(static_cast<int>(Column::Label), nodeName);
+	item->setText(static_cast<int>(Column::Label), nodeName);
 }
 
 //--------------------------------------------------------------------------------------
