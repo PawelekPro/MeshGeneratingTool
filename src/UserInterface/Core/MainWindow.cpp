@@ -80,8 +80,12 @@ void MainWindow::setConnections() {
 	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
 		generateMesh();
 	});
-	connect(ui->actionShowMesh, &QAction::triggered, [this]() {
-		showMesh();
+	connect(ui->actionShowMesh, &QAction::toggled, [this](bool checked) {
+		if (checked) {
+			showMesh();
+		} else {
+			showGeometry();
+		}
 	});
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
@@ -108,9 +112,8 @@ void MainWindow::importSTEP(QString fileName) {
 	QPointer<ProgressBar> progressBar = this->getProgressBar();
 	const std::string& filePath = fileName.toStdString();
 	try {
-		this->model->geometry.importSTEP(filePath, this->progressBar);
-		this->model->updateParts();
-		GeometryCore::PartsMap shapesMap = this->model->geometry.getShapesMap();
+		this->model->importSTEP(filePath, this->progressBar);
+		const GeometryCore::PartsMap& shapesMap = model->geometry.getShapesMap();
 		for(auto shape : shapesMap){
 			this->QVTKRender->addShapeToRenderer(shape.second);
 		}
@@ -146,7 +149,7 @@ void MainWindow::newModel() {
 	ui->actionGenerateMesh->setEnabled(true);
 }
 void MainWindow::generateMesh() {
-	this->model->meshParts();
+	this->model->meshSurface();
 }
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
@@ -168,11 +171,14 @@ void MainWindow::initializeActions() {
 }
 
 void MainWindow::showMesh() {
-	this->model->updateMeshActor();
 	this->QVTKRender->clearRenderer();
-	this->QVTKRender->addActor(this->model->meshActor);
+	this->QVTKRender->addActor(this->model->getMeshActor());
 	this->QVTKRender->RenderScene();
-	// this->QVTKRender->getActiveRenderer()->Render();
+}
+void MainWindow::showGeometry(){
+	this->QVTKRender->clearRenderer();
+	this->QVTKRender->addPipelinesToRenderer();
+	this->QVTKRender->RenderScene();
 }
 
 //----------------------------------------------------------------------------

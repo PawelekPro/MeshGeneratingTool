@@ -137,6 +137,7 @@ void Rendering::QVTKRenderWindow::enableWaterMark() {
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::clearRenderer() {
 	this->_renderer->Clear();
+	this->_renderer->RemoveActor(this->model->getMeshActor());
 
 	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
 		= _interactorStyle->getPipelines();
@@ -180,11 +181,23 @@ void Rendering::QVTKRenderWindow::addShapeToRenderer(const TopoDS_Shape& shape) 
 	static Standard_Integer ShapeID
 		= _interactorStyle->getPipelinesMapSize();
 	++ShapeID;
-	QIVtkSelectionPipeline* pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
+
+	Handle(QIVtkSelectionPipeline) pipeline = new QIVtkSelectionPipeline(shape, ShapeID);
 	pipeline->AddToRenderer(_renderer);
 
 	_interactorStyle->addPipeline(pipeline, ShapeID);
 	fitView();
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::addPipelinesToRenderer() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator pIt(pipelinesList);
+	for (; pIt.More(); pIt.Next()) {
+		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
+		pipeline->AddToRenderer(_renderer);
+	}
 }
 
 //----------------------------------------------------------------------------
