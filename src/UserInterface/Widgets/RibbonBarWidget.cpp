@@ -254,7 +254,7 @@ void RibbonBarWidget::onViewRepresentationChanged(QAction* action) {
 	}
 
 	_QVTKRender->RenderScene();
-
+}
 //----------------------------------------------------------------------------
 void RibbonBarWidget::onPressedSizeField(QAction* action){
 	const QString& actionText = action->text();
