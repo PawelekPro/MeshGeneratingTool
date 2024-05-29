@@ -73,7 +73,7 @@ protected:
 class PropertiesModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	PropertiesModel(QDomElement* element, QWidget* parent = nullptr);
+	PropertiesModel(QSharedPointer<QDomElement> element, QWidget* parent = nullptr);
 	~PropertiesModel();
 
 	/**
@@ -148,7 +148,7 @@ private:
 	/**
 	 * Pointer to a QDomElement object.
 	 */
-	QDomElement* _element;
+	QSharedPointer<QDomElement> _element;
 
 	/**
 	 * A list of QDomElement objects representing properties.

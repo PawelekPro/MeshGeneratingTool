@@ -42,7 +42,7 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(QDomElement* element, QWidget* parent)
+PropertiesModel::PropertiesModel(QSharedPointer<QDomElement> element, QWidget* parent)
     : QAbstractTableModel(parent)
     , _element(element) {
 

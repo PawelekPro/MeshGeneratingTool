@@ -90,7 +90,9 @@ public:
 	 */
 	void loadGeometryFile(const QString);
 
-
+	private slots:
+		void onItemChanged(QTreeWidgetItem* item, int column);
+	public:
 	/**
 	 * @brief  mesh sizing node and creates its input widgets in the tree.
 	 *
@@ -140,7 +142,10 @@ public:
 		// { "Actor", Qt::UserRole + 6 }
 	};
 
+
 private:
+	void treeWidgetItemRenamed(QTreeWidgetItem* renamedItem,QString newName);
+
 	/**
 	 * @brief  Build base widget representation by adding roots item to the tree structure.
 	 *
@@ -150,11 +155,11 @@ private:
 	/**
 	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
 	 *
-	 * @param  {QDomElement*} element    : QDomElement object coresponding to tree item.
+	 * @param  {QSharedPointer<QDomElement>} element    : QDomElement object coresponding to tree item.
 	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
 	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
 	 */
-	QTreeWidgetItem* createTreeWidgetItem(QDomElement* element, QTreeWidgetItem* parent = nullptr);
+	QTreeWidgetItem* createTreeWidgetItem(QSharedPointer<QDomElement> element, QTreeWidgetItem* parent = nullptr);
 
 	/**
 	 * Finds tree widget items that match the specified text and flags.
@@ -201,7 +206,7 @@ private:
 	 *
 	 * @returns None
 	 */
-	void addPropertiesModel(QDomElement*, QTreeWidgetItem*);
+	void addPropertiesModel(QSharedPointer<QDomElement>, QTreeWidgetItem*);
 
 	/**
 	 * Adds properties to a QDomElement.
@@ -211,7 +216,7 @@ private:
 	 *
 	 * @returns None
 	 */
-	void addProperties(QDomElement*, PropertiesList);
+	void addProperties(QSharedPointer<QDomElement>, PropertiesList);
 
 	/**
 	 * Parses the default properties from a RapidJSON document and a QString.
@@ -238,7 +243,7 @@ private:
 	/**
 	 * QMap that maps QTreeWidgetItem pointers to QDomElement pointers.
 	 */
-	QMap<QTreeWidgetItem*, QDomElement*> domElements;
+	QMap<QTreeWidgetItem*, QSharedPointer<QDomElement>> domElements;
 
 	TreeContextMenu* contextMenu;
 

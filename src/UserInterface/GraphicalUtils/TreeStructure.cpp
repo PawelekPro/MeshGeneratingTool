@@ -33,6 +33,7 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	this->contextMenu = new TreeContextMenu(this);
 
+    setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked);
 }
 
 //--------------------------------------------------------------------------------------
@@ -46,7 +47,7 @@ TreeStructure::~TreeStructure() {
 	this->writeDataToXML(xmlPath);
 	for (auto& treeItem : domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
-		QDomElement* element = domElements.value(treeItem);
+		QSharedPointer<QDomElement> element = domElements.value(treeItem);
 
 		int role = Role.value(element->firstChildElement("Properties").tagName());
 
@@ -59,7 +60,6 @@ TreeStructure::~TreeStructure() {
 		}
 
 		delete item;
-		delete element;
 	}
 	delete this->docObjectModel;
 	delete this->contextMenu;
@@ -83,7 +83,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 			xmlTag.remove(" ");
 		}
 		
-		QDomElement* rootElement = new QDomElement(this->docObjectModel->createElement(xmlTag));
+		QSharedPointer<QDomElement> rootElement(new QDomElement(this->docObjectModel->createElement(xmlTag)));
 
 		PropertiesList propertiesList = this->parseDefaultProperties(doc, xmlTag);
 		this->addProperties(rootElement, propertiesList);
@@ -93,7 +93,8 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 
 		// This will parse only element with "Properties" tage name
 		auto propsChildElem = rootElement->childNodes().at(0).toElement();
-		this->addPropertiesModel(&propsChildElem, rootItem);
+		QSharedPointer<QDomElement> propsChildElemPtr(&propsChildElem);
+		this->addPropertiesModel(propsChildElemPtr, rootItem);
 		root.appendChild(*rootElement);
 	}
 }
@@ -118,7 +119,7 @@ QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(TreeRoot root){
 }
 
 //--------------------------------------------------------------------------------------
-QTreeWidgetItem* TreeStructure::createTreeWidgetItem(QDomElement* element, QTreeWidgetItem* parent) {
+QTreeWidgetItem* TreeStructure::createTreeWidgetItem(QSharedPointer<QDomElement> element, QTreeWidgetItem* parent) {
 	QTreeWidgetItem* item = nullptr;
 
 	if (parent) {
@@ -141,27 +142,35 @@ void TreeStructure::addMeshSizing() {
     rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
 	QString meshSizingTag = XMLTags.value(XMLTag::MeshSizing);
     PropertiesList propList = parseDefaultProperties(doc, meshSizingTag);
-    QDomElement meshSizingElement = this->docObjectModel->createElement(meshSizingTag);
-	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
+    
+    QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
 
-	QDomElement* meshElement = domElements.value(parentItem);
+	QSharedPointer<QDomElement> meshElement = domElements.value(parentItem);
 	QString baseName = "Mesh sizing";
 	QString meshElementName = getUniqueElementNameForTag(TreeRoot::Mesh, XMLTag::MeshSizing, baseName);
 
-	meshSizingElement.setAttribute("name", meshElementName);
+    // Create a new QDomElement dynamically
+    QSharedPointer<QDomElement> meshSizingElementPtr(new QDomElement(this->docObjectModel->createElement(meshSizingTag)));
+    meshSizingElementPtr->setAttribute("name", meshElementName);
 
-    QDomElement* meshSizingElementPtr = &meshSizingElement;
     addProperties(meshSizingElementPtr, propList);
     
 	QTreeWidgetItem* meshSizingItem = this->createTreeWidgetItem(meshSizingElementPtr, parentItem);
-    meshSizingItem->setText(static_cast<int>(Column::Label), meshSizingElement.attribute("name"));
-	
-	domElements.value(parentItem)->appendChild(meshSizingElement);
+    meshSizingItem->setText(static_cast<int>(Column::Label), meshSizingElementPtr->attribute("name"));
+	meshSizingItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
 
-	auto propsChildElem = meshSizingElement.childNodes().at(0).toElement();
-	this->addPropertiesModel(&propsChildElem, meshSizingItem);
+    domElements.value(parentItem)->appendChild(*meshSizingElementPtr);
+
+	auto propsChildElem = meshSizingElementPtr->childNodes().at(0).toElement();
+    QSharedPointer<QDomElement> propsChildElemPtr(new QDomElement(propsChildElem));
+	this->addPropertiesModel(propsChildElemPtr, meshSizingItem);
+
+    connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemChanged);
+
+	std::cout << "Name attribute in method: " << meshSizingElementPtr->attribute("name").toStdString() << std::endl;
+
+    // Add the new mesh sizing element to the map
 }
-
 QString TreeStructure::getUniqueElementNameForTag(TreeRoot root, XMLTag tag, const QString& baseName){
 	QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
 	QDomNodeList rootElementChildNodes = domElements.value(rootItem)->childNodes();
@@ -183,11 +192,6 @@ QString TreeStructure::getUniqueElementNameForTag(TreeRoot root, XMLTag tag, con
     } while (rootElementChildNames.contains(uniqueName));
 	return uniqueName;
 }
-void TreeStructure::renameTreeWidgetItem(QTreeWidgetItem* itemToRename,const QString& newName){
-	QDomElement* elementToRename = domElements.value(itemToRename);
-	elementToRename->setAttribute("name", newName);
-	itemToRename->setText(static_cast<int>(Column::Label), newName);
-}
 //--------------------------------------------------------------------------------------
 void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName) {
 	QList<QTreeWidgetItem*> qlist
@@ -202,17 +206,18 @@ void TreeStructure::addNode(const QString& parentLabel, const QString& nodeName)
 	element.setAttribute("label", nodeName);
 
 	if (domElements.contains(parentItem)) {
-		QDomElement* node = domElements.value(parentItem);
+		QSharedPointer<QDomElement> node = domElements.value(parentItem);
 		if (node) {
 			node->appendChild(element);
 		}
 	}
-	auto item = this->createTreeWidgetItem(&element, parentItem);
+	QSharedPointer<QDomElement> elementPtr(&element);
+	auto item = this->createTreeWidgetItem(elementPtr, parentItem);
 	item->setText(static_cast<int>(Column::Label), nodeName);
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* item) {
+void TreeStructure::addPropertiesModel(QSharedPointer<QDomElement> element, QTreeWidgetItem* item) {
 	const int role = Role.value(element->tagName());
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
 	QVariant variantModel = QVariant::fromValue(model);
@@ -221,7 +226,7 @@ void TreeStructure::addPropertiesModel(QDomElement* element, QTreeWidgetItem* it
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addProperties(QDomElement* parentElement, PropertiesList propertiesList) {
+void TreeStructure::addProperties(QSharedPointer<QDomElement> parentElement, PropertiesList propertiesList) {
 	QDomElement propsElement = this->docObjectModel->createElement("Properties");
 
 	for (const QMap<QString, QString>& propertyMap : propertiesList) {
@@ -326,4 +331,23 @@ void TreeStructure::writeDataToXML(const std::string path) {
 
 	// Close the file
 	file.close();
+}
+
+void TreeStructure::treeWidgetItemRenamed(QTreeWidgetItem* renamedItem, QString newName) {
+    QSharedPointer<QDomElement> elementToRename = domElements.value(renamedItem, nullptr);
+    
+    if (elementToRename) {
+        std::cout << "Element valid, name: " << elementToRename->attribute("name").toStdString() << std::endl;
+        elementToRename->setAttribute("name", newName);
+    } else {
+        std::cout << "Element not found for the given QTreeWidgetItem" << std::endl;
+    }
+}
+
+void TreeStructure::onItemChanged(QTreeWidgetItem* item, int column) {
+    if (column == 0) { // Assuming we are renaming the first column
+		QString newName = item->text(column);
+        qDebug() << "Item changed, new name: " << newName;
+        treeWidgetItemRenamed(item, newName);
+    }
 }
