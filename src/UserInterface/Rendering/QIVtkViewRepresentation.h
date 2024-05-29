@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -20,39 +20,77 @@
 #ifndef QIVTKVIEWREPRESENTATION_H
 #define QIVTKVIEWREPRESENTATION_H
 
+#include "AppDefaultColors.h"
+#include "AppDefaults.h"
 #include "QIVtkSelectionPipeline.h"
+#include "QIVtkUtils.h"
+#include "QVTKInteractorStyle.h"
 
 #include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 
 #include <QColor>
+#include <QList>
 
-typedef enum {
-	ET_IsoLine = 0, //!< Isoline
-	ET_FreeVertex = 1, //!< Free vertex
-	ET_SharedVertex = 2, //!< Shared vertex
-	ET_FreeEdge = 3, //!< Free edge
-	ET_BoundaryEdge = 4, //!< Boundary edge (related to a single face)
-	ET_SharedEdge = 5, //!< Shared edge (related to several faces)
-	ET_WireFrameFace = 6, //!< Wireframe face
-	ET_ShadedFace = 7, //!< Shaded face
-	ET_SeamEdge = 8 //!< Seam edge between faces
-} QIVtkEntityType;
-
+/**
+ * @class QIVtkViewRepresentation
+ * @brief A class to manage VTK view representations.
+ *
+ * The QIVtkViewRepresentation class encapsulates functionality to set and manage
+ * different representations (such as shaded, wireframe, points, and surface with edges)
+ * for VTK actors within a QIVtkSelectionPipeline pipeline. It also allows use of a color
+ * lookup table for managing colors.
+ */
 class QIVtkViewRepresentation {
 public:
+	/**
+	 * @brief Constructor for the QIVtkViewRepresentation class.
+	 * Initializes a new instance of the QIVtkViewRepresentation class.
+	 */
 	QIVtkViewRepresentation();
+
+	/**
+	 * @brief Destructor for the QIVtkViewRepresentation class.
+	 * Cleans up any resources used by the instance.
+	 */
 	~QIVtkViewRepresentation();
 
-	void setRepresentationToShaded(const Handle(QIVtkSelectionPipeline) pipeline) {};
-	void setRepresentationToWireframe(const Handle(QIVtkSelectionPipeline) pipeline) {};
-	void setRepresentationToPoints(const Handle(QIVtkSelectionPipeline) pipeline) {};
-	void setRepresentationToSurfaceWithEdges(const Handle(QIVtkSelectionPipeline) pipeline) {};
+	/**
+	 * @brief Sets the interactor style for the view representation.
+	 * @param interactorStyle A pointer to the QVTKInteractorStyle instance to be used.
+	 */
+	void setInteractorStyle(QVTKInteractorStyle* interactorStyle);
 
-	void setEntityColor(QIVtkEntityType entity, QColor color) {};
+	/**
+	 * @brief Sets the representation of the actor to shaded (surface).
+	 * Changes the current actor's representation to a shaded surface.
+	 */
+	void setRepresentationToShaded();
+
+	/**
+	 * @brief Sets the representation of the actor to wireframe.
+	 * Changes the current actor's representation to a wireframe.
+	 */
+	void setRepresentationToWireframe();
+
+	/**
+	 * @brief Sets the representation of the actor to points.
+	 * Changes the current actor's representation to points.
+	 */
+	void setRepresentationToPoints();
+
+	/**
+	 * @brief Sets the representation of the actor to surface with edges.
+	 * Changes the current actor's representation to display the surface with edges.
+	 */
+	void setRepresentationToSurfaceWithEdges();
 
 private:
-	vtkSmartPointer<vtkLookupTable> _colorTable;
+	// Pointer to the interactor style used by this representation.
+	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
+
+	// Pointer to the color lookup table used by this representation.
+	vtkSmartPointer<QIVtkLookupTable> _colorTable;
 };
 
 #endif

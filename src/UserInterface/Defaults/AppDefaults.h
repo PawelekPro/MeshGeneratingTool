@@ -20,6 +20,8 @@
 #ifndef APPDEFAULTS_H
 #define APPDEFAULTS_H
 
+#include "AppDefaultColors.h"
+
 #include <QFile>
 #include <QSettings>
 
@@ -109,6 +111,8 @@ public:
 	 */
 	rapidjson::Document* getComboBoxModels();
 
+	const AppDefaultColors::GeomColorsArray getGeometryEntitiesColorArray();
+
 private:
 	AppDefaults(AppDefaults const&) = delete;
 	AppDefaults();
@@ -146,6 +150,7 @@ private:
 	 */
 	const QString getComboBoxModelsPath();
 
+private:
 	// Container for application settings
 	QSettings settings;
 
@@ -156,6 +161,8 @@ private:
 
 	// rapidjson document for ComboBoxModels JSON file
 	rapidjson::Document m_comboBoxModels;
+
+	AppDefaultColors _appDefaultColors;
 };
 
 #endif

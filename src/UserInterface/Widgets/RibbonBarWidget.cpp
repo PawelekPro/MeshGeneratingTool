@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -63,7 +63,13 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel1->addSmallAction(createAction("action2", ":/icons/icons/action2.svg"));
 	SARibbonPannel* pannel2 = new SARibbonPannel("pannel2", page1);
 	page1->addPannel(pannel2);
-	pannel2->addLargeAction(createAction("setting", ":/icons/icons/customize0.svg"));
+
+	QAction* settingsAct = createAction("setting", ":/icons/icons/customize0.svg");
+	connect(settingsAct, &QAction::triggered, _mainWindow,
+		&MainWindow::onShowDialogButtonClicked);
+
+	pannel2->addLargeAction(settingsAct);
+
 	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
 	
@@ -85,9 +91,49 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	connect(sizeFieldGroup, &QActionGroup::triggered, this,
 	&RibbonBarWidget::onPressedSizeField);
 
+  /* ================================================================
+	Display page
+	===================================================================*/
 	SARibbonCategory* page3 = new SARibbonCategory();
 	page3->setCategoryName("Display");
 	bar->addCategoryPage(page3);
+
+	SARibbonPannel* viewRepPanel = new SARibbonPannel("View representation", page3);
+	page3->addPannel(viewRepPanel);
+
+	QActionGroup* viewRepGroup = new QActionGroup(this);
+	viewRepGroup->setExclusive(true);
+
+	QAction* shadedRepAction = createAction(
+		"Shaded", ":/icons/icons/Shaded_representation.svg");
+	shadedRepAction->setIconText("Shaded");
+	shadedRepAction->setCheckable(true);
+	viewRepGroup->addAction(shadedRepAction);
+	viewRepPanel->addLargeAction(shadedRepAction);
+
+	QAction* surfaceWithEdgesRepAction = createAction(
+		"Surface with edges", ":/icons/icons/Surface_with_edges_representation.svg");
+	surfaceWithEdgesRepAction->setIconText("Surface with edges");
+	surfaceWithEdgesRepAction->setCheckable(true);
+	viewRepGroup->addAction(surfaceWithEdgesRepAction);
+	viewRepPanel->addLargeAction(surfaceWithEdgesRepAction);
+
+	QAction* wireframeRepAction = createAction(
+		"Wireframe", ":/icons/icons/Wireframe_representation.svg");
+	wireframeRepAction->setIconText("Wireframe");
+	wireframeRepAction->setCheckable(true);
+	viewRepGroup->addAction(wireframeRepAction);
+	viewRepPanel->addLargeAction(wireframeRepAction);
+
+	QAction* pointsRepAction = createAction(
+		"Points", ":/icons/icons/Points_representation.svg");
+	pointsRepAction->setIconText("Points");
+	pointsRepAction->setCheckable(true);
+	viewRepGroup->addAction(pointsRepAction);
+	viewRepPanel->addLargeAction(pointsRepAction);
+
+	connect(viewRepGroup, &QActionGroup::triggered, this,
+		&RibbonBarWidget::onViewRepresentationChanged);
 
 	/* ================================================================
 	Selection page
@@ -104,8 +150,8 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 
 	QAction* vertexSelAct = createAction("Vertex", ":/icons/icons/Selection_vertex.svg");
 	vertexSelAct->setIconText("Vertex");
-	vertexSelAct->setCheckable(true); // Ustawienie akcji jako checkable
-	selectionGroup->addAction(vertexSelAct); // Dodanie akcji do grupy
+	vertexSelAct->setCheckable(true);
+	selectionGroup->addAction(vertexSelAct);
 	selectionPanel->addLargeAction(vertexSelAct);
 
 	QAction* edgeSelAct = createAction("Edge", ":/icons/icons/Selection_edge.svg");
@@ -192,10 +238,29 @@ void RibbonBarWidget::onEntitySelectionChanged(QAction* action) {
 	}
 }
 
+//----------------------------------------------------------------------------
+void RibbonBarWidget::onViewRepresentationChanged(QAction* action) {
+	const QString& actionText = action->text();
+	QIVtkViewRepresentation* viewRep = _QVTKRender->getViewRepresentation();
+
+	if (actionText == "Shaded") {
+		viewRep->setRepresentationToShaded();
+	} else if (actionText == "Surface with edges") {
+		viewRep->setRepresentationToSurfaceWithEdges();
+	} else if (actionText == "Wireframe") {
+		viewRep->setRepresentationToWireframe();
+	} else if (actionText == "Points") {
+		viewRep->setRepresentationToPoints();
+	}
+
+	_QVTKRender->RenderScene();
+}
+//----------------------------------------------------------------------------
 void RibbonBarWidget::onPressedSizeField(QAction* action){
 	const QString& actionText = action->text();
 	
 	if (actionText == "elementSize"){
 		// this->_QVTKRender->model->addEdgeSizing()
 	}
+
 }

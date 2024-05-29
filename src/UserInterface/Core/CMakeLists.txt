@@ -1,5 +1,6 @@
 ADD_LIBRARY(Core 
   MainWindow.cpp
+  PreferencesDialog.cpp
 )
 
 TARGET_LINK_LIBRARIES(Core PUBLIC 

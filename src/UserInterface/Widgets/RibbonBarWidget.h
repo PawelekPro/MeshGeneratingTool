@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -21,6 +21,7 @@
 #define RIBBONBARWIDGET_H
 
 #include "MainWindow.h"
+#include "QIVtkViewRepresentation.h"
 #include "SARibbon.h"
 
 #include <QActionGroup>
@@ -51,7 +52,8 @@ private:
 
 private slots:
 	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
-	void onEntitySelectionChanged(QAction*);
+	void onEntitySelectionChanged(QAction* action);
+	void onViewRepresentationChanged(QAction* action);
 	void onPressedSizeField(QAction* action);
 
 private:

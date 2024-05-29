@@ -83,5 +83,4 @@ void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu, QTreeWidgetItem* it
 void TreeContextMenu::buildMeshMenu(QMenu* menu) {
 	menu->addAction("Add sizing");
 	menu->addAction("Generate mesh");
-	connect()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -28,7 +28,8 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	, _renderer(vtkSmartPointer<vtkRenderer>::New())
 	, _vtkWidget(new QVTKOpenGLNativeWidget())
 	, _shapePicker(vtkSmartPointer<IVtkTools_ShapePicker>::New())
-	, _interactorStyle(vtkSmartPointer<QVTKInteractorStyle>::New()) {
+	, _interactorStyle(vtkSmartPointer<QVTKInteractorStyle>::New())
+	, _qIVtkViewRepresentation(new QIVtkViewRepresentation()) {
 
 	_vtkWidget->setRenderWindow(_rendererWindow);
 	_interactor = _vtkWidget->interactor();
@@ -58,6 +59,7 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_interactorStyle->setPicker(_shapePicker);
 
 	_interactor->SetInteractorStyle(_interactorStyle);
+	_qIVtkViewRepresentation->setInteractorStyle(_interactorStyle);
 
 	_renderer->ResetCamera();
 	_rendererWindow->Render();
@@ -75,6 +77,8 @@ Rendering::QVTKRenderWindow::~QVTKRenderWindow() {
 
 	if (_shapePicker)
 		_shapePicker->Delete();
+
+	delete _qIVtkViewRepresentation;
 }
 
 //----------------------------------------------------------------------------
@@ -83,7 +87,7 @@ void Rendering::QVTKRenderWindow::addActor(vtkActor* actor) {
 }
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::RenderScene() {
-	_renderer->Render();
+	_rendererWindow->Render();
 }
 
 //----------------------------------------------------------------------------
@@ -203,4 +207,9 @@ void Rendering::QVTKRenderWindow::addPipelinesToRenderer() {
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::setSelectionMode(IVtk_SelectionMode mode) {
 	_interactorStyle->setSelectionMode(mode);
+}
+
+//----------------------------------------------------------------------------
+QIVtkViewRepresentation* Rendering::QVTKRenderWindow::getViewRepresentation() {
+	return _qIVtkViewRepresentation;
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 16.933333 16.933333"
+   version="1.1"
+   id="svg5"
+   xml:space="preserve"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="Points_representation.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="4.2583145"
+     inkscape:cx="-17.612602"
+     inkscape:cy="-11.037231"
+     inkscape:window-width="1872"
+     inkscape:window-height="1011"
+     inkscape:window-x="48"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" /><defs
+     id="defs2"><style
+       type="text/css"
+       id="style361" /></defs><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"><polygon
+       style="fill:none;stroke:#024089;stroke-width:4.05395977;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4.05395984,12.16187954;stroke-opacity:1;stroke-dashoffset:0;paint-order:markers fill stroke"
+       points="29,58 3,45 3,13 29,26 "
+       id="polygon2724"
+       transform="matrix(0.27500591,0,0,0.24782401,0.4914954,1.2797823)" /><polygon
+       style="fill:none;stroke:#024089;stroke-width:4.05395977;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4.05395984,12.16187954;stroke-opacity:1;stroke-dashoffset:0;paint-order:markers fill stroke"
+       points="29,58 55,45 55,13 29,26 "
+       id="polygon2726"
+       transform="matrix(0.27500591,0,0,0.24782401,0.4914954,1.2797823)" /><polygon
+       style="fill:none;stroke:#024089;stroke-width:4.05395977;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4.05395984,12.16187954;stroke-opacity:1;stroke-dashoffset:0;paint-order:markers fill stroke"
+       points="3,13 28,0 55,13 29,26 "
+       id="polygon2728"
+       transform="matrix(0.27500591,0,0,0.24782401,0.4914954,1.2797823)" /></g></svg>

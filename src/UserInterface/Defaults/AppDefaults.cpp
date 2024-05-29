@@ -25,7 +25,9 @@ const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/Combobox
 
 //--------------------------------------------------------------------------------------
 AppDefaults::AppDefaults()
-	: settings("settingsFile.ini", QSettings::IniFormat) {
+	: settings("settingsFile.ini", QSettings::IniFormat)
+	, _appDefaultColors(AppDefaultColors()) {
+
 	settings.beginGroup("ApplicationDefaults");
 	settings.setValue("Version", "1.0.0");
 	settings.setValue("ProjFileVersion", "1.0");
@@ -99,3 +101,7 @@ const QString AppDefaults::getDefaultPropertiesPath(){
 	return this->_defaultsPath;
 };
 
+//--------------------------------------------------------------------------------------
+const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
+	return _appDefaultColors.getGeometryEntitiesColorArray();
+}
