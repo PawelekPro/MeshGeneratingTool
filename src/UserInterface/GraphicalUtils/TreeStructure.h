@@ -154,7 +154,7 @@ private:
 	 * @brief  Build base widget representation by adding roots item to the tree structure.
 	 *
 	 */
-	void buildBaseObjectsRepresentation();
+	void addRootItems();
 
 	/**
 	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
@@ -200,7 +200,7 @@ private:
 	 *
 	 * @returns None
 	 */
-	void addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
+	void addSubItem(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
 		Qt::ItemFlags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 	/**

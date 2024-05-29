@@ -26,7 +26,7 @@ TreeStructure::TreeStructure(QWidget* parent)
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
 
-	this->buildBaseObjectsRepresentation();
+	this->addRootItems();
 
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	this->contextMenu = new TreeContextMenu(this);
@@ -60,16 +60,16 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::buildBaseObjectsRepresentation() {
-	QString defaultPropsPath = AppDefaults::getInstance().getTemplatesPath();
-	rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
+void TreeStructure::addRootItems() {
+	QString rootPropertiesPath = AppDefaults::getInstance().getTemplatesPath();
+	rapidjson::Document doc = this->readJsonTemplateFile(rootPropertiesPath);
 
-	QDomElement root = this->docObjectModel.createElement(
+	QDomElement docRootElement = this->docObjectModel.createElement(
 		AppDefaults::getInstance().getAppName());
-	root.setAttribute(
+	docRootElement.setAttribute(
 		"version", AppDefaults::getInstance().getAppProjFileVersion());
 
-	this->docObjectModel.appendChild(root);
+	this->docObjectModel.appendChild(docRootElement);
 
 	for (const auto& rootName : TreeRoots) {
 		QString xmlTag = rootName;
@@ -88,7 +88,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		// This will parse only element with "Properties" tage name
 		auto propsChildElem = rootElement.childNodes().at(0).toElement();
 		this->addPropertiesModel(propsChildElem, rootItem);
-		root.appendChild(rootElement);
+		docRootElement.appendChild(rootElement);
 	}
 }
 
@@ -277,7 +277,7 @@ void TreeStructure::renameItem(QTreeWidgetItem* item){
 
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
+void TreeStructure::addSubItem(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
 	Qt::ItemFlags flags){
 	if(!parentItem){
 		qWarning("Can only add node to a parent.");
@@ -293,10 +293,10 @@ void TreeStructure::addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const Q
     rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
     PropertiesList propList = parseJsonDocument(doc, XMLTags.value(xmlTag));
 	if(propList.isEmpty()){
-		qWarning("PropertiesList for created node is empty.");
+		QString warning = "PropertiesList for node: " + newName + " is empty";
+		qWarning() << warning;
 	}
 	addProperties(newElement, propList);
-	std::cout <<"New element name: " << newElement.attribute("name").toStdString() << std::endl;
 	QTreeWidgetItem* newItem = this->createTreeWidgetItem(newElement, parentItem);
     newItem->setText(static_cast<int>(Column::Label), newElement.attribute("name"));
 	newItem->setFlags(flags);
@@ -310,13 +310,13 @@ void TreeStructure::addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const Q
 
 void TreeStructure::loadGeometryFile(const QString fileName) {
 	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::GeomModel);
-	this->addNode(parentItem, XMLTag::GeometryImport, fileName);
+	this->addSubItem(parentItem, XMLTag::GeometryImport, fileName);
 	parentItem = getRootTreeWidgetItem(TreeRoot::GeomImport);
-	this->addNode(parentItem, XMLTag::GeometryImport, fileName);
+	this->addSubItem(parentItem, XMLTag::GeometryImport, fileName);
 }
 
 void TreeStructure::addMeshSizing() {
 	QString baseName = "Mesh sizing";
 	QTreeWidgetItem* meshParentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
-	addNode(meshParentItem, XMLTag::MeshSizing, baseName);
+	addSubItem(meshParentItem, XMLTag::MeshSizing, baseName);
 }
