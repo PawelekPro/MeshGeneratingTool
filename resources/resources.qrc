@@ -1,5 +1,14 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/Points_representation.svg</file>
+    <file>icons/Shaded_representation.svg</file>
+    <file>icons/Surface_with_edges_representation.svg</file>
+    <file>icons/Wireframe_representation.svg</file>
+    <file>icons/Theme.svg</file>
+    <file>icons/Ok_icon.svg</file>
+    <file>icons/Cancel_icon.svg</file>
+    <file>icons/Color_palette.svg</file>
+    <file>icons/Preferences.svg</file>
     <file>icons/windowsflag-normal.svg</file>
     <file>icons/useqss.svg</file>
     <file>icons/undo.svg</file>

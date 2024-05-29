@@ -3,6 +3,7 @@ ADD_LIBRARY(Rendering
   QVTKRenderWindow.cpp
   QIVtkSelectionPipeline.cpp
   QIVtkViewRepresentation.cpp
+  QIVtkUtils.cpp
 )
 
 INCLUDE_DIRECTORIES(
@@ -18,6 +19,7 @@ if(WIN32)
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     GeometryCore
+    Defaults
     Model
 )
 else()
@@ -29,6 +31,7 @@ else()
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     GeometryCore
+    Defaults
     Model
 )
 endif()

@@ -206,3 +206,10 @@ void MainWindow::onItemSelectionChanged() {
 		header->setSectionResizeMode(QHeaderView::Interactive);
 	}
 }
+
+void MainWindow::onShowDialogButtonClicked() {
+	PreferencesDialog dialog(this);
+
+	// Show the dialog
+	dialog.exec();
+}

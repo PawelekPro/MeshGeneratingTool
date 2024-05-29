@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -20,6 +20,8 @@
 #ifndef QIVtkSelectionPipeline_H
 #define QIVtkSelectionPipeline_H
 
+#include "QIVtkUtils.h"
+
 #include <NCollection_Shared.hxx>
 #include <Standard_Transient.hxx>
 #include <TopoDS_Shape.hxx>
@@ -28,12 +30,15 @@
 #include <Standard_WarningsDisable.hxx>
 #include <Standard_WarningsRestore.hxx>
 #include <vtkActor.h>
+#include <vtkAlgorithmOutput.h>
+#include <vtkLookupTable.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
 #include <IVtkTools_DisplayModeFilter.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
 #include <IVtkTools_SubPolyDataFilter.hxx>
 #include <IVtk_Types.hxx>
 
@@ -43,31 +48,122 @@ typedef NCollection_DataMap<IVtk_IdType, vtkSmartPointer<IVtkTools_SubPolyDataFi
 class QIVtkSelectionPipeline;
 DEFINE_STANDARD_HANDLE(QIVtkSelectionPipeline, Standard_Transient)
 
+/**
+ * @class QIVtkSelectionPipeline
+ * @brief Manages the selection and highlighting pipeline for a VTK actor.
+ *
+ * The QIVtkSelectionPipeline class handles the setup and management of the VTK pipeline
+ * for rendering shapes with different display modes and for managing selection and highlighting.
+ * It includes methods to add and remove actors from renderers, clear filters, and update the pipeline.
+ */
 class QIVtkSelectionPipeline : public Standard_Transient {
 public:
+	/**
+	 * @brief Provides run-time type information for QIVtkSelectionPipeline.
+	 */
 	DEFINE_STANDARD_RTTIEXT(QIVtkSelectionPipeline, Standard_Transient)
 
+	/**
+	 * @brief Constructs a QIVtkSelectionPipeline for a given shape and shape ID.
+	 * @param theShape The TopoDS_Shape to be managed by this pipeline.
+	 * @param theShapeID The ID of the shape.
+	 */
 	QIVtkSelectionPipeline(const TopoDS_Shape& theShape,
 		const Standard_Integer theShapeID);
+
+	/**
+	 * @brief Destructor for QIVtkSelectionPipeline.
+	 * Cleans up any resources used by the instance.
+	 */
 	~QIVtkSelectionPipeline() { }
 
+	/**
+	 * @brief Adds the actor to the specified renderer.
+	 * @param theRenderer The VTK renderer to add the actor to.
+	 */
 	void AddToRenderer(vtkRenderer* theRenderer);
+
+	/**
+	 * @brief Removes the actor from the specified renderer.
+	 * @param theRenderer The VTK renderer to remove the actor from.
+	 */
 	void RemoveFromRenderer(vtkRenderer* theRenderer);
+
+	/**
+	 * @brief Clears all highlight filters.
+	 */
 	void ClearHighlightFilters();
+
+	/**
+	 * @brief Clears all selection filters.
+	 */
 	void ClearSelectionFilters();
 
+	/**
+	 * @brief Gets the display mode filter.
+	 * @return A pointer to the IVtkTools_DisplayModeFilter.
+	 */
 	IVtkTools_DisplayModeFilter* GetDisplayModeFilter();
+
+	/**
+	 * @brief Gets the highlight filter.
+	 * @return A pointer to the IVtkTools_SubPolyDataFilter.
+	 */
 	IVtkTools_SubPolyDataFilter* GetHighlightFilter();
+
+	/**
+	 * @brief Gets the selection filter.
+	 * @return A pointer to the IVtkTools_SubPolyDataFilter.
+	 */
 	IVtkTools_SubPolyDataFilter* GetSelectionFilter();
+
+	/**
+	 * @brief Gets the display mode filter used for highlighting.
+	 * @return A pointer to the IVtkTools_DisplayModeFilter.
+	 */
 	IVtkTools_DisplayModeFilter* GetHighlightDMFilter();
+
+	/**
+	 * @brief Gets the display mode filter used for selection.
+	 * @return A pointer to the IVtkTools_DisplayModeFilter.
+	 */
 	IVtkTools_DisplayModeFilter* GetSelectionDMFilter();
 
-public:
-	inline vtkActor* Actor() { return myActor; }
-	inline vtkMapper* Mapper() { return myMapper; }
+	/**
+	 * @brief Updates the primary pipeline.
+	 */
+	void updatePrimaryPipeline();
+
+	/**
+	 * @brief Updates the primary pipeline with a specified display mode filter.
+	 * @param displayModeFilter The display mode filter to be applied.
+	 */
+	void updatePrimaryPipeline(IVtk_DisplayMode displayModeFilter);
+
+	/**
+	 * @brief Updates the primary pipeline with a specified color lookup table.
+	 * @param colorsTable The color lookup table to be used.
+	 */
+	void updatePrimaryPipeline(vtkLookupTable* colorsTable);
 
 public:
-	//! Filters comprising the pipeline.
+	/**
+	 * @brief Gets the actor associated with this pipeline.
+	 * @return A pointer to the vtkActor.
+	 */
+	inline vtkActor* Actor() { return _actor; }
+
+	/**
+	 * @brief Gets the mapper associated with this pipeline.
+	 * @return A pointer to the vtkMapper.
+	 */
+	inline vtkMapper* Mapper() { return _mapper; }
+
+public:
+	/**
+	 * @enum FilterId
+	 * @brief Enumeration of filter IDs used in the pipeline.
+	 */
 	enum FilterId {
 		Filter_DM_Shape = 1, //!< Display Mode filter for shape.
 		Filter_DM_Hili, //!< Display Mode filter for highlighting.
@@ -77,30 +173,35 @@ public:
 	};
 
 private:
-	//! Auxiliary map of internal filters by their correspondent IDs.
+	/**
+	 * @brief Type definition for a map of filters by their IDs.
+	 */
 	typedef NCollection_DataMap<FilterId, vtkSmartPointer<vtkAlgorithm>> FilterMap;
 
 private:
+	//! Shape data source.
+	vtkSmartPointer<IVtkTools_ShapeDataSource> _dataSource;
+
 	//! Actor.
-	vtkSmartPointer<vtkActor> myActor;
+	vtkSmartPointer<vtkActor> _actor;
 
 	//! Polygonal mapper.
-	vtkSmartPointer<vtkPolyDataMapper> myMapper;
+	vtkSmartPointer<vtkPolyDataMapper> _mapper;
 
 	//! Actor for highlighting.
-	vtkSmartPointer<vtkActor> myHiliActor;
+	vtkSmartPointer<vtkActor> _hiliActor;
 
 	//! Polygonal mapper for highlighting.
-	vtkSmartPointer<vtkPolyDataMapper> myHiliMapper;
+	vtkSmartPointer<vtkPolyDataMapper> _hiliMapper;
 
 	//! Actor for selection.
-	vtkSmartPointer<vtkActor> mySelActor;
+	vtkSmartPointer<vtkActor> _selActor;
 
 	//! Polygonal mapper for selection.
-	vtkSmartPointer<vtkPolyDataMapper> mySelMapper;
+	vtkSmartPointer<vtkPolyDataMapper> _selMapper;
 
 	//! Map of involved VTK filters.
-	FilterMap myFilterMap;
+	FilterMap _filterMap;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -20,9 +20,11 @@
 #ifndef QVTKRENDERWINDOW_H
 #define QVTKRENDERWINDOW_H
 
-// forward declaration
+// forward declarations
 class QVTKInteractorStyle;
+class QIVtkViewRepresentation;
 
+#include "QIVtkViewRepresentation.h"
 #include "QVTKInteractorStyle.h"
 
 #include "Model.h"
@@ -132,40 +134,44 @@ public:
 	 */
 	void clearRenderer();
 
+	QIVtkViewRepresentation* getViewRepresentation();
+
 public:
 	std::shared_ptr<Model> model;
 
 private:
-	// Container widget
+	// ! Container widget
 	QPointer<QWidget> _widget;
 
-	// The Qt widget containing a VTK viewport
+	// ! The Qt widget containing a VTK viewport
 	QPointer<QVTKOpenGLNativeWidget> _vtkWidget;
 
-	// The VTK renderer window
+	// ! The VTK renderer window
 	vtkGenericOpenGLRenderWindow* _rendererWindow;
 
-	// The VTK renderer
+	// ! The VTK renderer
 	vtkSmartPointer<vtkRenderer> _renderer;
 
-	// The VTK render window interactor
+	// ! The VTK render window interactor
 	vtkSmartPointer<QVTKInteractor> _interactor;
 
-	// Custom interactor style
+	// ! Custom interactor style
 	vtkSmartPointer<QVTKInteractorStyle> _interactorStyle;
 
-	// IVtk_ShapePicker from OCC VIS
+	// ! IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
-
-
-	// Widget for displaying global coordinate system
+  
+	// ! Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
-	// Navigation widget
+	// ! Navigation widget
 	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
 
-	// Water mark
+	// ! Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;
+
+	// ! Utility for controling view representation
+	QIVtkViewRepresentation* _qIVtkViewRepresentation;
 };
 };
 

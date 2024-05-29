@@ -1,9 +1,11 @@
 ADD_LIBRARY(Defaults 
   AppDefaults.cpp
+  AppDefaultColors.cpp
 )
 
 TARGET_LINK_LIBRARIES(Defaults PRIVATE 
   Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Gui
   ${VTK_LIBRARIES}  
 )
 

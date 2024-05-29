@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -19,16 +19,70 @@
 
 #include "QIVtkViewRepresentation.h"
 
+//----------------------------------------------------------------------------
 QIVtkViewRepresentation::QIVtkViewRepresentation()
-	: _colorTable(vtkSmartPointer<vtkLookupTable>::New()) {
-	double aRange[2];
-	aRange[0] = QIVtkEntityType::ET_IsoLine;
-	aRange[1] = QIVtkEntityType::ET_SeamEdge;
-
-	_colorTable->Allocate(9);
-	_colorTable->SetNumberOfTableValues(9);
-	_colorTable->SetTableRange(aRange);
-	_colorTable->SetValueRange(0, 1);
+	: _colorTable(vtkSmartPointer<QIVtkLookupTable>::New()) {
 }
 
+//----------------------------------------------------------------------------
 QIVtkViewRepresentation::~QIVtkViewRepresentation() { }
+
+//----------------------------------------------------------------------------
+void QIVtkViewRepresentation::setInteractorStyle(
+	QVTKInteractorStyle* interactorStyle) {
+	_interactorStyle = interactorStyle;
+}
+
+//----------------------------------------------------------------------------
+void QIVtkViewRepresentation::setRepresentationToShaded() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator it(pipelinesList);
+	for (; it.More(); it.Next()) {
+		Handle(QIVtkSelectionPipeline) pipeline = it.Value();
+		pipeline->Actor()->GetProperty()->SetRepresentationToSurface();
+		pipeline->updatePrimaryPipeline(IVtk_DisplayMode::DM_Shading);
+	}
+}
+
+//----------------------------------------------------------------------------
+void QIVtkViewRepresentation::setRepresentationToSurfaceWithEdges() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator it(pipelinesList);
+	for (; it.More(); it.Next()) {
+		Handle(QIVtkSelectionPipeline) pipeline = it.Value();
+		pipeline->Actor()->GetProperty()->SetRepresentationToSurface();
+		pipeline->updatePrimaryPipeline();
+	}
+}
+
+//----------------------------------------------------------------------------
+void QIVtkViewRepresentation::setRepresentationToWireframe() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator it(pipelinesList);
+	for (; it.More(); it.Next()) {
+		Handle(QIVtkSelectionPipeline) pipeline = it.Value();
+		pipeline->Actor()->GetProperty()->SetRepresentationToSurface();
+		pipeline->Actor()->GetProperty()->SetPointSize(0);
+		pipeline->updatePrimaryPipeline(IVtk_DisplayMode::DM_Wireframe);
+	}
+}
+
+//----------------------------------------------------------------------------
+void QIVtkViewRepresentation::setRepresentationToPoints() {
+	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
+		= _interactorStyle->getPipelines();
+
+	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator it(pipelinesList);
+	for (; it.More(); it.Next()) {
+		Handle(QIVtkSelectionPipeline) pipeline = it.Value();
+		pipeline->updatePrimaryPipeline(IVtk_DisplayMode::DM_Wireframe);
+		pipeline->Actor()->GetProperty()->SetRepresentationToPoints();
+		pipeline->Actor()->GetProperty()->SetPointSize(5);
+	}
+}
