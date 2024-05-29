@@ -79,7 +79,7 @@ void TreeStructure::buildBaseObjectsRepresentation() {
 		
 		QDomElement rootElement = this->docObjectModel.createElement(xmlTag);
 
-		PropertiesList propertiesList = this->parseJSONDocument(doc, xmlTag);
+		PropertiesList propertiesList = this->parseJsonDocument(doc, xmlTag);
 		this->addProperties(rootElement, propertiesList);
 
 		QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
@@ -278,7 +278,7 @@ void TreeStructure::renameItem(QTreeWidgetItem* item){
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
-	Qt::ItemFlags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled ){
+	Qt::ItemFlags flags){
 	if(!parentItem){
 		qWarning("Can only add node to a parent.");
 		return;
@@ -291,7 +291,7 @@ void TreeStructure::addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const Q
 	
 	QString defaultPropsPath = AppDefaults::getInstance().getDefaultPropertiesPath();
     rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
-    PropertiesList propList = parseJSONDocument(doc, XMLTags.value(xmlTag));
+    PropertiesList propList = parseJsonDocument(doc, XMLTags.value(xmlTag));
 	if(propList.isEmpty()){
 		qWarning("PropertiesList for created node is empty.");
 	}
@@ -299,7 +299,7 @@ void TreeStructure::addNode(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const Q
 	std::cout <<"New element name: " << newElement.attribute("name").toStdString() << std::endl;
 	QTreeWidgetItem* newItem = this->createTreeWidgetItem(newElement, parentItem);
     newItem->setText(static_cast<int>(Column::Label), newElement.attribute("name"));
-
+	newItem->setFlags(flags);
     domElements.value(parentItem).appendChild(newElement);
 
 	auto propsChildElem = newElement.childNodes().at(0).toElement();
