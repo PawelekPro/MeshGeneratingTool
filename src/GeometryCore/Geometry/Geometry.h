@@ -4,11 +4,7 @@
 #include <array>
 #include "STEPImporter.h"
 #include "STLImporter.h"
-#include "GeometryImporter.h"
 #include "TagMap.h"
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <TopTools_DataMapOfIntegerShape.hxx>
-
 
 namespace GeometryCore {
 
