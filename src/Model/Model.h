@@ -23,8 +23,6 @@
 #include "Geometry.h"
 #include "Mesh.h"
 
-#include <TopoDS_Shape.hxx>
-
 #ifdef _WIN32
 #include <gmsh.h_cwrap>
 #endif
@@ -34,20 +32,9 @@
 #endif
 
 
-#include <algorithm>
-#include <vector>
-
-#include <vtkActor.h>
-#include <vtkCellArray.h>
-#include <vtkPoints.h>
-#include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkDataSetMapper.h>
-#include <vtkIdTypeArray.h>
 
 class Model {
-public:
+	public:
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
@@ -55,26 +42,20 @@ public:
 	Model(std::string modelName);
 	~Model();
 
-	void updateParts();
+	//--------Geometry interface-----// 
+    void importSTEP(const std::string& filePath, QWidget* progressBar);
+    void importSTL(const std::string& filePath, QWidget* progressBar);
 
-	void meshParts();
-	void updateMeshActor();
+	//--------Meshing interface-----// 
+	void meshSurface();
+	void meshVolume();
+	vtkSmartPointer<vtkActor> getMeshActor();
 
-	void addFaceSizing(vtkSmartPointer<vtkActor> edgeActor);
-	void addEdgeSizing(vtkSmartPointer<vtkActor> faceActor);
+	void addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
+   
 
-	vtkSmartPointer<vtkPolyData> createMeshVtkPolyData();
-	vtkSmartPointer<vtkActor> meshActor;
-
-private:
-	enum class ElementType : int {
-		TETRA = 4,
-		TRIANGLE = 2,
-		LINE = 1,
-		POINT = 15,
-	};
-	vtkSmartPointer<vtkUnstructuredGrid> gridData;
-	vtkSmartPointer<vtkPolyData> polyData;
+	private:
+		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 
 #endif // MODEL_H

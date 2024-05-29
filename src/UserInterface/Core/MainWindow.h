@@ -96,6 +96,11 @@ public:
 	void showMesh();
 
 	/**
+	 * @brief  When mesh view is disabled -> add Model geometry actor to renderer
+	 */
+	void showGeometry();
+
+	/**
 	 * @brief  Get access to progress bar.
 	 *
 	 * @return {ProgressBar*}  : Progress bar instance.

@@ -4,33 +4,32 @@
 #include <array>
 #include "STEPImporter.h"
 #include "STLImporter.h"
-#include "GeometryImporter.h"
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <TopTools_DataMapOfIntegerShape.hxx>
+#include "TagMap.h"
 
 namespace GeometryCore {
-    enum class EntityType : int {
-        Vertex = 0,
-        Line = 1,
-        Face = 2,
-        Solid = 3,
-        NumEntityTypes = 4
-    };
 
     using namespace std::string_literals;
     using PartsMap = std::map<std::string, TopoDS_Shape>;
 
     class Geometry {
     public:
+        Geometry();
+        ~Geometry();
         const PartsMap& getShapesMap() const {return this->_shapesMap;};
 
         void importSTEP(const std::string& filePath, QWidget* progressBar);
         
         void importSTL(const std::string& filePath, QWidget* progressBar);
+
+        std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
+
         
     private:
         PartsMap _shapesMap;
+        TagMap _tagMap;
     };
+
+    // Geometry utils 
 };
 
 

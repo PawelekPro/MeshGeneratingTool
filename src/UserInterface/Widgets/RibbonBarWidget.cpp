@@ -72,12 +72,26 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 
 	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
-
+	
 	SARibbonCategory* page2 = new SARibbonCategory();
 	page2->setCategoryName("Mesh");
 	bar->addCategoryPage(page2);
 
-	/* ================================================================
+	SARibbonPannel* sizeFieldPanel
+		= new SARibbonPannel("Size fields", page2);
+	page2->addPannel(sizeFieldPanel);
+
+	QActionGroup* sizeFieldGroup = new QActionGroup(this);
+	sizeFieldGroup->setExclusive(true);
+
+	QAction* elementSizeAct = createAction("elementSize", ":/icons/icons/Selection_face.svg");
+	elementSizeAct->setIconText("Element Size");
+	sizeFieldGroup->addAction(elementSizeAct); // Dodanie akcji do grupy
+	sizeFieldPanel->addLargeAction(elementSizeAct);
+	connect(sizeFieldGroup, &QActionGroup::triggered, this,
+	&RibbonBarWidget::onPressedSizeField);
+
+  /* ================================================================
 	Display page
 	===================================================================*/
 	SARibbonCategory* page3 = new SARibbonCategory();
@@ -240,4 +254,13 @@ void RibbonBarWidget::onViewRepresentationChanged(QAction* action) {
 	}
 
 	_QVTKRender->RenderScene();
+
+//----------------------------------------------------------------------------
+void RibbonBarWidget::onPressedSizeField(QAction* action){
+	const QString& actionText = action->text();
+	
+	if (actionText == "elementSize"){
+		// this->_QVTKRender->model->addEdgeSizing()
+	}
+
 }

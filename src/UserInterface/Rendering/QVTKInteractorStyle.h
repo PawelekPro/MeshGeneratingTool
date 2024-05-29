@@ -25,6 +25,8 @@ namespace Rendering {
 class QVTKRenderWindow;
 };
 
+#include <functional>
+
 #include "QIVtkSelectionPipeline.h"
 #include "QVTKRenderWindow.h"
 
@@ -128,6 +130,7 @@ public:
 	 * @return A list of handles to the QIVtkSelectionPipelines.
 	 */
 	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines();
+	void removePipelines();
 
 	// Overriding
 public:
@@ -192,6 +195,7 @@ private:
 	 * @param select Whether to perform multiple selection (default is false).
 	 */
 	void OnSelection(const Standard_Boolean = Standard_False);
+	std::vector<TopoDS_Shape> getVectorOfSelectedShapes();
 
 private:
 	// ! Pointer to the context menu
@@ -199,6 +203,9 @@ private:
 
 	// ! Pointer to the "Fit View" action.
 	QPointer<QAction> _fitViewAction;
+	QPointer<QAction> _addSizingAction;
+	// QPointer<QAction> _edgeSizingAction;
+
 
 	// ! Smart pointer to the VTK renderer.
 	vtkSmartPointer<vtkRenderer> _renderer;
@@ -217,6 +224,8 @@ private:
 
 	// ! Current selection mode.
 	IVtk_SelectionMode _currentSelection;
+
+	std::vector<std::reference_wrapper<const TopoDS_Shape>> _selectedShapes;
 };
 
 #endif
