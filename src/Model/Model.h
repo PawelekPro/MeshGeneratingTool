@@ -53,6 +53,8 @@ class Model {
 	void meshVolume();
 	vtkSmartPointer<vtkActor> getMeshActor();
 
+	void fetchMeshProperties();
+
 	void addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
    
 

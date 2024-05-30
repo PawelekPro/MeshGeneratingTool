@@ -320,3 +320,39 @@ void TreeStructure::addMeshSizing() {
 	QTreeWidgetItem* meshParentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
 	addSubItem(meshParentItem, XMLTag::MeshSizing, baseName);
 }
+
+
+PropertiesList TreeStructure::getRootProperties(TreeRoot root){
+	QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
+	QDomElement rootElement = domElements.value(rootItem);
+	QDomNodeList elementNodeList = rootElement.childNodes();
+	PropertiesList propertiesList;
+	for (int i = 0; i < elementNodeList.count(); ++i) {
+		QDomNode node = elementNodeList.at(i);
+		if (node.isElement()) {
+			QDomElement element = node.toElement();
+			if (element.tagName() == "Properties") {
+				QDomNodeList properties = element.childNodes();
+				for (int j = 0; j < properties.count(); ++j) {
+					QDomNode propertyNode = properties.at(j);
+					if (propertyNode.isElement()) {
+						QDomElement propertyElement = propertyNode.toElement();
+						QString propertyName = propertyElement.tagName();
+						QString propertyValue = propertyElement.text();
+						
+						QMap<QString, QString> propertyMap;
+						propertyMap.insert(propertyName, propertyValue);
+						propertiesList.append(propertyMap);
+					}
+				}
+			}
+		}
+	}
+	return propertiesList;
+};
+
+
+QList<PropertiesList> TreeStructure::getItemsProperties(TreeRoot root, XMLTag itemTag){
+	QList<PropertiesList> list;
+	return list;
+};

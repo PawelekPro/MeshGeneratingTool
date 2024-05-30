@@ -59,6 +59,16 @@ PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
             this->_properties.append(propertyElement);
         }
     }
+	// connect(this, &PropertiesModel::dataChanged, this, [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
+    //         QDomNodeList list = this->_element.childNodes();
+    //         for (int i = 0; i < list.length(); ++i) {
+    //             QDomNode node = list.at(i);
+    //             if (node.isElement()) {
+    //                 QDomElement elem = node.toElement();
+    //                 std::cout << "Element: " << elem.tagName().toStdString() << ", Value: " << elem.text().toStdString() << std::endl;
+    //             }
+    //         }
+    //     });
 }
 
 //--------------------------------------------------------------------------------------

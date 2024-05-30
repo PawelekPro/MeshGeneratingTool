@@ -146,6 +146,23 @@ public:
 		// { "Actor", Qt::UserRole + 6 }
 	};
 
+	/**
+	 * Open an editor in the Name column of a TreeWidgetItem
+	 *
+	 * @param item item to be renamed
+	 *
+	 * @returns None
+	 */
+	PropertiesList getRootProperties(TreeRoot root);
+
+	/**
+	 * Open an editor in the Name column of a TreeWidgetItem
+	 *
+	 * @param item item to be renamed
+	 *
+	 * @returns None
+	 */
+	QList<PropertiesList> getItemsProperties(TreeRoot root, XMLTag itemTag);
 
 private:
 	void treeWidgetItemRenamed(QTreeWidgetItem* renamedItem,QString newName);
