@@ -9,14 +9,14 @@
             "label": "Named selection"
         }
     },
-    "CosInnego": {
+    "EntitySelection": {
         "0": {
-            "name": "test",
-            "label": "test"
+            "name": "edgeSelection",
+            "label": "Edge"
         },
         "1": {
-            "name": "test",
-            "label": "test"
+            "name": "faceSelection",
+            "label": "Face"
         }
     },
     "CosJeszczeInnego": {

@@ -150,6 +150,22 @@ void MainWindow::newModel() {
 	ui->actionGenerateMesh->setEnabled(true);
 }
 void MainWindow::generateMesh() {
+	PropertiesList propList = this->ui->treeWidget->getRootProperties(TreeStructure::TreeRoot::Mesh);
+	double minElementSize = 1;
+	double maxElementSize = 5;
+	for(auto& propMap : propList){
+		for (auto it = propMap.constBegin(); it != propMap.constEnd(); ++it) {
+			std::cout << it.key().toStdString() << ": " << it.value().toStdString() << std::endl;
+		}
+		if (propMap.value("name") == "minElementSize"){
+			minElementSize = propMap.value("value").toDouble();
+		}
+		if (propMap.value("name") == "maxElementSize"){
+			maxElementSize = propMap.value("value").toDouble();
+		}
+	}
+	std::cout << "Element sizes: " << minElementSize << "\t" << maxElementSize << std::endl;
+	this->model->fetchMeshProperties(minElementSize, maxElementSize);
 	this->model->meshSurface();
 	this->ui->treeWidget->addMeshSizing();
 }

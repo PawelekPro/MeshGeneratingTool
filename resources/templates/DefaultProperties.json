@@ -3,33 +3,25 @@
         "Properties": [
             {
                 "value": "0",
-                "name": "id0",
+                "name": "selectionScope",
                 "label": "Selection scope",
                 "widget": "ComboBoxWidget",
                 "hidden": "no",
-                "model": "SizeModelSelection"
+                "model": "EntitySelection"
             },
             {
-                "name": "id1",
-                "label": "Integer-type input",
-                "widget": "IntLineWidget",
-                "value": 420,
-                "hidden": "no",
-                "unit": "unit"
-            },
-            {
-                "name": "id2",
-                "label": "Double-type input",
-                "widget": "DoubleLineWidget",
-                "value": 2137.69,
-                "hidden": "no",
-                "unit": "unit"
-            },
-            {
-                "name": "id3",
-                "label": "Entity selection",
+                "name": "entitySelected",
+                "label": "Selected Entities",
                 "widget": "EntityPickWidget",
                 "value": ""
+            },
+            {
+                "name": "elementSize",
+                "label": "Element size",
+                "widget": "DoubleLineWidget",
+                "value": 1,
+                "hidden": "no",
+                "unit": "unit"
             }
         ]
     }
