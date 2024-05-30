@@ -17,9 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "AppInfo.h"
 #include "MainWindow.h"
 
 #include <QApplication>
+#include <QCoreApplication>
 #include <QLocale>
 #include <QTranslator>
 #include <QVTKOpenGLNativeWidget.h>
@@ -30,6 +32,9 @@ int main(int argc, char* argv[]) {
 	auto format = QVTKOpenGLNativeWidget::defaultFormat();
 	format.setProfile(QSurfaceFormat::CompatibilityProfile);
 	QSurfaceFormat::setDefaultFormat(format);
+
+	QCoreApplication::setOrganizationName(AppInfo::appName);
+	QCoreApplication::setApplicationName(AppInfo::appName);
 
 	QApplication application(argc, argv);
 

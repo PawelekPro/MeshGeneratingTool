@@ -21,9 +21,9 @@
 #define APPDEFAULTS_H
 
 #include "AppDefaultColors.h"
+#include "AppSettings.h"
 
 #include <QFile>
-#include <QSettings>
 
 #include <filesystem>
 #include <iostream>
@@ -142,14 +142,14 @@ private:
 
 private:
 	// Container for application settings
-	QSettings settings;
+	AppSettings _settings;
 
 	// Templates path
 	static const QString _templatesPath;
 	static const QString _comboBoxModelsPath;
 
 	// rapidjson document for ComboBoxModels JSON file
-	rapidjson::Document m_comboBoxModels;
+	rapidjson::Document _comboBoxModels;
 
 	AppDefaultColors _appDefaultColors;
 };

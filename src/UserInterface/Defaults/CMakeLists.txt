@@ -1,5 +1,6 @@
 ADD_LIBRARY(Defaults 
   AppDefaults.cpp
+  AppSettings.cpp
   AppDefaultColors.cpp
 )
 

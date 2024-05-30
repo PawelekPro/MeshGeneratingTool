@@ -24,19 +24,12 @@ const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/Combobox
 
 //--------------------------------------------------------------------------------------
 AppDefaults::AppDefaults()
-	: settings("settingsFile.ini", QSettings::IniFormat)
+	: _settings(AppSettings())
 	, _appDefaultColors(AppDefaultColors()) {
-
-	settings.beginGroup("ApplicationDefaults");
-	settings.setValue("Version", "1.0.0");
-	settings.setValue("ProjFileVersion", "1.0");
-	settings.setValue("Name", "MeshGeneratingTool");
-	// Space for more settings
-	settings.endGroup();
 
 	// Read JSON file representing combobox models
 	QString filePath = this->getComboBoxModelsPath();
-	this->readJSONFile(m_comboBoxModels, filePath);
+	this->readJSONFile(_comboBoxModels, filePath);
 }
 
 //--------------------------------------------------------------------------------------
@@ -60,14 +53,14 @@ void AppDefaults::readJSONFile(rapidjson::Document& doc, QString filePath) {
 
 //--------------------------------------------------------------------------------------
 rapidjson::Document* AppDefaults::getComboBoxModels() {
-	return &m_comboBoxModels;
+	return &_comboBoxModels;
 }
 
 //--------------------------------------------------------------------------------------
 QString AppDefaults::getValue(const QString& key) {
-	this->settings.beginGroup("ApplicationDefaults");
-	QString value = this->settings.value(key).toString();
-	this->settings.endGroup();
+	this->_settings.beginGroup(SettingsRoots::defaults);
+	QString value = this->_settings.value(key).toString();
+	this->_settings.endGroup();
 	return value;
 }
 
