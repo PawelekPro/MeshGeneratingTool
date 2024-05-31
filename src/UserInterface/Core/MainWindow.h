@@ -29,7 +29,10 @@
 #include "QVTKRenderWindow.h"
 
 #include "SARibbon.h"
+#include <QmlStyleUrlInterceptor.h>
+#include <QtAdvancedStylesheet.h>
 
+#include <QApplication>
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -121,6 +124,7 @@ private:
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 
+	acss::QtAdvancedStylesheet* _advancedStyleSheet;
 	/**
 	 * @brief Connect widgets to the methods.
 	 *

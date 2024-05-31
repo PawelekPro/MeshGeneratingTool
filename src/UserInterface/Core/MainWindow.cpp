@@ -23,7 +23,8 @@
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::MainWindow) {
+	, ui(new Ui::MainWindow)
+	, _advancedStyleSheet(new acss::QtAdvancedStylesheet(this)) {
 	ui->setupUi(this);
 
 	// Set initial sizes of the splitter sections
@@ -39,23 +40,24 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
-	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
-	// 	static_cast<int>(Rendering::Renderers::Main));
-
-	// this->buttonGroup.addButton(this->ui->facesSelectorButton,
-	// 	static_cast<int>(Rendering::Renderers::Faces));
-
-	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
-	// 	static_cast<int>(Rendering::Renderers::Edges));
-
 	this->setConnections();
 	this->initializeActions();
+
+	QString AppDir = qApp->applicationDirPath();
+	QString StylesDir = STYLES_DIR;
+	_advancedStyleSheet->setStylesDirPath(StylesDir);
+	_advancedStyleSheet->setOutputDirPath(AppDir + "/output");
+	_advancedStyleSheet->setCurrentStyle("qt_material");
+	_advancedStyleSheet->setDefaultTheme();
+	_advancedStyleSheet->updateStylesheet();
+	qApp->setStyleSheet(_advancedStyleSheet->styleSheet());
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
+	delete _advancedStyleSheet;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -114,7 +116,7 @@ void MainWindow::importSTEP(QString fileName) {
 	try {
 		this->model->importSTEP(filePath, this->progressBar);
 		const GeometryCore::PartsMap& shapesMap = model->geometry.getShapesMap();
-		for(auto shape : shapesMap){
+		for (auto shape : shapesMap) {
 			this->QVTKRender->addShapeToRenderer(shape.second);
 		}
 	} catch (std::filesystem::filesystem_error) {
@@ -175,7 +177,7 @@ void MainWindow::showMesh() {
 	this->QVTKRender->addActor(this->model->getMeshActor());
 	this->QVTKRender->RenderScene();
 }
-void MainWindow::showGeometry(){
+void MainWindow::showGeometry() {
 	this->QVTKRender->clearRenderer();
 	this->QVTKRender->addPipelinesToRenderer();
 	this->QVTKRender->RenderScene();
