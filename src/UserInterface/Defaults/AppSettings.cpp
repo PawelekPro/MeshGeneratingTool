@@ -22,7 +22,8 @@
 
 //--------------------------------------------------------------------------------------
 AppSettings::AppSettings()
-	: QSettings(QSettings::IniFormat, QSettings::UserScope, AppInfo::appName, AppInfo::appName) {
+	: QSettings(QSettings::IniFormat, QSettings::UserScope, AppInfo::appName, AppInfo::appName)
+	, _appColors(AppDefaultColors()) {
 
 	QString settingsPath = QDir::toNativeSeparators(
 		QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + ".ini");
@@ -32,6 +33,8 @@ AppSettings::AppSettings()
 		qDebug() << "Creating default settings.";
 		this->createDefaultSettings();
 	}
+
+	this->loadDefaultSettings();
 }
 
 //--------------------------------------------------------------------------------------
@@ -61,5 +64,35 @@ void AppSettings::createDefaultSettings() {
 	Graphics
 	===================================================================*/
 	this->beginGroup(SettingsRoots::graphics);
+
+	AppDefaultColors::GeomColorsArray colorsArr
+		= _appColors.getGeometryEntitiesColorArray(true);
+
+	int index = 0;
+	for (const QColor& color : colorsArr) {
+		QString colorVar = QString::fromStdString("color" + std::to_string(index++));
+		this->setValue(colorVar, color);
+	}
+
 	this->endGroup();
+}
+
+//--------------------------------------------------------------------------------------
+void AppSettings::loadDefaultSettings() {
+	this->beginGroup(SettingsRoots::graphics);
+
+	// Reading geometry colors stored in settings file
+	AppDefaultColors::GeomColorsArray colorsArr;
+	for (size_t index = 0; index < colorsArr.size(); ++index) {
+		QString colorVar = QString::fromStdString("color" + std::to_string(index));
+		QColor color = this->value(colorVar).value<QColor>();
+		colorsArr[index] = color;
+	}
+	_appColors.setGeometryEntitiesColorArray(colorsArr);
+	this->endGroup();
+}
+
+//--------------------------------------------------------------------------------------
+const AppDefaultColors::GeomColorsArray AppSettings::getGeometryColorsArray() {
+	return _appColors.getGeometryEntitiesColorArray();
 }

@@ -24,8 +24,7 @@ const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/Combobox
 
 //--------------------------------------------------------------------------------------
 AppDefaults::AppDefaults()
-	: _settings(AppSettings())
-	, _appDefaultColors(AppDefaultColors()) {
+	: _settings(AppSettings()) {
 
 	// Read JSON file representing combobox models
 	QString filePath = this->getComboBoxModelsPath();
@@ -91,5 +90,5 @@ const QString AppDefaults::getComboBoxModelsPath() {
 
 //--------------------------------------------------------------------------------------
 const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
-	return _appDefaultColors.getGeometryEntitiesColorArray();
+	return _settings.getGeometryColorsArray();
 }

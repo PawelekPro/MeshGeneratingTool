@@ -24,7 +24,7 @@ AppDefaultColors::AppDefaultColors() {
 
 	// Initialize default colors for geometry entities
 	// https://doc.qt.io/qt-6/qcolorconstants.html
-	_geomEntitiesColors = {
+	_defaultGeomEntitiesColors = {
 		QColor(200, 220, 230), //!< Isoline
 		Qt::green, //!< Free vertex
 		Qt::blue, //!< Shared vertex
@@ -37,6 +37,18 @@ AppDefaultColors::AppDefaultColors() {
 	};
 }
 
-const AppDefaultColors::GeomColorsArray AppDefaultColors::getGeometryEntitiesColorArray() {
-	return _geomEntitiesColors;
+//----------------------------------------------------------------------------
+const AppDefaultColors::GeomColorsArray
+AppDefaultColors::getGeometryEntitiesColorArray(bool defaultColors) {
+	if (defaultColors) {
+		return _defaultGeomEntitiesColors;
+	} else {
+		return _geomEntitiesColors;
+	}
+}
+
+//----------------------------------------------------------------------------
+void AppDefaultColors::setGeometryEntitiesColorArray(
+	AppDefaultColors::GeomColorsArray colorArray) {
+	_geomEntitiesColors = colorArray;
 }

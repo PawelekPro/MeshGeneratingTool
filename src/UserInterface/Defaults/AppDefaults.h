@@ -150,8 +150,6 @@ private:
 
 	// rapidjson document for ComboBoxModels JSON file
 	rapidjson::Document _comboBoxModels;
-
-	AppDefaultColors _appDefaultColors;
 };
 
 #endif

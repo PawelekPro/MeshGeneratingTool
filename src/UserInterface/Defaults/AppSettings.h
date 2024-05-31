@@ -21,6 +21,7 @@
 #ifndef APPSETTINGS_H
 #define APPSETTINGS_H
 
+#include "AppDefaultColors.h"
 #include "AppInfo.h"
 
 #include <QDir>
@@ -41,8 +42,15 @@ public:
 	explicit AppSettings();
 	~AppSettings() = default;
 
+public:
+	const AppDefaultColors::GeomColorsArray getGeometryColorsArray();
+
 private:
 	void createDefaultSettings();
+	void loadDefaultSettings();
+
+private:
+	AppDefaultColors _appColors;
 };
 
 #endif

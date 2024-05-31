@@ -32,9 +32,11 @@ public:
 	AppDefaultColors();
 	~AppDefaultColors() = default;
 
-	const GeomColorsArray getGeometryEntitiesColorArray();
+	const GeomColorsArray getGeometryEntitiesColorArray(bool defaultColors = false);
+	void setGeometryEntitiesColorArray(GeomColorsArray colorArray);
 
 private:
+	GeomColorsArray _defaultGeomEntitiesColors;
 	GeomColorsArray _geomEntitiesColors;
 };
 
