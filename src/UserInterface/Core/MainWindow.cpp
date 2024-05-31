@@ -47,10 +47,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Edges));
-
 	this->setConnections();
 	this->initializeActions();
 	Model::initializeGmsh();
+	newModel();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
@@ -74,10 +74,7 @@ void MainWindow::setConnections() {
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
-
-	connect(ui->actionNewModel, &QAction::triggered, [this]() {
-		newModel();
-	});
+		
 	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
 		generateMesh();
 	});
@@ -167,7 +164,6 @@ void MainWindow::generateMesh() {
 	std::cout << "Element sizes: " << minElementSize << "\t" << maxElementSize << std::endl;
 	this->model->fetchMeshProperties(minElementSize, maxElementSize);
 	this->model->meshSurface();
-	this->ui->treeWidget->addMeshSizing();
 }
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
