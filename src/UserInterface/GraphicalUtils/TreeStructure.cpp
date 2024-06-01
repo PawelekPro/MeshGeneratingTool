@@ -274,7 +274,21 @@ void TreeStructure::onItemChanged(QTreeWidgetItem* item, int column) {
 void TreeStructure::renameItem(QTreeWidgetItem* item){
 	this->editItem(item, 0);
 }
-
+void TreeStructure::removeSubItem(QTreeWidgetItem* item){
+	QDomElement element = domElements.value(item);
+	QString tag = element.tagName();
+	//To do remove items from model based on the tagName. For ex. remove imported parts if import item is removed.
+    if (!element.isNull()) {
+        QDomNode parentNode = element.parentNode();
+        if (!parentNode.isNull()) {
+            parentNode.removeChild(element);
+        }
+    }
+    int column = static_cast<int>(Column::Label);
+    this->removeItemWidget(item, column);
+    domElements.remove(item);
+    delete item;
+}
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addSubItem(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,

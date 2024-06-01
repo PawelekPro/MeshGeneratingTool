@@ -76,9 +76,13 @@ void TreeContextMenu::buildGeometryModelMenu(QMenu* menu) {
 }
 
 void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu, QTreeWidgetItem* item) {
-	menu->addAction("Add coordiante system");
+
 	renameAction = menu->addAction("Rename");
-    connect(renameAction, &QAction::triggered, [this, item]() {_treeWidget->renameItem(item); });}
+    connect(renameAction, &QAction::triggered, [this, item]() {_treeWidget->renameItem(item); });
+
+	removeItemAction = menu->addAction("Remove");
+	connect(removeItemAction, &QAction::triggered, [this, item](){_treeWidget->removeSubItem(item);});
+}
 
 void TreeContextMenu::buildMeshMenu(QMenu* menu) {
 	addSizingAction = menu->addAction("Add sizing");

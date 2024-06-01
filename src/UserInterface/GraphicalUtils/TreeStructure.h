@@ -102,6 +102,14 @@ public:
 	 *
 	 */
 	void addMeshSizing();
+	/**
+	 * Remove QTreeWidgetItem from the TreeStructure
+	 *
+	 * @param itemToRemove pointer to QTreeWidgetItem that will be removed
+	 *
+	 * @returns None
+	 */
+	void removeSubItem(QTreeWidgetItem* itemToRemove);
 
 	// Container for handling content of columns
 	enum class Column {
@@ -207,18 +215,19 @@ private:
 	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
 	 */
 	QTreeWidgetItem* getRootTreeWidgetItem(TreeRoot root);
-
-
 	/**
-	 * Adds a node to the data structure.
+	 * Adds a QTreeWidget item to TreeStructue and its QDomElement to main xml document
 	 *
-	 * @param name The name of the node to be added.
-	 * @param value The value associated with the node.
-	 *
+	 * @param parentItem Parent item of the newly created one.
+	 * @param xmlTag xml tag enum that will be used for marking the item in the xml and for parsing its proerties
+	 *  in the DefaultProperties.json
+	 * @param nodeBaseName base name for inserted name, folliwng names will be created with 1,2,... suffix
+	 * @param flags Flags of the newly created  QTreeWidget item. By default they are set to: 
+	 * Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled
 	 * @returns None
 	 */
 	void addSubItem(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
-		Qt::ItemFlags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		Qt::ItemFlags flags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 	/**
 	 * Adds properties of a model to a tree widget item.

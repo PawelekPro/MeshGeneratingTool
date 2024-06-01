@@ -52,6 +52,7 @@ private:
 	QAction* renameAction;
 	QAction* genereateMeshAction;
 	QAction* addSizingAction;
+	QAction* removeItemAction;
 };
 
 #endif
