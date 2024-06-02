@@ -53,10 +53,16 @@
    </item>
    <item row="2" column="4">
     <widget class="QPushButton" name="cancelButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>80</width>
-       <height>16777215</height>
+       <height>22</height>
       </size>
      </property>
      <property name="text">
@@ -70,10 +76,16 @@
    </item>
    <item row="2" column="0">
     <widget class="QPushButton" name="defaultsButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>80</width>
-       <height>16777215</height>
+       <height>22</height>
       </size>
      </property>
      <property name="text">
@@ -83,10 +95,16 @@
    </item>
    <item row="2" column="3">
     <widget class="QPushButton" name="applyButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>80</width>
-       <height>16777215</height>
+       <height>22</height>
       </size>
      </property>
      <property name="text">
@@ -101,7 +119,7 @@
    <item row="0" column="1" rowspan="2" colspan="4">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="generalPage">
       <layout class="QGridLayout" name="gridLayout_2">
@@ -364,6 +382,11 @@
           </item>
           <item row="2" column="1" rowspan="9">
            <widget class="QWidget" name="entityColorsWidget" native="true">
+            <property name="styleSheet">
+             <string notr="true">QWidget {
+	background-color: transparent;
+}</string>
+            </property>
             <layout class="QGridLayout" name="gridLayout_6">
              <property name="topMargin">
               <number>0</number>

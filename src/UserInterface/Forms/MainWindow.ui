@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1046</width>
-    <height>754</height>
+    <width>1107</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="font">
@@ -27,7 +27,7 @@
      <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="bottomMargin">
      <number>0</number>
@@ -152,10 +152,16 @@
           <property name="cursor">
            <cursorShape>ArrowCursor</cursorShape>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="tabPosition">
            <enum>QTabWidget::South</enum>
           </property>
           <widget class="QWidget" name="modelView">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <attribute name="title">
             <string>Model view</string>
            </attribute>
@@ -197,7 +203,7 @@
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>126</height>
+        <height>108</height>
        </size>
       </property>
      </widget>
@@ -209,7 +215,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1046</width>
+     <width>1107</width>
      <height>20</height>
     </rect>
    </property>

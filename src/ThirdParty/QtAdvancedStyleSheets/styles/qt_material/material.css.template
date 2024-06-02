@@ -78,8 +78,9 @@ QTextEdit,
 QLineEdit,
 QPushButton {
   color: {{primaryColor}};
+  min-height: 16px;
   background-color: {{secondaryDarkColor}};
-  border: 2px solid {{primaryColor}};
+  border: 1px solid {{primaryColor}};
   border-radius: 4px;
 }
 
@@ -226,7 +227,6 @@ QSpinBox::down-button:disabled {
 /*  QPushButton  */
 
 QPushButton {
-  text-transform: uppercase;
   margin: 0px;
   font-weight: bold;
 }
@@ -370,19 +370,8 @@ QGroupBox {
   background-color: {{secondaryColor}};
   border-radius: 4px;
   line-height: 13px;
-  text-transform: uppercase;
 }
 
-QGroupBox::title {
-  color: {{secondaryTextColor|opacity(0.4)}};
-  subcontrol-origin: margin;
-  subcontrol-position: top left;
-  padding: 0 15px;
-  margin-top: 10px;
-  background-color: {{secondaryDarkColor}};
-  background-color: transparent;
-  height: 20px;
-}
 
 /*  ------------------------------------------------------------------------  */
 /*  QRadioButton and QCheckBox labels  */
@@ -680,8 +669,6 @@ QMenuBar {
 }
 
 QMenuBar::item {
-  height: 30px;
-  padding: 8px;
   background-color: transparent;
   color: {{secondaryTextColor}};
 }
@@ -1171,7 +1158,7 @@ QDialog QToolButton:checked {
 QMainWindow::separator:vertical,
 QSplitter::handle:horizontal {
   image: url(icon:/primary/splitter-horizontal.svg);
-  width: px;
+  width: 6px;
 }
 
 QMainWindow::separator:horizontal,
