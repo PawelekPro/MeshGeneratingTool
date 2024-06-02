@@ -88,6 +88,13 @@ void MainWindow::setConnections() {
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
+
+
+	connect(this->ui->treeWidget->eventsHandler, &TreeWidgetEventHandler::entitySelectionConfirmed,
+	this, [this](){
+		emit this->ui->treeWidget->eventsHandler->entitiesNamesFetched("i am working!");
+		std::cout<<"connected";
+	});
 }
 
 //----------------------------------------------------------------------------
