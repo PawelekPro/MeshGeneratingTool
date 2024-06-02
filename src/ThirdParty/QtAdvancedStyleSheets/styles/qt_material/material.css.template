@@ -1,6 +1,7 @@
 /*  ------------------------------------------------------------------------  */
 /* QtMaterial - https://github.com/UN-GCPDS/qt-material
 /* By Yeison Cardona - GCPDS
+/* Modified by Paweł Gilewicz (2024-06-02)
 /*  ------------------------------------------------------------------------  */
 
 *{
@@ -80,8 +81,6 @@ QPushButton {
   background-color: {{secondaryDarkColor}};
   border: 2px solid {{primaryColor}};
   border-radius: 4px;
-  padding: 8px 16px ;
-  height: 18px;
 }
 
 QDateTimeEdit,
@@ -91,7 +90,6 @@ QTreeView,
 QListView,
 QLineEdit,
 QComboBox {
-  padding-left: 15px;
   border-radius: 0px;
   background-color: {{secondaryColor}};
   border-width: 0 0 2px 0;
@@ -102,7 +100,6 @@ QComboBox {
 
 QPlainTextEdit {
   border-radius: 4px;
-  padding: 8px 16px;
   background-color: {{secondaryDarkColor}};
   border: 1px solid {{secondaryColor}};
 }
@@ -116,14 +113,12 @@ QLineEdit:disabled {
   background-color: {{secondaryColor|opacity(0.75)}};
   border: 2px solid {{primaryColor|opacity(0.2)}};
   border-width: 0 0 2px 0;
-  padding: 8px 16px ;
   border-radius: 0px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
 
 QTextEdit {
-  padding: 8px;
   border-radius: 4px;
   background-color: {{secondaryColor}};
 }
@@ -150,7 +145,6 @@ QComboBox {
   border-radius: 0px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  height: 36px;
 }
 
 QComboBox:disabled {
@@ -234,10 +228,6 @@ QSpinBox::down-button:disabled {
 QPushButton {
   text-transform: uppercase;
   margin: 0px;
-  padding: 0px 16px;
-  height: 34px;
-  min-height: 34px;
-  max-height: 34px;
   font-weight: bold;
 }
 
@@ -248,7 +238,6 @@ QPushButton:pressed {
 }
 
 QPushButton:flat {
-  padding: 5px;
   margin: 0px;
   color: {{primaryColor}};
   border: none;
@@ -296,13 +285,11 @@ QTabBar::tab {
 
 QTabBar::tab:bottom,
 QTabBar::tab:top{
-  padding: 0 15px;
   height: 30px;
 }
 
 QTabBar::tab:left,
 QTabBar::tab:right{
-  padding: 15px 0;
   width: 30px;
 }
 
@@ -382,8 +369,6 @@ QTabBar::close-button:hover {
 QGroupBox {
   background-color: {{secondaryColor}};
   border-radius: 4px;
-  padding: 15px;
-  padding-top: 30px;
   line-height: 13px;
   text-transform: uppercase;
 }
@@ -404,7 +389,6 @@ QGroupBox::title {
 
 QRadioButton,
 QCheckBox {
-  spacing: 10px;
   color: {{secondaryTextColor}};
   line-height: 14px;
   height: 30px;
@@ -584,9 +568,6 @@ QDockWidget {
 
 QDockWidget::title {
   text-align: left;
-  padding-left: 35px;
-  padding: 3px;
-  margin-top: 4px;
 }
 
 /*  ------------------------------------------------------------------------  */
@@ -606,7 +587,7 @@ QComboBox::indicator:checked:selected {
 QComboBox::item,
 QCalendarWidget QMenu::item,
 QMenu::item {
-  height: 26px;
+  height: 12px;
   border: 8px solid transparent;
   color: {{secondaryTextColor}};
 }
@@ -939,15 +920,12 @@ QTableView {
 QTreeView,
 QListView {
   border-radius: 4px;
-  padding: 5px;
   margin: 0px;
 }
 
 QTableView::item,
 QTreeView::item,
 QListView::item {
-  padding: 5px;
-  min-height: 25px;
   color: {{secondaryTextColor}};
   selection-color: {{secondaryTextColor}}; /* For Windows */
   border-color: transparent;  /* Fix #34 */
@@ -1113,8 +1091,6 @@ QHeaderView::section {
   color: {{secondaryTextColor|opacity(0.7)}};
   text-transform: uppercase;
   background-color: {{secondaryColor}};
-  padding: 0 20px;
-  height: 35px;
   border-radius: 0px;
   border-right: 1px solid;
   border-bottom: 1px solid;
@@ -1192,15 +1168,16 @@ QDialog QToolButton:checked {
 /*  ------------------------------------------------------------------------  */
 /*  Grips  */
 
-
 QMainWindow::separator:vertical,
 QSplitter::handle:horizontal {
   image: url(icon:/primary/splitter-horizontal.svg);
+  width: px;
 }
 
 QMainWindow::separator:horizontal,
 QSplitter::handle:vertical {
   image: url(icon:/primary/splitter-vertical.svg);
+  height: 6px;
 }
 
 QSizeGrip {
