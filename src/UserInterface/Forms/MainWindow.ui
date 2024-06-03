@@ -27,7 +27,7 @@
      <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
      <number>0</number>
@@ -158,6 +158,9 @@
           <property name="tabPosition">
            <enum>QTabWidget::South</enum>
           </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
           <widget class="QWidget" name="modelView">
            <property name="styleSheet">
             <string notr="true"/>
@@ -173,12 +176,17 @@
              <number>0</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>2</number>
             </property>
             <property name="bottomMargin">
              <number>0</number>
             </property>
            </layout>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Page</string>
+           </attribute>
           </widget>
          </widget>
         </item>

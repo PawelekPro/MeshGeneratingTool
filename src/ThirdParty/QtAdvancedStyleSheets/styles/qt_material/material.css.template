@@ -285,18 +285,23 @@ QTabBar::tab {
 
 QTabBar::tab:bottom,
 QTabBar::tab:top{
-  height: 30px;
+    color: {{secondaryTextColor}};
+    text-transform: uppercase;
+    font-weight: bold;
+    background: transparent;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-left: 5px;
+    margin-bottom: 0px;
+    min-width: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 25px;
 }
 
 QTabBar::tab:left,
 QTabBar::tab:right{
   width: 30px;
-}
-
-QTabBar::tab:top:selected,
-QTabBar::tab:top:hover {
-  color: {{primaryColor}};
-  border-bottom: 2px solid {{primaryColor}};
 }
 
 QTabBar::tab:bottom:selected,
@@ -1174,3 +1179,79 @@ QSizeGrip {
   height: 16px;
 }
 
+/*  ------------------------------------------------------------------------  */
+/* RIBBON BAR WIDGETS */
+/*  ------------------------------------------------------------------------  */
+
+/*SARibbonTabBar*/
+SARibbonTabBar{
+    background-color: transparent;
+}
+
+SARibbonTabBar::tab {
+    color: {{secondaryTextColor}};
+    text-transform: uppercase;
+    font-weight: bold;
+    background: transparent;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-left: 5px;
+    margin-bottom: 0px;
+    min-width: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+SARibbonTabBar::tab:top{
+  height: 20px;
+}
+
+SARibbonTabBar::tab:selected {
+    background-color: {{secondaryColor}};
+    color: {{primaryColor}};
+    border-bottom: 2px solid {{primaryColor}};
+}
+
+SARibbonTabBar::tab:hover {
+    background-color: {{secondaryColor}};
+    color: {{primaryColor}};
+    border-bottom: 2px solid {{secondaryLightColor}};
+}
+
+SARibbonBar {
+  background-color: {{secondaryColor}};
+  color: {{secondaryTextColor}};
+  border: 0px;
+}
+
+
+SARibbonSeparatorWidget {
+  color: {{primaryColor}};
+  background-color: {{secondaryDarkColor}};
+  border: 1px solid {{secondaryColor}};
+}
+
+SARibbonCategory:focus{
+  outline: none;
+}
+SARibbonCategory{
+  background-color: {{secondaryColor}};
+  border: 0px;
+}
+
+SARibbonCategory > SARibbonSeparatorWidget {
+  color: {secondaryDarkColor};
+  margin-top:3px;
+  margin-bottom:3px;
+}
+
+SARibbonPannel {
+  background-color: transparent;
+  border: none;
+  color: {{secondaryTextColor}};
+}
+
+SARibbonPannelLabel {
+    background-color: transparent;
+    color: {{secondaryTextColor}};
+}

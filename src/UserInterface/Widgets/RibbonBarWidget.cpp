@@ -86,7 +86,7 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 
 	QAction* elementSizeAct = createAction("elementSize", ":/icons/icons/Selection_face.svg");
 	elementSizeAct->setIconText("Element Size");
-	sizeFieldGroup->addAction(elementSizeAct); // Dodanie akcji do grupy
+	sizeFieldGroup->addAction(elementSizeAct);
 	sizeFieldPanel->addLargeAction(elementSizeAct);
 	connect(sizeFieldGroup, &QActionGroup::triggered, this,
 		&RibbonBarWidget::onPressedSizeField);

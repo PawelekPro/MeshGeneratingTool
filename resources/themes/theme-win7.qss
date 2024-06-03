@@ -57,26 +57,6 @@ SARibbonPannel {
   color: #444444;
 }
 
-SARibbonPannel > QToolButton:hover {
-  border-radius: 5px;
-}
-
-SARibbonPannel > QToolButton:pressed {
-  border-radius: 5px;
-}
-
-SARibbonPannel > QToolButton {
-  border-radius: 5px;
-}
-
-SARibbonPannel > QActionGroup:pressed {
-  border-radius: 5px;
-}
-
-SARibbonPannel > QActionGroup {
-  border-radius: 5px;
-}
-
 /*SARibbonPannelLabel/
 
 SARibbonPannelLabel {
