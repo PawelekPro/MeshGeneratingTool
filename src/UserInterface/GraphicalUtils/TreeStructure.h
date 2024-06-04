@@ -23,6 +23,7 @@
 #include "AppDefaults.h"
 #include "PropertiesModel.h"
 #include "TreeContextMenu.h"
+#include "TreeWidgetEventHandler.h"
 
 class TreeContextMenu;
 
@@ -171,6 +172,8 @@ public:
 	 * @returns None
 	 */
 	QList<PropertiesList> getItemsProperties(TreeRoot root, XMLTag itemTag);
+
+	TreeWidgetEventHandler* eventHandler;
 
 private:
 	void treeWidgetItemRenamed(QTreeWidgetItem* renamedItem,QString newName);

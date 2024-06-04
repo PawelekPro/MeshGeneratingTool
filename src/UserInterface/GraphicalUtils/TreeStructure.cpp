@@ -21,7 +21,8 @@
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
-	: QTreeWidget(parent) {
+	: QTreeWidget(parent),
+	  eventHandler(new TreeWidgetEventHandler) {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
@@ -57,6 +58,7 @@ TreeStructure::~TreeStructure() {
 		}
 	}
 	domElements.clear();
+	delete eventHandler;
 }
 
 //--------------------------------------------------------------------------------------
@@ -150,7 +152,7 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem, X
 //--------------------------------------------------------------------------------------
 void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
 	const int role = Role.value(element.tagName());
-	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, this));
+	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, eventHandler, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection
 	item->setData(0, role, variantModel);

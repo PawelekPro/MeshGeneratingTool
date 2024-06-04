@@ -9,13 +9,9 @@ class TreeWidgetEventHandler : public QObject {
 
 public:
 
-public slots:
-    void entitySelectionConfirmed();  // Corrected the spelling mistake
-
-private slots:
-
 signals:
-    void entitiesNamesFetched(std::string name);
+    void entitySelectionConfirmed();
+    void sendEntitiesNames(const std::string& name);
 
 private:
 };

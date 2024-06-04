@@ -36,8 +36,10 @@ EntityPickWidget::EntityPickWidget(QWidget* parent)
 	_selectionButton->setFixedWidth(this->buttonWidth);
 	_selectionButton->hide();
 
+
 	connect(_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
 	this->setLayout(layout);
+
 }
 
 //----------------------------------------------------------------------------
@@ -50,6 +52,11 @@ EntityPickWidget::~EntityPickWidget() {
 void EntityPickWidget::setIndex(const QModelIndex& index) {
 	_index = index;
 	// ToDo: To be developed...
+	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
+	this->_eventHandler = model->eventHandler;
+
+
+	connect(this->_eventHandler, &TreeWidgetEventHandler::sendEntitiesNames, this, &EntityPickWidget::displayNames);
 }
 
 //----------------------------------------------------------------------------
@@ -78,9 +85,14 @@ void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
 		this->setSelected(true);
 	}
 	_selectionButton->show();
+	emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::setSelected(bool selected) {
 	_selected = selected;
+}
+
+void EntityPickWidget::displayNames(const std::string& name){
+	std::cout << "I am displaying names: " << name;
 }

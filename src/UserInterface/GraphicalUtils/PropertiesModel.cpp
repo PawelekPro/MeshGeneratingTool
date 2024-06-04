@@ -42,9 +42,10 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
+PropertiesModel::PropertiesModel(const QDomElement& element, TreeWidgetEventHandler* handler, QWidget* parent)
     : QAbstractTableModel(parent)
-    , _element(element) {
+    , _element(element)
+	, eventHandler(handler){
 
     this->_header << "Property"
                   << "Value";

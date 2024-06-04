@@ -20,6 +20,7 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
+#include "TreeWidgetEventHandler.h"
 #include "BaseWidget.h"
 #include "ComboBoxWidget.h"
 #include "DoubleLineWidget.h"
@@ -73,7 +74,7 @@ protected:
 class PropertiesModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	PropertiesModel(const QDomElement& element, QWidget* parent = nullptr);
+	PropertiesModel(const QDomElement& element, TreeWidgetEventHandler* handler, QWidget* parent = nullptr);
 	~PropertiesModel();
 
 	/**
@@ -143,6 +144,8 @@ public:
 	const QDomElement getProperty(int);
 
 	QWidget* getWidget(const QModelIndex&);
+
+	TreeWidgetEventHandler* eventHandler;
 
 private:
 	/**

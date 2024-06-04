@@ -21,6 +21,7 @@
 #define ENTITYPICKWIDHET_H
 
 #include "BaseWidget.h"
+#include "PropertiesModel.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -41,6 +42,7 @@ public:
 private:
 	void updateAppearance();
 
+	TreeWidgetEventHandler* _eventHandler;
 	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
@@ -57,6 +59,7 @@ signals:
 
 private slots:
 	void confirmSelection();
+	void displayNames(const std::string& name);
 };
 
 #endif

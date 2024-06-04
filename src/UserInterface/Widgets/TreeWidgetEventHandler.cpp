@@ -18,9 +18,3 @@
  */
 
 #include "TreeWidgetEventHandler.h"
-
-void TreeWidgetEventHandler::entitySelectionConfirmed(){
-    std::cout << "selection confirmed!";
-}
-
-
