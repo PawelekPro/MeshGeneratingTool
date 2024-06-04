@@ -51,12 +51,11 @@ EntityPickWidget::~EntityPickWidget() {
 //----------------------------------------------------------------------------
 void EntityPickWidget::setIndex(const QModelIndex& index) {
 	_index = index;
-	// ToDo: To be developed...
+
 	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
 	this->_eventHandler = model->eventHandler;
 
-
-	connect(this->_eventHandler, &TreeWidgetEventHandler::sendEntitiesNames, this, &EntityPickWidget::displayNames);
+	connect(this->_eventHandler, &TreeWidgetEventHandler::selectedEntitiesNamesFetched, this, &EntityPickWidget::displayNames);
 }
 
 //----------------------------------------------------------------------------

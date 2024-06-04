@@ -421,3 +421,8 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 		}
 	}
 }
+
+std::vector<std::reference_wrapper<const TopoDS_Shape>> QVTKInteractorStyle::getVectorOfSelectedShapes(){
+	std::vector<std::reference_wrapper<const TopoDS_Shape>> vector;
+	return vector;
+};

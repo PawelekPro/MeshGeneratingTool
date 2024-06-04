@@ -11,7 +11,7 @@ public:
 
 signals:
     void entitySelectionConfirmed();
-    void sendEntitiesNames(const std::string& name);
+    void selectedEntitiesNamesFetched(const std::string& name);
 
 private:
 };
