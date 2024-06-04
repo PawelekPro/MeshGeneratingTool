@@ -92,6 +92,15 @@ void EntityPickWidget::setSelected(bool selected) {
 	_selected = selected;
 }
 
-void EntityPickWidget::displayNames(const std::string& name){
-	std::cout << "I am displaying names: " << name;
+void EntityPickWidget::displayNames(const std::vector<std::string>& selectedNames){
+	std::string mergedNames = std::accumulate(
+			selectedNames.begin() + 1, 
+			selectedNames.end(), 
+			selectedNames[0], 
+			[](const std::string& a, const std::string& b) {
+				return a + "; " + b;
+			}
+		);
+    QString qMergedNames = QString::fromStdString(mergedNames);
+    _selectionLabel->setText(qMergedNames);
 }

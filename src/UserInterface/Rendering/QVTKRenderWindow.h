@@ -134,6 +134,13 @@ public:
 	 */
 	void clearRenderer();
 
+/**
+	 * @brief  Get interactor style (in order to interact with selected shapes outside renderWindow)
+	 *
+	 */
+	vtkSmartPointer<QVTKInteractorStyle> getInteractorStyle(){return _interactorStyle;};
+
+
 	QIVtkViewRepresentation* getViewRepresentation();
 
 public:

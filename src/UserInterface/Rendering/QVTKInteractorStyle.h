@@ -124,6 +124,11 @@ public:
 	 * @return The number of pipelines in the map.
 	 */
 	Standard_Integer getPipelinesMapSize();
+	/**
+	 * @brief Returns vector of referenc wrappers to selected TopoDS_Shapes.
+	 * 
+	 */
+	const std::vector<std::reference_wrapper<const TopoDS_Shape>>& getSelectedShapes();
 
 	/**
 	 * @brief Gets the list of pipelines.
@@ -196,11 +201,7 @@ private:
 	 */
 	void OnSelection(const Standard_Boolean = Standard_False);
 
-	/**
-	 * @brief Returns vector of referenc wrappers to selected TopoDS_Shapes.
-	 * 
-	 */
-	std::vector<std::reference_wrapper<const TopoDS_Shape>> getVectorOfSelectedShapes();
+
 
 private:
 	// ! Pointer to the context menu
