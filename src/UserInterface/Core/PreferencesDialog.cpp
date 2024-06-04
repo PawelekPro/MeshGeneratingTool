@@ -21,10 +21,17 @@
 #include "./ui_PreferencesDialog.h"
 
 //--------------------------------------------------------------------------------------
-PreferencesDialog::PreferencesDialog(QWidget* parent)
+PreferencesDialog::PreferencesDialog(QWidget* parent, acss::QtAdvancedStylesheet* styleSheet)
 	: QDialog(parent)
-	, ui(new Ui::PreferencesDialog) {
+	, ui(new Ui::PreferencesDialog)
+	, _advancedStyleSheet(styleSheet) {
 	ui->setupUi(this);
+
+	QComboBox* comboBox = this->ui->appThemeComboBox;
+	for (const auto& Theme : _advancedStyleSheet->themes()) {
+		comboBox->addItem(Theme);
+	}
+
 	this->intitializeColorProperties();
 }
 

@@ -23,6 +23,8 @@
 #include "AppDefaults.h"
 #include "ColorPickerWidget.h"
 
+#include <QtAdvancedStylesheet.h>
+
 #include <QColor>
 #include <QDialog>
 #include <QGridLayout>
@@ -36,12 +38,15 @@ QT_END_NAMESPACE
 class PreferencesDialog : public QDialog {
 	Q_OBJECT
 public:
-	explicit PreferencesDialog(QWidget* parent = nullptr);
+	explicit PreferencesDialog(QWidget* parent = nullptr, acss::QtAdvancedStylesheet* styleSheet = nullptr);
 	~PreferencesDialog();
 
 private:
-	Ui::PreferencesDialog* ui;
 	void intitializeColorProperties();
+
+private:
+	Ui::PreferencesDialog* ui;
+	acss::QtAdvancedStylesheet* _advancedStyleSheet;
 };
 
 #endif

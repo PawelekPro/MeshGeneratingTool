@@ -210,7 +210,7 @@ void MainWindow::onItemSelectionChanged() {
 }
 
 void MainWindow::onShowDialogButtonClicked() {
-	PreferencesDialog dialog(this);
+	PreferencesDialog dialog(this, _advancedStyleSheet);
 
 	// Show the dialog
 	dialog.exec();
