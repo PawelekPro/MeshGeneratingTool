@@ -75,6 +75,7 @@ void EntityPickWidget::confirmSelection() {
 		this->updateAppearance();
 	}
 	_selectionButton->hide();
+	emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------
@@ -84,7 +85,6 @@ void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
 		this->setSelected(true);
 	}
 	_selectionButton->show();
-	emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------
@@ -93,6 +93,7 @@ void EntityPickWidget::setSelected(bool selected) {
 }
 
 void EntityPickWidget::displayNames(const std::vector<std::string>& selectedNames){
+	std::cout <<"Size of selectedNames: " << selectedNames.size() << std::endl;
 	std::string mergedNames = std::accumulate(
 			selectedNames.begin() + 1, 
 			selectedNames.end(), 
@@ -102,5 +103,9 @@ void EntityPickWidget::displayNames(const std::vector<std::string>& selectedName
 			}
 		);
     QString qMergedNames = QString::fromStdString(mergedNames);
-    _selectionLabel->setText(qMergedNames);
+	if(qMergedNames.isEmpty()){
+		_selectionLabel->setText("");
+	}else{
+    	_selectionLabel->setText(qMergedNames);
+	}
 }

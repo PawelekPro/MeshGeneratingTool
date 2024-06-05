@@ -402,6 +402,7 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			// Get ids of cells for picked subshapes
 			IVtk_ShapeIdList aSubIds;
 			IVtk_ShapeIdList::Iterator aMetaIds(*selectedSubShapeIds);
+			_selectedShapes.clear();
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
 				const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());

@@ -90,13 +90,15 @@ void MainWindow::setConnections() {
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 
 
-	std::string name = "newname";
 	connect(this->ui->treeWidget->eventHandler, &TreeWidgetEventHandler::entitySelectionConfirmed,
-			this, [this, name]() {
+			this, [this]() {
 		std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes = 
 			this->QVTKRender->getInteractorStyle()->getSelectedShapes();
-		std::vector<std::string> names = this->model->geometry.getShapesNames(selectedShapes);
+		const std::vector<std::string> names = this->model->geometry.getShapesNames(selectedShapes);
 		emit this->ui->treeWidget->eventHandler->selectedEntitiesNamesFetched(names);
+		// for(auto name : names){
+		// 	std::cout << name << std::endl;
+		// }
 	});
 }
 
