@@ -106,7 +106,7 @@ void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selec
 	if (mutableIndex.model()) {
 		QAbstractItemModel* mutableModel
 			= const_cast<QAbstractItemModel*>(mutableIndex.model());
-		mutableModel->setData(mutableIndex, qMergedNames);
+		mutableModel->setData(mutableIndex, qMergedNames, Qt::DisplayRole);
 	} else {
 		qWarning() << "Invalid model in QModelIndex.";
 	}
