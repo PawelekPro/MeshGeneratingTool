@@ -22,6 +22,12 @@
                 "value": 1,
                 "hidden": "no",
                 "unit": "unit"
+            },
+            {
+                "name": "selectedTags",
+                "label": "Selected tags",
+                "hidden": "yes",
+                "value": 0
             }
         ]
     }

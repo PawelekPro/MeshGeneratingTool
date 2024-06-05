@@ -3,6 +3,7 @@
 
 #include <stdexcept> 
 #include <array>
+#include <map>
 
 #include <TopTools_DataMapOfShapeInteger.hxx>
 #include <TopTools_DataMapOfIntegerShape.hxx>
@@ -61,6 +62,10 @@ namespace GeometryCore {
             TopTools_DataMapOfShapeInteger _edgeTagMap;
             TopTools_DataMapOfShapeInteger _faceTagMap;
             TopTools_DataMapOfShapeInteger _solidTagMap;
+
+            std::map<std::string, int> _nameTagMap;
+            std::map<int, std::string> _tagNameMap;
+
 };
 }
 #endif
