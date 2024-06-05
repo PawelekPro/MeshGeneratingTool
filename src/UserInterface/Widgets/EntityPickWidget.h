@@ -59,7 +59,7 @@ signals:
 
 private slots:
 	void confirmSelection();
-	void displayNames(const std::vector<std::string>& selectedNames);
+	void updateSelectedNames(const std::vector<std::string>& selectedNames);
 };
 
 #endif

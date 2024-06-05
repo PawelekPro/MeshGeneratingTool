@@ -36,10 +36,8 @@ EntityPickWidget::EntityPickWidget(QWidget* parent)
 	_selectionButton->setFixedWidth(this->buttonWidth);
 	_selectionButton->hide();
 
-
 	connect(_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
 	this->setLayout(layout);
-
 }
 
 //----------------------------------------------------------------------------
@@ -55,13 +53,12 @@ void EntityPickWidget::setIndex(const QModelIndex& index) {
 	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
 	this->_eventHandler = model->eventHandler;
 
-	connect(this->_eventHandler, &TreeWidgetEventHandler::selectedEntitiesNamesFetched, this, &EntityPickWidget::displayNames);
+	connect(this->_eventHandler, &TreeWidgetEventHandler::selectedEntitiesNamesFetched, this, &EntityPickWidget::updateSelectedNames);
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::updateAppearance() {
 	if (_selected) {
-		_selectionLabel->setText("Selected");
 		_selectionButton->show();
 	} else {
 		_selectionLabel->setText("");
@@ -80,7 +77,6 @@ void EntityPickWidget::confirmSelection() {
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
-	// ToDo: Accept or reject entity selection
 	if (!_selected) {
 		this->setSelected(true);
 	}
@@ -92,20 +88,27 @@ void EntityPickWidget::setSelected(bool selected) {
 	_selected = selected;
 }
 
-void EntityPickWidget::displayNames(const std::vector<std::string>& selectedNames){
-	std::cout <<"Size of selectedNames: " << selectedNames.size() << std::endl;
-	std::string mergedNames = std::accumulate(
-			selectedNames.begin() + 1, 
-			selectedNames.end(), 
-			selectedNames[0], 
-			[](const std::string& a, const std::string& b) {
-				return a + "; " + b;
-			}
-		);
-    QString qMergedNames = QString::fromStdString(mergedNames);
-	if(qMergedNames.isEmpty()){
-		_selectionLabel->setText("");
-	}else{
-    	_selectionLabel->setText(qMergedNames);
+void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selectedNames){
+	QString qMergedNames = "";
+	if(!selectedNames.empty()){
+		std::string mergedNames = std::accumulate(
+					selectedNames.begin() + 1, 
+					selectedNames.end(), 
+					selectedNames[0], 
+					[](const std::string& a, const std::string& b) {
+						return a + "; " + b;
+					}
+				);
+		qMergedNames = QString::fromStdString(mergedNames);
+	}
+	QModelIndex mutableIndex = _index;
+	if (mutableIndex.model()) {
+		QAbstractItemModel* mutableModel
+			= const_cast<QAbstractItemModel*>(mutableIndex.model());
+		mutableModel->setData(mutableIndex, qMergedNames);
+	} else {
+		qWarning() << "Invalid model in QModelIndex.";
 	}
 }
+
+

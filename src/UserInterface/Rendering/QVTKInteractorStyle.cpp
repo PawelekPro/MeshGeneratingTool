@@ -239,6 +239,7 @@ void QVTKInteractorStyle::OnKeyPress() {
 			const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 			pipeline->Mapper()->Update();
 		}
+		_selectedShapes.clear();
 	}
 
 	this->Superclass::OnKeyPress();
