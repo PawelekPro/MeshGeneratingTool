@@ -171,7 +171,7 @@ public:
 	 *
 	 * @returns None
 	 */
-	QList<PropertiesList> getItemsProperties(TreeRoot root, XMLTag itemTag);
+	QMap<QString, PropertiesList> getItemsProperties(TreeRoot root, XMLTag itemTag);
 
 	TreeWidgetEventHandler* eventHandler;
 
