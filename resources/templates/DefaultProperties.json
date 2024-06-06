@@ -13,6 +13,7 @@
                 "name": "entitySelected",
                 "label": "Selected Entities",
                 "widget": "EntityPickWidget",
+                "hidden": "no",
                 "value": ""
             },
             {

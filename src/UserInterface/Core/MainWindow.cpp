@@ -95,10 +95,15 @@ void MainWindow::setConnections() {
 		std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes = 
 			this->QVTKRender->getInteractorStyle()->getSelectedShapes();
 		const std::vector<std::string> names = this->model->geometry.getShapesNames(selectedShapes);
-		emit this->ui->treeWidget->eventHandler->selectedEntitiesNamesFetched(names);
-		// for(auto name : names){
-		// 	std::cout << name << std::endl;
-		// }
+		std::vector<int> selectedTags;
+		for(auto shape : selectedShapes){
+			std::vector<int> newTags = this->model->geometry.getShapeVerticesTags(shape);
+			selectedTags.insert(selectedTags.end(), newTags.begin(), newTags.end());
+		}
+		std::sort(selectedTags.begin(), selectedTags.end());
+		auto last = std::unique(selectedTags.begin(), selectedTags.end());
+		selectedTags.erase(last, selectedTags.end());
+		emit this->ui->treeWidget->eventHandler->selectedEntitiesNamesFetched(names, selectedTags);
 	});
 }
 
