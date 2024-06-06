@@ -90,29 +90,22 @@ void EntityPickWidget::setSelected(bool selected) {
 }
 
 void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selectedNames){
-	QString qMergedNames = "";
-	if(!selectedNames.empty()){
-		std::string mergedNames = std::accumulate(
-					selectedNames.begin() + 1, 
-					selectedNames.end(), 
-					selectedNames[0], 
-					[](const std::string& a, const std::string& b) {
-						return a + "; " + b;
-					}
-				);
-		qMergedNames = QString::fromStdString(mergedNames);
-	}
-	QModelIndex mutableIndex = _index;
-	if (mutableIndex.model()) {
-		QAbstractItemModel* mutableModel
-			= const_cast<QAbstractItemModel*>(mutableIndex.model());
-		mutableModel->setData(mutableIndex, qMergedNames, Qt::DisplayRole);
-
-		QVariant newTagsVariant("testValue");
-		mutableModel->setProperty("selectedTags", newTagsVariant);
-	} else {
-		qWarning() << "Invalid model in QModelIndex.";
-	}
+	QString qMergedNames;
+    if (!selectedNames.empty()) {
+        std::string mergedNames = std::accumulate(
+            selectedNames.begin() + 1, 
+            selectedNames.end(), 
+            selectedNames[0], 
+            [](const std::string& a, const std::string& b) {
+                return a + "; " + b;
+            }
+        );
+        qMergedNames = QString::fromStdString(mergedNames);
+    }
+	QVariant namesVariant(qMergedNames);
+	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
+	model->setData(_index, namesVariant, Qt::DisplayRole);
+	model->setElementProperty(_index, "selectedTags", "1,2,3");
 }
 
 

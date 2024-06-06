@@ -56,6 +56,8 @@ public:
 		: QSortFilterProxyModel(parent) { }
 	~ModelFilter() = default;
 
+
+	
 protected:
 	/**
 	 * Determines if a row should be accepted by the filter.
@@ -142,6 +144,17 @@ public:
 	 * @return The QDomElement representing the property.
 	 */
 	const QDomElement getProperty(int);
+
+	/**
+	 * Returns the QDomElement corresponding to the property with the given integer identifier.
+	 *
+	 * @param row row of the changed property
+	 * @param name name of the property to change
+	 * @param value value to be assigned to the property
+	 * @return The QDomElement representing the property.
+	 */
+	void setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value);
+
 
 	QWidget* getWidget(const QModelIndex&);
 

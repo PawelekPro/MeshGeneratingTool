@@ -42,10 +42,11 @@ public:
 private:
 	void updateAppearance();
 
-	TreeWidgetEventHandler* _eventHandler;
+
 	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
+	TreeWidgetEventHandler* _eventHandler;
 	bool _selected;
 
 	// button width in pixels

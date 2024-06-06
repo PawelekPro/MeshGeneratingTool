@@ -160,6 +160,18 @@ const QDomElement PropertiesModel::getProperty(int row) {
 	return this->_properties.value(row);
 }
 
+void PropertiesModel::setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value) {
+	QDomNodeList propertyNodes = _element.childNodes();
+    for (int i = 0; i < propertyNodes.count(); ++i) {
+        QDomElement propertyElement = propertyNodes.at(i).toElement();
+        if (!propertyElement.isNull() && propertyElement.attribute("name") == name) {
+            propertyElement.firstChild().setNodeValue(value.toString());
+            break;
+        }
+    }
+	emit dataChanged(index, index);
+}
+
 //--------------------------------------------------------------------------------------
 QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
 	if (!index.isValid()) {
