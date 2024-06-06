@@ -1092,7 +1092,7 @@ QHeaderView::section {
   color: {{secondaryTextColor|opacity(0.7)}};
   text-transform: uppercase;
   background-color: {{secondaryColor}};
-  border-radius: 0px;
+  border-radius: 4px;
   border-right: 1px solid;
   border-bottom: 1px solid;
   border-color: {{secondaryDarkColor}};
