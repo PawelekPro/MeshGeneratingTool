@@ -377,6 +377,15 @@ QGroupBox {
   line-height: 13px;
 }
 
+QGroupBox::title {
+  background-color: {{secondaryColor}};
+  border-radius: 4px;
+  padding-top: 2px;
+  padding-left: 2px;
+  color: {{primaryColor}};
+  font-weight: bold;
+}
+
 
 /*  ------------------------------------------------------------------------  */
 /*  QRadioButton and QCheckBox labels  */
