@@ -41,12 +41,15 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
     gmsh::model::occ::synchronize();
 }
 
-void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
+void Model::addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
     for(const auto& shape : selectedShapes){
         const TopoDS_Shape& shapeRef =  shape.get();
         std::vector<int> vertexTags = geometry.getShapeVerticesTags(shape);
         mesh.addSizing(vertexTags, 0.1);
     }
+}
+void Model::addSizing(const std::vector<int>& verticesTags, double size){
+    mesh.addSizing(verticesTags, size);
 }
 
 void Model::meshSurface() {

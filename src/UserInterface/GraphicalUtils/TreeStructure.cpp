@@ -373,37 +373,42 @@ PropertiesList TreeStructure::getRootProperties(TreeRoot root) {
 }
 
 
-QMap<QString, PropertiesList> TreeStructure::getItemsProperties(TreeRoot root, XMLTag itemTag){
-	QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
-	QList<QTreeWidgetItem*> itemList = rootItem->takeChildren();
+QMap<QString, PropertiesList> TreeStructure::getItemsProperties(TreeRoot root, XMLTag itemTag) {
+    QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
+    if (!rootItem) {
+        qWarning() << "Root item is null.";
+        return QMap<QString, PropertiesList>();
+    }
 
-	QMap<QString, PropertiesList> resultMap;
+    QMap<QString, PropertiesList> resultMap;
 
-	for(int i = 0; i < itemList.size(); i++){
-		QDomElement element = domElements.value(itemList.at(i));
-		if(element.tagName() == XMLTags.value(itemTag)){
-			QString itemName = element.attribute("name");
-			QDomElement propertiesElement = element.childNodes().at(0).toElement();
-			QDomNodeList propNodes = propertiesElement.childNodes();
-			PropertiesList propertiesList;
-			for (int j = 0; j < propNodes.count(); ++j) {
-				QDomNode propertyNode = propNodes.at(j);
-				QMap<QString, QString> propertyMap;
-				if (propertyNode.isElement()) {
-					QDomElement propertyElement = propertyNode.toElement();
-					QDomNamedNodeMap attributes = propertyElement.attributes();
-					for (int k = 0; k < attributes.count(); ++k) {
-						QDomNode attribute = attributes.item(k);
-						QString propertyName = attribute.nodeName();
-						QString propertyValue = attribute.nodeValue();
-						propertyMap.insert(propertyName, propertyValue);
-					}
-					propertyMap.insert("value", propertyElement.text());
-					propertiesList.append(propertyMap);
-				}
+    for (int i = 0; i < rootItem->childCount(); ++i) {
+        QTreeWidgetItem* childItem = rootItem->child(i);
+        QDomElement element = domElements.value(childItem);
+        if (element.tagName() == XMLTags.value(itemTag)) {
+            QString itemName = element.attribute("name");
+            QDomElement propertiesElement = element.firstChildElement();
+            QDomNodeList propNodes = propertiesElement.childNodes();
+            PropertiesList propertiesList;
+
+            for (int j = 0; j < propNodes.count(); ++j) {
+                QDomNode propertyNode = propNodes.at(j);
+                if (propertyNode.isElement()) {
+                    QDomElement propertyElement = propertyNode.toElement();
+                    QMap<QString, QString> propertyMap;
+                    QDomNamedNodeMap attributes = propertyElement.attributes();
+                    for (int k = 0; k < attributes.count(); ++k) {
+                        QDomNode attribute = attributes.item(k);
+                        QString propertyName = attribute.nodeName();
+                        QString propertyValue = attribute.nodeValue();
+                        propertyMap.insert(propertyName, propertyValue);
+                    }
+                    propertyMap.insert("value", propertyElement.text());
+                    propertiesList.append(propertyMap);
+                }
             }
-			resultMap.insert(itemName, propertiesList);
-		}
-	}
-	return resultMap;
-};
+            resultMap.insert(itemName, propertiesList);
+        }
+    }
+    return resultMap;
+}
