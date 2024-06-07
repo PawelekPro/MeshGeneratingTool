@@ -156,20 +156,21 @@ public:
 	};
 
 	/**
-	 * Open an editor in the Name column of a TreeWidgetItem
+	 * Return PropertiesList of root node in the TreeStructure. Tree nodes are described using TreeRoot enum
+	 * @param root
 	 *
-	 * @param item item to be renamed
-	 *
-	 * @returns None
+	 * @returns  PropertiesList of a tree root
 	 */
 	PropertiesList getRootProperties(TreeRoot root);
 
 	/**
-	 * Open an editor in the Name column of a TreeWidgetItem
+	 * Get Map of all instances of item described by itemTag, where key is the items QDomElement name
+	 * and value is the PropertiesList of a given item
+	 * @param itemTag xmlTag of items to be found
+	 * @param root TreeRoot under which the items are placed
 	 *
-	 * @param item item to be renamed
-	 *
-	 * @returns None
+	 * @returns  Map of all instances of item described by itemTag, where key is the items QDomElement name
+	 * and value is the PropertiesList of a given item
 	 */
 	QMap<QString, PropertiesList> getItemsProperties(TreeRoot root, XMLTag itemTag);
 
@@ -279,8 +280,15 @@ private:
 	 */
 	QMap<QTreeWidgetItem*, QDomElement> domElements;
 
+	/**
+	 * Context menu that appears when item in TreeStructure is right-clicked
+	 */
 	TreeContextMenu* contextMenu;
 
+
+	/**
+	 * Generates new names for items created under the parentItem. Follows the pattern baseName_1, baseName_2..
+	 */
 	QString getUniqueElementNameForTag(QTreeWidgetItem* parentItem, XMLTag tag, const QString& baseName);
 
 	/**
