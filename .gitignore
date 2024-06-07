@@ -35,9 +35,6 @@
 build
 .vscode
 
-# Clang-format
-.clang-format
-
 # XML test file
 test.xml
 settingsFile.ini
