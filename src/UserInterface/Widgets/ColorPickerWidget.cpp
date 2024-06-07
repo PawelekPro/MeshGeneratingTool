@@ -30,7 +30,12 @@ ColorPickerWidget::ColorPickerWidget(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_selectionButton);
 
-	connect(_selectionButton, &QPushButton::clicked, this, &ColorPickerWidget::onSelectColorClicked);
+	connect(_selectionButton, &QPushButton::clicked,
+		this, &ColorPickerWidget::onSelectColorClicked);
+
+	QString aButtonStylesheet = QString("border: none;");
+	_selectionButton->setStyleSheet(aButtonStylesheet);
+
 	this->setValue(std::make_tuple(100, 100, 100));
 	this->setLayout(layout);
 }
