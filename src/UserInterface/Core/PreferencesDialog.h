@@ -43,10 +43,16 @@ public:
 
 private:
 	void intitializeColorProperties();
+	void updateThemeColorButtons();
+	void updateStyleSheet(QString theme);
+	void setConnections();
 
 private:
 	Ui::PreferencesDialog* ui;
 	acss::QtAdvancedStylesheet* _advancedStyleSheet;
+
+private slots:
+	void onApplyButtonClicked();
 };
 
 #endif

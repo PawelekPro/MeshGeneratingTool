@@ -33,11 +33,19 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, acss::QtAdvancedStylesheet
 	}
 
 	this->intitializeColorProperties();
+	this->updateThemeColorButtons();
+	this->setConnections();
 }
 
 //--------------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog() {
 	delete ui;
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::setConnections() {
+	connect(this->ui->appThemeComboBox, &QComboBox::currentTextChanged,
+		this, &PreferencesDialog::updateStyleSheet);
 }
 
 //--------------------------------------------------------------------------------------
@@ -60,4 +68,39 @@ void PreferencesDialog::intitializeColorProperties() {
 			}
 		}
 	}
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::updateThemeColorButtons() {
+	QGridLayout* appColorsLayout = qobject_cast<QGridLayout*>(ui->appColorsWidget->layout());
+	if (!appColorsLayout) {
+		qWarning() << "No QGridLayout found in QGroupBox!";
+		return;
+	}
+
+	const auto& ThemeColors = _advancedStyleSheet->themeColorVariables();
+	auto itc = ThemeColors.constBegin();
+	for (int i = 0; i < appColorsLayout->count(); ++i, ++itc) {
+		QWidget* widget = appColorsLayout->itemAt(i)->widget();
+		ColorPickerWidget* colorPicker = qobject_cast<ColorPickerWidget*>(widget);
+
+		if (colorPicker) {
+			QColor color = itc.value();
+			std::tuple<int, int, int> colorTuple(color.red(), color.green(), color.blue());
+			colorPicker->setValue(colorTuple);
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::updateStyleSheet(QString theme) {
+	_advancedStyleSheet->setCurrentTheme(theme);
+	_advancedStyleSheet->updateStylesheet();
+	qApp->setStyleSheet(_advancedStyleSheet->styleSheet());
+
+	this->updateThemeColorButtons();
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::onApplyButtonClicked() {
 }
