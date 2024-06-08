@@ -23,11 +23,11 @@
 #include <string>
 #include <QDebug>
 #include <QFile>
-#include <QtXml/QDomElement>
 #include <vtkLogger.h>
 
+using PropertiesList = QList<QMap<QString, QString>>;
+
 class JsonParser{
-    
     public:
         /**
          * Create rapidjson::Document object based on the path to .json file
@@ -36,23 +36,18 @@ class JsonParser{
         rapidjson::Document initJsonDocumnet(const QString& filePath);
         
         /**
-         * Parse top-level entry in the rapidjson::Document and create a QDomElement based on it.
+         * Parse "Properties" value in given JSON document for a specified entryTag in JSON for ex. Mesh
          * @param document rapidjson::Document to be parsed. Can be obtained using initJsonDocument method
-         * @param entryName Name of the top-level entry to be parsed.
+         * @param entryName Name of the entry to be parsed.
          */
-        QDomElement parseEntryProperties(const rapidjson::Document& document, const QString& entryTag);
-        
-        /**
-         * Parses entire json Document calling parseJsonDocumentEntry for each entry
-         * @param document rapidjson::Document to be parsed. Can be obtained using initJsonDocument method
-         */
-        QDomElement parseJsonDocument(const rapidjson::Document& document);
+        PropertiesList parseEntryProperties(const rapidjson::Document& document, const QString& entryTag);
 
     private:
         /**
-         * Helper method that creates a QDomElement based on rapidjson::array
-         * @param array
+         * Helper method that creates a QMap of attributes from json value (value in json is defined by {})
+         * @param jsonValue
          */
-        QDomElement createElementFromValue(const rapidjson::Value& jsonLine, const QString& newElementTag);
+        QMap<QString, QString> createPropertyMap(const rapidjson::Value& jsonValue);
 };
+
 #endif
