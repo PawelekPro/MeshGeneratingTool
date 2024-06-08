@@ -28,7 +28,7 @@
 #include "PreferencesDialog.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
-
+#include "DocumentHandler.h"
 #include "SARibbon.h"
 #include <QmlStyleUrlInterceptor.h>
 
