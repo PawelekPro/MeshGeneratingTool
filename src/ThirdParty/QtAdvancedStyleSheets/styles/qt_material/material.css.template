@@ -881,33 +881,35 @@ QToolBar::separator:vertical {
 /*  ------------------------------------------------------------------------  */
 /*  QToolButton  */
 
-QToolButton {
-  background: {{secondaryDarkColor}};
-  border: 0px;
-  height: 40px;
-  margin: 3px;
-  padding: 3px;
-  border-right: 10px solid {{secondaryDarkColor}};
-  border-left: 10px solid {{secondaryDarkColor}};
-}
+/*  Note: Not used!  */
+/*  QToolButton {
+    background: {{secondaryDarkColor}};
+    border: 0px;
+    height: 40px;
+    margin: 3px;
+    padding: 3px;
+    border-right: 10px solid {{secondaryDarkColor}};
+    border-left: 10px solid {{secondaryDarkColor}};
+  }
 
-QToolButton:hover {
-  background: {{secondaryLightColor}};
-  border-right: 10px solid {{secondaryLightColor}};
-  border-left: 10px solid {{secondaryLightColor}};
-}
+  QToolButton:hover {
+    background: {{secondaryLightColor}};
+    border-right: 10px solid {{secondaryLightColor}};
+    border-left: 10px solid {{secondaryLightColor}};
+  }
 
-QToolButton:pressed {
-  background: {{secondaryColor}};
-  border-right: 10px solid {{secondaryColor}};
-  border-left: 10px solid {{secondaryColor}};
-}
+  QToolButton:pressed {
+    background: {{secondaryColor}};
+    border-right: 10px solid {{secondaryColor}};
+    border-left: 10px solid {{secondaryColor}};
+  }
 
-QToolButton:checked {
-  background: {{secondaryLightColor}};
-  border-left: 10px solid {{secondaryLightColor}};
-  border-right: 10px solid {{primaryColor}};
-}
+  QToolButton:checked {
+    background: {{secondaryLightColor}};
+    border-left: 10px solid {{secondaryLightColor}};
+    border-right: 10px solid {{primaryColor}};
+  }
+*/
 
 /*  ------------------------------------------------------------------------  */
 /*  General viewers  */
@@ -1263,4 +1265,46 @@ SARibbonPannel {
 SARibbonPannelLabel {
     background-color: transparent;
     color: {{secondaryTextColor}};
+}
+
+SARibbonToolButton{
+    border: none;
+    color: {{secondaryTextColor}};
+    background-color: transparent;
+    border-radius: 5px;
+} 
+
+SARibbonToolButton:focus {
+  border: 1px solid {{primaryColor}};
+}
+
+SARibbonToolButton:pressed{
+    color: {{secondaryTextColor}};
+    background-color: {{secondaryDarkColor}};
+    border-radius: 5px;
+}
+SARibbonToolButton:checked{
+    color: {{secondaryTextColor}};
+    border: 1px solid {{primaryColor}};
+    background-color: {{secondaryDarkColor}};
+    border-radius: 5px;
+}
+SARibbonToolButton:hover {
+    color: {{secondaryTextColor}};
+    background-color: {{secondaryLightColor}};
+    border-radius: 5px;
+}
+
+QActionGroup {
+  background-color: transparent;
+  border-radius: 5px;
+}
+
+QActionGroup:pressed {
+  border-radius: 5px;
+}
+
+QActionGroup {
+  background-color: transparent;
+  border-radius: 5px;
 }

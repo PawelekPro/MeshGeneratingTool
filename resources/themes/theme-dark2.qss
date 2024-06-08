@@ -21,30 +21,6 @@ SARibbonPannel > SARibbonSeparatorWidget {
   color: #5d636a;
 }
 
-SARibbonPannel > QToolButton:hover {
-  background-color: #435c76;
-  border-radius: 5px;
-}
-
-SARibbonPannel > QToolButton:pressed {
-  background-color: #4a4f61;
-  border-radius: 5px;
-}
-
-SARibbonPannel > QToolButton {
-  background-color: transparent;
-  border-radius: 5px;
-}
-
-SARibbonPannel > QActionGroup:pressed {
-  border-radius: 5px;
-}
-
-SARibbonPannel > QActionGroup {
-  background-color: transparent;
-  border-radius: 5px;
-}
-
 /*SARibbonPannelOptionButton*/
 SARibbonPannelOptionButton {
   border:none;
@@ -96,31 +72,6 @@ SARibbonApplicationButton::menu-indicator {
 SARibbonCheckBox{
     color:#dadada;
     background-color:transparent;
-}
-
-/*SARibbonToolButton*/
-
-SARibbonToolButton{
-    border:none;
-    color:#dadada;
-    background-color: #2a2a2a;
-} 
-
-SARibbonToolButton:focus {
-  border: 1px solid #2a8db5;
-}
-SARibbonToolButton:pressed{
-    color:#dadada;
-    background-color: #435c76;
-}
-SARibbonToolButton:checked{
-    color:#dadada;
-    border: 1px solid #2a8db5;
-    background-color: #435c76;
-}
-SARibbonToolButton:hover {
-    color:#dadada;
-    background-color: #435c76;
 }
 
 /*SARibbonControlToolButton*/

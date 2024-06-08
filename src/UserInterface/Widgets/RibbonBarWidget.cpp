@@ -50,7 +50,7 @@ RibbonBarWidget::~RibbonBarWidget() {
 }
 
 void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
-	SARibbonCategory* page1 = new SARibbonCategory();
+	SARibbonCategory* page1 = new SARibbonCategory(this);
 	page1->setCategoryName("Home");
 	SARibbonPannel* pannel1 = new SARibbonPannel("pannel1", page1);
 	page1->addPannel(pannel1);
@@ -73,7 +73,7 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
 
-	SARibbonCategory* page2 = new SARibbonCategory();
+	SARibbonCategory* page2 = new SARibbonCategory(this);
 	page2->setCategoryName("Mesh");
 	bar->addCategoryPage(page2);
 
@@ -94,7 +94,7 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	/* ================================================================
 	  Display page
 	  ===================================================================*/
-	SARibbonCategory* page3 = new SARibbonCategory();
+	SARibbonCategory* page3 = new SARibbonCategory(this);
 	page3->setCategoryName("Display");
 	bar->addCategoryPage(page3);
 
@@ -138,7 +138,7 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	/* ================================================================
 	Selection page
 	===================================================================*/
-	SARibbonCategory* page4 = new SARibbonCategory();
+	SARibbonCategory* page4 = new SARibbonCategory(this);
 	page4->setCategoryName("Selection");
 	bar->addCategoryPage(page4);
 
