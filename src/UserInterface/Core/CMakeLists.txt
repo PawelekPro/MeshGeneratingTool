@@ -8,6 +8,7 @@ TARGET_LINK_LIBRARIES(Core PUBLIC
   ${VTK_LIBRARIES}
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Xml
   Defaults
   GraphicalUtils
   Rendering
