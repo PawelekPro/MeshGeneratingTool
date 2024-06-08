@@ -2,31 +2,27 @@
     "MeshSizing": {
         "Properties": [
             {
-                "value": "0",
                 "name": "selectionScope",
-                "label": "Selection scope",
-                "widget": "ComboBoxWidget",
                 "hidden": "no",
-                "model": "EntitySelection"
+                "widget": "ComboBoxWidget",
+                "model": "EntitySelection",
+                "value": "0"
             },
             {
                 "name": "entitySelected",
-                "label": "Selected Entities",
-                "widget": "EntityPickWidget",
                 "hidden": "no",
+                "widget": "EntityPickWidget",
                 "value": ""
             },
             {
                 "name": "elementSize",
-                "label": "Element size",
+                "hidden": "no",
                 "widget": "DoubleLineWidget",
                 "value": 1,
-                "hidden": "no",
                 "unit": "unit"
             },
             {
                 "name": "selectedTags",
-                "label": "Selected tags",
                 "hidden": "yes",
                 "value": 0
             }
