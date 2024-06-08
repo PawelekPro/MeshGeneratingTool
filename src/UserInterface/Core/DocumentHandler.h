@@ -20,6 +20,7 @@
 #define DOCUMENTHANDLER_H
 
 #include "JsonParser.h"
+#include "AppDefaults.h"
 
 #include <QMap>
 #include <QtXml/QDomDocument>
@@ -30,7 +31,6 @@
 class DocumentHandler{
     
     public:
-
         enum class RootTag{
             GeomImport,
             GeomModel,
@@ -41,24 +41,23 @@ class DocumentHandler{
             MeshSizing,
             STEPImport,
         };
-
-
-
         static const QMap<EntryTag, QString> entryTags;
         static const QMap<RootTag, QString> rootTags;
 
-        QDomElement& getRootElement(QString& rootName);
-
-
-        void addChildElement(QDomElement& parentElement);
-
+        void writeDocToXML(const std::string& savePath);
     private:
         /**
          * Main document of the application 
          */
-        QDomDocument _document;
+        QDomDocument _domDocument;
 
-        void addRootElement(const RootTag& rootTag);
+        void initializeDocument();
+
+        void addRootElement(const rapidjson::Document& document, RootTag& rootTag);
+
+        void addPropertiesToElement(QDomElement& element, const PropertiesList& propertiesList);
+
+        
 };
 
 

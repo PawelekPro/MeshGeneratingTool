@@ -47,9 +47,9 @@ MainWindow::MainWindow(QWidget* parent)
 	Model::initializeGmsh();
 	newModel();
 
-	JsonParser jsonParser;
-	const rapidjson::Document document = jsonParser.initJsonDocumnet(AppDefaults::getInstance().getDefaultPropertiesPath());
-	jsonParser.parseEntryProperties(document, DocumentHandler::entryTags.value(DocumentHandler::EntryTag::MeshSizing));
+	// JsonParser jsonParser;
+	// const rapidjson::Document document = jsonParser.initJsonDocumnet(AppDefaults::getInstance().getDefaultPropertiesPath());
+	// jsonParser.parseEntryProperties(document, DocumentHandler::entryTags.value(DocumentHandler::EntryTag::MeshSizing));
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {

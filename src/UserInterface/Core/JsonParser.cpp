@@ -16,10 +16,11 @@ rapidjson::Document JsonParser::initJsonDocumnet(const QString& filePath){
 		vtkLogF(ERROR, "Error parsing JSON file.");
 	}
 	return document;
-}
+};
 
-QDomElement JsonParser::parseEntryProperties(const rapidjson::Document& document, const QString& entryTag){
-    QDomElement element;    
+PropertiesList JsonParser::parseEntryProperties(const rapidjson::Document& document, const QString& entryTag){
+    
+    PropertiesList propertiesList;
 
     std::string entryNameStd = entryTag.toStdString();
     const char* entryName = entryNameStd.c_str();
@@ -27,14 +28,14 @@ QDomElement JsonParser::parseEntryProperties(const rapidjson::Document& document
     if (!document.HasMember(entryName) || 
         !document[entryName].IsObject()) {
         qWarning("Json document does not include entry: %s", qPrintable(entryName));
-        return element;
+        return propertiesList;
     }
 
     const rapidjson::Value& entrySection = document[entryName];
 
     if (!entrySection.HasMember("Properties") || !entrySection["Properties"].IsArray()) {
         qWarning("Entry does not have a valid Properties array");
-        return element;
+        return propertiesList;
     }
     const rapidjson::GenericArray<true, rapidjson::Value> propertiesArray = entrySection["Properties"].GetArray();
 
@@ -43,15 +44,14 @@ QDomElement JsonParser::parseEntryProperties(const rapidjson::Document& document
             qWarning("Property is not an object!");
             continue;
         }
-        QDomElement propertyElement = createElementFromValue(property, "property");
-        element.appendChild(propertyElement);
+        QMap<QString, QString> propertyMap = createPropertyMap(property);
+        propertiesList.append(propertyMap);
     };
-    return element;
-}
+    return propertiesList;
+};
 
-QDomElement JsonParser::createElementFromValue(const rapidjson::Value& jsonValue, const QString& newElementTag){
-    QDomElement element;
-    element.setTagName(newElementTag);
+QMap<QString, QString> JsonParser::createPropertyMap(const rapidjson::Value& jsonValue){
+    QMap<QString, QString> propertyMap;
 
     for(auto itr = jsonValue.MemberBegin();
             itr != jsonValue.MemberEnd();
@@ -62,8 +62,8 @@ QDomElement JsonParser::createElementFromValue(const rapidjson::Value& jsonValue
 
         QString name = QString::fromUtf8(nameChar);
         QString value = QString::fromUtf8(jsonValue.GetString());
-
-        element.setAttribute(name, value);
+        propertyMap.insert(name, value);
     }
-    return element;
-}
+    return propertyMap;
+};
+
