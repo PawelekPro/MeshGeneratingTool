@@ -2,6 +2,7 @@ ADD_LIBRARY(Core
   MainWindow.cpp
   PreferencesDialog.cpp
   DocumentHandler.cpp
+  JsonParser.cpp
 )
 
 TARGET_LINK_LIBRARIES(Core PUBLIC 
