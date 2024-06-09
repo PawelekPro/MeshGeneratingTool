@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -22,17 +22,17 @@
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
 	: QTreeWidget(parent),
-	  eventHandler(new TreeWidgetEventHandler) {
+	  eventHandler(new TreeWidgetEventHandler),
+	  documentHandler(new DocumentHandler) {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
 
-	this->addRootItems();
-
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	this->contextMenu = new TreeContextMenu(this);
 
-    connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemChanged);
+    connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemRenamed);
+	documentHandler->initializeDocument();
 	}
 
 //--------------------------------------------------------------------------------------
@@ -43,9 +43,9 @@ TreeStructure::~TreeStructure() {
 	#ifdef linux
 	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
-	this->writeDataToXML(xmlPath);
 
-	// error causing part of destructor
+	this->documentHandler->writeDocToXML("testHandler.xml");
+
 	for (auto& treeItem : domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
 		QDomElement element = domElements.value(treeItem);
@@ -62,49 +62,44 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addRootItems() {
-	QString rootPropertiesPath = AppDefaults::getInstance().getTemplatesPath();
-	rapidjson::Document doc = this->readJsonTemplateFile(rootPropertiesPath);
 
-	QDomElement docRootElement = this->docObjectModel.createElement(
-		AppDefaults::getInstance().getAppName());
-	docRootElement.setAttribute(
-		"version", AppDefaults::getInstance().getAppProjFileVersion());
+void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 
-	this->docObjectModel.appendChild(docRootElement);
+	QDomElement rootElement = this->documentHandler->createRootElement(rootTag);
+	QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
 
-	for (const auto& rootName : TreeRoots) {
-		QString xmlTag = rootName;
-		if (xmlTag.contains(" ")) {
-			xmlTag.remove(" ");
+	QString rootText = DocumentHandler::rootTags.value(rootTag);
+	rootItem->setText(static_cast<int>(Column::Label), rootText);
+	this->addPropertiesModel(rootElement, rootItem);
+}
+
+void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
+  								const DocumentHandler::EntryTag& entryTag,
+								const QString& itemBaseName,
+								Qt::ItemFlags flags){
+	if(!parentItem){
+		qWarning("Can only add sub item to existing parent item.");
+		return;
 		}
-		
-		QDomElement rootElement = this->docObjectModel.createElement(xmlTag);
+	QDomElement parentElement = domElements.value(parentItem);
+	QDomElement subElement = this->documentHandler->createSubElement(entryTag, parentElement);
 
-		PropertiesList propertiesList = this->parseJsonDocument(doc, xmlTag);
-		this->addProperties(rootElement, propertiesList);
+	QString subName = getUniqueElementNameForTag(parentItem, entryTag, itemBaseName);
+	subElement.attribute("name") = subName;
 
-		QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
-		rootItem->setText(static_cast<int>(Column::Label), rootName);
+	QTreeWidgetItem* newItem = this->createTreeWidgetItem(subElement, parentItem);
+    newItem->setText(static_cast<int>(Column::Label), subName);
+	newItem->setFlags(flags);
 
-		// This will parse only element with "Properties" tage name
-		auto propsChildElem = rootElement.childNodes().at(0).toElement();
-		this->addPropertiesModel(propsChildElem, rootItem);
-		docRootElement.appendChild(rootElement);
-	}
+	QDomElement subElementProperties = this->documentHandler->getElementsPropertiesElement(subElement);
+	this->addPropertiesModel(subElementProperties, newItem);
 }
 
 //--------------------------------------------------------------------------------------
-QList<QTreeWidgetItem*> TreeStructure::findTreeWidgetItems(
-	const QString& qString, Qt::MatchFlags flags) {
-	return this->findItems(qString, flags);
-}
 
-QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(TreeRoot root){
-	
-	QString rootName = TreeRoots.value(root);
+QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(const DocumentHandler::RootTag& rootTag){
+	QString rootName = DocumentHandler::rootTags.value(rootTag);
 	QList<QTreeWidgetItem*> itemList = this->findItems(rootName, Qt::MatchExactly); 
-
 	if(itemList.isEmpty()){
 		qErrnoWarning("Root TreeWidgetItem not initialized");
 	}else if(itemList.size()!=1){
@@ -116,7 +111,6 @@ QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(TreeRoot root){
 //--------------------------------------------------------------------------------------
 QTreeWidgetItem* TreeStructure::createTreeWidgetItem(const QDomElement& element, QTreeWidgetItem* parent) {
 	QTreeWidgetItem* item = nullptr;
-
 	if (parent) {
 		item = new QTreeWidgetItem(parent);
 	} else {
@@ -126,12 +120,17 @@ QTreeWidgetItem* TreeStructure::createTreeWidgetItem(const QDomElement& element,
 	return item;
 }
 
-QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem, XMLTag tag, const QString& baseName){
-	QDomNodeList rootElementChildNodes = domElements.value(parentItem).childNodes();
+QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
+												const DocumentHandler::EntryTag& entryTag,
+												const QString& baseName){
+	
+	QDomElement parentElement = domElements.value(parentItem);
+	QDomNodeList parentElementChildNodes = parentElement.childNodes();
 	QSet<QString> rootElementChildNames;
-	for(int i = 0; i < rootElementChildNodes.size(); ++i){
-		QDomElement child = rootElementChildNodes.at(i).toElement();
-        if (child.tagName() == XMLTags.value(tag)) {
+
+	for(int i = 0; i < parentElementChildNodes.size(); ++i){
+		QDomElement child = parentElementChildNodes.at(i).toElement();
+        if (child.tagName() == DocumentHandler::entryTags.value(entryTag)) {
             QString name = child.attribute("name");
             if (!name.isEmpty()) {
                 rootElementChildNames.insert(name);
@@ -148,8 +147,6 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem, X
 }
 //--------------------------------------------------------------------------------------
 
-
-//--------------------------------------------------------------------------------------
 void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
 	const int role = Role.value(element.tagName());
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, eventHandler, this));
@@ -159,115 +156,13 @@ void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetIt
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addProperties(QDomElement& parentElement, PropertiesList propertiesList) {
-	QDomElement propsElement = this->docObjectModel.createElement("Properties");
 
-	for (const QMap<QString, QString>& propertyMap : propertiesList) {
-		QDomElement elem = this->docObjectModel.createElement("property");
-
-		// Iterate through QMap to set attributes
-		for (const auto& key : propertyMap.keys()) {
-			if (key != "value") {
-				elem.setAttribute(key, propertyMap.value(key));
-			}
-		}
-
-		// Set the value of node
-		QDomText textNode = this->docObjectModel.createTextNode(propertyMap.value("value"));
-		elem.appendChild(textNode);
-
-		propsElement.appendChild(elem);
-	}
-	parentElement.appendChild(propsElement);
-}
-
-//--------------------------------------------------------------------------------------
-PropertiesList TreeStructure::parseJsonDocument(const rapidjson::Document& document, QString prop) {
-	// Initialize properties container
-	PropertiesList propertiesList;
-	std::string propName = prop.toStdString();
-	if (document.HasMember(propName.c_str()) && document[propName.c_str()].IsObject()) {
-		const rapidjson::Value& section = document[propName.c_str()];
-
-		if (section.HasMember("Properties")) {
-			const rapidjson::Value& propertiesArray = section["Properties"];
-
-			// Iterate through the elements of the "Properties" array
-			for (rapidjson::SizeType i = 0; i < propertiesArray.Size(); ++i) {
-				const rapidjson::Value& property = propertiesArray[i];
-
-				if (property.IsObject()) {
-					// Each QMap instance represents one property
-					QMap<QString, QString> propertyMap;
-
-					for (rapidjson::Value::ConstMemberIterator itr
-						 = property.MemberBegin();
-						 itr != property.MemberEnd(); ++itr) {
-						// Get the key and value
-						const char* key = itr->name.GetString();
-						const rapidjson::Value& value = itr->value;
-
-						// Insert key-value pair into the QMap
-						propertyMap[QString::fromUtf8(key)]
-							= QString::fromUtf8(value.GetString());
-					}
-					// Add the QMap to the QList
-					propertiesList.append(propertyMap);
-				}
-			}
-		}
-	}
-	return propertiesList;
-}
-
-//--------------------------------------------------------------------------------------
-rapidjson::Document TreeStructure::readJsonTemplateFile(const QString& jsonTemplatePath) {
-	QFile jsonFile(jsonTemplatePath);
-
-	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		vtkLogF(ERROR, "Failed to open ProjectSetup.json file.");
-	}
-
-	QByteArray jsonData = jsonFile.readAll();
-	jsonFile.close();
-
-	rapidjson::Document document;
-	document.Parse(jsonData.constData());
-
-	if (document.HasParseError()) {
-		vtkLogF(ERROR, "Error parsing JSON file.");
-	}
-
-	return document;
-}
-
-//--------------------------------------------------------------------------------------
-void TreeStructure::writeDataToXML(const std::string path) {
-	QFile file(QString::fromStdString(path));
-
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		qDebug() << "Failed to open file for writing.";
-		return;
-	}
-
-	QTextStream out(&file);
-	out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-
-	// Indentation of 4 spaces
-	this->docObjectModel.save(out, 4);
-
-	file.close();
-}
-
-
-
-//--------------------------------------------------------------------------------------
 void TreeStructure::treeWidgetItemRenamed(QTreeWidgetItem* renamedItem, QString newName) {
     QDomElement elementToRename = domElements.value(renamedItem);
 	elementToRename.setAttribute("name", newName);
 }
 
-void TreeStructure::onItemChanged(QTreeWidgetItem* item, int column) {
+void TreeStructure::onItemRenamed(QTreeWidgetItem* item, int column) {
     if (column == 0) {
 		QString newName = item->text(column);
         treeWidgetItemRenamed(item, newName);
@@ -276,6 +171,7 @@ void TreeStructure::onItemChanged(QTreeWidgetItem* item, int column) {
 void TreeStructure::renameItem(QTreeWidgetItem* item){
 	this->editItem(item, 0);
 }
+
 void TreeStructure::removeSubItem(QTreeWidgetItem* item){
 	QDomElement element = domElements.value(item);
 	QString tag = element.tagName();
@@ -293,122 +189,16 @@ void TreeStructure::removeSubItem(QTreeWidgetItem* item){
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addSubItem(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
-	Qt::ItemFlags flags){
-	if(!parentItem){
-		qWarning("Can only add node to a parent.");
-		return;
-		}
-	QDomElement parentElement = domElements.value(parentItem);
-	QString newName = getUniqueElementNameForTag(parentItem, xmlTag, nodeBaseName);
 
-   	QDomElement newElement = this->docObjectModel.createElement(XMLTags.value(xmlTag));
-    newElement.setAttribute("name", newName);
-	
-	QString defaultPropsPath = AppDefaults::getInstance().getDefaultPropertiesPath();
-    rapidjson::Document doc = this->readJsonTemplateFile(defaultPropsPath);
-    PropertiesList propList = parseJsonDocument(doc, XMLTags.value(xmlTag));
-	if(propList.isEmpty()){
-		QString warning = "PropertiesList for node: " + newName + " is empty";
-		qWarning() << warning;
-	}
-	addProperties(newElement, propList);
-	QTreeWidgetItem* newItem = this->createTreeWidgetItem(newElement, parentItem);
-    newItem->setText(static_cast<int>(Column::Label), newElement.attribute("name"));
-	newItem->setFlags(flags);
-    domElements.value(parentItem).appendChild(newElement);
-
-	auto propsChildElem = newElement.childNodes().at(0).toElement();
-	this->addPropertiesModel(propsChildElem, newItem);
-}
-
-
-
-void TreeStructure::loadGeometryFile(const QString fileName) {
-	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(TreeRoot::GeomModel);
-	this->addSubItem(parentItem, XMLTag::GeometryImport, fileName);
-	parentItem = getRootTreeWidgetItem(TreeRoot::GeomImport);
-	this->addSubItem(parentItem, XMLTag::GeometryImport, fileName);
+void TreeStructure::loadGeometryFile(const QString& fileName) {
+	QTreeWidgetItem* parentItem = getRootTreeWidgetItem(DocumentHandler::RootTag::GeomModel);
+	this->addSubItem(parentItem, DocumentHandler::EntryTag::STEPImport, fileName);
+	parentItem = getRootTreeWidgetItem(DocumentHandler::RootTag::GeomImport);
+	this->addSubItem(parentItem, DocumentHandler::EntryTag::STEPImport, fileName);
 }
 
 void TreeStructure::addMeshSizing() {
 	QString baseName = "Mesh sizing";
-	QTreeWidgetItem* meshParentItem = getRootTreeWidgetItem(TreeRoot::Mesh);
-	addSubItem(meshParentItem, XMLTag::MeshSizing, baseName);
-}
-
-
-PropertiesList TreeStructure::getRootProperties(TreeRoot root) {
-    QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
-    QDomElement rootElement = domElements.value(rootItem);
-    QDomNodeList elementNodeList = rootElement.childNodes();
-    PropertiesList propertiesList;
-
-    for (int i = 0; i < elementNodeList.count(); ++i) {
-        QDomNode node = elementNodeList.at(i);
-        if (node.isElement()) {
-            QDomElement element = node.toElement();
-            if (element.tagName() == "Properties") {
-                QMap<QString, QString> propertyMap;
-                QDomNodeList properties = element.childNodes();
-                for (int j = 0; j < properties.count(); ++j) {
-                    QDomNode propertyNode = properties.at(j);
-                    if (propertyNode.isElement()) {
-                        QDomElement propertyElement = propertyNode.toElement();
-                        QDomNamedNodeMap attributes = propertyElement.attributes();
-                        for (int k = 0; k < attributes.count(); ++k) {
-                            QDomNode attribute = attributes.item(k);
-                            QString propertyName = attribute.nodeName();
-                            QString propertyValue = attribute.nodeValue();
-                            propertyMap.insert(propertyName, propertyValue);
-                        }
-						propertyMap.insert("value", propertyElement.text());
-                		propertiesList.append(propertyMap);
-                    }
-                }
-            }
-        }
-    }
-    return propertiesList;
-}
-
-
-QMap<QString, PropertiesList> TreeStructure::getItemsProperties(TreeRoot root, XMLTag itemTag) {
-    QTreeWidgetItem* rootItem = getRootTreeWidgetItem(root);
-    if (!rootItem) {
-        qWarning() << "Root item is null.";
-        return QMap<QString, PropertiesList>();
-    }
-
-    QMap<QString, PropertiesList> resultMap;
-
-    for (int i = 0; i < rootItem->childCount(); ++i) {
-        QTreeWidgetItem* childItem = rootItem->child(i);
-        QDomElement element = domElements.value(childItem);
-        if (element.tagName() == XMLTags.value(itemTag)) {
-            QString itemName = element.attribute("name");
-            QDomElement propertiesElement = element.firstChildElement();
-            QDomNodeList propNodes = propertiesElement.childNodes();
-            PropertiesList propertiesList;
-
-            for (int j = 0; j < propNodes.count(); ++j) {
-                QDomNode propertyNode = propNodes.at(j);
-                if (propertyNode.isElement()) {
-                    QDomElement propertyElement = propertyNode.toElement();
-                    QMap<QString, QString> propertyMap;
-                    QDomNamedNodeMap attributes = propertyElement.attributes();
-                    for (int k = 0; k < attributes.count(); ++k) {
-                        QDomNode attribute = attributes.item(k);
-                        QString propertyName = attribute.nodeName();
-                        QString propertyValue = attribute.nodeValue();
-                        propertyMap.insert(propertyName, propertyValue);
-                    }
-                    propertyMap.insert("value", propertyElement.text());
-                    propertiesList.append(propertyMap);
-                }
-            }
-            resultMap.insert(itemName, propertiesList);
-        }
-    }
-    return resultMap;
+	QTreeWidgetItem* meshParentItem = getRootTreeWidgetItem(DocumentHandler::RootTag::Mesh);
+	addSubItem(meshParentItem, DocumentHandler::EntryTag::MeshSizing, baseName);
 }
