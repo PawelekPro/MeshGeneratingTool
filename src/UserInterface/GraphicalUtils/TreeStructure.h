@@ -28,8 +28,6 @@
 
 class TreeContextMenu;
 
-#include "document.h"
-#include "istreamwrapper.h"
 
 #include <filesystem>
 #include <fstream>
@@ -37,16 +35,10 @@ class TreeContextMenu;
 #include <string>
 
 #include <QDebug>
-#include <QFile>
 #include <QHeaderView>
 #include <QMap>
-#include <QPointer>
-#include <QSharedPointer>
-#include <QStringList>
-#include <QTextStream>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
 
 #include <vtkLogger.h>

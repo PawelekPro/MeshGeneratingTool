@@ -20,8 +20,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "ModelEventHandler.h"
-#include "DocumentHandler.h"
 #include "Geometry.h"
 #include "Mesh.h"
 
