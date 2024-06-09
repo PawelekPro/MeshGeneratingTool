@@ -211,8 +211,8 @@ void MainWindow::generateMesh() {
 		this->model->addSizing(verticesTags, size);
 	}
 
-	this->model->fetchMeshProperties(minElementSize, maxElementSize);
-	this->model->meshSurface();
+	// this->model->fetchMeshProperties(minElementSize, maxElementSize);
+	// this->model->meshSurface();
 }
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {

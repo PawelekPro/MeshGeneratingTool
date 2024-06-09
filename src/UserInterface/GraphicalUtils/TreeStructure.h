@@ -149,9 +149,6 @@ private:
 	QString getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 										const DocumentHandler::EntryTag& entryTag,
 										const QString& baseName);
-
-
-	void renameItem(QTreeWidgetItem* item);
 	/**
 	 * Changes the name in QDomElment tied to QTreeWidgetItem.
 	 *
