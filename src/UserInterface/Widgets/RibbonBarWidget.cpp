@@ -32,13 +32,7 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 	_ribbonBar->setRibbonStyle(SARibbonBar::RibbonStyleCompactThreeRow);
 	_ribbonBar->setApplicationButton(nullptr);
 
-#ifdef _WIN32
-	sa_set_ribbon_theme(_ribbonBar, SARibbonTheme::RibbonThemeOffice2021Blue);
-#endif
-
-#ifdef linux
-	sa_set_ribbon_theme(_ribbonBar, SARibbonTheme::RibbonThemeDark2);
-#endif
+	sa_set_ribbon_theme(_ribbonBar, SARibbonTheme::Default);
 
 	this->verticalLayout->setMenuBar(_ribbonBar);
 	buildRibbon(_ribbonBar);
@@ -175,24 +169,6 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	connect(selectionGroup, &QActionGroup::triggered, this,
 		&RibbonBarWidget::onEntitySelectionChanged);
 
-	/* ================================================================
-	Ribbon bar theme selection
-	===================================================================*/
-	mComboTheme = new QComboBox();
-	mComboTheme->addItem("Theme Win7", static_cast<int>(SARibbonTheme::RibbonThemeWindows7));
-	mComboTheme->addItem("Theme Office2013", static_cast<int>(SARibbonTheme::RibbonThemeOffice2013));
-	mComboTheme->addItem("Theme Office2016 Blue", static_cast<int>(SARibbonTheme::RibbonThemeOffice2016Blue));
-	mComboTheme->addItem("Theme Office2021 Blue", static_cast<int>(SARibbonTheme::RibbonThemeOffice2021Blue));
-	mComboTheme->addItem("Theme Dark", static_cast<int>(SARibbonTheme::RibbonThemeDark));
-	mComboTheme->addItem("Theme Dark2", static_cast<int>(SARibbonTheme::RibbonThemeDark2));
-	mComboTheme->setCurrentIndex(mComboTheme->findData(static_cast<int>(SARibbonTheme::RibbonThemeOffice2013)));
-	connect(mComboTheme,
-		QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this,
-		&RibbonBarWidget::onRibbonThemeComboBoxCurrentIndexChanged);
-	pannel2->addSeparator();
-	pannel2->addSmallWidget(mComboTheme);
-
 	SARibbonQuickAccessBar* qbar = _ribbonBar->quickAccessBar();
 	// qbar->addAction(createAction("undo", ":/icons/icons/undo.svg"));
 	// qbar->addAction(createAction("redo", ":/icons/icons/redo.svg"));
@@ -204,12 +180,6 @@ QAction* RibbonBarWidget::createAction(const QString& text, const QString& iconu
 	act->setIcon(QIcon(iconurl));
 	act->setObjectName(text);
 	return act;
-}
-
-void RibbonBarWidget::onRibbonThemeComboBoxCurrentIndexChanged(int index) {
-	SARibbonTheme t = static_cast<SARibbonTheme>(mComboTheme->itemData(index).toInt());
-	sa_set_ribbon_theme(_ribbonBar, t);
-	_ribbonBar->updateRibbonGeometry();
 }
 
 //----------------------------------------------------------------------------

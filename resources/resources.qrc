@@ -43,14 +43,7 @@
     <file>images/ArrowDown.png</file>
   </qresource>
   <qresource prefix="theme">
-    <file>themes/theme-win7.qss</file>
-    <file>themes/theme-office2021-blue.qss</file>
-    <file>themes/theme-office2016-blue.qss</file>
-    <file>themes/theme-office2013-em.qss</file>
-    <file>themes/theme-office2013.qss</file>
-    <file>themes/theme-dark2.qss</file>
-    <file>themes/theme-dark.qss</file>
-    <file>themes/office2013-px.qss</file>
+    <file>themes/default-theme.qss</file>
   </qresource>
   <qresource prefix="templates">
     <file>templates/ComboboxModels.json</file>
