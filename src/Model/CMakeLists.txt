@@ -1,6 +1,5 @@
 ADD_LIBRARY(Model 
     Model.cpp
-    ModelEventHandler.cpp
 )
 
 if(WIN32)
@@ -8,14 +7,14 @@ if(WIN32)
     ${GMSH_LIB}
     GeometryCore
     MeshCore
-    Core
+    Utils
 )
 else()
     TARGET_LINK_LIBRARIES(Model PUBLIC
     ${GMSH_LIB}
     GeometryCore
     MeshCore
-    Core
+    Utils
 )
 endif()
 

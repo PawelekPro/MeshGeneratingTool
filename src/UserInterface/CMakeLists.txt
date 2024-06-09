@@ -3,6 +3,7 @@ ADD_SUBDIRECTORY(Defaults)
 ADD_SUBDIRECTORY(GraphicalUtils)
 ADD_SUBDIRECTORY(Rendering)
 ADD_SUBDIRECTORY(Widgets)
+ADD_SUBDIRECTORY(Utils)
 
 ADD_LIBRARY(UserInterface)
 
@@ -15,4 +16,5 @@ TARGET_LINK_LIBRARIES(UserInterface PUBLIC
   GraphicalUtils
   Rendering
   Core
+  Utils
 )
