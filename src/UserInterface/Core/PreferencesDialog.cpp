@@ -27,6 +27,9 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, acss::QtAdvancedStylesheet
 	, _advancedStyleSheet(styleSheet) {
 	ui->setupUi(this);
 
+	// Getting acces to main window instance
+	_mainWindow = qobject_cast<MainWindow*>(parent->window());
+
 	QComboBox* comboBox = this->ui->appThemeComboBox;
 	for (const auto& Theme : _advancedStyleSheet->themes()) {
 		comboBox->addItem(Theme);
@@ -46,6 +49,12 @@ PreferencesDialog::~PreferencesDialog() {
 void PreferencesDialog::setConnections() {
 	connect(this->ui->appThemeComboBox, &QComboBox::currentTextChanged,
 		this, &PreferencesDialog::updateStyleSheet);
+
+	connect(this->ui->renBackgroundComboBox, &QComboBox::currentTextChanged,
+		this, &PreferencesDialog::onRenBackgroundComboBoxChanged);
+
+	connect(this->ui->applyButton, &QPushButton::clicked,
+		this, &PreferencesDialog::onApplyButtonClicked);
 }
 
 //--------------------------------------------------------------------------------------
@@ -103,4 +112,46 @@ void PreferencesDialog::updateStyleSheet(QString theme) {
 
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::onApplyButtonClicked() {
+	Rendering::QVTKRenderWindow* aRenWin = _mainWindow->getRenderWindow();
+	int index = this->ui->renBackgroundComboBox->currentIndex();
+	if (index == 0) {
+		aRenWin->setBackground(ui->firstRenColor->getColorAsDoubleArray());
+
+	} else {
+		const double* col1 = ui->firstRenColor->getColorAsDoubleArray();
+		const double* col2 = ui->secRenColor->getColorAsDoubleArray();
+		vtkRenderer::GradientModes mode;
+
+		switch (index) {
+		case 1:
+			mode = vtkRenderer::GradientModes::VTK_GRADIENT_VERTICAL;
+			break;
+		case 2:
+			mode = vtkRenderer::GradientModes::VTK_GRADIENT_HORIZONTAL;
+			break;
+		case 3:
+			mode = vtkRenderer::GradientModes::VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_SIDE;
+			break;
+		case 4:
+			mode = vtkRenderer::GradientModes::VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_CORNER;
+			break;
+		default:
+			qWarning() << "Wrong index!";
+			return;
+		}
+
+		aRenWin->setBackground(mode, col1, col2);
+	}
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::onRenBackgroundComboBoxChanged(QString text) {
+	if (text == "Single Color") {
+		this->ui->secRenColor->setEnabled(false);
+		this->ui->secRenColorLabel->setEnabled(false);
+
+	} else {
+		this->ui->secRenColor->setEnabled(true);
+		this->ui->secRenColorLabel->setEnabled(true);
+	}
 }

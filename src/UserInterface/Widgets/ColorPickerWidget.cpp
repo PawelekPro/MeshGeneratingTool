@@ -23,7 +23,8 @@
 ColorPickerWidget::ColorPickerWidget(QWidget* parent)
 	: BaseWidget(parent)
 	, _selectionButton(new QPushButton(this))
-	, _index(QModelIndex()) {
+	, _index(QModelIndex())
+	, _color(QColor()) {
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
@@ -65,6 +66,7 @@ void ColorPickerWidget::setValue(const std::tuple<int, int, int>& color) {
 	int r = std::get<0>(color);
 	int g = std::get<1>(color);
 	int b = std::get<2>(color);
+	_color.setRgb(r, g, b);
 
 	QColor aColor = QColor(r, g, b);
 	QString aStyleSheet = QString("background-color: %1").arg(aColor.name());
@@ -97,4 +99,13 @@ void ColorPickerWidget::onSelectColorClicked() {
 		QColor newColor = dlg.currentColor();
 		setValue(std::make_tuple(newColor.red(), newColor.green(), newColor.blue()));
 	}
+}
+
+//----------------------------------------------------------------------------
+double* ColorPickerWidget::getColorAsDoubleArray() {
+	_rgb[0] = _color.redF();
+	_rgb[1] = _color.greenF();
+	_rgb[2] = _color.blueF();
+
+	return _rgb;
 }

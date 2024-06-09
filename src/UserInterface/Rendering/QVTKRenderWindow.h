@@ -136,6 +136,10 @@ public:
 
 	QIVtkViewRepresentation* getViewRepresentation();
 
+	void setBackground(
+		vtkRenderer::GradientModes mode, const double* col1 = nullptr, const double* col2 = nullptr);
+	void setBackground(const double* col1 = nullptr);
+
 public:
 	std::shared_ptr<Model> model;
 
@@ -160,7 +164,7 @@ private:
 
 	// ! IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
-  
+
 	// ! Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 

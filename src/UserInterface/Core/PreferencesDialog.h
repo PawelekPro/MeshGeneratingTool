@@ -20,8 +20,10 @@
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
+class MainWindow;
 #include "AppDefaults.h"
 #include "ColorPickerWidget.h"
+#include "MainWindow.h"
 
 #include <QtAdvancedStylesheet.h>
 
@@ -50,9 +52,11 @@ private:
 private:
 	Ui::PreferencesDialog* ui;
 	acss::QtAdvancedStylesheet* _advancedStyleSheet;
+	MainWindow* _mainWindow;
 
 private slots:
 	void onApplyButtonClicked();
+	void onRenBackgroundComboBoxChanged(QString text);
 };
 
 #endif

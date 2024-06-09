@@ -40,8 +40,6 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_rendererWindow->AddRenderer(_renderer);
 	_renderer->SetBackground(colors->GetColor3d("LightSlateGray").GetData());
 
-	// _vtkWidget->setFocusPolicy(Qt::StrongFocus);
-
 	this->generateCoordinateSystemAxes();
 	this->setWaterMark();
 
@@ -212,4 +210,19 @@ void Rendering::QVTKRenderWindow::setSelectionMode(IVtk_SelectionMode mode) {
 //----------------------------------------------------------------------------
 QIVtkViewRepresentation* Rendering::QVTKRenderWindow::getViewRepresentation() {
 	return _qIVtkViewRepresentation;
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setBackground(
+	vtkRenderer::GradientModes mode, const double* col1, const double* col2) {
+	_renderer->GradientBackgroundOn();
+	_renderer->SetGradientMode(mode);
+	_renderer->SetBackground(col1);
+	_renderer->SetBackground2(col2);
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setBackground(const double* col1) {
+	_renderer->GradientBackgroundOff();
+	_renderer->SetBackground(col1);
 }
