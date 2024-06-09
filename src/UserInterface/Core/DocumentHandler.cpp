@@ -32,45 +32,84 @@ void DocumentHandler::writeDocToXML(const std::string& savePath){
 void DocumentHandler::initializeDocument(){
 
     JsonParser parser;
-    rapidjson::Document jsonDocument = parser.initJsonDocumnet(
+    this->_rootElementsDocument = parser.initJsonDocumnet(
         AppDefaults::getInstance().getTemplatesPath());
+    this->_subElementsDocument = parser.initJsonDocumnet(
+        AppDefaults::getInstance().getDefaultPropertiesPath());
     
-    QDomElement docRootElement = this->_domDocument.createElement(
+    this->_appRootElement = this->_domDocument.createElement(
 		AppDefaults::getInstance().getAppName());
-	docRootElement.setAttribute(
+	
+    this->_appRootElement.setAttribute(
 		"version", AppDefaults::getInstance().getAppProjFileVersion());
 
-	this->_domDocument.appendChild(docRootElement);
-
-    for(auto& rootTag : this->rootTags.keys()){
-        addRootElement(jsonDocument, rootTag);
-    }
+	this->_domDocument.appendChild(this->_appRootElement);
 }
 
 
-void DocumentHandler::addRootElement(const rapidjson::Document& document, RootTag& rootTag){
+QDomElement DocumentHandler::createRootElement( const RootTag& newElementTag){
     
-    QString rootTagName = this->rootTags.value(rootTag);
+    QString rootTagName = this->rootTags.value(newElementTag);
     QDomElement rootElement = this->_domDocument.createElement(rootTagName);
 
     JsonParser parser;
-    PropertiesList propertiesList = parser.parseEntryProperties(document, rootTagName);
+    PropertiesList propertiesList = parser.parseEntryProperties(this->_rootElementsDocument, rootTagName);
 
     addPropertiesToElement(rootElement, propertiesList);
 
-    this->_domDocument.appendChild(rootElement);
+    this->_appRootElement.appendChild(rootElement);
+
+    return rootElement;
+}
+
+QDomElement DocumentHandler::createSubElement(  const EntryTag& newElementTag,
+                                                QDomElement& parentElement){
+
+    const QString& newElementTagStr = entryTags.value(newElementTag); 
+    JsonParser parser;
+    PropertiesList propertiesList = parser.parseEntryProperties(this->_subElementsDocument, newElementTagStr);
+
+    if(!parentElement.isElement()){
+        qWarning("Root element does not exist");
+    }
+
+    QDomElement element = this->_domDocument.createElement(newElementTagStr);
+    addPropertiesToElement(element, propertiesList);
+    
+    parentElement.appendChild(element);
+    return element;
 }
 
 void DocumentHandler::addPropertiesToElement(QDomElement& element, const PropertiesList& propertiesList){
     QDomElement propertiesElement = this->_domDocument.createElement("Properties");
     for(auto& propertiesMap : propertiesList){
+        QDomElement propertyElement = this->_domDocument.createElement("property");
         for (auto it = propertiesMap.constBegin(); it != propertiesMap.constEnd(); ++it) {
             const QString& key = it.key();
             const QString& value = it.value();
-            QDomElement propertyElement = this->_domDocument.createElement("property");
             propertyElement.setAttribute(key, value);
-            propertiesElement.appendChild(propertyElement);
         }
+        propertiesElement.appendChild(propertyElement);
     }
     element.appendChild(propertiesElement);
+}
+
+QDomElement DocumentHandler::getElementsPropertiesElement(const QDomElement& element){
+    QDomNodeList elementSubNodes = element.childNodes();
+    QDomElement subElement;
+    bool found = false;
+    for (int i = 0; i < elementSubNodes.count(); ++i) {
+        QDomNode node = elementSubNodes.at(i);
+        if (!node.isElement()) {
+            continue;
+        }
+        subElement = node.toElement();
+        if(subElement.tagName() == "Properties"){
+            found = true;
+            break;
+        }
+    }
+    if(!found)
+        qWarning("Could not find Properties element, returning last sub element");
+    return subElement;
 }

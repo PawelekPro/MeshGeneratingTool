@@ -25,6 +25,10 @@
 #include <QFile>
 #include <vtkLogger.h>
 
+/**
+ * Defines a custom data structure for storing a list of properties.
+ * Each property is represented as a map with key-value pairs.
+ */
 using PropertiesList = QList<QMap<QString, QString>>;
 
 class JsonParser{
