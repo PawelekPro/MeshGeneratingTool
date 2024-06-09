@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
