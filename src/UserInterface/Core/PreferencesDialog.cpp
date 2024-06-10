@@ -77,6 +77,28 @@ void PreferencesDialog::intitializeColorProperties() {
 			}
 		}
 	}
+
+	const AppDefaultColors::RendererColorsArray renColorsArr
+		= AppDefaults::getInstance().getRendererColorsArray();
+	QColor color1 = renColorsArr.at(0);
+	QColor color2 = renColorsArr.at(1);
+
+	std::tuple<int, int, int> colorTuple1(color1.red(), color1.green(), color1.blue());
+	std::tuple<int, int, int> colorTuple2(color2.red(), color2.green(), color2.blue());
+
+	ui->firstRenColor->setValue(colorTuple1);
+	ui->secRenColor->setValue(colorTuple2);
+
+	const bool isGradModeEnabled = AppDefaults::getInstance().isGradientBackgroundEnabled();
+	int index = 0;
+	if (isGradModeEnabled) {
+		vtkRenderer::GradientModes mode
+			= AppDefaults::getInstance().getRendererGradientMode();
+		index = static_cast<int>(mode) + 1;
+		ui->secRenColor->setEnabled(true);
+		ui->secRenColorLabel->setEnabled(true);
+	}
+	ui->renBackgroundComboBox->setCurrentIndex(index);
 }
 
 //--------------------------------------------------------------------------------------
@@ -124,16 +146,20 @@ void PreferencesDialog::onApplyButtonClicked() {
 
 		switch (index) {
 		case 1:
-			mode = vtkRenderer::GradientModes::VTK_GRADIENT_VERTICAL;
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_VERTICAL;
 			break;
 		case 2:
-			mode = vtkRenderer::GradientModes::VTK_GRADIENT_HORIZONTAL;
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_HORIZONTAL;
 			break;
 		case 3:
-			mode = vtkRenderer::GradientModes::VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_SIDE;
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_SIDE;
 			break;
 		case 4:
-			mode = vtkRenderer::GradientModes::VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_CORNER;
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_CORNER;
 			break;
 		default:
 			qWarning() << "Wrong index!";

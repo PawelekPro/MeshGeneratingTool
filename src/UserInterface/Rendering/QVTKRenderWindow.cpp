@@ -34,11 +34,29 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_vtkWidget->setRenderWindow(_rendererWindow);
 	_interactor = _vtkWidget->interactor();
 
-	vtkNew<vtkNamedColors> colors;
 	_renderer->GetActiveCamera()->ParallelProjectionOff();
 	_renderer->LightFollowCameraOn();
 	_rendererWindow->AddRenderer(_renderer);
-	_renderer->SetBackground(colors->GetColor3d("LightSlateGray").GetData());
+
+	const bool isGradModeEnabled
+		= AppDefaults::getInstance().isGradientBackgroundEnabled();
+	AppDefaultColors::RendererColorsArray colorsArr
+		= AppDefaults::getInstance().getRendererColorsArray();
+
+	// Convert QColor to RGB
+	double rgbCol1[3], rgbCol2[3];
+	AppDefaultColors::QColorToRgbArray(colorsArr.at(0), rgbCol1);
+	AppDefaultColors::QColorToRgbArray(colorsArr.at(1), rgbCol2);
+
+	if (isGradModeEnabled) {
+		vtkRenderer::GradientModes mode
+			= AppDefaults::getInstance().getRendererGradientMode();
+
+		this->setBackground(mode, rgbCol1, rgbCol2);
+
+	} else {
+		this->setBackground(rgbCol1);
+	}
 
 	this->generateCoordinateSystemAxes();
 	this->setWaterMark();

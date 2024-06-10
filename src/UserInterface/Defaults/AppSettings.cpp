@@ -58,6 +58,20 @@ void AppSettings::createDefaultSettings() {
 	Rendering
 	===================================================================*/
 	this->beginGroup(SettingsRoots::rendering);
+
+	AppDefaultColors::RendererColorsArray renColorsArr
+		= _appColors.getRendererColorsArray(true);
+	int index = 0;
+	for (const QColor& color : renColorsArr) {
+		QString colorVar = QString::fromStdString("color" + std::to_string(index++));
+		this->setValue(colorVar, color);
+	}
+
+	this->setValue(
+		"GradientBackgroundEnabled", _appColors.isGradientBackgroundEnabled(true));
+	this->setValue(
+		"GradientBackgroundMode", static_cast<int>(_appColors.getRendererGradientMode(true)));
+
 	this->endGroup();
 
 	/* ================================================================
@@ -67,8 +81,7 @@ void AppSettings::createDefaultSettings() {
 
 	AppDefaultColors::GeomColorsArray colorsArr
 		= _appColors.getGeometryEntitiesColorArray(true);
-
-	int index = 0;
+	index = 0;
 	for (const QColor& color : colorsArr) {
 		QString colorVar = QString::fromStdString("color" + std::to_string(index++));
 		this->setValue(colorVar, color);
@@ -79,6 +92,9 @@ void AppSettings::createDefaultSettings() {
 
 //--------------------------------------------------------------------------------------
 void AppSettings::loadDefaultSettings() {
+	/* ================================================================
+	Graphics
+	===================================================================*/
 	this->beginGroup(SettingsRoots::graphics);
 
 	// Reading geometry colors stored in settings file
@@ -90,9 +106,46 @@ void AppSettings::loadDefaultSettings() {
 	}
 	_appColors.setGeometryEntitiesColorArray(colorsArr);
 	this->endGroup();
+
+	/* ================================================================
+	Rendering
+	===================================================================*/
+	this->beginGroup(SettingsRoots::rendering);
+	AppDefaultColors::RendererColorsArray renColorsArr;
+
+	for (size_t index = 0; index < renColorsArr.size(); ++index) {
+		QString colorVar = QString::fromStdString("color" + std::to_string(index));
+		QColor color = this->value(colorVar).value<QColor>();
+		renColorsArr[index] = color;
+	}
+	_appColors.setRendererColorsArray(renColorsArr);
+	_appColors.setGradientBackgroundEnabled(
+		this->value("GradientBackgroundEnabled").toBool());
+	_appColors.setRendererGradientMode(
+		static_cast<vtkRenderer::GradientModes>(
+			this->value("GradientBackgroundMode").toInt()));
+	this->endGroup();
 }
 
 //--------------------------------------------------------------------------------------
-const AppDefaultColors::GeomColorsArray AppSettings::getGeometryColorsArray() {
+const AppDefaultColors::GeomColorsArray
+AppSettings::getGeometryColorsArray() {
 	return _appColors.getGeometryEntitiesColorArray();
+}
+
+//--------------------------------------------------------------------------------------
+const AppDefaultColors::RendererColorsArray
+AppSettings::getRendererColorsArray() {
+	return _appColors.getRendererColorsArray();
+}
+
+//--------------------------------------------------------------------------------------
+const bool AppSettings::isGradientBackgroundEnabled(bool defaultVal) {
+	return _appColors.isGradientBackgroundEnabled(defaultVal);
+}
+
+//--------------------------------------------------------------------------------------
+const vtkRenderer::GradientModes
+AppSettings::getRendererGradientMode(bool defaultVal) {
+	return _appColors.getRendererGradientMode(defaultVal);
 }

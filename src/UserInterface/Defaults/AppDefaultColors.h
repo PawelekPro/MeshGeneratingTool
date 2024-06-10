@@ -22,22 +22,39 @@
 
 #include <array>
 
+#include <vtkRenderer.h>
+
 #include <QColor>
 
 class AppDefaultColors {
 public:
 	typedef std::array<QColor, 9> GeomColorsArray;
+	typedef std::array<QColor, 2> RendererColorsArray;
+
+	struct ColorSettings {
+		GeomColorsArray geomColors;
+		RendererColorsArray rendererColors;
+		vtkRenderer::GradientModes renBackgroundMode;
+		bool isGradientBackgroundOn;
+	};
 
 public:
 	AppDefaultColors();
 	~AppDefaultColors() = default;
 
 	const GeomColorsArray getGeometryEntitiesColorArray(bool defaultColors = false);
-	void setGeometryEntitiesColorArray(GeomColorsArray colorArray);
+	const RendererColorsArray getRendererColorsArray(bool defaultColors = false);
+	void setGeometryEntitiesColorArray(GeomColorsArray colorsArray);
+	void setRendererColorsArray(RendererColorsArray colorsArray);
+	vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
+	void setRendererGradientMode(vtkRenderer::GradientModes mode);
+	bool isGradientBackgroundEnabled(bool defaultVal = false);
+	void setGradientBackgroundEnabled(bool enabled);
+	static void QColorToRgbArray(const QColor& color, double rgb[3]);
 
 private:
-	GeomColorsArray _defaultGeomEntitiesColors;
-	GeomColorsArray _geomEntitiesColors;
+	ColorSettings _defaultColors;
+	ColorSettings _currentColors;
 };
 
 #endif

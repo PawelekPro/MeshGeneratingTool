@@ -102,6 +102,9 @@ public:
 	rapidjson::Document* getComboBoxModels();
 
 	const AppDefaultColors::GeomColorsArray getGeometryEntitiesColorArray();
+	const AppDefaultColors::RendererColorsArray getRendererColorsArray();
+	const bool isGradientBackgroundEnabled(bool defaultVal = false);
+	const vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
 
 private:
 	AppDefaults(AppDefaults const&) = delete;

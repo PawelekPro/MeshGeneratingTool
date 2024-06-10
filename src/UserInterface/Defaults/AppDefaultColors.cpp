@@ -24,7 +24,7 @@ AppDefaultColors::AppDefaultColors() {
 
 	// Initialize default colors for geometry entities
 	// https://doc.qt.io/qt-6/qcolorconstants.html
-	_defaultGeomEntitiesColors = {
+	_defaultColors.geomColors = {
 		QColor(200, 220, 230), //!< Isoline
 		Qt::green, //!< Free vertex
 		Qt::blue, //!< Shared vertex
@@ -35,20 +35,86 @@ AppDefaultColors::AppDefaultColors() {
 		QColor(85, 120, 170), //!< Shaded face
 		Qt::darkGreen, //!< Seam edge between faces
 	};
+
+	_defaultColors.rendererColors = {
+		QColor(190, 190, 190), // ! Background color 1
+		QColor(60, 55, 70) //! Background color 2
+	};
+
+	_defaultColors.isGradientBackgroundOn = true;
+	_defaultColors.renBackgroundMode
+		= vtkRenderer::GradientModes::
+			VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_CORNER;
+
+	_currentColors = _defaultColors;
 }
 
 //----------------------------------------------------------------------------
 const AppDefaultColors::GeomColorsArray
 AppDefaultColors::getGeometryEntitiesColorArray(bool defaultColors) {
 	if (defaultColors) {
-		return _defaultGeomEntitiesColors;
+		return _defaultColors.geomColors;
 	} else {
-		return _geomEntitiesColors;
+		return _currentColors.geomColors;
 	}
 }
 
 //----------------------------------------------------------------------------
 void AppDefaultColors::setGeometryEntitiesColorArray(
-	AppDefaultColors::GeomColorsArray colorArray) {
-	_geomEntitiesColors = colorArray;
+	AppDefaultColors::GeomColorsArray colorsArray) {
+	_currentColors.geomColors = colorsArray;
+}
+
+//----------------------------------------------------------------------------
+const AppDefaultColors::RendererColorsArray
+AppDefaultColors::getRendererColorsArray(bool defaultColors) {
+	if (defaultColors) {
+		return _defaultColors.rendererColors;
+	} else {
+		return _currentColors.rendererColors;
+	}
+}
+
+//----------------------------------------------------------------------------
+void AppDefaultColors::setRendererColorsArray(
+	AppDefaultColors::RendererColorsArray colorsArray) {
+	_currentColors.rendererColors = colorsArray;
+}
+
+//----------------------------------------------------------------------------
+vtkRenderer::GradientModes AppDefaultColors::getRendererGradientMode(bool defaultVal) {
+	if (defaultVal) {
+		return _defaultColors.renBackgroundMode;
+	} else {
+		return _currentColors.renBackgroundMode;
+	}
+}
+
+//----------------------------------------------------------------------------
+void AppDefaultColors::setRendererGradientMode(
+	vtkRenderer::GradientModes mode) {
+	_currentColors.renBackgroundMode = mode;
+}
+
+//----------------------------------------------------------------------------
+bool AppDefaultColors::isGradientBackgroundEnabled(bool defaultVal) {
+	if (defaultVal) {
+		return _defaultColors.isGradientBackgroundOn;
+	} else {
+		return _currentColors.isGradientBackgroundOn;
+	}
+}
+
+//----------------------------------------------------------------------------
+void AppDefaultColors::setGradientBackgroundEnabled(bool enabled) {
+	_currentColors.isGradientBackgroundOn = enabled;
+}
+
+//----------------------------------------------------------------------------
+void AppDefaultColors::QColorToRgbArray(const QColor& color, double rgb[3]) {
+	float r, g, b;
+	color.getRgbF(&r, &g, &b);
+	rgb[0] = static_cast<double>(r);
+	rgb[1] = static_cast<double>(g);
+	rgb[2] = static_cast<double>(b);
 }

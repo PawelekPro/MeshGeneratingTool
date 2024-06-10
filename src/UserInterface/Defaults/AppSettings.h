@@ -44,6 +44,9 @@ public:
 
 public:
 	const AppDefaultColors::GeomColorsArray getGeometryColorsArray();
+	const AppDefaultColors::RendererColorsArray getRendererColorsArray();
+	const bool isGradientBackgroundEnabled(bool defaultVal = false);
+	const vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
 
 private:
 	void createDefaultSettings();

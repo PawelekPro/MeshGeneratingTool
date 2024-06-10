@@ -92,3 +92,19 @@ const QString AppDefaults::getComboBoxModelsPath() {
 const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
 	return _settings.getGeometryColorsArray();
 }
+
+//--------------------------------------------------------------------------------------
+const AppDefaultColors::RendererColorsArray AppDefaults::getRendererColorsArray() {
+	return _settings.getRendererColorsArray();
+}
+
+//--------------------------------------------------------------------------------------
+const bool AppDefaults::isGradientBackgroundEnabled(bool defaultVal) {
+	return _settings.isGradientBackgroundEnabled(defaultVal);
+}
+
+//--------------------------------------------------------------------------------------
+const vtkRenderer::GradientModes
+AppDefaults::getRendererGradientMode(bool defaultVal) {
+	return _settings.getRendererGradientMode(defaultVal);
+}
