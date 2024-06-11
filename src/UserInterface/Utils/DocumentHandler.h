@@ -45,6 +45,7 @@ class DocumentHandler{
         static const QMap<RootTag, QString> rootTags;
 
         DocumentHandler();
+        ~DocumentHandler();
 
         void writeDocToXML(const std::string& savePath);
 
