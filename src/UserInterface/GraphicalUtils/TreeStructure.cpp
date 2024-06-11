@@ -22,18 +22,25 @@
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
 	: QTreeWidget(parent),
-	  eventHandler(new TreeWidgetEventHandler),
-	  documentHandler(new DocumentHandler) {
+	  _eventHandler(new TreeWidgetEventHandler)
+	{
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
 
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
-	this->contextMenu = new TreeContextMenu(this);
+	this->_contextMenu = new TreeContextMenu(this);
 
     connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemRenamed);
-	documentHandler->initializeDocument();
+	// _documentHandler->initializeDocument();
 	}
+
+void TreeStructure::initialize(DocumentHandler* documentHandler){
+	this->_documentHandler = documentHandler;
+	for(const auto& rootTag : DocumentHandler::rootTags.keys()){
+		this->addRootItem(rootTag);
+	}
+}
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
@@ -44,11 +51,11 @@ TreeStructure::~TreeStructure() {
 	std::string xmlPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
 
-	this->documentHandler->writeDocToXML("testHandler.xml");
+	// this->_documentHandler->writeDocToXML("testHandler.xml");
 
-	for (auto& treeItem : domElements.keys()) {
+	for (auto& treeItem : _domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
-		QDomElement element = domElements.value(treeItem);
+		QDomElement element = _domElements.value(treeItem);
 		int role = Role.value(element.firstChildElement("Properties").tagName());
 		QVariant variantModel = item->data(0, role);
 		QSharedPointer<PropertiesModel> model
@@ -57,19 +64,20 @@ TreeStructure::~TreeStructure() {
 			model->deleteLater();
 		}
 	}
-	domElements.clear();
-	delete eventHandler;
+	_domElements.clear();
 }
 
 //--------------------------------------------------------------------------------------
 
 void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 
-	QDomElement rootElement = this->documentHandler->createRootElement(rootTag);
+	QDomElement rootElement = this->_documentHandler->createRootElement(rootTag);
 	QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
 
 	QString rootText = DocumentHandler::rootTags.value(rootTag);
-	rootItem->setText(static_cast<int>(Column::Label), rootText);
+	std::cout << "Root element tag name: " << rootElement.tagName().toStdString() << std::endl;
+	std::cout << "Root element text: " << rootText.toStdString() << std::endl;
+	rootItem->setText(static_cast<int>(Column::Visible), rootText);
 	this->addPropertiesModel(rootElement, rootItem);
 }
 
@@ -81,8 +89,8 @@ void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
 		qWarning("Can only add sub item to existing parent item.");
 		return;
 		}
-	QDomElement parentElement = domElements.value(parentItem);
-	QDomElement subElement = this->documentHandler->createSubElement(entryTag, parentElement);
+	QDomElement parentElement = _domElements.value(parentItem);
+	QDomElement subElement = this->_documentHandler->createSubElement(entryTag, parentElement);
 
 	QString subName = getUniqueElementNameForTag(parentItem, entryTag, itemBaseName);
 	subElement.attribute("name") = subName;
@@ -91,7 +99,7 @@ void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
     newItem->setText(static_cast<int>(Column::Label), subName);
 	newItem->setFlags(flags);
 
-	QDomElement subElementProperties = this->documentHandler->getElementsPropertiesElement(subElement);
+	QDomElement subElementProperties = this->_documentHandler->getElementsPropertiesElement(subElement);
 	this->addPropertiesModel(subElementProperties, newItem);
 }
 
@@ -116,7 +124,7 @@ QTreeWidgetItem* TreeStructure::createTreeWidgetItem(const QDomElement& element,
 	} else {
 		item = new QTreeWidgetItem(this);
 	}
-	domElements[item] = element;
+	_domElements[item] = element;
 	return item;
 }
 
@@ -124,7 +132,7 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 												const DocumentHandler::EntryTag& entryTag,
 												const QString& baseName){
 	
-	QDomElement parentElement = domElements.value(parentItem);
+	QDomElement parentElement = _domElements.value(parentItem);
 	QDomNodeList parentElementChildNodes = parentElement.childNodes();
 	QSet<QString> rootElementChildNames;
 
@@ -149,7 +157,7 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 
 void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
 	const int role = Role.value(element.tagName());
-	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, eventHandler, this));
+	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, _eventHandler, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection
 	item->setData(0, role, variantModel);
@@ -158,7 +166,7 @@ void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetIt
 //--------------------------------------------------------------------------------------
 
 void TreeStructure::treeWidgetItemRenamed(QTreeWidgetItem* renamedItem, QString newName) {
-    QDomElement elementToRename = domElements.value(renamedItem);
+    QDomElement elementToRename = _domElements.value(renamedItem);
 	elementToRename.setAttribute("name", newName);
 }
 
@@ -173,7 +181,7 @@ void TreeStructure::renameItem(QTreeWidgetItem* item){
 }
 
 void TreeStructure::removeSubItem(QTreeWidgetItem* item){
-	QDomElement element = domElements.value(item);
+	QDomElement element = _domElements.value(item);
 	QString tag = element.tagName();
 	//To do remove items from model based on the tagName. For ex. remove imported parts if import item is removed.
     if (!element.isNull()) {
@@ -184,7 +192,7 @@ void TreeStructure::removeSubItem(QTreeWidgetItem* item){
     }
     int column = static_cast<int>(Column::Label);
     this->removeItemWidget(item, column);
-    domElements.remove(item);
+    _domElements.remove(item);
     delete item;
 }
 
