@@ -37,6 +37,7 @@ class TreeContextMenu;
 #include <QDebug>
 #include <QHeaderView>
 #include <QMap>
+#include <QSharedPointer>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QtXml/QDomElement>
@@ -58,6 +59,13 @@ class TreeStructure : public QTreeWidget {
 public:
 	TreeStructure(QWidget* parent);
 	~TreeStructure();
+
+
+	/**
+	 * Initializes TreeStructure with QDomDocument Handler, builds root items
+	 * @returns None
+	 */
+	void initialize(DocumentHandler* DocumentHandler);
 	/**
 	 * Loads a geometry file using the specified file path.
 	 *
@@ -105,7 +113,7 @@ public:
 		// { "Actor", Qt::UserRole + 6 }
 	};
 
-	TreeWidgetEventHandler* eventHandler;
+
 
 private:
 	/**
@@ -129,15 +137,25 @@ private:
 	/**
 	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
 	 *
-	 * @param  {QSharedPointer<QDomElement>} element    : QDomElement object coresponding to tree item.
+	 * @param  {QDomElement} element    : QDomElement object coresponding to tree item.
 	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
 	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
 	 */
-
 	QTreeWidgetItem* createTreeWidgetItem(const QDomElement&, QTreeWidgetItem* parent = nullptr);
 
+	/**
+	 * @brief  Creates instance of PropertiesModel based on the QDomElement and adds it to QTreeWidgetItem
+	 *
+	 * @param  {QDomElement} element    : QDomElement based on which the PropertiesModel will be created
+	 * @param  {QTreeWidgetItem*} parent : Item to which the PropertiesModel will be added
+	 */
 	void addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item);
 
+	/**
+	 * @param  {QTreeWidgetItem} parentItem : parentItem under which to search for existing names
+	 * @param  {DocumentHandler::EntryTag} entry tag : Entry tag family that will be searched for existing names
+	 * @return {QString}        : Unique name following pattern of baseName_1, baseName_2, ...
+	 */
 	QString getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 										const DocumentHandler::EntryTag& entryTag,
 										const QString& baseName);
@@ -150,12 +168,7 @@ private:
 	void treeWidgetItemRenamed(QTreeWidgetItem* renamedItem,QString newName);
 
 	/**
-	 * Finds tree widget items that match the specified text and flags.
-	 *
-	 * @param text The text to match against.
-	 * @param flags The matching flags to use.
-	 *
-	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
+	 * @return QTreeWidgetItem described by the rootTag from DocumentHandler
 	 */
 	QTreeWidgetItem* getRootTreeWidgetItem(const DocumentHandler::RootTag& rootTag);
 
@@ -163,15 +176,22 @@ private:
 	/**
 	 * QMap that maps QTreeWidgetItem pointers to QDomElements.
 	 */
-	QMap<QTreeWidgetItem*, QDomElement> domElements;
+	QMap<QTreeWidgetItem*, QDomElement> _domElements;
 
 	/**
 	 * Context menu that appears when item in TreeStructure is right-clicked
 	 */
-	TreeContextMenu* contextMenu;
+	TreeContextMenu* _contextMenu;
 
+	/**
+	 * Event handler for widgets inside Tree Widget Items.
+	 */
+	TreeWidgetEventHandler* _eventHandler;
+	/**
+	 * Pointer to document handler that stores data of TreeWidgetItems
+	 */
+	DocumentHandler* _documentHandler;
 
-	QSharedPointer<DocumentHandler> documentHandler;
 	/**
 	 * Generates new names for items created under the parentItem. Follows the pattern baseName_1, baseName_2..
 	 */

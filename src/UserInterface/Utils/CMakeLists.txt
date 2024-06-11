@@ -1,6 +1,7 @@
 ADD_LIBRARY(Utils 
   DocumentHandler.cpp
   JsonParser.cpp
+  EventHandler.cpp
   TreeWidgetEventHandler.cpp
   ModelEventHandler.cpp
 )

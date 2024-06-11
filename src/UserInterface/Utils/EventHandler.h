@@ -17,16 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELEVENTHANDLER_H
-#define MODELEVENTHANDLER_H
+#ifndef EVENTHANDLER_H
+#define EVENTHANDLER_H
 
-#include "Model.h"
-#include "DocumentHandler.h"
 #include <QObject>
 #include <iostream>
 
-class ModelEventHandler : public QObject {
+#include "ModelEventHandler.h"
+#include "TreeWidgetEventHandler.h"
+
+class EventHandler : public QObject {
     Q_OBJECT
 };
+
 
 #endif

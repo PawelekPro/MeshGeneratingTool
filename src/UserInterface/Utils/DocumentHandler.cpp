@@ -10,6 +10,17 @@ const QMap<DocumentHandler::RootTag, QString> DocumentHandler::rootTags = {
     { DocumentHandler::RootTag::CSYS, "CoordinateSystem" },
     { DocumentHandler::RootTag::Mesh, "Mesh" }
 };
+DocumentHandler::DocumentHandler(){
+    this->_appRootElement = this->_domDocument.createElement(
+		AppDefaults::getInstance().getAppName());
+	
+    this->_appRootElement.setAttribute(
+		"version", AppDefaults::getInstance().getAppProjFileVersion());
+
+	this->_domDocument.appendChild(this->_appRootElement);
+}
+
+
 
 void DocumentHandler::writeDocToXML(const std::string& savePath){
     QFile file(QString::fromStdString(savePath));
@@ -27,33 +38,15 @@ void DocumentHandler::writeDocToXML(const std::string& savePath){
 	file.close();
 }
 
-
-
-void DocumentHandler::initializeDocument(){
-
-    JsonParser parser;
-    this->_rootElementsDocument = parser.initJsonDocumnet(
-        AppDefaults::getInstance().getTemplatesPath());
-    this->_subElementsDocument = parser.initJsonDocumnet(
-        AppDefaults::getInstance().getDefaultPropertiesPath());
-    
-    this->_appRootElement = this->_domDocument.createElement(
-		AppDefaults::getInstance().getAppName());
-	
-    this->_appRootElement.setAttribute(
-		"version", AppDefaults::getInstance().getAppProjFileVersion());
-
-	this->_domDocument.appendChild(this->_appRootElement);
-}
-
-
 QDomElement DocumentHandler::createRootElement( const RootTag& newElementTag){
     
     QString rootTagName = this->rootTags.value(newElementTag);
     QDomElement rootElement = this->_domDocument.createElement(rootTagName);
 
-    JsonParser parser;
-    PropertiesList propertiesList = parser.parseEntryProperties(this->_rootElementsDocument, rootTagName);
+    JsonParser parser; 
+    rapidjson::Document rootElementsDocument = parser.initJsonDocumnet(
+        AppDefaults::getInstance().getTemplatesPath());
+    PropertiesList propertiesList = parser.parseEntryProperties(rootElementsDocument, rootTagName);
 
     addPropertiesToElement(rootElement, propertiesList);
 
@@ -66,8 +59,11 @@ QDomElement DocumentHandler::createSubElement(  const EntryTag& newElementTag,
                                                 QDomElement& parentElement){
 
     const QString& newElementTagStr = entryTags.value(newElementTag); 
+    
     JsonParser parser;
-    PropertiesList propertiesList = parser.parseEntryProperties(this->_subElementsDocument, newElementTagStr);
+    rapidjson::Document subElementsDocument = parser.initJsonDocumnet(
+        AppDefaults::getInstance().getDefaultPropertiesPath());
+    PropertiesList propertiesList = parser.parseEntryProperties(subElementsDocument, newElementTagStr);
 
     if(!parentElement.isElement()){
         qWarning("Root element does not exist");
