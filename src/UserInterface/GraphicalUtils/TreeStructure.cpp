@@ -32,7 +32,6 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->_contextMenu = new TreeContextMenu(this);
 
     connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemRenamed);
-	// _documentHandler->initializeDocument();
 	}
 
 void TreeStructure::initialize(DocumentHandler* documentHandler){
@@ -75,9 +74,8 @@ void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 	QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
 
 	QString rootText = DocumentHandler::rootTags.value(rootTag);
-	std::cout << "Root element tag name: " << rootElement.tagName().toStdString() << std::endl;
-	std::cout << "Root element text: " << rootText.toStdString() << std::endl;
-	rootItem->setText(static_cast<int>(Column::Visible), rootText);
+
+	rootItem->setText(static_cast<int>(Column::Label), rootText);
 	this->addPropertiesModel(rootElement, rootItem);
 }
 
