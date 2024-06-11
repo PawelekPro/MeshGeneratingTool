@@ -85,12 +85,18 @@ void DocumentHandler::addPropertiesToElement(QDomElement& element, const Propert
         for (auto it = propertiesMap.constBegin(); it != propertiesMap.constEnd(); ++it) {
             const QString& key = it.key();
             const QString& value = it.value();
-            propertyElement.setAttribute(key, value);
+            if (key == "value") {
+                QDomText textNode = this->_domDocument.createTextNode(value);
+		        propertyElement.appendChild(textNode);
+			}else{
+				propertyElement.setAttribute(key, value);
+            }
         }
         propertiesElement.appendChild(propertyElement);
     }
     element.appendChild(propertiesElement);
 }
+
 
 QDomElement DocumentHandler::getElementsPropertiesElement(const QDomElement& element){
     QDomNodeList elementSubNodes = element.childNodes();
