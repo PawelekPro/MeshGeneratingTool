@@ -53,8 +53,6 @@ TreeStructure::~TreeStructure() {
 	std::string xmlPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
 
-	this->_documentHandler->writeDocToXML("testHandler.xml");
-
 	for (auto& treeItem : _domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
 		QDomElement element = _domElements.value(treeItem);
@@ -82,7 +80,7 @@ void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 	rootItem->setText(static_cast<int>(Column::Label), rootText);
 	QDomElement rootElementProperties = this->_documentHandler->getElementsPropertiesElement(rootElement);
 	this->addPropertiesModel(rootElementProperties, rootItem);
-	this->_documentHandler->writeDocToXML("callFromTree.xml");
+	// this->_documentHandler->writeDocToXML("callFromTree.xml");
 }
 
 void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
@@ -161,14 +159,6 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 
 void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
 	const int role = Role.value(element.tagName());
-	std::cout << element.tagName().toStdString() << std::endl;
-	QDomNodeList props  = element.childNodes();
-	for (int i = 0; i < props.length(); ++i) {
-            QDomElement propertyElement = props.at(i).toElement();
-            QString propertyName = propertyElement.tagName();
-            QString propertyValue = propertyElement.text();
-			std::cout << propertyValue.toStdString() << std::endl;
-    }
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, _eventHandler, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection

@@ -18,9 +18,10 @@ DocumentHandler::DocumentHandler(){
 		"version", AppDefaults::getInstance().getAppProjFileVersion());
 
 	this->_domDocument.appendChild(this->_appRootElement);
+}
+DocumentHandler::~DocumentHandler(){
     writeDocToXML("testPath.xml");
 }
-
 
 
 void DocumentHandler::writeDocToXML(const std::string& savePath){
