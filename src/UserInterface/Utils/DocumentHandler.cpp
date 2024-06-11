@@ -18,6 +18,7 @@ DocumentHandler::DocumentHandler(){
 		"version", AppDefaults::getInstance().getAppProjFileVersion());
 
 	this->_domDocument.appendChild(this->_appRootElement);
+    writeDocToXML("testPath.xml");
 }
 
 
@@ -49,8 +50,8 @@ QDomElement DocumentHandler::createRootElement( const RootTag& newElementTag){
     PropertiesList propertiesList = parser.parseEntryProperties(rootElementsDocument, rootTagName);
 
     addPropertiesToElement(rootElement, propertiesList);
-
     this->_appRootElement.appendChild(rootElement);
+
 
     return rootElement;
 }

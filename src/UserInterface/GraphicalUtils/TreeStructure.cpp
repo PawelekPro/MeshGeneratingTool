@@ -27,11 +27,11 @@ TreeStructure::TreeStructure(QWidget* parent)
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
-
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
 	this->_contextMenu = new TreeContextMenu(this);
 
     connect(this, &QTreeWidget::itemChanged, this, &TreeStructure::onItemRenamed);
+
 	}
 
 void TreeStructure::initialize(DocumentHandler* documentHandler){
@@ -39,6 +39,9 @@ void TreeStructure::initialize(DocumentHandler* documentHandler){
 	for(const auto& rootTag : DocumentHandler::rootTags.keys()){
 		this->addRootItem(rootTag);
 	}
+	this->setColumnWidth(static_cast<int>(Column::Label), 10);
+	this->setColumnWidth(static_cast<int>(Column::Visible), 10);
+	this->setColumnWidth(static_cast<int>(Column::Actor), 10);
 }
 
 //--------------------------------------------------------------------------------------
@@ -50,7 +53,7 @@ TreeStructure::~TreeStructure() {
 	std::string xmlPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
 
-	// this->_documentHandler->writeDocToXML("testHandler.xml");
+	this->_documentHandler->writeDocToXML("testHandler.xml");
 
 	for (auto& treeItem : _domElements.keys()) {
 		QTreeWidgetItem* item = treeItem;
@@ -71,12 +74,15 @@ TreeStructure::~TreeStructure() {
 void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 
 	QDomElement rootElement = this->_documentHandler->createRootElement(rootTag);
+	
 	QTreeWidgetItem* rootItem = this->createTreeWidgetItem(rootElement);
 
 	QString rootText = DocumentHandler::rootTags.value(rootTag);
 
 	rootItem->setText(static_cast<int>(Column::Label), rootText);
-	this->addPropertiesModel(rootElement, rootItem);
+	QDomElement rootElementProperties = this->_documentHandler->getElementsPropertiesElement(rootElement);
+	this->addPropertiesModel(rootElementProperties, rootItem);
+	this->_documentHandler->writeDocToXML("callFromTree.xml");
 }
 
 void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
@@ -155,6 +161,14 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 
 void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
 	const int role = Role.value(element.tagName());
+	std::cout << element.tagName().toStdString() << std::endl;
+	QDomNodeList props  = element.childNodes();
+	for (int i = 0; i < props.length(); ++i) {
+            QDomElement propertyElement = props.at(i).toElement();
+            QString propertyName = propertyElement.tagName();
+            QString propertyValue = propertyElement.text();
+			std::cout << propertyValue.toStdString() << std::endl;
+    }
 	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, _eventHandler, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection
