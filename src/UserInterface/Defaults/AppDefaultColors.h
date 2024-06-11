@@ -42,14 +42,17 @@ public:
 	AppDefaultColors();
 	~AppDefaultColors() = default;
 
+public:
 	const GeomColorsArray getGeometryEntitiesColorArray(bool defaultColors = false);
 	const RendererColorsArray getRendererColorsArray(bool defaultColors = false);
+	vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
+	bool isGradientBackgroundEnabled(bool defaultVal = false);
+
 	void setGeometryEntitiesColorArray(GeomColorsArray colorsArray);
 	void setRendererColorsArray(RendererColorsArray colorsArray);
-	vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
 	void setRendererGradientMode(vtkRenderer::GradientModes mode);
-	bool isGradientBackgroundEnabled(bool defaultVal = false);
 	void setGradientBackgroundEnabled(bool enabled);
+
 	static void QColorToRgbArray(const QColor& color, double rgb[3]);
 
 private:

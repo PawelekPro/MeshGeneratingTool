@@ -36,7 +36,7 @@ const std::string graphics = "Graphics";
 const std::string theme = "Theme";
 };
 
-class AppSettings : public QSettings {
+class AppSettings : public QSettings, public AppDefaultColors {
 	Q_OBJECT
 public:
 	explicit AppSettings();

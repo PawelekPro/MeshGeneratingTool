@@ -106,6 +106,11 @@ public:
 	const bool isGradientBackgroundEnabled(bool defaultVal = false);
 	const vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
 
+	void setGeometryEntitiesColorsArray(const AppDefaultColors::GeomColorsArray array);
+	void setRendererColorsArray(const AppDefaultColors::RendererColorsArray array);
+	void setGradientBackgroundEnabled(const bool enabled);
+	void setRendererGradientMode(const vtkRenderer::GradientModes mode);
+
 private:
 	AppDefaults(AppDefaults const&) = delete;
 	AppDefaults();
