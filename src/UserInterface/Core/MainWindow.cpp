@@ -56,6 +56,7 @@ MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
+	delete documentHandler;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;

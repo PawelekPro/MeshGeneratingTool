@@ -44,6 +44,8 @@ class DocumentHandler{
         static const QMap<EntryTag, QString> entryTags;
         static const QMap<RootTag, QString> rootTags;
 
+        DocumentHandler();
+
         void writeDocToXML(const std::string& savePath);
 
         QDomElement createRootElement(const RootTag& newElementTag);
@@ -53,17 +55,12 @@ class DocumentHandler{
 
         QDomElement getElementsPropertiesElement(const QDomElement& element);
 
-        void initializeDocument();
-
     private:
         /**
          * Main document of the application 
          */
         QDomDocument _domDocument;
         QDomElement _appRootElement;
-
-        rapidjson::Document _rootElementsDocument;
-        rapidjson::Document _subElementsDocument;
 
         void addPropertiesToElement(QDomElement& element, const PropertiesList& propertiesList);
 };

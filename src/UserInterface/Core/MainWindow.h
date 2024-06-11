@@ -127,6 +127,7 @@ private:
 	vtkSmartPointer<MGTMesh> mgtm;
 	Ui::MainWindow* ui;
 
+	DocumentHandler* documentHandler;
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 
