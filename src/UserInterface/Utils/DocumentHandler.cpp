@@ -85,7 +85,7 @@ void DocumentHandler::addPropertiesToElement(QDomElement& element, const Propert
         for (auto it = propertiesMap.constBegin(); it != propertiesMap.constEnd(); ++it) {
             const QString& key = it.key();
             const QString& value = it.value();
-            if (key == "value") {
+               if (key == "value") {
                 QDomText textNode = this->_domDocument.createTextNode(value);
 		        propertyElement.appendChild(textNode);
 			}else{

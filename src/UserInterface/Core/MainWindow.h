@@ -29,6 +29,7 @@
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
 #include "DocumentHandler.h"
+#include "EventHandler.h"
 #include "SARibbon.h"
 #include <QmlStyleUrlInterceptor.h>
 
