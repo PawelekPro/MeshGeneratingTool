@@ -23,11 +23,34 @@
 #include <QObject>
 #include <iostream>
 
-#include "ModelEventHandler.h"
+#include "Model.h"
+#include "QVTKRenderWindow.h"
 #include "TreeWidgetEventHandler.h"
+#include "Document.h"
 
 class EventHandler : public QObject {
     Q_OBJECT
+
+    public:
+        EventHandler(Model* model, TreeWidgetEventHandler* treeEventHandler, QVTKInteractorStyle* interactor);
+    
+    //Add compontents that require handling as private below and add them the constructor
+    private:
+        Model* _model;
+        TreeWidgetEventHandler* _treeEventHandler;
+        QVTKInteractorStyle* _interactor;
+    
+
+
+
+    signals:
+
+
+    public slots:
+
+
+
+
 };
 
 
