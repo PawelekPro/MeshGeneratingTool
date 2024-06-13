@@ -79,8 +79,7 @@ void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 
 	rootItem->setText(static_cast<int>(Column::Label), rootText);
 	QDomElement rootElementProperties = this->_documentHandler->getElementsPropertiesElement(rootElement);
-	this->addPropertiesModel(rootElementProperties, rootItem);
-	// this->_documentHandler->writeDocToXML("callFromTree.xml");
+	this->addPropertiesModel(rootElement, rootItem);
 }
 
 void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
@@ -101,8 +100,7 @@ void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
     newItem->setText(static_cast<int>(Column::Label), subName);
 	newItem->setFlags(flags);
 
-	QDomElement subElementProperties = this->_documentHandler->getElementsPropertiesElement(subElement);
-	this->addPropertiesModel(subElementProperties, newItem);
+	this->addPropertiesModel(subElement, newItem);
 }
 
 //--------------------------------------------------------------------------------------
@@ -158,8 +156,9 @@ QString TreeStructure::getUniqueElementNameForTag(QTreeWidgetItem* parentItem,
 //--------------------------------------------------------------------------------------
 
 void TreeStructure::addPropertiesModel(const QDomElement& element, QTreeWidgetItem* item) {
-	const int role = Role.value(element.tagName());
-	QSharedPointer<PropertiesModel> model(new PropertiesModel(element, _eventHandler, this));
+	QDomElement propertiesElement = this->_documentHandler->getElementsPropertiesElement(element);
+	const int role = Role.value(propertiesElement.tagName());
+	QSharedPointer<PropertiesModel> model(new PropertiesModel(propertiesElement, _eventHandler, this));
 	QVariant variantModel = QVariant::fromValue(model);
 	// ToDo: Model data changed detection
 	item->setData(0, role, variantModel);
