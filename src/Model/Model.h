@@ -20,6 +20,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include "DocumentHandler.h"
 #include "Geometry.h"
 #include "Mesh.h"
 
@@ -54,6 +55,7 @@ class Model {
 	vtkSmartPointer<vtkActor> getMeshActor();
 
 	void setMeshProperties(double minElementSize, double maxElementSize);
+	
 
 	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
    	void addSizing(const std::vector<int>& verticesTags, double size);

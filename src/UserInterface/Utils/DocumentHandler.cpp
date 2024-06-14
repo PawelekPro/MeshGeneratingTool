@@ -117,3 +117,22 @@ QDomElement DocumentHandler::getElementsPropertiesElement(const QDomElement& ele
         qWarning("Could not find Properties element, returning last sub element");
     return subElement;
 }
+
+QList<QDomElement> DocumentHandler::getElementsByTag(const EntryTag& entryTag){
+    QList<QDomElement> elements;
+    QDomNodeList nodeList = this->_domDocument.elementsByTagName(entryTags.value(entryTag));
+    for (int i = 0; i < nodeList.size(); ++i) {
+            QDomNode node = nodeList.item(i);
+            if (node.isElement()) {
+                elements.append(node.toElement());
+            }
+        }
+    return elements;
+}
+
+
+QDomElement DocumentHandler::getRootElement(const RootTag& rootTag){
+    QDomNodeList nodeList = this->_domDocument.elementsByTagName(rootTags.value(rootTag));
+    QDomElement rootElement = nodeList.at(0).toElement();
+    return rootElement;
+}
