@@ -56,6 +56,10 @@ class DocumentHandler{
 
         QDomElement getElementsPropertiesElement(const QDomElement& element);
 
+        QList<QDomElement> getElementsByTag(const EntryTag& entryTag);
+
+        QDomElement getRootElement(const RootTag& rootTag);
+
     private:
         /**
          * Main document of the application 

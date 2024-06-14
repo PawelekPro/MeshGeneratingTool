@@ -26,14 +26,19 @@
 #include "Model.h"
 #include "QVTKRenderWindow.h"
 #include "TreeWidgetEventHandler.h"
-#include "Document.h"
+#include "DocumentHandler.h"
 
 class EventHandler : public QObject {
     Q_OBJECT
 
     public:
-        EventHandler(Model* model, TreeWidgetEventHandler* treeEventHandler, QVTKInteractorStyle* interactor);
+        EventHandler(Model* model,
+                     TreeWidgetEventHandler* treeEventHandler,
+                     QVTKInteractorStyle* interactor,
+                     DocumentHandler* documentHandler);
         void connectEvents();
+        void setMeshSizings();
+        void setMeshProperties();
     //Add compontents that require handling as private below and add them the constructor
     private:
 
@@ -41,12 +46,12 @@ class EventHandler : public QObject {
         Model* _model;
         TreeWidgetEventHandler* _treeEventHandler;
         QVTKInteractorStyle* _interactor;
+        DocumentHandler* _documentHandler;
 
     signals:
 
 
     public slots:
-
 
 
 
