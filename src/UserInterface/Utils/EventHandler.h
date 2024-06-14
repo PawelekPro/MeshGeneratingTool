@@ -36,15 +36,35 @@ class EventHandler : public QObject {
                      TreeWidgetEventHandler* treeEventHandler,
                      QVTKInteractorStyle* interactor,
                      DocumentHandler* documentHandler);
+
+        /**
+         * @brief  Connects various Qt slots with signals.
+         *
+         */
         void connectEvents();
 
     //Add compontents that require handling as private below and add them the constructor
     private:
-
+        /**
+         * @brief  Emits signal with selected shapes names back to EntityPickWidget so that the names can be displayed
+         */
         void emitNamesSignal();
+
+        /**
+         * Raw pointer to model that contains Mesh and Geometry objects. Serves so that its data can be used in widgets
+         */
         Model* _model;
+        /**
+	     * Raw pointer to event hadler for widgets inside Tree Widget Items.
+	     */
         TreeWidgetEventHandler* _treeEventHandler;
+         /**
+	     * Raw pointer to interactor that handles seleceted shapes
+	     */
         QVTKInteractorStyle* _interactor;
+        /**
+	     * Taw pointert to global document hadnler
+	     */
         DocumentHandler* _documentHandler;
 
     signals:
