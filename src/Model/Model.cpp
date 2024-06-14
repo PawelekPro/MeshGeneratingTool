@@ -22,7 +22,7 @@
 #include "Model.h"
 
 
-Model::Model(std::string modelName) : _modelName(modelName) {
+Model::Model(DocumentHandler* documentHandler, std::string modelName) : _modelName(modelName), _documentHandler(documentHandler) {
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
@@ -116,7 +116,6 @@ void Model::applyMeshGlobalSize(){
             maxSize = meshProp.text().toDouble();
         }
     }
-    std::cout << "Setting sizes: " << minSize << " " << maxSize << std::endl;
     gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
     gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
 };
