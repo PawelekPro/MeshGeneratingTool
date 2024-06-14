@@ -42,7 +42,7 @@ class Model {
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
 
-	Model(std::string modelName);
+	Model(DocumentHandler* documentHandler, std::string modelName);
 	~Model();
 
 	//--------Geometry interface-----// 
@@ -56,15 +56,15 @@ class Model {
 
 	void applyMeshSettings();
 
+	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
+	void addSizing(const std::vector<int>& verticesTags, double size);
+
 	private:
 		static bool gmshInitialized;
 		DocumentHandler* _documentHandler;
 
-
 		void applyMeshGlobalSize();
 		void applyMeshSizings();
-
-		void addSizing(const std::vector<int>& verticesTags, double size);
 
 		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
