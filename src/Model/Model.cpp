@@ -91,7 +91,7 @@ void Model::initializeGmsh() {
     }
 }
 
-void Model::fetchMeshProperties(double minElementSize, double maxElementSize){
+void Model::setMeshProperties(double minElementSize, double maxElementSize){
     gmsh::option::setNumber("Mesh.MeshSizeMin", minElementSize);
     gmsh::option::setNumber("Mesh.MeshSizeMax", maxElementSize);
 }
