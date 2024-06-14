@@ -50,7 +50,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	this->eventHandler = new EventHandler(this->model.get(),
 		this->ui->treeWidget->_eventHandler,
-		this->QVTKRender->getInteractorStyle().Get());
+		this->QVTKRender->getInteractorStyle().Get(),
+		this->documentHandler);
 
 	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Main));
@@ -163,44 +164,9 @@ void MainWindow::newModel() {
 	ui->actionGenerateMesh->setEnabled(true);
 }
 void MainWindow::generateMesh() {
-	// PropertiesList propList = this->ui->treeWidget->getRootProperties(TreeStructure::TreeRoot::Mesh);
-	// double minElementSize = 1;
-	// double maxElementSize = 5;
-	// for(auto& propMap : propList){
-	// 	if (propMap.value("name") == "minElementSize"){
-	// 		minElementSize = propMap.value("value").toDouble();
-	// 	}
-	// 	if (propMap.value("name") == "maxElementSize"){
-	// 		maxElementSize = propMap.value("value").toDouble();
-	// 	}
-	// }
-	// QMap<QString, PropertiesList> sizingMap =
-	// 	this->ui->treeWidget->getItemsProperties(TreeStructure::TreeRoot::Mesh,
-	// 											 TreeStructure::XMLTag::MeshSizing);
-
-	// for(auto& propList : sizingMap){
-	// 	std::vector<int> verticesTags;
-	// 	double size;
-	// 	for(auto& propMap : propList){
-	// 		if(propMap.value("name") == "selectedTags"){
-	// 			QString tagString = propMap.value("value");
-	// 			QStringList tagList = tagString.split(',');
-	// 			for(QString& s : tagList){
-	// 				if(s == ','){
-	// 					continue;
-	// 				}else{
-	// 					verticesTags.push_back(s.toInt());
-	// 				}
-	// 			}
-	// 		}if(propMap.value("name") == "elementSize"){
-	// 			size = propMap.value("value").toFloat();
-	// 		}
-	// 	}
-	// 	this->model->addSizing(verticesTags, size);
-	// }
-
-	// this->model->fetchMeshProperties(minElementSize, maxElementSize);
-	// this->model->meshSurface();
+	this->eventHandler->setMeshProperties();
+	this->eventHandler->setMeshSizings();
+	this->model->meshSurface();
 }
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
