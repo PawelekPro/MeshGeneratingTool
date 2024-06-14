@@ -3,6 +3,7 @@
         "Properties": [
             {
                 "name": "selectionScope",
+                "label": "Selection scope",
                 "hidden": "no",
                 "widget": "ComboBoxWidget",
                 "model": "EntitySelection",
@@ -10,12 +11,14 @@
             },
             {
                 "name": "entitySelected",
+                "label": "Selected entities",
                 "hidden": "no",
                 "widget": "EntityPickWidget",
                 "value": ""
             },
             {
                 "name": "elementSize",
+                "label": "Element size",
                 "hidden": "no",
                 "widget": "DoubleLineWidget",
                 "value": 1,

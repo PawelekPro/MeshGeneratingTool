@@ -35,5 +35,19 @@ EventHandler::EventHandler( Model* model,
                                 if(!interactor){
                                     qWarning("Interactor not initialized before setting event handler");
                                 }
+                                this->connectEvents();
                             }
                             
+
+void EventHandler::connectEvents(){
+    connect(_treeEventHandler, &TreeWidgetEventHandler::entitySelectionConfirmed,
+            this, &EventHandler::emitNamesSignal);
+}
+void EventHandler::emitNamesSignal(){
+    std::vector<std::string> selectedNames;
+    std::vector<int> selectedTags;
+    selectedNames = this->_model->geometry.getShapesNames(this->_interactor->getSelectedShapes());
+    selectedTags = this->_model->geometry.getShapesVerticesTags(this->_interactor->getSelectedShapes());
+    emit this->_treeEventHandler->sendNamesToWidgetDisplay(selectedNames, selectedTags);
+}
+
