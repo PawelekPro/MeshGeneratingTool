@@ -54,14 +54,18 @@ class Model {
 	void meshVolume();
 	vtkSmartPointer<vtkActor> getMeshActor();
 
-	void setMeshProperties(double minElementSize, double maxElementSize);
-	
-
-	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
-   	void addSizing(const std::vector<int>& verticesTags, double size);
+	void applyMeshSettings();
 
 	private:
 		static bool gmshInitialized;
+		DocumentHandler* _documentHandler;
+
+
+		void applyMeshGlobalSize();
+		void applyMeshSizings();
+
+		void addSizing(const std::vector<int>& verticesTags, double size);
+
 		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 

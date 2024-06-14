@@ -165,8 +165,6 @@ void MainWindow::newModel() {
 	ui->actionGenerateMesh->setEnabled(true);
 }
 void MainWindow::generateMesh() {
-	this->eventHandler->setMeshProperties();
-	this->eventHandler->setMeshSizings();
 	this->model->meshSurface();
 }
 //----------------------------------------------------------------------------

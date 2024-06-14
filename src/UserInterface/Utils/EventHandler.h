@@ -37,8 +37,7 @@ class EventHandler : public QObject {
                      QVTKInteractorStyle* interactor,
                      DocumentHandler* documentHandler);
         void connectEvents();
-        void setMeshSizings();
-        void setMeshProperties();
+
     //Add compontents that require handling as private below and add them the constructor
     private:
 
@@ -52,8 +51,6 @@ class EventHandler : public QObject {
 
 
     public slots:
-
-
 
 };
 
