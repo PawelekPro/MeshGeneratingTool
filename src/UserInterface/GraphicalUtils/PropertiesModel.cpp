@@ -57,6 +57,7 @@ PropertiesModel::PropertiesModel(const QDomElement& element, TreeWidgetEventHand
             QDomElement propertyElement = props.at(i).toElement();
             QString propertyName = propertyElement.tagName();
             QString propertyValue = propertyElement.text();
+			std::cout << "property Name: " << propertyValue.toStdString() << std::endl;
             this->_properties.append(propertyElement);
         }
     }

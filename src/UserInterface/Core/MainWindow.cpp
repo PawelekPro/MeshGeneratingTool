@@ -41,6 +41,19 @@ MainWindow::MainWindow(QWidget* parent)
 
 	this->documentHandler = new DocumentHandler();
 	this->ui->treeWidget->initialize(this->documentHandler);
+
+	this->setConnections();
+	this->initializeActions();
+
+	Model::initializeGmsh();
+	newModel();
+
+	this->eventHandler = new EventHandler(	this->model.get(),
+											this->ui->treeWidget->_eventHandler,
+											this->QVTKRender->getInteractorStyle().Get());
+											
+
+
 	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Main));
 
@@ -49,14 +62,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Edges));
-	this->setConnections();
-	this->initializeActions();
-	Model::initializeGmsh();
-	newModel();
 
-	// JsonParser jsonParser;
-	// const rapidjson::Document document = jsonParser.initJsonDocumnet(AppDefaults::getInstance().getDefaultPropertiesPath());
-	// jsonParser.parseEntryProperties(document, DocumentHandler::entryTags.value(DocumentHandler::EntryTag::MeshSizing));
+
+
+
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
@@ -96,23 +105,6 @@ void MainWindow::setConnections() {
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
-
-
-	// connect(this->ui->treeWidget->eventHandler, &TreeWidgetEventHandler::entitySelectionConfirmed,
-	// 		this, [this]() {
-	// 	std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes = 
-	// 		this->QVTKRender->getInteractorStyle()->getSelectedShapes();
-	// 	const std::vector<std::string> names = this->model->geometry.getShapesNames(selectedShapes);
-	// 	std::vector<int> selectedTags;
-	// 	for(auto shape : selectedShapes){
-	// 		std::vector<int> newTags = this->model->geometry.getShapeVerticesTags(shape);
-	// 		selectedTags.insert(selectedTags.end(), newTags.begin(), newTags.end());
-	// 	}
-	// 	std::sort(selectedTags.begin(), selectedTags.end());
-	// 	auto last = std::unique(selectedTags.begin(), selectedTags.end());
-	// 	selectedTags.erase(last, selectedTags.end());
-	// 	emit this->ui->treeWidget->eventHandler->selectedEntitiesNamesFetched(names, selectedTags);
-	// });
 }
 
 //----------------------------------------------------------------------------

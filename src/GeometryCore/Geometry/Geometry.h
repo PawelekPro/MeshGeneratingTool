@@ -26,6 +26,7 @@ namespace GeometryCore {
 
         std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
 
+        std::vector<int> getShapesVerticesTags(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec);
 
         std::string getShapeName(const TopoDS_Shape& shape);
 
