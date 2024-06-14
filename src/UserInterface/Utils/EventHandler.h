@@ -33,15 +33,14 @@ class EventHandler : public QObject {
 
     public:
         EventHandler(Model* model, TreeWidgetEventHandler* treeEventHandler, QVTKInteractorStyle* interactor);
-    
+        void connectEvents();
     //Add compontents that require handling as private below and add them the constructor
     private:
+
+        void emitNamesSignal();
         Model* _model;
         TreeWidgetEventHandler* _treeEventHandler;
         QVTKInteractorStyle* _interactor;
-    
-
-
 
     signals:
 

@@ -123,6 +123,8 @@ private:
 	Ui::MainWindow* ui;
 
 	DocumentHandler* documentHandler;
+
+	EventHandler* eventHandler;
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 

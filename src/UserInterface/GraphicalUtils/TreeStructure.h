@@ -112,7 +112,11 @@ public:
 		// { "HiddenText", Qt::UserRole + 4 },
 		// { "Actor", Qt::UserRole + 6 }
 	};
-
+	
+	/**
+	 * Event handler for widgets inside Tree Widget Items.
+	 */
+	TreeWidgetEventHandler* _eventHandler;
 
 
 private:
@@ -183,10 +187,6 @@ private:
 	 */
 	TreeContextMenu* _contextMenu;
 
-	/**
-	 * Event handler for widgets inside Tree Widget Items.
-	 */
-	TreeWidgetEventHandler* _eventHandler;
 	/**
 	 * Pointer to document handler that stores data of TreeWidgetItems
 	 */

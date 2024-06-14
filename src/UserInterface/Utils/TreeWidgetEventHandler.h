@@ -11,7 +11,7 @@ public:
 
 signals:
     void entitySelectionConfirmed();
-    void selectedEntitiesNamesFetched(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags);
+    void sendNamesToWidgetDisplay(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags);
 
 private:
 };
