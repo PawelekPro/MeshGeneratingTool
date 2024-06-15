@@ -77,7 +77,8 @@ void TreeStructure::addRootItem(const DocumentHandler::RootTag& rootTag) {
 
 	QString rootText = DocumentHandler::rootTags.value(rootTag);
 
-	rootItem->setText(static_cast<int>(Column::Label), rootText);
+	QString rootLabel = rootLabels.value(rootTag);
+	rootItem->setText(static_cast<int>(Column::Label), rootLabel);
 	QDomElement rootElementProperties = this->_documentHandler->getElementsPropertiesElement(rootElement);
 	this->addPropertiesModel(rootElement, rootItem);
 }
@@ -90,6 +91,7 @@ void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
 		qWarning("Can only add sub item to existing parent item.");
 		return;
 		}
+
 	QDomElement parentElement = _domElements.value(parentItem);
 	QDomElement subElement = this->_documentHandler->createSubElement(entryTag, parentElement);
 
@@ -106,7 +108,7 @@ void TreeStructure::addSubItem(	QTreeWidgetItem* parentItem,
 //--------------------------------------------------------------------------------------
 
 QTreeWidgetItem* TreeStructure::getRootTreeWidgetItem(const DocumentHandler::RootTag& rootTag){
-	QString rootName = DocumentHandler::rootTags.value(rootTag);
+	QString rootName = rootLabels.value(rootTag);
 	QList<QTreeWidgetItem*> itemList = this->findItems(rootName, Qt::MatchExactly); 
 	if(itemList.isEmpty()){
 		qErrnoWarning("Root TreeWidgetItem not initialized");

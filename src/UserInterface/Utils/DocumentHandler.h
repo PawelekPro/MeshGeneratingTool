@@ -100,6 +100,11 @@ class DocumentHandler{
          */
         QDomElement getRootElement(const RootTag& rootTag);
 
+        /**
+         * @brief returns the value of a property (subText of a node) as a QString
+         */
+        QString getPropertyValue(const QDomElement& element, const QString& propName);
+
     private:
         /**
          * Main document of the application 

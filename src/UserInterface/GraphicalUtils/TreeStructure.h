@@ -120,9 +120,14 @@ public:
 
 
 private:
+	QMap<DocumentHandler::RootTag, QString> rootLabels = {
+		{DocumentHandler::RootTag::GeomModel, "Geometry model"},
+		{DocumentHandler::RootTag::GeomImport, "Geometry imports"},
+		{DocumentHandler::RootTag::CSYS, "CSYS"},
+		{DocumentHandler::RootTag::Mesh, "Mesh"}
+	};
 	/**
 	 * @brief  Build base widget representation by adding roots item to the tree structure.
-	 *
 	 */
 	void addRootItem(const DocumentHandler::RootTag& rootTag);
 	/**
@@ -176,7 +181,6 @@ private:
 	 */
 	QTreeWidgetItem* getRootTreeWidgetItem(const DocumentHandler::RootTag& rootTag);
 
-
 	/**
 	 * QMap that maps QTreeWidgetItem pointers to QDomElements.
 	 */
@@ -191,10 +195,6 @@ private:
 	 * Pointer to document handler that stores data of TreeWidgetItems
 	 */
 	DocumentHandler* _documentHandler;
-
-	/**
-	 * Generates new names for items created under the parentItem. Follows the pattern baseName_1, baseName_2..
-	 */
 
 	private slots:
 		void onItemRenamed(QTreeWidgetItem* item, int column);	
