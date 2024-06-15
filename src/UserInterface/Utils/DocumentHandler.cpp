@@ -136,3 +136,17 @@ QDomElement DocumentHandler::getRootElement(const RootTag& rootTag){
     QDomElement rootElement = nodeList.at(0).toElement();
     return rootElement;
 }
+
+QString DocumentHandler::getPropertyValue(const QDomElement& element, const QString& propName) {
+    QDomElement propElement = this->getElementsPropertiesElement(element);
+    QDomNodeList propertiesList = propElement.childNodes();
+
+    for (int i = 0; i < propertiesList.size(); i++) {
+        QDomElement prop = propertiesList.at(i).toElement();
+        if (prop.attribute("name") == propName) {
+            return prop.text();
+        }
+    }
+
+    throw std::runtime_error("Could not find property with name: " + propName.toStdString());
+}

@@ -101,53 +101,61 @@ void Model::applyMeshSettings(){
 
 
 void Model::applyMeshGlobalSize(){
-    //TODO move this logic somewhere else, according to solution to TODO from setMeshSizign Suggestions:
-    // 1. some kind of method to fetch values from element so therese no need to constantly allocate nodelists and raw loops.
-    double minSize = 0.1;
-    double maxSize = 1;
+    double minSize;
+    double maxSize;
     QDomElement meshElement = this->_documentHandler->getRootElement(DocumentHandler::RootTag::Mesh);
-    QDomElement meshProps = this->_documentHandler->getElementsPropertiesElement(meshElement);
-    QDomNodeList propertiesList = meshProps.childNodes();
-    for(int i = 0; i < propertiesList.size(); i++){
-        QDomElement meshProp = propertiesList.at(i).toElement();
-        if (meshProp.attribute("name") == "minElementSize"){
-            minSize = meshProp.text().toDouble();
-        }else if(meshProp.attribute("name") == "minElementSize"){
-            maxSize = meshProp.text().toDouble();
-        }
+
+    try {
+        QString minValue = this->_documentHandler->getPropertyValue(meshElement, "minElementSize");
+        minSize = minValue.toDouble();
+    } catch (const std::runtime_error& e) {
+        qWarning() << e.what() << " Setting minElementSize to default 0.1";
+        minSize = 0.1;
     }
+
+    try {
+        QString maxValue = this->_documentHandler->getPropertyValue(meshElement, "maxElementSize");
+        maxSize = maxValue.toDouble();
+    } catch (const std::runtime_error& e) {
+        qWarning() << e.what() << " Setting maxElementSize to default 1";
+        maxSize = 1;
+    }
+
+    std::cout << "settting sizes: " << minSize << " " << maxSize;
+
     gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
     gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
 };
 
 
 void Model::applyMeshSizings(){
-    //TODO move this logic somewhere else. Suggestions:
-        // 1.1 Implement a method that returns a list of items which elements have specific tagname (in this case MeshSzigin) in TreeStructure.
-        // 1.2 Get values of selectedTags and element size from PropertiesModel assigned to an item
-        // OR
-        // 2.1 Use a method getElementByTag from handler to get list of meshSizings
-        // 2.2 Implement a method in document handler that returns a value of property (input(element, property name), output QString),
-        // Use the TreeStructure/DocumentHandler method to get data and then get values of ElementSize and verticesTags here!
-        // Operations like those below should not be in the event handler!!!
     QList<QDomElement> sizingElements = this->_documentHandler->getElementsByTag(DocumentHandler::EntryTag::MeshSizing);
     for(auto sizingElem : sizingElements){
         std::vector<int> currentTags;
         double size;
-        QDomElement propertiesElem = this->_documentHandler->getElementsPropertiesElement(sizingElem);
-        QDomNodeList propertiesList = propertiesElem.childNodes();
-        for(int i = 0; i < propertiesList.size(); i++){
-            QDomElement propertyElem = propertiesList.at(i).toElement();
-            if (propertyElem.attribute("name") == "elementSize"){
-                size = propertyElem.text().toDouble();
-            }
-            if (propertyElem.attribute("name") == "selectedTags"){
-                QString tags = propertyElem.text();
-                QStringList tagsList = tags.split(',', Qt::SkipEmptyParts);
-                for (const QString& tag : tagsList) {
-                    currentTags.push_back(tag.toInt());
-                }
-            }
+        QString sizeString, tagsString;
+        try{sizeString = this->_documentHandler->getPropertyValue(sizingElem, "elementSize");}
+        catch(const std::runtime_error& e){
+            qWarning() << e.what() << "Skipping this meshSizing...";
+            continue;
+        }
+        try{tagsString = this->_documentHandler->getPropertyValue(sizingElem, "selectedTags");}
+        catch(const std::runtime_error& e){
+            qWarning() << e.what() << "Skipping this meshSizing...";
+            continue;
+        }
+        if(sizeString.isEmpty()){
+            qWarning() << "Element size is empty in " << sizingElem.attribute("name") << " skipping...";
+            continue;
+        }
+        if(tagsString.isEmpty()){
+            qWarning() << "selectedTags value is empty in " << sizingElem.attribute("name") << " skipping...";
+            continue;
+        }
+        size = sizeString.toDouble();
+        QStringList tagsList = tagsString.split(',', Qt::SkipEmptyParts);
+        for (const QString& tag : tagsList) {
+            currentTags.push_back(tag.toInt());
         }
         this->addSizing(currentTags, size);
     }

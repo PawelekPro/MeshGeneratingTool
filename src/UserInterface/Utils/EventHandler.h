@@ -39,7 +39,6 @@ class EventHandler : public QObject {
 
         /**
          * @brief  Connects various Qt slots with signals.
-         *
          */
         void connectEvents();
 
