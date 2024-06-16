@@ -16,10 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef OUTPUTREDIRECTOR_H
+#define OUTPUTREDIRECTOR_H
+
 #include "ProgressBar.h"
 
-class OutputRedirector {
+#include <streambuf>
+#include <iostream>
+#include <string>
+#include <functional>
+#include <regex>
+#include <QProgressBar>
 
+class OutputRedirector : public std::streambuf {
+public:
+    OutputRedirector(ProgressBar *progressBar);
 
+    ~OutputRedirector();
 
+    void progressMeshing();
+
+protected:
+    virtual std::streamsize xsputn(const char* s, std::streamsize n) override;
+    virtual int overflow(int c) override;
+
+private:
+    void parseGmshMeshing(const std::string &output);
+
+    std::function<void(const std::string &)> _outputHandler;
+    ProgressBar *_progressBar;
+    std::streambuf *_oldStdoutBuf;
+    std::streambuf *_oldStderrBuf;
 };
+
+#endif OUTPUTREDIRECTOR_H
