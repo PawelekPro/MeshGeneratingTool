@@ -3,6 +3,7 @@ ADD_LIBRARY(Utils
   JsonParser.cpp
   EventHandler.cpp
   TreeWidgetEventHandler.cpp
+  OutputRedirector.cpp
 )
 
 TARGET_LINK_LIBRARIES(Utils PRIVATE 
