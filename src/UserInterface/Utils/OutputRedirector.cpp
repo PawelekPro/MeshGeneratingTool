@@ -39,16 +39,12 @@ void OutputRedirector::progressMeshing(){
     }
 
 void OutputRedirector::parseGmshMeshing(const std::string &output) {
-        static std::string buffer;
-        buffer += output;
-        std::regex progressRegex(R"((\d+)%\s*-)");
+        std::regex progressRegex(R"(\[\s*(\d+)%\s*\]\s*Meshing\s*surface\s*(\d+))");
         std::smatch match;
-        while (std::regex_search(buffer, match, progressRegex)) {
+        if (std::regex_search(output, match, progressRegex)) {
             int progress = std::stoi(match[1]);
             if (_progressBar) {
                 _progressBar->setValue(progress);
             }
-            buffer = match.suffix();
         }
     }
-
