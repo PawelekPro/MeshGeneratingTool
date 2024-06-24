@@ -33,7 +33,6 @@ class TreeContextMenu : public QObject {
 	Q_OBJECT
 public:
 	explicit TreeContextMenu(TreeStructure* treeWidget, QObject* parent = nullptr);
-
 private slots:
 	void showContextMenu(const QPoint& pos);
 
@@ -45,10 +44,15 @@ private:
 
 	void buildGeometryImportsMenu(QMenu*);
 	void buildGeometryModelMenu(QMenu*);
-	void buildCoordinateSystemMenu(QMenu*);
+	void buildCoordinateSystemMenu(QMenu* menu, QTreeWidgetItem* item);
 	void buildMeshMenu(QMenu*);
 
 	static const int fontSize = 10;
+
+	QAction* renameAction;
+	QAction* genereateMeshAction;
+	QAction* addSizingAction;
+	QAction* removeItemAction;
 };
 
 #endif

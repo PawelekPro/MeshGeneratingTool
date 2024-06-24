@@ -35,3 +35,15 @@ std::vector<int> GeometryCore::Geometry::getShapeVerticesTags(const TopoDS_Shape
     return vertexTags;
 }
 
+std::vector<std::string> GeometryCore::Geometry::getShapesNames(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec){
+    std::vector<std::string> shapesNames;
+    for(const TopoDS_Shape& shapeRef : shapesVec){
+        shapesNames.push_back("shape");
+    }
+    return shapesNames;
+}
+
+std::string GeometryCore::Geometry::getShapeName(const TopoDS_Shape& shape){
+    std::string name = "shape";
+    return name;
+}

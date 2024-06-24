@@ -23,7 +23,6 @@
 
 
 Model::Model(std::string modelName) : _modelName(modelName) {
-        gmsh::initialize();
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
@@ -42,12 +41,15 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
     gmsh::model::occ::synchronize();
 }
 
-void Model::addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
+void Model::addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
     for(const auto& shape : selectedShapes){
         const TopoDS_Shape& shapeRef =  shape.get();
         std::vector<int> vertexTags = geometry.getShapeVerticesTags(shape);
         mesh.addSizing(vertexTags, 0.1);
     }
+}
+void Model::addSizing(const std::vector<int>& verticesTags, double size){
+    mesh.addSizing(verticesTags, size);
 }
 
 void Model::meshSurface() {
@@ -71,4 +73,25 @@ void Model::importSTEP(const std::string& filePath, QWidget* progressBar){
     geometry.importSTEP(filePath, progressBar);
     GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
     addShapesToModel(shapesMap);
+}
+
+void Model::initializeGmsh() {
+    static bool gmshInitialized = false;
+    if (!gmshInitialized) {
+        try {
+            gmsh::initialize();
+            gmshInitialized = true;
+        } catch (const std::exception &e) {
+            std::cerr << "Error initializing Gmsh: " << e.what() << std::endl;
+            throw;
+        } catch (...) {
+            std::cerr << "Unknown error initializing Gmsh" << std::endl;
+            throw;
+        }
+    }
+}
+
+void Model::fetchMeshProperties(double minElementSize, double maxElementSize){
+    gmsh::option::setNumber("Mesh.MeshSizeMin", minElementSize);
+    gmsh::option::setNumber("Mesh.MeshSizeMax", maxElementSize);
 }

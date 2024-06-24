@@ -20,6 +20,7 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
+#include "TreeWidgetEventHandler.h"
 #include "BaseWidget.h"
 #include "ComboBoxWidget.h"
 #include "DoubleLineWidget.h"
@@ -55,6 +56,8 @@ public:
 		: QSortFilterProxyModel(parent) { }
 	~ModelFilter() = default;
 
+
+	
 protected:
 	/**
 	 * Determines if a row should be accepted by the filter.
@@ -73,7 +76,7 @@ protected:
 class PropertiesModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	PropertiesModel(QDomElement* element, QWidget* parent = nullptr);
+	PropertiesModel(const QDomElement& element, TreeWidgetEventHandler* handler, QWidget* parent = nullptr);
 	~PropertiesModel();
 
 	/**
@@ -142,13 +145,26 @@ public:
 	 */
 	const QDomElement getProperty(int);
 
+	/**
+	 * Returns the QDomElement corresponding to the property with the given integer identifier.
+	 *
+	 * @param row row of the changed property
+	 * @param name name of the property to change
+	 * @param value value to be assigned to the property
+	 * @return The QDomElement representing the property.
+	 */
+	void setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value);
+
+
 	QWidget* getWidget(const QModelIndex&);
+
+	TreeWidgetEventHandler* eventHandler;
 
 private:
 	/**
 	 * Pointer to a QDomElement object.
 	 */
-	QDomElement* _element;
+	QDomElement _element;
 
 	/**
 	 * A list of QDomElement objects representing properties.

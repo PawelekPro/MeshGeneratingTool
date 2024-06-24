@@ -23,6 +23,7 @@
 #include "AppDefaults.h"
 #include "PropertiesModel.h"
 #include "TreeContextMenu.h"
+#include "TreeWidgetEventHandler.h"
 
 class TreeContextMenu;
 
@@ -89,6 +90,27 @@ public:
 	 * @returns None
 	 */
 	void loadGeometryFile(const QString);
+	/**
+	 * Open an editor in the Name column of a TreeWidgetItem
+	 *
+	 * @param item item to be renamed
+	 *
+	 * @returns None
+	 */
+	void renameItem(QTreeWidgetItem* item);
+	/**
+	 * @brief  mesh sizing node and creates its input widgets in the tree.
+	 *
+	 */
+	void addMeshSizing();
+	/**
+	 * Remove QTreeWidgetItem from the TreeStructure
+	 *
+	 * @param itemToRemove pointer to QTreeWidgetItem that will be removed
+	 *
+	 * @returns None
+	 */
+	void removeSubItem(QTreeWidgetItem* itemToRemove);
 
 	// Container for handling content of columns
 	enum class Column {
@@ -97,101 +119,6 @@ public:
 		Actor
 	};
 
-	/**
-	 * Mapping of role names to corresponding Qt user roles.
-	 */
-	static const inline QMap<QString, int> Role = {
-		{ "Properties", Qt::UserRole + 1 },
-		// { "Advanced", Qt::UserRole + 2 },
-		// { "References", Qt::UserRole + 3 },
-		// { "HiddenText", Qt::UserRole + 4 },
-		// { "Actor", Qt::UserRole + 6 }
-	};
-
-private:
-	/**
-	 * @brief  Build base widget representation by adding roots item to the tree structure.
-	 *
-	 */
-	void buildBaseObjectsRepresentation();
-
-	/**
-	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
-	 *
-	 * @param  {QDomElement*} element    : QDomElement object coresponding to tree item.
-	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
-	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
-	 */
-	QTreeWidgetItem* createItem(QDomElement* element, QTreeWidgetItem* parent = nullptr);
-
-	/**
-	 * Finds tree widget items that match the specified text and flags.
-	 *
-	 * @param text The text to match against.
-	 * @param flags The matching flags to use.
-	 *
-	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
-	 */
-	QList<QTreeWidgetItem*> findTreeWidgetItems(const QString&, Qt::MatchFlags);
-
-	/**
-	 * Adds a node to the data structure.
-	 *
-	 * @param name The name of the node to be added.
-	 * @param value The value associated with the node.
-	 *
-	 * @returns None
-	 */
-	void addNode(const QString&, const QString&);
-
-	/**
-	 * Adds properties of a model to a tree widget item.
-	 *
-	 * @param modelElement Pointer to the QDomElement representing the model.
-	 * @param treeItem Pointer to the QTreeWidgetItem where the properties will be added.
-	 *
-	 * @returns None
-	 */
-	void addPropertiesModel(QDomElement*, QTreeWidgetItem*);
-
-	/**
-	 * Adds properties to a QDomElement.
-	 *
-	 * @param element Pointer to the QDomElement to which properties will be added.
-	 * @param properties List of properties to add to the element.
-	 *
-	 * @returns None
-	 */
-	void addProperties(QDomElement*, PropertiesList);
-
-	/**
-	 * Parses the default properties from a RapidJSON document and a QString.
-	 *
-	 * @param document The RapidJSON document containing the properties.
-	 * @param str The QString containing additional properties.
-	 *
-	 * @returns A PropertiesList object containing the parsed default properties.
-	 */
-	PropertiesList parseDefaultProperties(const rapidjson::Document&, QString);
-
-	/**
-	 * Reads and returns the default properties from a JSON document using RapidJSON.
-	 *
-	 * @return A RapidJSON Document containing the default properties.
-	 */
-	rapidjson::Document readDefaultProperties();
-
-	/**
-	 * Pointer to a QDomDocument object that represents an XML document object model.
-	 */
-	QDomDocument* docObjectModel;
-
-	/**
-	 * QMap that maps QTreeWidgetItem pointers to QDomElement pointers.
-	 */
-	QMap<QTreeWidgetItem*, QDomElement*> domElements;
-
-	TreeContextMenu* contextMenu;
 
 	/**
 	 * Enum class representing different types of tree roots.
@@ -208,6 +135,162 @@ private:
 		Mesh
 	};
 
+	enum class XMLTag{
+		MeshSizing, 
+		GeometryImport,
+	};
+	QMap<XMLTag, QString> XMLTags = {
+		{XMLTag::MeshSizing, "MeshSizing"},
+		{XMLTag::GeometryImport, "GeometryImport"},
+	};
+
+	/**
+	 * Mapping of role names to corresponding Qt user roles.
+	 */
+	static const inline QMap<QString, int> Role = {
+		{ "Properties", Qt::UserRole + 1 },
+		// { "Advanced", Qt::UserRole + 2 },
+		// { "References", Qt::UserRole + 3 },
+		// { "HiddenText", Qt::UserRole + 4 },
+		// { "Actor", Qt::UserRole + 6 }
+	};
+
+	/**
+	 * Return PropertiesList of root node in the TreeStructure. Tree nodes are described using TreeRoot enum
+	 * @param root
+	 *
+	 * @returns  PropertiesList of a tree root
+	 */
+	PropertiesList getRootProperties(TreeRoot root);
+
+	/**
+	 * Get Map of all instances of item described by itemTag, where key is the items QDomElement name
+	 * and value is the PropertiesList of a given item
+	 * @param itemTag xmlTag of items to be found
+	 * @param root TreeRoot under which the items are placed
+	 *
+	 * @returns  Map of all instances of item described by itemTag, where key is the items QDomElement name
+	 * and value is the PropertiesList of a given item
+	 */
+	QMap<QString, PropertiesList> getItemsProperties(TreeRoot root, XMLTag itemTag);
+
+	TreeWidgetEventHandler* eventHandler;
+
+private:
+	void treeWidgetItemRenamed(QTreeWidgetItem* renamedItem,QString newName);
+
+	/**
+	 * @brief  Build base widget representation by adding roots item to the tree structure.
+	 *
+	 */
+	void addRootItems();
+
+	/**
+	 * @brief  Create QTreeWidgetItem object and store reference to coresponding QDomElement.
+	 *
+	 * @param  {QSharedPointer<QDomElement>} element    : QDomElement object coresponding to tree item.
+	 * @param  {QTreeWidgetItem*} parent : Parent item which will be the parent of the created item.
+	 * @return {QTreeWidgetItem*}        : New QTreeWidgetItem object.
+	 */
+	QTreeWidgetItem* createTreeWidgetItem(const QDomElement&, QTreeWidgetItem* parent = nullptr);
+
+	/**
+	 * Finds tree widget items that match the specified text and flags.
+	 *
+	 * @param text The text to match against.
+	 * @param flags The matching flags to use.
+	 *
+	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
+	 */
+	QList<QTreeWidgetItem*> findTreeWidgetItems(const QString&, Qt::MatchFlags);
+	/**
+	 * Changes the name in QDomElment tied to QTreeWidgetItem.
+	 *
+	 * @param itemToRename Pointer to QTreeWidgetItem that is being renamed
+	 * @param newName New name assigned to QTReeWidgetItem
+	 */
+	void renameTreeWidgetItem(QTreeWidgetItem* itemToRename, const QString& newName);
+	/**
+	 * Finds tree widget items that match the specified text and flags.
+	 *
+	 * @param text The text to match against.
+	 * @param flags The matching flags to use.
+	 *
+	 * @returns A list of QTreeWidgetItem pointers that match the search criteria.
+	 */
+	QTreeWidgetItem* getRootTreeWidgetItem(TreeRoot root);
+	/**
+	 * Adds a QTreeWidget item to TreeStructue and its QDomElement to main xml document
+	 *
+	 * @param parentItem Parent item of the newly created one.
+	 * @param xmlTag xml tag enum that will be used for marking the item in the xml and for parsing its proerties
+	 *  in the DefaultProperties.json
+	 * @param nodeBaseName base name for inserted name, folliwng names will be created with 1,2,... suffix
+	 * @param flags Flags of the newly created  QTreeWidget item. By default they are set to: 
+	 * Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled
+	 * @returns None
+	 */
+	void addSubItem(QTreeWidgetItem* parentItem,  XMLTag xmlTag, const QString& nodeBaseName,
+		Qt::ItemFlags flags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+	/**
+	 * Adds properties of a model to a tree widget item.
+	 *
+	 * @param modelElement Pointer to the QDomElement representing the model.
+	 * @param treeItem Pointer to the QTreeWidgetItem where the properties will be added.
+	 *
+	 * @returns None
+	 */
+	void addPropertiesModel(const QDomElement&, QTreeWidgetItem*);
+
+	/**
+	 * Adds properties to a QDomElement.
+	 *
+	 * @param element Pointer to the QDomElement to which properties will be added.
+	 * @param properties List of properties to add to the element.
+	 *
+	 * @returns None
+	 */
+	void addProperties(QDomElement&, PropertiesList);
+
+	/**
+	 * Parses the default properties from a RapidJSON document and a QString.
+	 *
+	 * @param document The RapidJSON document containing the properties.
+	 * @param str The QString containing additional properties.
+	 *
+	 * @returns A PropertiesList object containing the parsed default properties.
+	 */
+	PropertiesList parseJsonDocument(const rapidjson::Document& document, QString prop);
+
+	/**
+	 * Reads and returns the default properties from a JSON document using RapidJSON.
+	 *
+	 * @return A RapidJSON Document containing the default properties.
+	 */
+	rapidjson::Document readJsonTemplateFile(const QString& jsonTemplatePath);
+
+	/**
+	 * QDomDocument object that represents an XML document object model.
+	 */
+	QDomDocument docObjectModel;
+
+	/**
+	 * QMap that maps QTreeWidgetItem pointers to QDomElements.
+	 */
+	QMap<QTreeWidgetItem*, QDomElement> domElements;
+
+	/**
+	 * Context menu that appears when item in TreeStructure is right-clicked
+	 */
+	TreeContextMenu* contextMenu;
+
+
+	/**
+	 * Generates new names for items created under the parentItem. Follows the pattern baseName_1, baseName_2..
+	 */
+	QString getUniqueElementNameForTag(QTreeWidgetItem* parentItem, XMLTag tag, const QString& baseName);
+
 	/**
 	 * A QMap that maps TreeRoot enum values to corresponding QString descriptions.
 	 *
@@ -222,6 +305,9 @@ private:
 		{ TreeRoot::CSYS, "Coordinate System" },
 		{ TreeRoot::Mesh, "Mesh" }
 	};
+
+	private slots:
+		void onItemChanged(QTreeWidgetItem* item, int column);	
 };
 
 #endif

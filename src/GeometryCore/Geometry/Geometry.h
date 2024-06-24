@@ -1,7 +1,10 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include <string>
+#include <vector>
 #include <array>
+
 #include "STEPImporter.h"
 #include "STLImporter.h"
 #include "TagMap.h"
@@ -23,7 +26,11 @@ namespace GeometryCore {
 
         std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
 
-        
+
+        std::string getShapeName(const TopoDS_Shape& shape);
+
+        std::vector<std::string> getShapesNames(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec);
+
     private:
         PartsMap _shapesMap;
         TagMap _tagMap;

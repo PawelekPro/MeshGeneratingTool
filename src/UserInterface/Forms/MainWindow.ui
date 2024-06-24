@@ -251,7 +251,6 @@
     <property name="title">
      <string>Model</string>
     </property>
-    <addaction name="actionNewModel"/>
     <addaction name="actionGenerateMesh"/>
    </widget>
    <widget class="QMenu" name="menuView">
