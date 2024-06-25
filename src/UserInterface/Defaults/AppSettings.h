@@ -42,6 +42,9 @@ public:
 	explicit AppSettings();
 	~AppSettings() = default;
 
+public:
+	void updateRendererSettings();
+
 private:
 	void createDefaultSettings();
 	void loadDefaultSettings();

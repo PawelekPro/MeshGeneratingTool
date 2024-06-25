@@ -54,6 +54,8 @@ public:
 	void setGradientBackgroundEnabled(bool enabled);
 
 	static void QColorToRgbArray(const QColor& color, double rgb[3]);
+	static RendererColorsArray doubleColorsToColorsArray(
+		const double* color1, const double* color2);
 
 private:
 	ColorSettings _defaultColors;

@@ -125,3 +125,25 @@ void AppSettings::loadDefaultSettings() {
 			this->value("GradientBackgroundMode").toInt()));
 	this->endGroup();
 }
+
+//--------------------------------------------------------------------------------------
+void AppSettings::updateRendererSettings() {
+	this->beginGroup(SettingsRoots::rendering);
+
+	this->setValue(
+		"GradientBackgroundEnabled",
+		this->isGradientBackgroundEnabled());
+	this->setValue(
+		"GradientBackgroundMode",
+		static_cast<int>(this->getRendererGradientMode()));
+
+	AppDefaultColors::RendererColorsArray colorsArr
+		= this->getRendererColorsArray();
+
+	for (size_t index = 0; index < colorsArr.size(); ++index) {
+		QString colorVar = QString::fromStdString("color" + std::to_string(index));
+		this->setValue(colorVar, colorsArr[index]);
+	}
+
+	this->endGroup();
+}

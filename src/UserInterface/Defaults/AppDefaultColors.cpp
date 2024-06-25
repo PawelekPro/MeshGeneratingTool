@@ -118,3 +118,13 @@ void AppDefaultColors::QColorToRgbArray(const QColor& color, double rgb[3]) {
 	rgb[1] = static_cast<double>(g);
 	rgb[2] = static_cast<double>(b);
 }
+
+//----------------------------------------------------------------------------
+AppDefaultColors::RendererColorsArray AppDefaultColors::doubleColorsToColorsArray(
+	const double* color1, const double* color2) {
+	RendererColorsArray array;
+
+	array[0] = QColor::fromRgbF(color1[0], color1[1], color1[2]);
+	array[1] = QColor::fromRgbF(color2[0], color2[1], color2[2]);
+	return array;
+}

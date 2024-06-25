@@ -59,8 +59,8 @@ void PreferencesDialog::setConnections() {
 
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::intitializeColorProperties() {
-	const AppDefaultColors::GeomColorsArray colorsArray
-		= AppDefaults::getInstance().getGeometryEntitiesColorArray();
+	AppDefaults& appDefaults = AppDefaults::getInstance();
+	const AppDefaultColors::GeomColorsArray colorsArray = appDefaults.getGeometryEntitiesColorArray();
 
 	QGridLayout* layout = qobject_cast<QGridLayout*>(ui->entityColorsWidget->layout());
 	if (!layout) {
@@ -78,8 +78,7 @@ void PreferencesDialog::intitializeColorProperties() {
 		}
 	}
 
-	const AppDefaultColors::RendererColorsArray renColorsArr
-		= AppDefaults::getInstance().getRendererColorsArray();
+	const AppDefaultColors::RendererColorsArray renColorsArr = appDefaults.getRendererColorsArray();
 	QColor color1 = renColorsArr.at(0);
 	QColor color2 = renColorsArr.at(1);
 
@@ -89,11 +88,10 @@ void PreferencesDialog::intitializeColorProperties() {
 	ui->firstRenColor->setValue(colorTuple1);
 	ui->secRenColor->setValue(colorTuple2);
 
-	const bool isGradModeEnabled = AppDefaults::getInstance().isGradientBackgroundEnabled();
+	const bool isGradModeEnabled = appDefaults.isGradientBackgroundEnabled();
 	int index = 0;
 	if (isGradModeEnabled) {
-		vtkRenderer::GradientModes mode
-			= AppDefaults::getInstance().getRendererGradientMode();
+		vtkRenderer::GradientModes mode = appDefaults.getRendererGradientMode();
 		index = static_cast<int>(mode) + 1;
 		ui->secRenColor->setEnabled(true);
 		ui->secRenColorLabel->setEnabled(true);
@@ -135,13 +133,20 @@ void PreferencesDialog::updateStyleSheet(QString theme) {
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::onApplyButtonClicked() {
 	Rendering::QVTKRenderWindow* aRenWin = _mainWindow->getRenderWindow();
+	AppDefaults& appDefaults = AppDefaults::getInstance();
+
 	int index = this->ui->renBackgroundComboBox->currentIndex();
+	const double* col1 = ui->firstRenColor->getColorAsDoubleArray();
+	const double* col2 = ui->secRenColor->getColorAsDoubleArray();
+
 	if (index == 0) {
 		aRenWin->setBackground(ui->firstRenColor->getColorAsDoubleArray());
 
+		appDefaults.setGradientBackgroundEnabled(false);
+		appDefaults.setRendererColorsArray(
+			AppDefaultColors::doubleColorsToColorsArray(col1, col2));
+
 	} else {
-		const double* col1 = ui->firstRenColor->getColorAsDoubleArray();
-		const double* col2 = ui->secRenColor->getColorAsDoubleArray();
 		vtkRenderer::GradientModes mode;
 
 		switch (index) {
@@ -167,7 +172,15 @@ void PreferencesDialog::onApplyButtonClicked() {
 		}
 
 		aRenWin->setBackground(mode, col1, col2);
+
+		appDefaults.setRendererGradientMode(mode);
+		appDefaults.setGradientBackgroundEnabled(true);
+		appDefaults.setRendererColorsArray(
+			AppDefaultColors::doubleColorsToColorsArray(col1, col2));
 	}
+
+	appDefaults.updateRendererSettings();
+	this->close();
 }
 
 //--------------------------------------------------------------------------------------
