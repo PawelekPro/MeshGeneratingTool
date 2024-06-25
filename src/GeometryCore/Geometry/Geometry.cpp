@@ -35,6 +35,18 @@ std::vector<int> GeometryCore::Geometry::getShapeVerticesTags(const TopoDS_Shape
     return vertexTags;
 }
 
+std::vector<int> GeometryCore::Geometry::getShapesVerticesTags(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec) {
+    std::vector<int> verticesTags;
+    for (const auto& shape : shapesVec) {
+        std::vector<int> shapeVerticesTags = getShapeVerticesTags(shape);
+        verticesTags.insert(verticesTags.end(), shapeVerticesTags.begin(), shapeVerticesTags.end());
+    }
+    std::sort(verticesTags.begin(), verticesTags.end());
+    verticesTags.erase(std::unique(verticesTags.begin(), verticesTags.end()), verticesTags.end());
+
+    return verticesTags;
+}
+
 std::vector<std::string> GeometryCore::Geometry::getShapesNames(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec){
     std::vector<std::string> shapesNames;
     for(const TopoDS_Shape& shapeRef : shapesVec){

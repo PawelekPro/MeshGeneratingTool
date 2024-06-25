@@ -39,6 +39,22 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
+	this->documentHandler = new DocumentHandler();
+	this->ui->treeWidget->initialize(this->documentHandler);
+
+	this->setConnections();
+	this->initializeActions();
+
+	Model::initializeGmsh();
+	newModel();
+
+	this->eventHandler = new EventHandler(	this->model.get(),
+											this->ui->treeWidget->_eventHandler,
+											this->QVTKRender->getInteractorStyle().Get(),
+											this->documentHandler);
+											
+
+
 	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Main));
 
@@ -47,16 +63,18 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Edges));
-	this->setConnections();
-	this->initializeActions();
-	Model::initializeGmsh();
-	newModel();
+
+
+
+
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
+
+	delete documentHandler;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -88,23 +106,6 @@ void MainWindow::setConnections() {
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
-
-
-	connect(this->ui->treeWidget->eventHandler, &TreeWidgetEventHandler::entitySelectionConfirmed,
-			this, [this]() {
-		std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes = 
-			this->QVTKRender->getInteractorStyle()->getSelectedShapes();
-		const std::vector<std::string> names = this->model->geometry.getShapesNames(selectedShapes);
-		std::vector<int> selectedTags;
-		for(auto shape : selectedShapes){
-			std::vector<int> newTags = this->model->geometry.getShapeVerticesTags(shape);
-			selectedTags.insert(selectedTags.end(), newTags.begin(), newTags.end());
-		}
-		std::sort(selectedTags.begin(), selectedTags.end());
-		auto last = std::unique(selectedTags.begin(), selectedTags.end());
-		selectedTags.erase(last, selectedTags.end());
-		emit this->ui->treeWidget->eventHandler->selectedEntitiesNamesFetched(names, selectedTags);
-	});
 }
 
 //----------------------------------------------------------------------------
@@ -156,7 +157,7 @@ void MainWindow::importSTL(QString fileName) {
 //----------------------------------------------------------------------------
 void MainWindow::newModel() {
 	std::string modelName = "Model_1";
-	this->model = std::make_shared<Model>(modelName);
+	this->model = std::make_shared<Model>(documentHandler, modelName);
 	this->QVTKRender->model = this->model;
 	// enable imports
 	ui->actionImportSTEP->setEnabled(true);
@@ -164,45 +165,6 @@ void MainWindow::newModel() {
 	ui->actionGenerateMesh->setEnabled(true);
 }
 void MainWindow::generateMesh() {
-	PropertiesList propList = this->ui->treeWidget->getRootProperties(TreeStructure::TreeRoot::Mesh);
-	double minElementSize = 1;
-	double maxElementSize = 5;
-	for(auto& propMap : propList){
-		if (propMap.value("name") == "minElementSize"){
-			minElementSize = propMap.value("value").toDouble();
-		}
-		if (propMap.value("name") == "maxElementSize"){
-			maxElementSize = propMap.value("value").toDouble();
-		}
-	}
-	QMap<QString, PropertiesList> sizingMap = 
-		this->ui->treeWidget->getItemsProperties(TreeStructure::TreeRoot::Mesh, 
-												 TreeStructure::XMLTag::MeshSizing);
-	
-
-
-	for(auto& propList : sizingMap){
-		std::vector<int> verticesTags;
-		double size;
-		for(auto& propMap : propList){
-			if(propMap.value("name") == "selectedTags"){
-				QString tagString = propMap.value("value");
-				QStringList tagList = tagString.split(',');
-				for(QString& s : tagList){
-					if(s == ','){
-						continue;
-					}else{
-						verticesTags.push_back(s.toInt());
-					}
-				}
-			}if(propMap.value("name") == "elementSize"){
-				size = propMap.value("value").toFloat();
-			}
-		}
-		this->model->addSizing(verticesTags, size);
-	}
-
-	this->model->fetchMeshProperties(minElementSize, maxElementSize);
 	this->model->meshSurface();
 }
 //----------------------------------------------------------------------------

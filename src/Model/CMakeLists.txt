@@ -1,6 +1,5 @@
 ADD_LIBRARY(Model 
     Model.cpp
-    ModelDocumentHandler.cpp
 )
 
 if(WIN32)
@@ -8,12 +7,14 @@ if(WIN32)
     ${GMSH_LIB}
     GeometryCore
     MeshCore
+    Utils
 )
 else()
     TARGET_LINK_LIBRARIES(Model PUBLIC
     ${GMSH_LIB}
     GeometryCore
     MeshCore
+    Utils
 )
 endif()
 
