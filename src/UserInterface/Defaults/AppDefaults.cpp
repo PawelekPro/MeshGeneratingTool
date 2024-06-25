@@ -23,8 +23,7 @@ const QString AppDefaults::_templatesPath = ":/templates/templates/ProjectSetup.
 const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/ComboboxModels.json";
 
 //--------------------------------------------------------------------------------------
-AppDefaults::AppDefaults()
-	: _settings(AppSettings()) {
+AppDefaults::AppDefaults() {
 
 	// Read JSON file representing combobox models
 	QString filePath = this->getComboBoxModelsPath();
@@ -57,9 +56,9 @@ rapidjson::Document* AppDefaults::getComboBoxModels() {
 
 //--------------------------------------------------------------------------------------
 QString AppDefaults::getValue(const QString& key) {
-	this->_settings.beginGroup(SettingsRoots::defaults);
-	QString value = this->_settings.value(key).toString();
-	this->_settings.endGroup();
+	this->beginGroup(SettingsRoots::defaults);
+	QString value = this->value(key).toString();
+	this->endGroup();
 	return value;
 }
 
@@ -86,25 +85,4 @@ const QString AppDefaults::getTemplatesPath() {
 //--------------------------------------------------------------------------------------
 const QString AppDefaults::getComboBoxModelsPath() {
 	return this->_comboBoxModelsPath;
-}
-
-//--------------------------------------------------------------------------------------
-const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
-	return _settings.getGeometryColorsArray();
-}
-
-//--------------------------------------------------------------------------------------
-const AppDefaultColors::RendererColorsArray AppDefaults::getRendererColorsArray() {
-	return _settings.getRendererColorsArray();
-}
-
-//--------------------------------------------------------------------------------------
-const bool AppDefaults::isGradientBackgroundEnabled(bool defaultVal) {
-	return _settings.isGradientBackgroundEnabled(defaultVal);
-}
-
-//--------------------------------------------------------------------------------------
-const vtkRenderer::GradientModes
-AppDefaults::getRendererGradientMode(bool defaultVal) {
-	return _settings.getRendererGradientMode(defaultVal);
 }

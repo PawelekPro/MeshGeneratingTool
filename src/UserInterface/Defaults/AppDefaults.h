@@ -43,7 +43,7 @@ namespace fs = std::filesystem;
  * only one instance of the class is created and provides a global point of access
  * to that instance through the static method getInstance().
  */
-class AppDefaults {
+class AppDefaults : public AppSettings {
 public:
 	/**
 	 * @brief Provides a global point of access to the singleton instance of the AppDefaults class.
@@ -101,16 +101,6 @@ public:
 	 */
 	rapidjson::Document* getComboBoxModels();
 
-	const AppDefaultColors::GeomColorsArray getGeometryEntitiesColorArray();
-	const AppDefaultColors::RendererColorsArray getRendererColorsArray();
-	const bool isGradientBackgroundEnabled(bool defaultVal = false);
-	const vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
-
-	void setGeometryEntitiesColorsArray(const AppDefaultColors::GeomColorsArray array);
-	void setRendererColorsArray(const AppDefaultColors::RendererColorsArray array);
-	void setGradientBackgroundEnabled(const bool enabled);
-	void setRendererGradientMode(const vtkRenderer::GradientModes mode);
-
 private:
 	AppDefaults(AppDefaults const&) = delete;
 	AppDefaults();
@@ -149,9 +139,6 @@ private:
 	const QString getComboBoxModelsPath();
 
 private:
-	// Container for application settings
-	AppSettings _settings;
-
 	// Templates path
 	static const QString _templatesPath;
 	static const QString _comboBoxModelsPath;
