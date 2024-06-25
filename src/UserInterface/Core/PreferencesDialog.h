@@ -47,6 +47,7 @@ private:
 	void intitializeColorProperties();
 	void updateThemeColorButtons();
 	void updateStyleSheet(QString theme);
+	void processRendererSettings();
 	void setConnections();
 
 private:

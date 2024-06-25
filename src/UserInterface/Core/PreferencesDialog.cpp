@@ -132,6 +132,12 @@ void PreferencesDialog::updateStyleSheet(QString theme) {
 
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::onApplyButtonClicked() {
+	this->processRendererSettings();
+	this->close();
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::processRendererSettings() {
 	Rendering::QVTKRenderWindow* aRenWin = _mainWindow->getRenderWindow();
 	AppDefaults& appDefaults = AppDefaults::getInstance();
 
@@ -180,7 +186,6 @@ void PreferencesDialog::onApplyButtonClicked() {
 	}
 
 	appDefaults.updateRendererSettings();
-	this->close();
 }
 
 //--------------------------------------------------------------------------------------
