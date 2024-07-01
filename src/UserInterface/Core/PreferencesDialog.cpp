@@ -21,17 +21,16 @@
 #include "./ui_PreferencesDialog.h"
 
 //--------------------------------------------------------------------------------------
-PreferencesDialog::PreferencesDialog(QWidget* parent, acss::QtAdvancedStylesheet* styleSheet)
+PreferencesDialog::PreferencesDialog(QWidget* parent)
 	: QDialog(parent)
-	, ui(new Ui::PreferencesDialog)
-	, _advancedStyleSheet(styleSheet) {
+	, ui(new Ui::PreferencesDialog) {
 	ui->setupUi(this);
 
 	// Getting acces to main window instance
 	_mainWindow = qobject_cast<MainWindow*>(parent->window());
 
 	QComboBox* comboBox = this->ui->appThemeComboBox;
-	for (const auto& Theme : _advancedStyleSheet->themes()) {
+	for (const auto& Theme : AppTheme::getInstance().themes()) {
 		comboBox->addItem(Theme);
 	}
 
@@ -107,7 +106,7 @@ void PreferencesDialog::updateThemeColorButtons() {
 		return;
 	}
 
-	const auto& ThemeColors = _advancedStyleSheet->themeColorVariables();
+	const auto& ThemeColors = AppTheme::getInstance().themeColorVariables();
 	auto itc = ThemeColors.constBegin();
 	for (int i = 0; i < appColorsLayout->count(); ++i, ++itc) {
 		QWidget* widget = appColorsLayout->itemAt(i)->widget();
@@ -123,9 +122,10 @@ void PreferencesDialog::updateThemeColorButtons() {
 
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::updateStyleSheet(QString theme) {
-	_advancedStyleSheet->setCurrentTheme(theme);
-	_advancedStyleSheet->updateStylesheet();
-	qApp->setStyleSheet(_advancedStyleSheet->styleSheet());
+	AppTheme& appTheme = AppTheme::getInstance();
+	appTheme.setCurrentTheme(theme);
+	appTheme.updateStylesheet();
+	appTheme.updateAppStylesheet();
 
 	this->updateThemeColorButtons();
 }

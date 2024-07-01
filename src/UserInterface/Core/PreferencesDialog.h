@@ -22,10 +22,9 @@
 
 class MainWindow;
 #include "AppDefaults.h"
+#include "AppTheme.h"
 #include "ColorPickerWidget.h"
 #include "MainWindow.h"
-
-#include <QtAdvancedStylesheet.h>
 
 #include <QColor>
 #include <QDialog>
@@ -40,7 +39,7 @@ QT_END_NAMESPACE
 class PreferencesDialog : public QDialog {
 	Q_OBJECT
 public:
-	explicit PreferencesDialog(QWidget* parent = nullptr, acss::QtAdvancedStylesheet* styleSheet = nullptr);
+	explicit PreferencesDialog(QWidget* parent = nullptr);
 	~PreferencesDialog();
 
 private:
@@ -52,7 +51,6 @@ private:
 
 private:
 	Ui::PreferencesDialog* ui;
-	acss::QtAdvancedStylesheet* _advancedStyleSheet;
 	MainWindow* _mainWindow;
 
 private slots:

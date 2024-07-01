@@ -22,6 +22,7 @@
 
 #include <functional>
 
+#include "AppTheme.h"
 #include "Configuration.h"
 #include "Model.h"
 #include "PreferencesDialog.h"
@@ -30,7 +31,6 @@
 
 #include "SARibbon.h"
 #include <QmlStyleUrlInterceptor.h>
-#include <QtAdvancedStylesheet.h>
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -124,7 +124,6 @@ private:
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 
-	acss::QtAdvancedStylesheet* _advancedStyleSheet;
 	/**
 	 * @brief Connect widgets to the methods.
 	 *

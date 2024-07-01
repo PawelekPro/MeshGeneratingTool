@@ -23,8 +23,7 @@
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::MainWindow)
-	, _advancedStyleSheet(new acss::QtAdvancedStylesheet(this)) {
+	, ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 
 	// Set initial sizes of the splitter sections
@@ -43,21 +42,14 @@ MainWindow::MainWindow(QWidget* parent)
 	this->setConnections();
 	this->initializeActions();
 
-	QString AppDir = qApp->applicationDirPath();
-	QString StylesDir = STYLES_DIR;
-	_advancedStyleSheet->setStylesDirPath(StylesDir);
-	_advancedStyleSheet->setOutputDirPath(AppDir + "/output");
-	_advancedStyleSheet->setCurrentStyle("qt_material");
-	_advancedStyleSheet->setDefaultTheme();
-	_advancedStyleSheet->updateStylesheet();
-	qApp->setStyleSheet(_advancedStyleSheet->styleSheet());
+	AppTheme& appTheme = AppTheme::getInstance(this);
+	appTheme.updateAppStylesheet();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
-	delete _advancedStyleSheet;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -210,7 +202,7 @@ void MainWindow::onItemSelectionChanged() {
 }
 
 void MainWindow::onShowDialogButtonClicked() {
-	PreferencesDialog dialog(this, _advancedStyleSheet);
+	PreferencesDialog dialog(this);
 
 	// Show the dialog
 	dialog.exec();
