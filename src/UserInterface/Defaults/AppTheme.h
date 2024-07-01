@@ -19,8 +19,8 @@
 
 #ifndef APPTHEME_H
 #define APPTHEME_H
-
 #include <QtAdvancedStylesheet.h>
+#include <iostream>
 
 #include <QApplication>
 #include <QObject>
@@ -36,22 +36,6 @@
  */
 class AppTheme : public acss::QtAdvancedStylesheet {
 public:
-	/**
-	 * @brief Deleted copy constructor.
-	 *
-	 * The copy constructor is deleted to ensure that the singleton instance
-	 * cannot be copied.
-	 */
-	AppTheme(const AppTheme&) = delete;
-
-	/**
-	 * @brief Deleted assignment operator.
-	 *
-	 * The assignment operator is deleted to ensure that the singleton instance
-	 * cannot be assigned.
-	 */
-	AppTheme& operator=(const AppTheme&) = delete;
-
 	/**
 	 * @brief Gets the singleton instance of the AppTheme class.
 	 *
@@ -78,6 +62,14 @@ public:
 
 private:
 	/**
+	 * @brief Deleted copy constructor.
+	 *
+	 * The copy constructor is deleted to ensure that the singleton instance
+	 * cannot be copied.
+	 */
+	AppTheme(const AppTheme&) = delete;
+
+	/**
 	 * @brief Construct an AppTheme object.
 	 *
 	 * This constructor is private to prevent direct instantiation. It initializes
@@ -94,6 +86,16 @@ private:
 	 * will only be called once when the application exits.
 	 */
 	~AppTheme() = default;
+	/**
+	 * @brief Deleted assignment operator.
+	 *
+	 * The assignment operator is deleted to ensure that the singleton instance
+	 * cannot be assigned.
+	 */
+	AppTheme& operator=(const AppTheme&) = delete;
+
+private:
+	QObject* _parent;
 };
 
 #endif

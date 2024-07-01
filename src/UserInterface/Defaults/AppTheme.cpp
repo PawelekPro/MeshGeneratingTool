@@ -19,10 +19,13 @@
 
 #include "AppTheme.h"
 
+//--------------------------------------------------------------------------------------
 AppTheme::AppTheme(QObject* parent)
-	: acss::QtAdvancedStylesheet(parent) {
+	: _parent(parent)
+	, acss::QtAdvancedStylesheet(parent) {
 	QString appDir = qApp->applicationDirPath();
 	QString stylesDir = STYLES_DIR;
+
 	this->setStylesDirPath(stylesDir);
 	this->setOutputDirPath(appDir + "/output");
 	this->setCurrentStyle("qt_material");
@@ -30,6 +33,7 @@ AppTheme::AppTheme(QObject* parent)
 	this->updateStylesheet();
 }
 
+//--------------------------------------------------------------------------------------
 void AppTheme::updateAppStylesheet() {
 	qApp->setStyleSheet(this->styleSheet());
 }

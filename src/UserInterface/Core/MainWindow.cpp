@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget* parent)
 	this->setConnections();
 	this->initializeActions();
 
-	AppTheme& appTheme = AppTheme::getInstance(this);
+	AppTheme& appTheme = AppTheme::getInstance();
 	appTheme.updateAppStylesheet();
 }
 //----------------------------------------------------------------------------
