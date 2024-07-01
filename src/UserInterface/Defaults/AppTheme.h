@@ -25,20 +25,74 @@
 #include <QApplication>
 #include <QObject>
 
+/**
+ * @class AppTheme
+ * @brief A singleton class for managing the application's stylesheet.
+ *
+ * The AppTheme class inherits from acss::QtAdvancedStylesheet and ensures
+ * that only one instance of the theme manager exists throughout the
+ * application's lifecycle. It provides a method to update the application's
+ * stylesheet.
+ */
 class AppTheme : public acss::QtAdvancedStylesheet {
 public:
+	/**
+	 * @brief Deleted copy constructor.
+	 *
+	 * The copy constructor is deleted to ensure that the singleton instance
+	 * cannot be copied.
+	 */
 	AppTheme(const AppTheme&) = delete;
+
+	/**
+	 * @brief Deleted assignment operator.
+	 *
+	 * The assignment operator is deleted to ensure that the singleton instance
+	 * cannot be assigned.
+	 */
 	AppTheme& operator=(const AppTheme&) = delete;
 
+	/**
+	 * @brief Gets the singleton instance of the AppTheme class.
+	 *
+	 * This method returns the single instance of the AppTheme class. The first
+	 * call to this method initializes the instance with the provided parent.
+	 * Subsequent calls return the already initialized instance and ignore the
+	 * parent parameter.
+	 *
+	 * @param parent The parent QObject for the AppTheme instance. Default is nullptr.
+	 * @return AppTheme& Reference to the singleton instance.
+	 */
 	static AppTheme& getInstance(QObject* parent = nullptr) {
 		static AppTheme instance(parent);
 		return instance;
 	}
 
+	/**
+	 * @brief Updates the application's stylesheet.
+	 *
+	 * This method should contain the implementation for updating the
+	 * application's stylesheet.
+	 */
 	void updateAppStylesheet();
 
 private:
+	/**
+	 * @brief Construct an AppTheme object.
+	 *
+	 * This constructor is private to prevent direct instantiation. It initializes
+	 * the AppTheme object with the provided parent.
+	 *
+	 * @param parent The parent QObject for the AppTheme instance. Default is nullptr.
+	 */
 	explicit AppTheme(QObject* parent = nullptr);
+
+	/**
+	 * @brief Destruct the AppTheme object.
+	 *
+	 * The destructor is defaulted. Since this is a singleton class, the destructor
+	 * will only be called once when the application exits.
+	 */
 	~AppTheme() = default;
 };
 
