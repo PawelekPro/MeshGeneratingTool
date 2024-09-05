@@ -48,6 +48,8 @@ private:
 	QModelIndex _index;
 	TreeWidgetEventHandler* _eventHandler;
 	bool _selected;
+	bool _selectionValid;
+	QString _selectedNames;
 
 	// button width in pixels
 	static const int buttonWidth = 60;

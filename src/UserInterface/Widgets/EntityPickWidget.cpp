@@ -23,7 +23,8 @@
 EntityPickWidget::EntityPickWidget(QWidget* parent)
 	: _selectionLabel(new QLabel(this))
 	, _selectionButton(new QPushButton("Select", this))
-	, _selected(false) {
+	, _selected(false)
+	, _selectionValid(false) {
 
 	_index = QModelIndex();
 
@@ -38,6 +39,8 @@ EntityPickWidget::EntityPickWidget(QWidget* parent)
 
 	connect(_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
 	this->setLayout(layout);
+	_selectionLabel->setStyleSheet("QLabel { background-color : red; color : black; }");
+	this->updateAppearance();
 }
 
 //----------------------------------------------------------------------------
@@ -65,15 +68,22 @@ void EntityPickWidget::updateAppearance() {
 		_selectionLabel->setText("");
 		_selectionButton->hide();
 	}
+	if (_selectionValid){
+		_selectionLabel->setText(_selectedNames);
+		_selectionLabel->setStyleSheet("QLabel { background-color : white; color : black; }");
+	} else {
+		_selectionLabel->setText("");
+		_selectionLabel->setStyleSheet("QLabel { background-color : red; color : black; }");
+	}
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::confirmSelection() {
+	emit _eventHandler->entitySelectionConfirmed();
 	if (_selected) {
 		this->updateAppearance();
 	}
 	_selectionButton->hide();
-	emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------
@@ -90,7 +100,6 @@ void EntityPickWidget::setSelected(bool selected) {
 }
 
 void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags){
-	QString qMergedNames;
     if (!selectedNames.empty()) {
         std::string mergedNames = std::accumulate(
             selectedNames.begin() + 1, 
@@ -100,9 +109,14 @@ void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selec
                 return a + "; " + b;
             }
         );
-        qMergedNames = QString::fromStdString(mergedNames);
-    }
-	QVariant namesVariant(qMergedNames);
+        _selectedNames = QString::fromStdString(mergedNames);
+		_selectionValid = true;
+    } else {
+		_selectedNames = QString();
+		_selectionValid = false;
+		return;
+	}
+	QVariant namesVariant(_selectedNames);
 	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
 	model->setData(_index, namesVariant, Qt::DisplayRole);
 
