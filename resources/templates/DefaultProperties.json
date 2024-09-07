@@ -21,13 +21,13 @@
                 "label": "Element size",
                 "hidden": "no",
                 "widget": "DoubleLineWidget",
-                "value": 1,
+                "value": "1",
                 "unit": "unit"
             },
             {
                 "name": "selectedTags",
                 "hidden": "yes",
-                "value": 0
+                "value": "0"
             }
         ]
     }
