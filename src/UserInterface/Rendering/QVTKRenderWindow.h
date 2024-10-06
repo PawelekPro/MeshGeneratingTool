@@ -26,6 +26,7 @@ class QIVtkViewRepresentation;
 
 #include "QIVtkViewRepresentation.h"
 #include "QVTKInteractorStyle.h"
+#include "QVTKCameraOrientationWidget.h"
 
 #include "Model.h"
 
@@ -38,7 +39,6 @@ class QIVtkViewRepresentation;
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
-#include <vtkCameraOrientationWidget.h>
 #include <vtkCaptionActor2D.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkInteractorStyle.h>
@@ -172,7 +172,7 @@ private:
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
 	// ! Navigation widget
-	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
+	vtkNew<QVTKCameraOrientationWidget> _camOrientManipulator;
 
 	// ! Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;
