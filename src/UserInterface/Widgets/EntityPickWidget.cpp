@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -53,7 +53,7 @@ void EntityPickWidget::setIndex(const QModelIndex& index) {
 	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
 	this->_eventHandler = model->eventHandler;
 
-	connect(this->_eventHandler, &TreeWidgetEventHandler::selectedEntitiesNamesFetched,
+	connect(this->_eventHandler, &TreeWidgetEventHandler::sendNamesToWidgetDisplay,
 		this, &EntityPickWidget::updateSelectedNames);
 }
 

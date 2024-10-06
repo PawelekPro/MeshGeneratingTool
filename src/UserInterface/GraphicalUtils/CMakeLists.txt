@@ -14,6 +14,7 @@ TARGET_LINK_LIBRARIES(GraphicalUtils PRIVATE
   Qt${QT_VERSION_MAJOR}::Xml
   Defaults
   Widgets
+  Utils
 )
 
 TARGET_INCLUDE_DIRECTORIES(GraphicalUtils PUBLIC

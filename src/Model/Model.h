@@ -20,6 +20,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include "DocumentHandler.h"
 #include "Geometry.h"
 #include "Mesh.h"
 
@@ -41,7 +42,7 @@ class Model {
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
 
-	Model(std::string modelName);
+	Model(DocumentHandler* documentHandler, std::string modelName);
 	~Model();
 
 	//--------Geometry interface-----// 
@@ -53,13 +54,18 @@ class Model {
 	void meshVolume();
 	vtkSmartPointer<vtkActor> getMeshActor();
 
-	void fetchMeshProperties(double minElementSize, double maxElementSize);
+	void applyMeshSettings();
 
 	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
-   	void addSizing(const std::vector<int>& verticesTags, double size);
+	void addSizing(const std::vector<int>& verticesTags, double size);
 
 	private:
 		static bool gmshInitialized;
+		DocumentHandler* _documentHandler;
+
+		void applyMeshGlobalSize();
+		void applyMeshSizings();
+
 		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 

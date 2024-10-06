@@ -27,7 +27,8 @@
 #include "PreferencesDialog.h"
 #include "ProgressBar.h"
 #include "QVTKRenderWindow.h"
-
+#include "DocumentHandler.h"
+#include "EventHandler.h"
 #include "SARibbon.h"
 
 #include <QButtonGroup>
@@ -118,6 +119,9 @@ public:
 private:
 	Ui::MainWindow* ui;
 
+	DocumentHandler* documentHandler;
+
+	EventHandler* eventHandler;
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 
