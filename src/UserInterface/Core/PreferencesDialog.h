@@ -52,6 +52,7 @@ private:
 private:
 	Ui::PreferencesDialog* ui;
 	MainWindow* _mainWindow;
+	AppDefaults& _appDefaults;
 
 private slots:
 	void onApplyButtonClicked();

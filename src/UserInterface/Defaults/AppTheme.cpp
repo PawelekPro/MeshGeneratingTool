@@ -37,3 +37,10 @@ AppTheme::AppTheme(QObject* parent)
 void AppTheme::updateAppStylesheet() {
 	qApp->setStyleSheet(this->styleSheet());
 }
+
+void AppTheme::initializeAppStylesheet() {
+	AppSettings appSettings;
+	this->setCurrentTheme(appSettings.getThemeAsString());
+	this->updateStylesheet();
+	qApp->setStyleSheet(this->styleSheet());
+}

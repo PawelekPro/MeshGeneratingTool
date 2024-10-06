@@ -51,6 +51,17 @@ void AppSettings::createDefaultSettings() {
 	Theme
 	===================================================================*/
 	this->beginGroup(SettingsRoots::theme);
+	this->setValue("Theme", "dark_blue");
+
+	const auto& themeColors = AppTheme::getInstance().themeColorVariables();
+	auto itc = themeColors.constBegin();
+	int index = 0;
+	for (itc; itc != themeColors.constEnd(); ++itc) {
+		QColor color = itc.value();
+		QString colorVar = QString::fromStdString("color" + std::to_string(index++));
+		this->setValue(colorVar, color);
+	}
+
 	this->endGroup();
 
 	/* ================================================================
@@ -60,7 +71,7 @@ void AppSettings::createDefaultSettings() {
 
 	AppDefaultColors::RendererColorsArray renColorsArr
 		= this->getRendererColorsArray(true);
-	int index = 0;
+	index = 0;
 	for (const QColor& color : renColorsArr) {
 		QString colorVar = QString::fromStdString("color" + std::to_string(index++));
 		this->setValue(colorVar, color);
@@ -91,6 +102,22 @@ void AppSettings::createDefaultSettings() {
 
 //--------------------------------------------------------------------------------------
 void AppSettings::loadDefaultSettings() {
+
+	/* ================================================================
+	Theme
+	===================================================================*/
+	this->beginGroup(SettingsRoots::theme);
+
+	AppDefaultColors::ThemeColorsArray themeColorsArr;
+	for (size_t index = 0; index < themeColorsArr.size(); ++index) {
+		QString colorVar = QString::fromStdString("color" + std::to_string(index));
+		QColor color = this->value(colorVar).value<QColor>();
+		themeColorsArr[index] = color;
+		// std::cout << "Red: " << color.red() << ", Green: " << color.green()
+		// 		  << ", Blue: " << color.blue() << std::endl;
+	}
+	this->endGroup();
+
 	/* ================================================================
 	Graphics
 	===================================================================*/
@@ -145,5 +172,20 @@ void AppSettings::updateRendererSettings() {
 		this->setValue(colorVar, colorsArr[index]);
 	}
 
+	this->endGroup();
+}
+
+//--------------------------------------------------------------------------------------
+const QString AppSettings::getThemeAsString() {
+	this->beginGroup(SettingsRoots::theme);
+	QString value = this->value("Theme").toString();
+	this->endGroup();
+	return value;
+}
+
+//--------------------------------------------------------------------------------------
+void AppSettings::setThemeString(QString theme) {
+	this->beginGroup(SettingsRoots::theme);
+	this->setValue("Theme", theme);
 	this->endGroup();
 }

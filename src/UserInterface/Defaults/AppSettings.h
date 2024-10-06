@@ -23,6 +23,7 @@
 
 #include "AppDefaultColors.h"
 #include "AppInfo.h"
+#include "AppTheme.h"
 
 #include <QDir>
 #include <QFile>
@@ -44,6 +45,8 @@ public:
 
 public:
 	void updateRendererSettings();
+	const QString getThemeAsString(); 
+	void setThemeString(QString theme);
 
 private:
 	void createDefaultSettings();

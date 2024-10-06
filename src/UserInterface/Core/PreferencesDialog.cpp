@@ -23,7 +23,8 @@
 //--------------------------------------------------------------------------------------
 PreferencesDialog::PreferencesDialog(QWidget* parent)
 	: QDialog(parent)
-	, ui(new Ui::PreferencesDialog) {
+	, ui(new Ui::PreferencesDialog)
+	, _appDefaults(AppDefaults::getInstance()) {
 	ui->setupUi(this);
 
 	// Getting acces to main window instance
@@ -32,6 +33,14 @@ PreferencesDialog::PreferencesDialog(QWidget* parent)
 	QComboBox* comboBox = this->ui->appThemeComboBox;
 	for (const auto& Theme : AppTheme::getInstance().themes()) {
 		comboBox->addItem(Theme);
+	}
+
+	QString theme = _appDefaults.getThemeAsString();
+	for (int index = 0; index < this->ui->appThemeComboBox->count(); ++index) {
+		if (this->ui->appThemeComboBox->itemText(index) == theme) {
+			this->ui->appThemeComboBox->setCurrentIndex(index);
+			break;
+		}
 	}
 
 	this->intitializeColorProperties();
@@ -58,10 +67,11 @@ void PreferencesDialog::setConnections() {
 
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::intitializeColorProperties() {
-	AppDefaults& appDefaults = AppDefaults::getInstance();
-	const AppDefaultColors::GeomColorsArray colorsArray = appDefaults.getGeometryEntitiesColorArray();
+	const AppDefaultColors::GeomColorsArray colorsArray
+		= _appDefaults.getGeometryEntitiesColorArray();
 
-	QGridLayout* layout = qobject_cast<QGridLayout*>(ui->entityColorsWidget->layout());
+	QGridLayout* layout = qobject_cast<QGridLayout*>(
+		ui->entityColorsWidget->layout());
 	if (!layout) {
 		qWarning() << "No QGridLayout found in QGroupBox!";
 	} else {
@@ -77,7 +87,7 @@ void PreferencesDialog::intitializeColorProperties() {
 		}
 	}
 
-	const AppDefaultColors::RendererColorsArray renColorsArr = appDefaults.getRendererColorsArray();
+	const AppDefaultColors::RendererColorsArray renColorsArr = _appDefaults.getRendererColorsArray();
 	QColor color1 = renColorsArr.at(0);
 	QColor color2 = renColorsArr.at(1);
 
@@ -87,10 +97,10 @@ void PreferencesDialog::intitializeColorProperties() {
 	ui->firstRenColor->setValue(colorTuple1);
 	ui->secRenColor->setValue(colorTuple2);
 
-	const bool isGradModeEnabled = appDefaults.isGradientBackgroundEnabled();
+	const bool isGradModeEnabled = _appDefaults.isGradientBackgroundEnabled();
 	int index = 0;
 	if (isGradModeEnabled) {
-		vtkRenderer::GradientModes mode = appDefaults.getRendererGradientMode();
+		vtkRenderer::GradientModes mode = _appDefaults.getRendererGradientMode();
 		index = static_cast<int>(mode) + 1;
 		ui->secRenColor->setEnabled(true);
 		ui->secRenColorLabel->setEnabled(true);
@@ -133,13 +143,15 @@ void PreferencesDialog::updateStyleSheet(QString theme) {
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::onApplyButtonClicked() {
 	this->processRendererSettings();
+
+	_appDefaults.setThemeString(
+		this->ui->appThemeComboBox->currentText());
 	this->close();
 }
 
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::processRendererSettings() {
 	Rendering::QVTKRenderWindow* aRenWin = _mainWindow->getRenderWindow();
-	AppDefaults& appDefaults = AppDefaults::getInstance();
 
 	int index = this->ui->renBackgroundComboBox->currentIndex();
 	const double* col1 = ui->firstRenColor->getColorAsDoubleArray();
@@ -148,8 +160,8 @@ void PreferencesDialog::processRendererSettings() {
 	if (index == 0) {
 		aRenWin->setBackground(ui->firstRenColor->getColorAsDoubleArray());
 
-		appDefaults.setGradientBackgroundEnabled(false);
-		appDefaults.setRendererColorsArray(
+		_appDefaults.setGradientBackgroundEnabled(false);
+		_appDefaults.setRendererColorsArray(
 			AppDefaultColors::doubleColorsToColorsArray(col1, col2));
 
 	} else {
@@ -179,13 +191,13 @@ void PreferencesDialog::processRendererSettings() {
 
 		aRenWin->setBackground(mode, col1, col2);
 
-		appDefaults.setRendererGradientMode(mode);
-		appDefaults.setGradientBackgroundEnabled(true);
-		appDefaults.setRendererColorsArray(
+		_appDefaults.setRendererGradientMode(mode);
+		_appDefaults.setGradientBackgroundEnabled(true);
+		_appDefaults.setRendererColorsArray(
 			AppDefaultColors::doubleColorsToColorsArray(col1, col2));
 	}
 
-	appDefaults.updateRendererSettings();
+	_appDefaults.updateRendererSettings();
 }
 
 //--------------------------------------------------------------------------------------

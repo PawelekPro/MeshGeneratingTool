@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget* parent)
 	this->initializeActions();
 
 	AppTheme& appTheme = AppTheme::getInstance();
-	appTheme.updateAppStylesheet();
+	appTheme.initializeAppStylesheet();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {

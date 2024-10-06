@@ -25,6 +25,8 @@
 #include <QApplication>
 #include <QObject>
 
+#include "AppSettings.h"
+
 /**
  * @class AppTheme
  * @brief A singleton class for managing the application's stylesheet.
@@ -59,6 +61,10 @@ public:
 	 * application's stylesheet.
 	 */
 	void updateAppStylesheet();
+
+
+	void initializeAppStylesheet();
+	
 
 private:
 	/**

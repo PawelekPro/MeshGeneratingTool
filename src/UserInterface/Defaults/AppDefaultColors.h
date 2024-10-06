@@ -30,6 +30,7 @@ class AppDefaultColors {
 public:
 	typedef std::array<QColor, 9> GeomColorsArray;
 	typedef std::array<QColor, 2> RendererColorsArray;
+	typedef std::array<QColor, 7> ThemeColorsArray;
 
 	struct ColorSettings {
 		GeomColorsArray geomColors;

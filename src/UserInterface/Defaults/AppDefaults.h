@@ -101,6 +101,7 @@ public:
 	 */
 	rapidjson::Document* getComboBoxModels();
 
+
 private:
 	AppDefaults(AppDefaults const&) = delete;
 	AppDefaults();
