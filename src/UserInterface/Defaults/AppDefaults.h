@@ -91,6 +91,16 @@ public:
 	const QString getTemplatesPath();
 
 	/**
+	 * @brief Returns the path to the templates directory.
+	 *
+	 * The templates directory contains predefined templates used by the application.
+	 *
+	 * @return The path to the templates directory as a QString.
+	 */
+	const QString getDefaultPropertiesPath();
+
+
+	/**
 	 * @brief Returns a pointer to the ComboBox models stored in the AppDefaults class.
 	 *
 	 * This function provides access to the ComboBox models stored within the AppDefaults class.
@@ -141,6 +151,7 @@ private:
 
 private:
 	// Templates path
+	static const QString _defaultsPath;
 	static const QString _templatesPath;
 	static const QString _comboBoxModelsPath;
 

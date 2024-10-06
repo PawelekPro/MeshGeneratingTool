@@ -37,23 +37,22 @@ PropertiesWidget::~PropertiesWidget() {
 
 //--------------------------------------------------------------------------------------
 void PropertiesWidget::setModel(PropertiesModel* model) {
-	qDeleteAll(_createdWidgets);
-	_createdWidgets.clear();
+    qDeleteAll(_createdWidgets);
+    _createdWidgets.clear();
 
-	ModelFilter* proxy = new ModelFilter(this);
-	proxy->setSourceModel(model);
-	QTableView::setModel(proxy);
+    ModelFilter* proxy = new ModelFilter(this);
+    proxy->setSourceModel(model);
+    QTableView::setModel(proxy);
 
-	if (proxy) {
-		for (int i = 0; i < proxy->rowCount(); ++i) {
-			this->setRowHeight(i, this->rowHeight);
-			QModelIndex index = proxy->index(i, 1);
-			QModelIndex indexSource = proxy->mapToSource(index);
-			QWidget* widget = model->getWidget(indexSource);
-			this->setIndexWidget(index, widget);
+    if (proxy) {
+        for (int i = 0; i < proxy->rowCount(); ++i) {
+            this->setRowHeight(i, this->rowHeight);
+            QModelIndex index = proxy->index(i, 1);
+            QModelIndex indexSource = proxy->mapToSource(index);
+            QWidget* widget = model->getWidget(indexSource);
 
-			// Add widget to list to handle its deleting on model change event
-			_createdWidgets.append(widget);
-		}
-	}
+            this->setIndexWidget(index, widget);
+            _createdWidgets.append(widget);
+        }
+    }
 }

@@ -18,6 +18,7 @@
  */
 
 #include "ProgressBar.h"
+#include "ui_ProgressBar.h"
 
 //----------------------------------------------------------------------------
 ProgressBar::ProgressBar(QWidget* parent)

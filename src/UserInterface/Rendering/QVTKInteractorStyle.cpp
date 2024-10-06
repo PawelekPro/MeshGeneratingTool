@@ -239,6 +239,7 @@ void QVTKInteractorStyle::OnKeyPress() {
 			const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 			pipeline->Mapper()->Update();
 		}
+		_selectedShapes.clear();
 	}
 
 	this->Superclass::OnKeyPress();
@@ -402,6 +403,7 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 			// Get ids of cells for picked subshapes
 			IVtk_ShapeIdList aSubIds;
 			IVtk_ShapeIdList::Iterator aMetaIds(*selectedSubShapeIds);
+			_selectedShapes.clear();
 			for (; aMetaIds.More(); aMetaIds.Next()) {
 				IVtk_ShapeIdList aSubSubIds = anOccShape->GetSubIds(aMetaIds.Value());
 				const TopoDS_Shape& aSubShape = anOccShape->GetSubShape(aMetaIds.Value());
@@ -421,3 +423,7 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 		}
 	}
 }
+
+const std::vector<std::reference_wrapper<const TopoDS_Shape>>& QVTKInteractorStyle::getSelectedShapes(){
+	return _selectedShapes;
+};

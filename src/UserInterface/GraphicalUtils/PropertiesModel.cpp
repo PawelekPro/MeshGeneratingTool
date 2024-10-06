@@ -42,19 +42,34 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(QDomElement* element, QWidget* parent)
-	: QAbstractTableModel(parent)
-	, _element(element) {
+PropertiesModel::PropertiesModel(const QDomElement& element, TreeWidgetEventHandler* handler, QWidget* parent)
+    : QAbstractTableModel(parent)
+    , _element(element)
+	, eventHandler(handler){
 
-	this->_header << "Property"
-				  << "Value";
+    this->_header << "Property"
+                  << "Value";
 
-	QDomNodeList props = this->_element->childNodes();
-	for (int i = 0; i < props.length(); ++i) {
-		if (!props.at(i).isComment()) {
-			this->_properties.append(props.at(i).toElement());
-		}
-	}
+    QDomNodeList props = this->_element.childNodes();
+
+    for (int i = 0; i < props.length(); ++i) {
+        if (!props.at(i).isComment()) {
+            QDomElement propertyElement = props.at(i).toElement();
+            QString propertyName = propertyElement.tagName();
+            QString propertyValue = propertyElement.text();
+            this->_properties.append(propertyElement);
+        }
+    }
+	// connect(this, &PropertiesModel::dataChanged, this, [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
+    //         QDomNodeList list = this->_element.childNodes();
+    //         for (int i = 0; i < list.length(); ++i) {
+    //             QDomNode node = list.at(i);
+    //             if (node.isElement()) {
+    //                 QDomElement elem = node.toElement();
+    //                 std::cout << "Element: " << elem.tagName().toStdString() << ", Value: " << elem.text().toStdString() << std::endl;
+    //             }
+    //         }
+    //     });
 }
 
 //--------------------------------------------------------------------------------------
@@ -143,6 +158,18 @@ const QDomElement PropertiesModel::getProperty(int row) {
 		throw std::out_of_range("Invalid row index");
 	}
 	return this->_properties.value(row);
+}
+
+void PropertiesModel::setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value) {
+	QDomNodeList propertyNodes = _element.childNodes();
+    for (int i = 0; i < propertyNodes.count(); ++i) {
+        QDomElement propertyElement = propertyNodes.at(i).toElement();
+        if (!propertyElement.isNull() && propertyElement.attribute("name") == name) {
+            propertyElement.firstChild().setNodeValue(value.toString());
+            break;
+        }
+    }
+	emit dataChanged(index, index);
 }
 
 //--------------------------------------------------------------------------------------

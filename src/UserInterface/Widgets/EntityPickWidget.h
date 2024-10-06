@@ -21,6 +21,7 @@
 #define ENTITYPICKWIDHET_H
 
 #include "BaseWidget.h"
+#include "PropertiesModel.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -41,9 +42,11 @@ public:
 private:
 	void updateAppearance();
 
+
 	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
+	TreeWidgetEventHandler* _eventHandler;
 	bool _selected;
 
 	// button width in pixels
@@ -57,6 +60,7 @@ signals:
 
 private slots:
 	void confirmSelection();
+	void updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags);
 };
 
 #endif

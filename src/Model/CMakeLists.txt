@@ -1,5 +1,6 @@
 ADD_LIBRARY(Model 
     Model.cpp
+    ModelDocumentHandler.cpp
 )
 
 if(WIN32)

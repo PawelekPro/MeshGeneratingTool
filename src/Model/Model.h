@@ -35,6 +35,8 @@
 
 class Model {
 	public:
+	static void initializeGmsh();
+
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
@@ -51,10 +53,13 @@ class Model {
 	void meshVolume();
 	vtkSmartPointer<vtkActor> getMeshActor();
 
-	void addSizing(std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
-   
+	void fetchMeshProperties(double minElementSize, double maxElementSize);
+
+	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
+   	void addSizing(const std::vector<int>& verticesTags, double size);
 
 	private:
+		static bool gmshInitialized;
 		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 

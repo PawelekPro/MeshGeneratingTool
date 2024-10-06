@@ -49,13 +49,17 @@ EntityPickWidget::~EntityPickWidget() {
 //----------------------------------------------------------------------------
 void EntityPickWidget::setIndex(const QModelIndex& index) {
 	_index = index;
-	// ToDo: To be developed...
+
+	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
+	this->_eventHandler = model->eventHandler;
+
+	connect(this->_eventHandler, &TreeWidgetEventHandler::selectedEntitiesNamesFetched,
+		this, &EntityPickWidget::updateSelectedNames);
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::updateAppearance() {
 	if (_selected) {
-		_selectionLabel->setText("Selected");
 		_selectionButton->show();
 	} else {
 		_selectionLabel->setText("");
@@ -69,11 +73,11 @@ void EntityPickWidget::confirmSelection() {
 		this->updateAppearance();
 	}
 	_selectionButton->hide();
+	emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
-	// ToDo: Accept or reject entity selection
 	if (!_selected) {
 		this->setSelected(true);
 	}
@@ -84,3 +88,38 @@ void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
 void EntityPickWidget::setSelected(bool selected) {
 	_selected = selected;
 }
+
+void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags){
+	QString qMergedNames;
+    if (!selectedNames.empty()) {
+        std::string mergedNames = std::accumulate(
+            selectedNames.begin() + 1, 
+            selectedNames.end(), 
+            selectedNames[0], 
+            [](const std::string& a, const std::string& b) {
+                return a + "; " + b;
+            }
+        );
+        qMergedNames = QString::fromStdString(mergedNames);
+    }
+	QVariant namesVariant(qMergedNames);
+	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
+	model->setData(_index, namesVariant, Qt::DisplayRole);
+
+	if(!selectedTags.empty()){
+		std::vector<std::string> strVec(selectedTags.size());
+		std::transform(selectedTags.begin(), selectedTags.end(), strVec.begin(), [](int num) {
+			return std::to_string(num);
+		});
+		std::string tags = std::accumulate(std::next(strVec.begin()), strVec.end(), strVec[0],
+			[](const std::string& a, const std::string& b) {
+				return a + "," + b;
+			});
+
+		QString qTags = QString::fromStdString(tags);
+		QVariant tagsVariant(qTags);
+		model->setElementProperty(_index, "selectedTags", tagsVariant);
+	}
+}
+
+

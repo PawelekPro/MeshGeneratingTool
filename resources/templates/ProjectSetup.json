@@ -56,10 +56,20 @@
     "Mesh": {
         "Properties": [
             {
-                "name": "test",
-                "label": "test",
-                "widget": "test",
-                "value": "0"
+                "name": "minElementSize",
+                "label": "Min element size",
+                "widget": "DoubleLineWidget",
+                "value": "0.1",
+                "hidden": "no",
+                "unit": "unit"
+            },
+            {
+                "name": "maxElementSize",
+                "label": "Max element size",
+                "widget": "DoubleLineWidget",
+                "value": "1",
+                "hidden": "no",
+                "unit": "unit"
             }
         ]
     }

@@ -24,6 +24,8 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <QObject>
+
 namespace MeshCore{
     
     enum class ElementType : int {
@@ -43,9 +45,13 @@ namespace MeshCore{
             vtkSmartPointer<vtkPoints> getVtkPoints();
             vtkSmartPointer<vtkCellArray> getVtkCellArray(ElementType ElementType);
             vtkSmartPointer<vtkActor> getMeshActor(){return this->_meshActor;};
+        
+        public slots:
+            void setMaxElementSize(double maxSize);
+            void setMinElementSize(double minSize);
+
 
         private:
-
             void fillVtkPoints();
             void fillElementDataMap(ElementType elementType);
 

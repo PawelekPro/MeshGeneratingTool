@@ -19,6 +19,7 @@
 
 #include "AppDefaults.h"
 
+const QString AppDefaults::_defaultsPath = ":/templates/templates/DefaultProperties.json";
 const QString AppDefaults::_templatesPath = ":/templates/templates/ProjectSetup.json";
 const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/ComboboxModels.json";
 
@@ -85,4 +86,13 @@ const QString AppDefaults::getTemplatesPath() {
 //--------------------------------------------------------------------------------------
 const QString AppDefaults::getComboBoxModelsPath() {
 	return this->_comboBoxModelsPath;
+}
+
+const QString AppDefaults::getDefaultPropertiesPath(){
+	return this->_defaultsPath;
+};
+
+//--------------------------------------------------------------------------------------
+const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
+	return _appDefaultColors.getGeometryEntitiesColorArray();
 }
