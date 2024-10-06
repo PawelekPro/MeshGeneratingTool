@@ -4,6 +4,7 @@ ADD_LIBRARY(Rendering
   QIVtkSelectionPipeline.cpp
   QIVtkViewRepresentation.cpp
   QIVtkUtils.cpp
+  QVTKCameraOrientationWidget.cpp
 )
 
 INCLUDE_DIRECTORIES(
