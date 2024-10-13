@@ -9564,6 +9564,9 @@ void SARibbonGallery::paintEvent(QPaintEvent* event) {
 #include <QTimer>
 #include <QVariant>
 
+#ifdef HELP_DRAW_RECT
+    #undef HELP_DRAW_RECT
+#endif
 #define HELP_DRAW_RECT(p, rect)             \
 	do {                                    \
 		p.save();                           \

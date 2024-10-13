@@ -18,3 +18,5 @@ endif()
 TARGET_INCLUDE_DIRECTORIES(MeshCore PUBLIC
     ${PRJ_SOURCE_DIR}/src/MeshCore
 )
+
+ADD_SUBDIRECTORY(NetgenPlugin)

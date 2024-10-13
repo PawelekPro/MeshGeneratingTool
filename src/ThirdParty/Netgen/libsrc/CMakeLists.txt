@@ -1,0 +1,13 @@
+add_subdirectory(core)
+add_subdirectory(general)
+add_subdirectory(gprim)
+add_subdirectory(linalg)
+add_subdirectory(include)
+add_subdirectory(meshing)
+add_subdirectory(visualization)
+add_subdirectory(csg)
+add_subdirectory(geom2d)
+add_subdirectory(occ)
+add_subdirectory(stlgeom)
+add_subdirectory(interface)
+

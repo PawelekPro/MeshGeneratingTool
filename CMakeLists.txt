@@ -9,6 +9,7 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define an option to include/exclude examples
 option(BUILD_EXAMPLES "Build examples" ON)
+option(ENABLE_NETGEN "Enable Netgen" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
@@ -127,20 +128,20 @@ if(NOT GMSH_LIB)
     MESSAGE(FATAL_ERROR "Could not find libgmsh")
 else()
     # Read the content of gmsh.h into a variable
-    file(READ "${GMSH_INCLUDE_DIR}/gmsh.h" GMSH_H_CONTENT)
+    set(GMSH_H_CONTENT "${GMSH_INCLUDE_DIR}/gmsh.h")
     # Extract version information using regular expressions
     # Major version
-    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MAJOR
+    file(STRINGS ${GMSH_H_CONTENT} GMSH_API_VERSION_MAJOR
         REGEX "#define GMSH_API_VERSION_MAJOR.*"
     )
     string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MAJOR ${GMSH_API_VERSION_MAJOR})
     # Minor version
-    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MINOR
+    file(STRINGS ${GMSH_H_CONTENT} GMSH_API_VERSION_MINOR
         REGEX "#define GMSH_API_VERSION_MINOR.*"
     )
     string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MINOR ${GMSH_API_VERSION_MINOR})
     # Patch version
-    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_PATCH
+    file(STRINGS ${GMSH_H_CONTENT} GMSH_API_VERSION_PATCH
         REGEX "#define GMSH_API_VERSION_PATCH.*"
     )
     string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_PATCH ${GMSH_API_VERSION_PATCH})
@@ -159,6 +160,48 @@ endif()
 
 INCLUDE_DIRECTORIES(${GMSH_INC})
 
+
+# Netgen
+######################################################################
+if(ENABLE_NETGEN)
+    set(NETGEN_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/ThirdParty/Netgen)
+endif(ENABLE_NETGEN)
+
+add_subdirectory(src/ThirdParty)
+
+# Retrieve variables
+if(ENABLE_NETGEN)
+    get_directory_property(Netgen_LIBRARIES
+      DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ThirdParty/Netgen
+      DEFINITION Netgen_LIBRARIES
+    )
+    # Read the content of gmsh.h into a variable
+    set(NETGEN_HPP_CONTENT "${NETGEN_ROOT_DIR}/libsrc/include/netgen_version.hpp")
+    # Extract version information using regular expressions
+    # Major version
+    file(STRINGS ${NETGEN_HPP_CONTENT} NETGEN_VERSION_MAJOR
+        REGEX "#define NETGEN_VERSION_MAJOR.*"
+    )
+    string(REGEX MATCH "[0-9]+" NETGEN_VERSION_MAJOR ${NETGEN_VERSION_MAJOR})
+    # Minor version
+    file(STRINGS ${NETGEN_HPP_CONTENT} NETGEN_VERSION_MINOR
+        REGEX "#define NETGEN_VERSION_MINOR.*"
+    )
+    string(REGEX MATCH "[0-9]+" NETGEN_VERSION_MINOR ${NETGEN_VERSION_MINOR})
+    # Patch version
+    file(STRINGS ${NETGEN_HPP_CONTENT} NETGEN_VERSION_PATCH
+        REGEX "#define NETGEN_VERSION_PATCH.*"
+    )
+    string(REGEX MATCH "[0-9]+" NETGEN_VERSION_PATCH ${NETGEN_VERSION_PATCH})
+
+    # Print version information
+    MESSAGE(STATUS "NETGEN FOUND")
+    MESSAGE(STATUS "NETGEN VERSION: ${NETGEN_VERSION_MAJOR}.${NETGEN_VERSION_MINOR}.${NETGEN_VERSION_PATCH}")
+    MESSAGE(STATUS "-------------------------------------------------------------------------------")
+else()
+    set(Netgen_LIBRARIES)
+    message(STATUS "Netgen is not enabled and will not be available in the resulting library.")
+endif(ENABLE_NETGEN)
 
 # rapidjson library for parsing json files
 ######################################################################

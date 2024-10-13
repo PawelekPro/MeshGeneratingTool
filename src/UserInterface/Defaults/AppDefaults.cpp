@@ -92,7 +92,3 @@ const QString AppDefaults::getDefaultPropertiesPath(){
 	return this->_defaultsPath;
 };
 
-//--------------------------------------------------------------------------------------
-const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
-	return _appDefaultColors.getGeometryEntitiesColorArray();
-}
