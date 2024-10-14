@@ -19,6 +19,7 @@
 
 #include "NetgenPlugin_ngDefs.h"
 #include "NetgenPlugin_ngMeshInfo.h"
+#include "TopoDS_Shape.hxx"
 
 namespace nglib {
 #include <nglib.h>
@@ -29,8 +30,10 @@ class OCCGeoemtry;
 class Mesh;
 }
 
+class MESH_Mesh;
+
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(SMESH_Mesh* mesh, const TopoDS_Shape& aShape, const bool isVolume);
+	NetgenPlugin_Mesher(MESH_Mesh* mesh, const TopoDS_Shape& aShape, const bool isVolume);
 	~NetgenPlugin_Mesher();
-}
+};

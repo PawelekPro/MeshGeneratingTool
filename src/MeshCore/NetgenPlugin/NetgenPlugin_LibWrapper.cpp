@@ -178,7 +178,7 @@ void NetgenPlugin_LibWrapper::removeOutputFile() {
 //----------------------------------------------------------------------------
 int NetgenPlugin_LibWrapper::generateMesh(
 	netgen::OCCGeometry& occgeo, int startWith, int endWith) {
-	return this->GenerateMesh(occgeo, startWith, endWith, _ngMesh);
+	return this->generateMesh(occgeo, startWith, endWith, _ngMesh);
 }
 
 //----------------------------------------------------------------------------

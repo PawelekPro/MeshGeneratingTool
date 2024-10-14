@@ -50,7 +50,7 @@ void NetgenPlugin_ngMeshInfo::transferLocalH(netgen::Mesh* fromMesh, netgen::Mes
 	if (!fromMesh->LocalHFunctionGenerated())
 		return;
 	if (!toMesh->LocalHFunctionGenerated())
-		NetgenPlugin_LibWrapper::CalcLocalH(toMesh);
+		NetgenPlugin_LibWrapper::calcLocalH(toMesh);
 
 	const size_t size = sizeof(netgen::LocalH);
 	_copyOfLocalH = new char[size];
