@@ -22,13 +22,12 @@
 
 #include <functional>
 
-#include "Configuration.h"
-#include "Model.h"
+#include "Configuration.hpp"
+#include "Model.hpp"
 #include "PreferencesDialog.h"
-#include "ProgressBar.h"
+#include "ProgressBar.hpp"
 #include "QVTKRenderWindow.h"
-#include "DocumentHandler.h"
-#include "EventHandler.h"
+#include "DocumentHandler.hpp"
 #include "SARibbon.h"
 
 #include <QButtonGroup>
@@ -119,9 +118,6 @@ public:
 private:
 	Ui::MainWindow* ui;
 
-	DocumentHandler* documentHandler;
-
-	EventHandler* eventHandler;
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 

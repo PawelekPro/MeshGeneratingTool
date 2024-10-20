@@ -51,10 +51,10 @@ void EntityPickWidget::setIndex(const QModelIndex& index) {
 	_index = index;
 
 	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
-	this->_eventHandler = model->eventHandler;
+	// this->_eventHandler = model->eventHandler;
 
-	connect(this->_eventHandler, &TreeWidgetEventHandler::sendNamesToWidgetDisplay,
-		this, &EntityPickWidget::updateSelectedNames);
+	// connect(this->_eventHandler, &TreeWidgetEventHandler::sendNamesToWidgetDisplay,
+	// 	this, &EntityPickWidget::updateSelectedNames);
 }
 
 //----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ void EntityPickWidget::confirmSelection() {
 		this->updateAppearance();
 	}
 	_selectionButton->hide();
-	emit _eventHandler->entitySelectionConfirmed();
+	// emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------

@@ -88,7 +88,7 @@ public:
 	 *
 	 * @return The path to the templates directory as a QString.
 	 */
-	const QString getTemplatesPath();
+	const QString getRootItemsSetupPath();
 
 	/**
 	 * @brief Returns the path to the templates directory.
@@ -97,7 +97,7 @@ public:
 	 *
 	 * @return The path to the templates directory as a QString.
 	 */
-	const QString getDefaultPropertiesPath();
+	const QString getSubItemsSetupPath();
 
 
 	/**
@@ -155,8 +155,8 @@ private:
 	QSettings settings;
 
 	// Templates path
-	static const QString _defaultsPath;
-	static const QString _templatesPath;
+	static const QString _subItemsSetupPath;
+	static const QString _rootItemsSetupPath;
 	static const QString _comboBoxModelsPath;
 
 	// rapidjson document for ComboBoxModels JSON file

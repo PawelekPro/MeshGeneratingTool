@@ -1,6 +1,6 @@
 ADD_SUBDIRECTORY(Core)
 ADD_SUBDIRECTORY(Defaults)
-ADD_SUBDIRECTORY(GraphicalUtils)
+ADD_SUBDIRECTORY(TreeStructure)
 ADD_SUBDIRECTORY(Rendering)
 ADD_SUBDIRECTORY(Widgets)
 ADD_SUBDIRECTORY(Utils)
@@ -13,7 +13,7 @@ TARGET_LINK_LIBRARIES(UserInterface PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   Widgets
   Defaults
-  GraphicalUtils
+  TreeStructure
   Rendering
   Core
   Utils

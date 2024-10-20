@@ -1,11 +1,11 @@
 ADD_LIBRARY(Widgets 
+  WidgetFactory.cpp
   AbstractLineEdit.cpp
   IntLineWidget.cpp
   DoubleLineWidget.cpp
   ComboBoxWidget.cpp
   BaseWidget.h
   EntityPickWidget.cpp
-  TreeContextMenu.cpp
   RibbonBarWidget.cpp
   ColorPickerWidget.cpp
   ${SARIBBON_PATH}/SARibbon.h
@@ -22,7 +22,7 @@ TARGET_LINK_LIBRARIES(Widgets PUBLIC
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Core5Compat
-  GraphicalUtils
+  TreeStructure
   Rendering
   Defaults
   Core
