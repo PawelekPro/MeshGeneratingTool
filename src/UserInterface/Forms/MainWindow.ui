@@ -326,12 +326,12 @@
   <customwidget>
    <class>TreeStructure</class>
    <extends>QTreeWidget</extends>
-   <header>TreeStructure.h</header>
+   <header>TreeStructure.hpp</header>
   </customwidget>
   <customwidget>
    <class>PropertiesWidget</class>
    <extends>QTableView</extends>
-   <header>PropertiesWidget.h</header>
+   <header>PropertiesWidget.hpp</header>
   </customwidget>
   <customwidget>
    <class>RibbonBarWidget</class>

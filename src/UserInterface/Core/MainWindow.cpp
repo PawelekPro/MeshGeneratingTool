@@ -39,41 +39,26 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
-	this->documentHandler = new DocumentHandler();
-	this->ui->treeWidget->initialize(this->documentHandler);
-
 	this->setConnections();
 	this->initializeActions();
 
 	Model::initializeGmsh();
 	newModel();
-
-	this->eventHandler = new EventHandler(this->model.get(),
-		this->ui->treeWidget->_eventHandler,
-		this->QVTKRender->getInteractorStyle().Get(),
-		this->documentHandler);
 
 	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Main));
 
-	this->setConnections();
-	this->initializeActions();
+	// this->buttonGroup.addButton(this->ui->facesSelectorButton,
+	// 	static_cast<int>(Rendering::Renderers::Faces));
 
-	AppTheme& appTheme = AppTheme::getInstance();
-	appTheme.initializeAppStylesheet();
-	Model::initializeGmsh();
-	newModel();
-
-	// JsonParser jsonParser;
-	// const rapidjson::Document document = jsonParser.initJsonDocumnet(AppDefaults::getInstance().getDefaultPropertiesPath());
-	// jsonParser.parseEntryProperties(document, DocumentHandler::entryTags.value(DocumentHandler::EntryTag::MeshSizing));
+	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
+	// 	static_cast<int>(Rendering::Renderers::Edges));
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
-	delete documentHandler;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -139,7 +124,6 @@ void MainWindow::importSTEP(QString fileName) {
 	}
 
 	QFileInfo fileInfo(fileName);
-	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
 	QVTKRender->fitView();
 }
 
@@ -156,7 +140,7 @@ void MainWindow::importSTL(QString fileName) {
 //----------------------------------------------------------------------------
 void MainWindow::newModel() {
 	std::string modelName = "Model_1";
-	this->model = std::make_shared<Model>(documentHandler, modelName);
+	this->model = std::make_shared<Model>(modelName);
 	this->QVTKRender->model = this->model;
 	// enable imports
 	ui->actionImportSTEP->setEnabled(true);

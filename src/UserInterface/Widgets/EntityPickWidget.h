@@ -21,7 +21,7 @@
 #define ENTITYPICKWIDHET_H
 
 #include "BaseWidget.h"
-#include "PropertiesModel.h"
+#include "PropertiesModel.hpp"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -46,7 +46,6 @@ private:
 	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
-	TreeWidgetEventHandler* _eventHandler;
 	bool _selected;
 
 	// button width in pixels
