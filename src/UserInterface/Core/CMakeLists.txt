@@ -8,7 +8,7 @@ TARGET_LINK_LIBRARIES(Core PUBLIC
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
   Defaults
-  GraphicalUtils
+  TreeStructure
   Rendering
   Widgets
   NetgenPlugin

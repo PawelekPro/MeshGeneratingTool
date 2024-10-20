@@ -28,7 +28,7 @@ class QIVtkViewRepresentation;
 #include "QVTKInteractorStyle.h"
 #include "QVTKCameraOrientationWidget.h"
 
-#include "Model.h"
+#include "Model.hpp"
 
 #include <algorithm>
 #include <array>

@@ -24,12 +24,11 @@
 
 #include "AppTheme.h"
 #include "Configuration.h"
+#include "DocumentHandler.hpp"
 #include "Model.h"
 #include "PreferencesDialog.h"
-#include "ProgressBar.h"
+#include "ProgressBar.hpp"
 #include "QVTKRenderWindow.h"
-#include "DocumentHandler.h"
-#include "EventHandler.h"
 #include "SARibbon.h"
 #include <QmlStyleUrlInterceptor.h>
 
@@ -128,9 +127,6 @@ private:
 	vtkSmartPointer<MGTMesh> mgtm;
 	Ui::MainWindow* ui;
 
-	DocumentHandler* documentHandler;
-
-	EventHandler* eventHandler;
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 

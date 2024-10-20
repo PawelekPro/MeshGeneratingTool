@@ -47,8 +47,8 @@
   </qresource>
   <qresource prefix="templates">
     <file>templates/ComboboxModels.json</file>
-    <file>templates/ProjectSetup.json</file>
-    <file>templates/DefaultProperties.json</file>
+    <file>templates/RootItemsSetup.json</file>
+    <file>templates/SubItemsSetup.json</file>
   </qresource>
   <qresource prefix="uiSetup">
     <file>icons/watermark.png</file>

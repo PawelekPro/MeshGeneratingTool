@@ -19,10 +19,10 @@
 
 
 
-#include "Model.h"
+#include "Model.hpp"
 
 
-Model::Model(DocumentHandler* documentHandler, std::string modelName) : _modelName(modelName), _documentHandler(documentHandler) {
+Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
@@ -103,10 +103,12 @@ void Model::applyMeshSettings(){
 void Model::applyMeshGlobalSize(){
     double minSize;
     double maxSize;
-    QDomElement meshElement = this->_documentHandler->getRootElement(DocumentHandler::RootTag::Mesh);
+
+    DocumentHandler& docHandler = DocumentHandler::getInstance();
+    QDomElement meshElement = docHandler.getRootElement(ItemTypes::Root::Mesh);
 
     try {
-        QString minValue = this->_documentHandler->getPropertyValue(meshElement, "minElementSize");
+        QString minValue = docHandler.getPropertyValue(meshElement, "minElementSize");
         minSize = minValue.toDouble();
     } catch (const std::runtime_error& e) {
         qWarning() << e.what() << " Setting minElementSize to default 0.1";
@@ -114,7 +116,7 @@ void Model::applyMeshGlobalSize(){
     }
 
     try {
-        QString maxValue = this->_documentHandler->getPropertyValue(meshElement, "maxElementSize");
+        QString maxValue = docHandler.getPropertyValue(meshElement, "maxElementSize");
         maxSize = maxValue.toDouble();
     } catch (const std::runtime_error& e) {
         qWarning() << e.what() << " Setting maxElementSize to default 1";
@@ -129,17 +131,18 @@ void Model::applyMeshGlobalSize(){
 
 
 void Model::applyMeshSizings(){
-    QList<QDomElement> sizingElements = this->_documentHandler->getElementsByTag(DocumentHandler::EntryTag::MeshSizing);
+    DocumentHandler& docHandler = DocumentHandler::getInstance();
+    QList<QDomElement> sizingElements = docHandler.getElementsByType(ItemTypes::Mesh::ElementSizing);
     for(auto sizingElem : sizingElements){
         std::vector<int> currentTags;
         double size;
         QString sizeString, tagsString;
-        try{sizeString = this->_documentHandler->getPropertyValue(sizingElem, "elementSize");}
+        try{sizeString = docHandler.getPropertyValue(sizingElem, "elementSize");}
         catch(const std::runtime_error& e){
             qWarning() << e.what() << "Skipping this meshSizing...";
             continue;
         }
-        try{tagsString = this->_documentHandler->getPropertyValue(sizingElem, "selectedTags");}
+        try{tagsString = docHandler.getPropertyValue(sizingElem, "selectedTags");}
         catch(const std::runtime_error& e){
             qWarning() << e.what() << "Skipping this meshSizing...";
             continue;

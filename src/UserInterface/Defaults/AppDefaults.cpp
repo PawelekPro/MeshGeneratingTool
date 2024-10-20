@@ -19,9 +19,9 @@
 
 #include "AppDefaults.h"
 
-const QString AppDefaults::_defaultsPath = ":/templates/templates/DefaultProperties.json";
-const QString AppDefaults::_templatesPath = ":/templates/templates/ProjectSetup.json";
-const QString AppDefaults::_comboBoxModelsPath = ":/templates/templates/ComboboxModels.json";
+const QString AppDefaults::_subItemsSetupPath  = ":templates/templates/SubItemsSetup.json";
+const QString AppDefaults::_rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
+const QString AppDefaults::_comboBoxModelsPath = ":templates/templates/ComboboxModels.json";
 
 //--------------------------------------------------------------------------------------
 AppDefaults::AppDefaults() {
@@ -79,8 +79,8 @@ QString AppDefaults::getAppProjFileVersion() {
 }
 
 //--------------------------------------------------------------------------------------
-const QString AppDefaults::getTemplatesPath() {
-	return this->_templatesPath;
+const QString AppDefaults::getRootItemsSetupPath() {
+	return this->_rootItemsSetupPath;
 }
 
 //--------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ const QString AppDefaults::getComboBoxModelsPath() {
 	return this->_comboBoxModelsPath;
 }
 
-const QString AppDefaults::getDefaultPropertiesPath(){
-	return this->_defaultsPath;
+const QString AppDefaults::getSubItemsSetupPath(){
+	return this->_subItemsSetupPath;
 };
 

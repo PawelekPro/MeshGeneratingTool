@@ -151,7 +151,6 @@ void MainWindow::importSTEP(QString fileName) {
 	}
 
 	QFileInfo fileInfo(fileName);
-	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
 	QVTKRender->fitView();
 }
 
@@ -168,7 +167,7 @@ void MainWindow::importSTL(QString fileName) {
 //----------------------------------------------------------------------------
 void MainWindow::newModel() {
 	std::string modelName = "Model_1";
-	this->model = std::make_shared<Model>(documentHandler, modelName);
+	this->model = std::make_shared<Model>(modelName);
 	this->QVTKRender->model = this->model;
 	// enable imports
 	ui->actionImportSTEP->setEnabled(true);

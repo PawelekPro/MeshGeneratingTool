@@ -18,7 +18,7 @@
  */
 
 #include "ComboBoxWidget.h"
-#include "PropertiesModel.h"
+#include "PropertiesModel.hpp"
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::ComboBoxWidget(QWidget* parent)
