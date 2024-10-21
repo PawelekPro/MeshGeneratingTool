@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BASEWIDGET_H
-#define BASEWIDGET_H
+#ifndef BASEWIDGET_HPP
+#define BASEWIDGET_HPP
 
 #include <QWidget>
 

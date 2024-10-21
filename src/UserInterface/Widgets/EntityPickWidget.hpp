@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ENTITYPICKWIDHET_H
-#define ENTITYPICKWIDHET_H
+#ifndef ENTITYPICKWIDHET_HPP
+#define ENTITYPICKWIDHET_HPP
 
-#include "BaseWidget.h"
+#include "BaseWidget.hpp"
 #include "PropertiesModel.hpp"
 
 #include <QHBoxLayout>

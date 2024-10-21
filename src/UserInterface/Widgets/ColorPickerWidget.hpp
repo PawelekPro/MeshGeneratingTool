@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COLORPICKERWIDGET_H
-#define COLORPICKERWIDGET_H
+#ifndef COLORPICKERWIDGET_HPP
+#define COLORPICKERWIDGET_HPP
 
-#include "BaseWidget.h"
+#include "BaseWidget.hpp"
 
 #include <QAbstractItemModel>
 #include <QColor>

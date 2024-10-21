@@ -23,7 +23,7 @@
 class MainWindow;
 #include "AppDefaults.h"
 #include "AppTheme.h"
-#include "ColorPickerWidget.h"
+#include "ColorPickerWIdget.hpp"
 #include "MainWindow.h"
 
 #include <QColor>

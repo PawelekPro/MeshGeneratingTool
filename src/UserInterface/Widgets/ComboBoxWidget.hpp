@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMBOBOXWIDGET_H
-#define COMBOBOXWIDGET_H
+#ifndef COMBOBOXWIDGET_HPP
+#define COMBOBOXWIDGET_HPP
 
 #include "AppDefaults.h"
-#include "BaseWidget.h"
+#include "BaseWidget.hpp"
 
 #include "document.h"
 #include "filereadstream.h"
