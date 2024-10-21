@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "RibbonBarWidget.h"
+#include "RibbonBarWidget.hpp"
 
 RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 	: QWidget(parent) {

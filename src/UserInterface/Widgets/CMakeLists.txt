@@ -4,7 +4,7 @@ ADD_LIBRARY(Widgets
   IntLineWidget.cpp
   DoubleLineWidget.cpp
   ComboBoxWidget.cpp
-  BaseWidget.h
+  BaseWidget.hpp
   EntityPickWidget.cpp
   RibbonBarWidget.cpp
   ColorPickerWidget.cpp

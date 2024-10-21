@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIBBONBARWIDGET_H
-#define RIBBONBARWIDGET_H
+#ifndef RIBBONBARWIDGET_HPP
+#define RIBBONBARWIDGET_HPP
 
 #include "MainWindow.h"
 #include "QIVtkViewRepresentation.h"

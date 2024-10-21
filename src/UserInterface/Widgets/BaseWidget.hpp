@@ -17,31 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PREFERENCESDIALOG_H
-#define PREFERENCESDIALOG_H
+#ifndef BASEWIDGET_HPP
+#define BASEWIDGET_HPP
 
-#include "AppDefaults.h"
-#include "ColorPickerWIdget.hpp"
+#include <QWidget>
 
-#include <QColor>
-#include <QDialog>
-#include <QGridLayout>
-
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class PreferencesDialog;
-}
-QT_END_NAMESPACE
-
-class PreferencesDialog : public QDialog {
+/**
+ * @brief A base class for custom QWidget-based widgets.
+ *
+ * The BaseWidget class serves as a base class for custom widgets and defines a common interface
+ * for setting the QModelIndex associated with the widget.
+ *
+ * This class is intended to be subclassed to create specialized widgets with specific functionality.
+ *
+ * @note This class inherits from QWidget and defines a pure virtual function setIndex(),
+ *       which must be implemented by subclasses to set the QModelIndex associated with the widget.
+ */
+class BaseWidget : public QWidget {
 	Q_OBJECT
 public:
-	explicit PreferencesDialog(QWidget* parent = nullptr);
-	~PreferencesDialog();
-
-private:
-	Ui::PreferencesDialog* ui;
-	void intitializeColorProperties();
+	BaseWidget(QWidget* parent = nullptr)
+		: QWidget(parent) {};
+	virtual ~BaseWidget() {};
+	virtual void setIndex(const QModelIndex& index) = 0;
 };
 
 #endif

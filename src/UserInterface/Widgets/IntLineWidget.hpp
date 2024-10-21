@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTLINEWIDGET_H
-#define INTLINEWIDGET_H
+#ifndef INTLINEWIDGET_HPP
+#define INTLINEWIDGET_HPP
 
 #include "AbstractLineEdit.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,45 +17,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COLORPICKERWIDGET_H
-#define COLORPICKERWIDGET_H
+#ifndef ENTITYPICKWIDHET_HPP
+#define ENTITYPICKWIDHET_HPP
 
-#include "BaseWidget.h"
+#include "BaseWidget.hpp"
+#include "PropertiesModel.hpp"
 
-#include <QAbstractItemModel>
-#include <QColor>
-#include <QColorDialog>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QModelIndex>
 #include <QPushButton>
-#include <QVariant>
+#include <QString>
+#include <QWidget>
 
-#include <tuple>
-
-class ColorPickerWidget : public BaseWidget {
+class EntityPickWidget : public BaseWidget {
 	Q_OBJECT
 public:
-	/**
-	 * @brief Construct an ColorPickerWidget object.
-	 *
-	 * @param parent The parent widget to which this widget belongs.
-	 */
-	explicit ColorPickerWidget(QWidget* parent = nullptr);
-
-	/**
-	 * @brief Destroy the ColorPickerWidget object.
-	 */
-	~ColorPickerWidget();
+	explicit EntityPickWidget(QWidget* parent = nullptr);
+	~EntityPickWidget();
 
 	void setIndex(const QModelIndex& index) override;
-	void setValue(const std::tuple<int, int, int>& color);
+	void setSelected(bool selected);
 
 private:
+	void updateAppearance();
+
+
+	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
+	bool _selected;
+
+	// button width in pixels
+	static const int buttonWidth = 60;
+
+protected:
+	void mousePressEvent(QMouseEvent* event) override;
+
+signals:
+	void confirmed(const QString& selection);
 
 private slots:
-	void onSelectColorClicked();
+	void confirmSelection();
+	void updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags);
 };
 
 #endif

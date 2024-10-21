@@ -17,29 +17,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BASEWIDGET_H
-#define BASEWIDGET_H
+#ifndef COLORPICKERWIDGET_HPP
+#define COLORPICKERWIDGET_HPP
 
-#include <QWidget>
+#include "BaseWidget.hpp"
 
-/**
- * @brief A base class for custom QWidget-based widgets.
- *
- * The BaseWidget class serves as a base class for custom widgets and defines a common interface
- * for setting the QModelIndex associated with the widget.
- *
- * This class is intended to be subclassed to create specialized widgets with specific functionality.
- *
- * @note This class inherits from QWidget and defines a pure virtual function setIndex(),
- *       which must be implemented by subclasses to set the QModelIndex associated with the widget.
- */
-class BaseWidget : public QWidget {
+#include <QAbstractItemModel>
+#include <QColor>
+#include <QColorDialog>
+#include <QHBoxLayout>
+#include <QModelIndex>
+#include <QPushButton>
+#include <QVariant>
+
+#include <tuple>
+
+class ColorPickerWidget : public BaseWidget {
 	Q_OBJECT
 public:
-	BaseWidget(QWidget* parent = nullptr)
-		: QWidget(parent) {};
-	virtual ~BaseWidget() {};
-	virtual void setIndex(const QModelIndex& index) = 0;
+	/**
+	 * @brief Construct an ColorPickerWidget object.
+	 *
+	 * @param parent The parent widget to which this widget belongs.
+	 */
+	explicit ColorPickerWidget(QWidget* parent = nullptr);
+
+	/**
+	 * @brief Destroy the ColorPickerWidget object.
+	 */
+	~ColorPickerWidget();
+
+	void setIndex(const QModelIndex& index) override;
+	void setValue(const std::tuple<int, int, int>& color);
+
+private:
+	QPushButton* _selectionButton;
+	QModelIndex _index;
+
+private slots:
+	void onSelectColorClicked();
 };
 
 #endif

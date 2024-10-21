@@ -319,7 +319,7 @@
   <customwidget>
    <class>RibbonBarWidget</class>
    <extends>QWidget</extends>
-   <header>RibbonBarWidget.h</header>
+   <header>RibbonBarWidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
