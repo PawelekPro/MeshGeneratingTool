@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ComboBoxWidget.h"
+#include "ComboBoxWidget.hpp"
 #include "PropertiesModel.hpp"
 
 //----------------------------------------------------------------------------

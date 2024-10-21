@@ -20,11 +20,11 @@
 #ifndef PROPERTIESMODEL_H
 #define PROPERTIESMODEL_H
 
-#include "BaseWidget.h"
-#include "ComboBoxWidget.h"
-#include "DoubleLineWidget.h"
-#include "EntityPickWidget.h"
-#include "IntLineWidget.h"
+#include "BaseWidget.hpp"
+#include "ComboBoxWidget.hpp"
+#include "DoubleLineWidget.hpp"
+#include "EntityPickWidget.hpp"
+#include "IntLineWidget.hpp"
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>

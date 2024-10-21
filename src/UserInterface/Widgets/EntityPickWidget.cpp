@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "EntityPickWidget.h"
+#include "EntityPickWidget.hpp"
 
 //----------------------------------------------------------------------------
 EntityPickWidget::EntityPickWidget(QWidget* parent)

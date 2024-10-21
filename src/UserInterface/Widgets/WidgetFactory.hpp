@@ -20,7 +20,7 @@
 #ifndef WIDGETFACTORY_HPP
 #define WIDGETFACTORY_HPP
 
-#include "BaseWidget.h"
+#include "BaseWidget.hpp"
 
 class WidgetFactory{
 

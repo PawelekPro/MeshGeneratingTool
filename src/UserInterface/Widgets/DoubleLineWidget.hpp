@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DOUBLELINEWIDGET_H
-#define DOUBLELINEWIDGET_H
+#ifndef DOUBLELINEWIDGET_HPP
+#define DOUBLELINEWIDGET_HPP
 
 #include "AbstractLineEdit.h"
 
