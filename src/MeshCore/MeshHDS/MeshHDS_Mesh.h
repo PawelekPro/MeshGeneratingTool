@@ -33,7 +33,7 @@
 
 class MeshHDS_EXPORT MeshHDS_Mesh : public MeshDS_Mesh {
 public:
-	MeshHDS_Mesh();
+	MeshHDS_Mesh(int theMeshID);
 	~MeshHDS_Mesh();
 
 	void shapeToMesh(const TopoDS_Shape& shape);
@@ -41,6 +41,7 @@ public:
 private:
 	TopoDS_Shape _shape;
 	TopTools_IndexedMapOfShape _indexToShape;
+	int _persistentID;
 };
 
 #endif

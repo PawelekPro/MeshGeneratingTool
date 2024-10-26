@@ -27,13 +27,15 @@
 #include <TopExp.hxx>
 
 //----------------------------------------------------------------------------
-MeshHDS_Mesh::MeshHDS_Mesh() { }
+MeshHDS_Mesh::MeshHDS_Mesh(int theMeshID) {
+	_persistentID = theMeshID;
+}
 
 //----------------------------------------------------------------------------
 MeshHDS_Mesh::~MeshHDS_Mesh() { }
 
 //----------------------------------------------------------------------------
-void MeshHDS_Mesh::shapeToMesh(const TopoDS_Shape shape) {
+void MeshHDS_Mesh::shapeToMesh(const TopoDS_Shape& shape) {
 	_shape = shape;
 	if (!shape.IsNull()) {
 		TopExp::MapShapes(_shape, _indexToShape);

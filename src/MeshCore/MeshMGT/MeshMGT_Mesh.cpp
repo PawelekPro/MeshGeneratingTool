@@ -23,6 +23,7 @@
  */
 
 #include "MeshMGT_Mesh.h"
+#include "MeshHDS_Document.h"
 
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <TopoDS_Solid.hxx>
@@ -30,9 +31,11 @@
 class TopoDS_Solid;
 
 //----------------------------------------------------------------------------
-MeshMGT_Mesh::MeshMGT_Mesh(int localId)
-	: _id(localId) {
+MeshMGT_Mesh::MeshMGT_Mesh(int localId, MeshHDS_Document* theDocument)
+	: _id(localId)
+	, _document(theDocument) {
 
+	_meshHDS = theDocument->newMesh(localId);
 	_meshHDS->shapeToMesh(this->PseudoShape());
 }
 

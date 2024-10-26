@@ -27,11 +27,12 @@
 
 #include <TopoDS_Shape.hxx>
 
+class MeshHDS_Document;
 class TopoDS_Solid;
 
 class MeshMGT_EXPORT MeshMGT_Mesh {
 public:
-	MeshMGT_Mesh(int localId);
+	MeshMGT_Mesh(int localId, MeshHDS_Document* theDocument);
 	virtual ~MeshMGT_Mesh();
 
 	void shapeToMesh(const TopoDS_Shape& theShape);
@@ -41,4 +42,5 @@ public:
 private:
 	int _id;
 	MeshHDS_Mesh* _meshHDS;
+	MeshHDS_Document* _document;
 };
