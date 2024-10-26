@@ -20,7 +20,7 @@
 #ifndef NetgenPlugin_MESHER_H
 #define NetgenPlugin_MESHER_H
 
-#include "NetgenPlugin_ngDefs.h"
+#include "NetgenPlugin_Macro.h"
 #include "NetgenPlugin_ngMeshInfo.h"
 #include "TopoDS_Shape.hxx"
 
@@ -29,16 +29,25 @@ namespace nglib {
 }
 
 namespace netgen {
-class OCCGeoemtry;
+class OCCGeometry;
 class Mesh;
 }
 
-class MESH_Mesh;
+class MeshMGT_Mesh;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(MESH_Mesh* mesh, const TopoDS_Shape& aShape, const bool isVolume);
+	NetgenPlugin_Mesher(MeshMGT_Mesh* mesh, const TopoDS_Shape& shape, const bool isVolume);
 	~NetgenPlugin_Mesher();
+
+	void setDefaultParameters();
+
+private:
+	MeshMGT_Mesh* _mesh;
+	const TopoDS_Shape& _shape;
+	bool _isVolume;
+	netgen::Mesh* _ngMesh;
+	netgen::OCCGeometry* _ngOccGeom;
 };
 
 #endif

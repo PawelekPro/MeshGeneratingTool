@@ -20,10 +20,10 @@
 #ifndef NetgenPlugin_ngMeshInfo_H
 #define NetgenPlugin_ngMeshInfo_H
 
-#include "NetgenPlugin_ngDefs.h"
+#include "NetgenPlugin_Macro.h"
 
 namespace netgen {
-class OCCGeoemtry;
+class OCCGeometry;
 class Mesh;
 }
 

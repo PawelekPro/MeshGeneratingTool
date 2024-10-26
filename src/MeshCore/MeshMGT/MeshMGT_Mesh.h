@@ -22,12 +22,12 @@
  * Date      : 26/10/2024
  */
 
-#include "MeshHDS_Mesh.h"
 #include "MeshMGT_Macro.h"
 
 #include <TopoDS_Shape.hxx>
 
 class MeshHDS_Document;
+class MeshHDS_Mesh;
 class TopoDS_Solid;
 
 class MeshMGT_EXPORT MeshMGT_Mesh {

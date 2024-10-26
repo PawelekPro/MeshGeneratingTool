@@ -25,7 +25,7 @@
 #ifndef NetgenPlugin_LibWrapper_H
 #define NetgenPlugin_LibWrapper_H
 
-#include "NetgenPlugin_ngDefs.h"
+#include "NetgenPlugin_Macro.h"
 
 namespace nglib {
 #include <nglib.h>

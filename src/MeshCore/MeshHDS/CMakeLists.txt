@@ -1,10 +1,12 @@
 SET(MeshHDS_HEADERS
     MeshHDS_Macro.h
     MeshHDS_Mesh.h
+    MeshHDS_Document.h
 )
 
 SET(MeshHDS_SOURCES
     MeshHDS_Mesh.cpp
+    MeshHDS_Document.cpp
 )
 
 SET(_link_LIBRARIES

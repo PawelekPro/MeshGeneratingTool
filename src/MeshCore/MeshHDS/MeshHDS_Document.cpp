@@ -24,7 +24,7 @@
 
 #include "MeshHDS_Document.h"
 
-#include <exception>
+#include <stdexcept>
 
 //----------------------------------------------------------------------------
 MeshHDS_Document::MeshHDS_Document() { }
@@ -35,10 +35,10 @@ MeshHDS_Document::~MeshHDS_Document() { }
 //----------------------------------------------------------------------------
 MeshHDS_Mesh* MeshHDS_Document::newMesh(int MeshID) {
 	std::map<int, MeshHDS_Mesh*>::iterator i_m
-		= _meshes.insert(make_pair(MeshID, (MeshHDS_Mesh*)0)).first;
+		= _meshes.insert(std::make_pair(MeshID, (MeshHDS_Mesh*)0)).first;
 
 	if (i_m->second)
-		throw std::exception("MeshHDS_Document::newMesh(): ID of existing mesh given");
+		throw std::runtime_error("MeshHDS_Document::newMesh(): ID of existing mesh given");
 	MeshHDS_Mesh* mesh = new MeshHDS_Mesh(MeshID);
 	i_m->second = mesh;
 	return mesh;

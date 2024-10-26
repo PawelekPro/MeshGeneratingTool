@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NetgenPlugin_ngDefs_H
-#define NetgenPlugin_ngDefs_H
+#ifndef NetgenPlugin_MACRO_H
+#define NetgenPlugin_MACRO_H
 
 #ifdef WIN32
 

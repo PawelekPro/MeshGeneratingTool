@@ -24,6 +24,7 @@
 
 #include "MeshMGT_Mesh.h"
 #include "MeshHDS_Document.h"
+#include "MeshHDS_Mesh.h"
 
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <TopoDS_Solid.hxx>
