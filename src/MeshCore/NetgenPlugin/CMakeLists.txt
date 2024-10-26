@@ -13,6 +13,7 @@ SET(NetgenPlugin_SOURCES
 
 SET(_link_LIBRARIES
   ${Netgen_LIBRARIES}
+  ${}
 )
 
 ADD_LIBRARY(NetgenPlugin ${NetgenPlugin_SOURCES})

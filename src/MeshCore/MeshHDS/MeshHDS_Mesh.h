@@ -15,30 +15,32 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Mesh      : C++ implementation
+ * File      : MeshHDS_Mesh.h
+ * Author    : Paweł Gilewicz
+ * Date      : 26/10/2024
  */
 
-#ifndef NetgenPlugin_MESHER_H
-#define NetgenPlugin_MESHER_H
+#ifndef MeshHDS_MESH_H
+#define MeshHDS_MESH_H
 
-#include "NetgenPlugin_ngDefs.h"
-#include "NetgenPlugin_ngMeshInfo.h"
-#include "TopoDS_Shape.hxx"
+#include "MeshDS_Mesh.h"
+#include "MeshHDS_Macro.h"
 
-namespace nglib {
-#include <nglib.h>
-}
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS_Shape.hxx>
 
-namespace netgen {
-class OCCGeoemtry;
-class Mesh;
-}
-
-class MESH_Mesh;
-
-class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
+class MeshHDS_EXPORT MeshHDS_Mesh : public MeshDS_Mesh {
 public:
-	NetgenPlugin_Mesher(MESH_Mesh* mesh, const TopoDS_Shape& aShape, const bool isVolume);
-	~NetgenPlugin_Mesher();
+	MeshHDS_Mesh();
+	~MeshHDS_Mesh();
+
+	void shapeToMesh(const TopoDS_Shape& shape);
+
+private:
+	TopoDS_Shape _shape;
+	TopTools_IndexedMapOfShape _indexToShape;
 };
 
 #endif

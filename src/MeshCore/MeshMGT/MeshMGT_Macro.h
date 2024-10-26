@@ -15,30 +15,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Mesh      : C++ implementation
+ * File      : MeshMGT_Macro.h
+ * Author    : Paweł Gilewicz
+ * Date      : 26/10/2024
  */
+#ifndef MeshMGT_MACRO_H
+#define MeshMGT_MACRO_H
 
-#ifndef NetgenPlugin_MESHER_H
-#define NetgenPlugin_MESHER_H
-
-#include "NetgenPlugin_ngDefs.h"
-#include "NetgenPlugin_ngMeshInfo.h"
-#include "TopoDS_Shape.hxx"
-
-namespace nglib {
-#include <nglib.h>
-}
-
-namespace netgen {
-class OCCGeoemtry;
-class Mesh;
-}
-
-class MESH_Mesh;
-
-class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
-public:
-	NetgenPlugin_Mesher(MESH_Mesh* mesh, const TopoDS_Shape& aShape, const bool isVolume);
-	~NetgenPlugin_Mesher();
-};
+#ifdef WIN32
+#if defined MESHimpl_EXPORTS
+#define MeshMGT_EXPORT __declspec(dllexport)
+#else
+#define MeshMGT_EXPORT __declspec(dllimport)
+#endif
+#else
+#define MeshMGT_EXPORT
+#endif
 
 #endif
