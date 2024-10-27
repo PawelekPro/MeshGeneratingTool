@@ -41,3 +41,8 @@ void MeshHDS_Mesh::shapeToMesh(const TopoDS_Shape& shape) {
 		TopExp::MapShapes(_shape, _indexToShape);
 	}
 }
+
+//----------------------------------------------------------------------------
+const int MeshHDS_Mesh::shapeToIndex(const TopoDS_Shape& shape) {
+	return _indexToShape.FindIndex(shape);
+}

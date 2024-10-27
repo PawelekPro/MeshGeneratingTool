@@ -38,6 +38,8 @@ public:
 
 	void shapeToMesh(const TopoDS_Shape& shape);
 
+	const int shapeToIndex(const TopoDS_Shape& shape);
+
 private:
 	TopoDS_Shape _shape;
 	TopTools_IndexedMapOfShape _indexToShape;
