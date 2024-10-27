@@ -18,6 +18,8 @@
  */
 
 #include "NetgenPlugin_Mesher.h"
+#include "MeshMGT_ComputeError.hpp"
+#include "NetgenPlugin_LibWrapper.h"
 
 #include "MeshMGT_Mesh.h"
 
@@ -77,4 +79,17 @@ void NetgenPlugin_Mesher::setDefaultParameters() {
 	}
 
 #endif
+}
+
+//----------------------------------------------------------------------------
+bool NetgenPlugin_Mesher::compute() {
+	NetgenPlugin_LibWrapper ngLib;
+	netgen::MeshingParameters& mparams = netgen::mparam;
+
+	MeshMGT_ComputeErrorPtr error = MeshMGT_ComputeError::New();
+
+	// -------------------------
+	// Prepare OCC geometry
+	// -------------------------
+	netgen::OCCGeometry occGeom;
 }

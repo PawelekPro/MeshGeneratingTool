@@ -16,34 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Mesh      : C++ implementation
- * File      : MESH_Mesh.h
- * Author    : Paweł Gilewicz
- * Date      : 26/10/2024
+ * NetgenPlugin : C++ implementation
+ * File      	: NetgenPlugin_Internals.h
+ * Author    	: Paweł Gilewicz
+ * Date      	: 27/10/2024
  */
+#ifndef NetgenPlugin_INTERNALS_H
+#define NetgenPlugin_INTERNALS_H
 
-#include "MeshMGT_Macro.h"
+#include "NetgenPlugin_Macro.h"
 
-#include <TopoDS_Shape.hxx>
+#include <set>
 
-class MeshHDS_Document;
-class MeshHDS_Mesh;
-class TopoDS_Solid;
+class MeshMGT_Mesh;
+class TopoDS_Shape;
 
-class MeshMGT_EXPORT MeshMGT_Mesh {
+class NETGENPLUGIN_EXPORT NetgenPlugin_Internals {
+	MeshMGT_Mesh& _mesh;
+	bool _is3D;
+
+	//! 3D
+	std::set<int> _intShapes;
+
 public:
-	MeshMGT_Mesh(int localId, MeshHDS_Document* theDocument);
-	virtual ~MeshMGT_Mesh();
-
-	void shapeToMesh(const TopoDS_Shape& theShape);
-
-	static const TopoDS_Solid& PseudoShape();
-
-	const MeshHDS_Mesh* GetMeshHDS() const { return _meshHDS; }
-	MeshHDS_Mesh* GetMeshHDS() { return _meshHDS; }
-
-private:
-	int _id;
-	MeshHDS_Mesh* _meshHDS;
-	MeshHDS_Document* _document;
+	NetgenPlugin_Internals(MeshMGT_Mesh& mesh, const TopoDS_Shape& shape, bool is3D);
 };
+
+#endif

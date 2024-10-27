@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * NetgenPlugin : C++ implementation
- * File      : NetgenPlugin_LibWrapper.h
- * Author    : Paweł Gilewicz
- * Date      : 06/10/2024
+ * File      	: NetgenPlugin_LibWrapper.h
+ * Author    	: Paweł Gilewicz
+ * Date      	: 06/10/2024
  */
 
 #ifndef NetgenPlugin_LibWrapper_H

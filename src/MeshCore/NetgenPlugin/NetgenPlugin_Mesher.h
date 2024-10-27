@@ -42,6 +42,8 @@ public:
 
 	void setDefaultParameters();
 
+	bool compute();
+
 private:
 	MeshMGT_Mesh* _mesh;
 	const TopoDS_Shape& _shape;
