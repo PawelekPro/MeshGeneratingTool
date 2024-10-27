@@ -17,7 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Mesh      : C++ implementation
- * File      : MESH_MeshAttributes.cpp
+ * File      : MeshMGT_MeshAttributes.cpp
  * Author    : Paweł Gilewicz
- * Date      : 14/10/2024
+ * Date      : 27/10/2024
  */
+
+#include "MeshMGT_MeshAttributes.h"
+
+//----------------------------------------------------------------------------
+MeshMGT_MeshAttributes::MeshMGT_MeshAttributes() { }
+
+//----------------------------------------------------------------------------
+MeshMGT_MeshAttributes::~MeshMGT_MeshAttributes() { }

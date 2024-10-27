@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Mesh      : C++ implementation
- * File      : MESH_MeshAttributes.h
+ * File      : MeshMGT_MeshAttributes.h
  * Author    : Paweł Gilewicz
- * Date      : 14/10/2024
+ * Date      : 27/10/2024
  */
 
 #include "MeshMGT_Macro.h"
@@ -31,20 +31,23 @@ enum MeshDimension {
 	MeshDim_3D
 };
 
-class MESH_EXPORT MESH_MeshAttributes {
+class MeshMGT_EXPORT MeshMGT_MeshAttributes {
 public:
 	enum Status // in the order of severity
 	{
 		ATT_OK = 0,
-		ATT_MISSING, // algo misses a ATTothesis
-		ATT_BAD_PARAMETER, // ATTothesis has a bad parameter value
-		ATT_UNKNOWN_FATAL, //  --- all statuses below should be considered as fatal
-						   //      for Add/RemoveATTothesis operations
-		ATT_INCOMPATIBLE, // ATTothesis does not fit algo
-		ATT_ALREADY_EXIST, // several applicable ATTothesis of same priority assigned
-		ATT_BAD_DIM, // bad dimension
-		ATT_BAD_SUBSHAPE, // shape is neither the main one, nor its sub-shape, nor a group
-		ATT_BAD_GEOMETRY, // shape geometry mismatches algorithm's expectation
-		ATT_NEED_SHAPE, // algorithm can work on shape only
+		ATT_MISSING, //! algo misses a attributes
+		ATT_BAD_PARAMETER, //! Attributes has a bad parameter value
+		ATT_UNKNOWN_FATAL, //! all statuses below should be considered as fatal
+						   //!      for Add/RemoveATTothesis operations
+		ATT_INCOMPATIBLE, //! Atrtibutes does not fit algorithm
+		ATT_ALREADY_EXIST, //! several applicable Attributes of same priority assigned
+		ATT_BAD_DIM, //! bad dimension
+		ATT_BAD_SUBSHAPE, //! shape is neither the main one, nor its sub-shape, nor a group
+		ATT_BAD_GEOMETRY, //! shape geometry mismatches algorithm's expectation
+		ATT_NEED_SHAPE, //! algorithm can work on shape only
 	};
+
+	MeshMGT_MeshAttributes();
+	virtual ~MeshMGT_MeshAttributes();
 };
