@@ -27,11 +27,27 @@
 #include "MeshDS_Mesh.h"
 #include "MeshDS_MeshObject.h"
 
+#include <set>
+
+class MeshDS_ElementHolder;
+
 class MeshDS_EXPORT MeshDS_Mesh : public MeshDS_MeshObject {
 public:
 	MeshDS_Mesh();
 
 private:
+protected:
+	MeshDS_Mesh* _parent;
+
+	friend class MeshDS_ElementHolder;
+	std::set<MeshDS_ElementHolder*> elementHolders;
+
+	double xmin;
+	double xmax;
+	double ymin;
+	double ymax;
+	double zmin;
+	double zmax;
 };
 
 #endif
