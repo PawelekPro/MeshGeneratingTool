@@ -46,11 +46,11 @@ void PropertiesWidget::setModel(PropertiesModel* model) {
 
     if (proxy) {
         for (int i = 0; i < proxy->rowCount(); ++i) {
-            this->setRowHeight(i, this->rowHeight);
-            QModelIndex index = proxy->index(i, 1);
+            this->setRowHeight(i, this->_rowHeight);
+            QModelIndex index = proxy->index(i, PropertiesModel::Col::Data);
             QModelIndex indexSource = proxy->mapToSource(index);
-            QWidget* widget = model->getWidget(indexSource);
 
+            QWidget* widget = model->getWidget(indexSource, this);
             this->setIndexWidget(index, widget);
             _createdWidgets.append(widget);
         }

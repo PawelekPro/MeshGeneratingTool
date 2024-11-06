@@ -34,11 +34,16 @@ TreeStructure::TreeStructure(QWidget* parent)
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
 	this->setContextMenuPolicy(Qt::CustomContextMenu);
-	this->_contextMenu = new TreeContextMenu(this);
+	_contextMenu = new TreeContextMenu(this);
 
 	this->setColumnWidth(static_cast<int>(Column::Label), 10);
 	this->setColumnWidth(static_cast<int>(Column::Visible), 10);
 	this->setColumnWidth(static_cast<int>(Column::Actor), 10);
+	this->header()->setVisible(true);  // Ensure headers are visible
+	this->header()->setSectionResizeMode(QHeaderView::Stretch);
+
+	
+	std::for_each(_rootItems.begin(), _rootItems.end(), [this](auto item){this->addTopLevelItem(item.second);});
 }
 
 //--------------------------------------------------------------------------------------

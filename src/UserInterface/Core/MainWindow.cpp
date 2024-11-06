@@ -26,10 +26,12 @@ MainWindow::MainWindow(QWidget* parent)
 	, ui(new Ui::MainWindow) {
 	ui->setupUi(this);
 
+
 	// Set initial sizes of the splitter sections
 	QList<int> sizes;
 	sizes << 100 << 400;
 	ui->mainSplitter->setSizes(sizes);
+	ui->propertiesSplitter->setSizes(sizes);
 
 	this->QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	this->QVTKRender->enableCameraOrientationWidget();
@@ -182,28 +184,29 @@ void MainWindow::showGeometry(){
 
 //----------------------------------------------------------------------------
 void MainWindow::onItemSelectionChanged() {
-	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
+    QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
 
-	QTreeWidgetItem* item;
-	if (!itemsList.isEmpty()) {
-		item = itemsList.takeFirst();
-	}
-
-	QVariant modelVariant = item->data(
-		0, TreeStructure::Role.value("Properties"));
-	QSharedPointer<PropertiesModel> sharedModel
-		= modelVariant.value<QSharedPointer<PropertiesModel>>();
-
-	if (!sharedModel.isNull()) {
-		PropertiesModel* model = sharedModel.data();
-		// ToDo: Detect data changed event and make project unsaved
-
-		this->ui->propertiesTable->setModel(model);
-		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
-		header->setSectionResizeMode(QHeaderView::ResizeToContents);
-		header->setStretchLastSection(true);
-		header->setSectionResizeMode(QHeaderView::Interactive);
-	}
+    // Proceed only if there is a selected item
+    if (!itemsList.isEmpty()) {
+        // Cast the first selected item to TreeItem
+        TreeItem* item = dynamic_cast<TreeItem*>(itemsList.takeFirst());
+        
+        // Check if the cast was successful and the item is a valid TreeItem
+        if (item && item->_propModel) {
+            PropertiesModel* model = item->_propModel;
+            
+            // Set the properties table model
+            this->ui->propertiesTable->setModel(model);
+            
+            // Configure the header
+            QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
+            header->setSectionResizeMode(QHeaderView::ResizeToContents);
+            header->setStretchLastSection(true);
+            header->setSectionResizeMode(QHeaderView::Interactive);
+        } else {
+            qDebug() << "Selected item is not a TreeItem or has a null PropertiesModel pointer.";
+        }
+    }
 }
 
 void MainWindow::onShowDialogButtonClicked() {

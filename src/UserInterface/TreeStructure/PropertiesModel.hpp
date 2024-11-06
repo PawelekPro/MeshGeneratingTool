@@ -17,14 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROPERTIESMODEL_H
-#define PROPERTIESMODEL_H
-
-#include "BaseWidget.hpp"
-#include "ComboBoxWidget.hpp"
-#include "DoubleLineWidget.hpp"
-#include "EntityPickWidget.hpp"
-#include "IntLineWidget.hpp"
+#ifndef PROPERTIESMODEL_HPP
+#define PROPERTIESMODEL_HPP
 
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
@@ -36,10 +30,8 @@
 #include <Qt>
 #include <QtXml/QDomElement>
 
-template <typename className>
-className* createInstance() {
-	return new className();
-};
+#include "WidgetFactory.hpp"
+#include "DocumentHandler.hpp"
 
 /**
  * Custom model filter class that filters rows based on a custom criteria.
@@ -51,6 +43,7 @@ class ModelFilter : public QSortFilterProxyModel {
 	Q_OBJECT
 
 public:
+
 	explicit ModelFilter(QObject* parent = nullptr)
 		: QSortFilterProxyModel(parent) { }
 	~ModelFilter() = default;
@@ -75,6 +68,12 @@ protected:
 class PropertiesModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
+
+	enum Col{
+		Label,
+		Data
+	};
+
 	PropertiesModel(const QDomElement& element, QWidget* parent = nullptr);
 	~PropertiesModel();
 
@@ -155,7 +154,7 @@ public:
 	void setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value);
 
 
-	QWidget* getWidget(const QModelIndex&);
+	QWidget* getWidget(const QModelIndex& aIndex, QWidget* aWidgetParent);
 
 private:
 	/**
@@ -163,17 +162,12 @@ private:
 	 */
 	QDomElement _element;
 
-	/**
-	 * A list of QDomElement objects representing properties.
-	 */
-	QList<QDomElement> _properties;
+	QMap<int, QDomElement> _properties;
 
 	/**
 	 * A list of header strings.
 	 */
 	QStringList _header;
-
-	static QMap<QString, std::function<BaseWidget*()>> factoryMap;
 };
 
 #endif

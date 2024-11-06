@@ -19,13 +19,6 @@
 
 #include "PropertiesModel.hpp"
 
-QMap<QString, std::function<BaseWidget*()>> PropertiesModel::factoryMap = {
-	{ "IntLineWidget", createInstance<IntLineWidget> },
-	{ "DoubleLineWidget", createInstance<DoubleLineWidget> },
-	{ "ComboBoxWidget", createInstance<ComboBoxWidget> },
-	{ "EntityPickWidget", createInstance<EntityPickWidget> }
-};	
-
 //--------------------------------------------------------------------------------------
 bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
 	Q_UNUSED(sourceParent);
@@ -42,21 +35,19 @@ bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
-    : QAbstractTableModel(parent)
-    , _element(element){
+PropertiesModel::PropertiesModel(const QDomElement& aPropertiesElement, QWidget* aParent)
+    : QAbstractTableModel(aParent)
+    , _element(aPropertiesElement){
 
     this->_header << "Property"
                   << "Value";
 
-    QDomNodeList props = this->_element.childNodes();
 
-    for (int i = 0; i < props.length(); ++i) {
-        if (!props.at(i).isComment()) {
-            QDomElement propertyElement = props.at(i).toElement();
-            // QString propertyName = propertyElement.tagName();
-           	// QString propertyValue = propertyElement.text();
-            this->_properties.append(propertyElement);
+	QDomNodeList properties = aPropertiesElement.childNodes();
+    for (int row = 0; row < properties.length(); ++row) {
+        if (!properties.at(row).isComment()) {
+            QDomElement propertyElement = properties.at(row).toElement();
+            this->_properties.insert(row, propertyElement);
         }
     }
 	// connect(this, &PropertiesModel::dataChanged, this, [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
@@ -77,7 +68,7 @@ PropertiesModel::~PropertiesModel() { }
 //--------------------------------------------------------------------------------------
 int PropertiesModel::rowCount(const QModelIndex& parent) const {
 	Q_UNUSED(parent);
-	return this->_properties.length();
+	return this->_properties.count();
 }
 
 //--------------------------------------------------------------------------------------
@@ -94,16 +85,16 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 	if (role != Qt::DisplayRole && role != Qt::EditRole)
 		return QVariant();
 
-	QDomElement propNode = this->_properties.value(index.row());
-	QVariant ret;
-	if (index.column() == 0) {
+	QDomElement propNode = this->_properties[index.row()];
+	QVariant dataVariant;
+	if (index.column() == PropertiesModel::Col::Label) {
 		QDomAttr attr = propNode.attributes().namedItem("label").toAttr();
-		ret = attr.value();
-	} else if (index.column() == 1) {
-		ret = propNode.firstChild().toText().data();
+		dataVariant = attr.value();
+	} else if (index.column() == PropertiesModel::Col::Data) {
+		dataVariant = propNode.firstChild().toText().data();
 	}
 
-	return ret;
+	return dataVariant;
 }
 
 //--------------------------------------------------------------------------------------
@@ -113,19 +104,20 @@ bool PropertiesModel::setData(
 		return false;
 	}
 
-	QDomElement propNode = this->_properties.value(index.row());
-	if (index.column() == 1) {
-		QDomText textNode = propNode.firstChild().toText();
+	QDomElement propElement= this->_properties[index.row()];
+	if (index.column() == PropertiesModel::Col::Data) {
+		QDomText textNode = propElement.firstChild().toText();
 		if (textNode.isNull()) {
-			QDomDocument doc = propNode.ownerDocument();
-			QDomText newText = doc.createTextNode(value.toString());
-			propNode.appendChild(newText);
+			DocumentHandler::getInstance().addTextNode(propElement, value.toString());
 		} else {
 			textNode.setData(value.toString());
 		}
-
 		emit dataChanged(index, index);
 		return true;
+	} else if (index.column() == PropertiesModel::Col::Label) {
+		DocumentHandler::setAttribute(propElement, "label", value.toString());
+	} else {
+		qWarning() << "Invalid model index column.";
 	}
 
 	return false;
@@ -172,27 +164,17 @@ void PropertiesModel::setElementProperty(const QModelIndex& index, const QString
 }
 
 //--------------------------------------------------------------------------------------
-QWidget* PropertiesModel::getWidget(const QModelIndex& index) {
-	if (!index.isValid()) {
-		return nullptr;
+QWidget* PropertiesModel::getWidget( const QModelIndex& aIndex, QWidget* aWidgetParent ) {
+	if (!aIndex.isValid()) {
+		qWarning("Widget index invalid!");
+	}
+	if(aIndex.column() != PropertiesModel::Col::Data){
+		qWarning("Widget index should have column == 1");
 	}
 
-	QWidget* widget = nullptr;
-	if (index.column() == 1) {
-		QDomNamedNodeMap attrs = this->_properties[index.row()].attributes();
-		QString name = attrs.namedItem("widget").toAttr().value();
+	QDomElement propertyElement = _properties[aIndex.row()];
+	QString widgetName = DocumentHandler::getAttribute(propertyElement, "widget");
 
-		auto classType = this->factoryMap.find(name);
-		if (classType != this->factoryMap.end()) {
-			auto createFunction = classType.value();
-			auto widget = createFunction(); // Call the std::function to create the widget
-
-			widget->setIndex(index);
-			return widget;
-		} else {
-			vtkLogF(
-				ERROR, ("Class not found in widgets factory map: " + name.toStdString()).c_str());
-		}
-	}
-	return widget;
+	QWidget* newWidget= WidgetFactory::createWidget(widgetName, aWidgetParent);
+	return newWidget;
 }
