@@ -21,11 +21,11 @@
 #define WIDGETFACTORY_HPP
 
 #include "BaseWidget.hpp"
+#include <memory>
+#include <string>
+#include <iostream>
 
-class WidgetFactory{
-
-
-
-};
-
+namespace WidgetFactory {
+    BaseWidget* createWidget(const QString& widgetName, QWidget* parent = nullptr);
+}
 #endif

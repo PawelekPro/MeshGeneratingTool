@@ -28,17 +28,20 @@ TreeItem* TreeItemFactory::createRootItem (const ItemTypes::Root & aRootItemType
 
     DocumentHandler& docHandler = DocumentHandler::getInstance();
     QDomElement element =  docHandler.createRootElement(aRootItemType);
+    QDomElement propertiesElement = DocumentHandler::getProperties(element);
 
-    PropertiesModel* propertiesModel = new PropertiesModel(element, _treeStructure);
-    PropertiesWidget* propertiesWidget = new PropertiesWidget(_treeStructure);
+    PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
+    TreeItem* newRootItem = new TreeItem(_treeStructure, element, propertiesModel, aRootItemType);
 
-    propertiesWidget->setModel(propertiesModel);
-
-    TreeItem* newRootItem = new TreeItem(_treeStructure, element, propertiesModel, propertiesWidget, aRootItemType);
-    
-    newRootItem->setText(static_cast<int>(TreeItem::Column::Label), ItemTypes::label(aRootItemType));
     newRootItem->setData(0, Qt::EditRole, QVariant::fromValue(propertiesModel));
 
+    QVariant testVariant = QVariant::fromValue(propertiesModel);
+    if (!testVariant.isValid()) {
+        qDebug() << "Failed to create a valid QVariant from propertiesModel.";
+    }
+
+    newRootItem->setText(static_cast<int>(TreeItem::Column::Label), ItemTypes::label(aRootItemType));
+   
     return newRootItem;
 }
 
@@ -47,15 +50,13 @@ TreeItem* TreeItemFactory::createSubItem (TreeItem* aParentItem, const ItemTypes
     DocumentHandler& docHandler = DocumentHandler::getInstance();
     QDomElement rootElement = docHandler.getRootElement(ItemTypes::rootType(aSubItemType));
     QDomElement element = docHandler.createSubElement(aSubItemType, rootElement);
-    
-    PropertiesModel* propertiesModel = new PropertiesModel(element, _treeStructure);
-    PropertiesWidget* propertiesWidget = new PropertiesWidget(_treeStructure);
+    QDomElement propertiesElement = DocumentHandler::getProperties(element);
 
-    propertiesWidget->setModel(propertiesModel);
-
-    TreeItem* newSubItem = new TreeItem(aParentItem, element, propertiesModel, propertiesWidget, aSubItemType);
+    PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
+    TreeItem* newSubItem = new TreeItem(aParentItem, element, propertiesModel, aSubItemType);
     
     QString uniqueLabel = getUniqueItemLabel(aSubItemType);
+    
     newSubItem->setText(static_cast<int>(TreeItem::Column::Label), uniqueLabel);
     newSubItem->setData(0, Qt::EditRole, QVariant::fromValue(propertiesModel));
 

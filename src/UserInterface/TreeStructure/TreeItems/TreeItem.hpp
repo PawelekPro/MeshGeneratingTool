@@ -66,28 +66,29 @@ class TreeItem : public QTreeWidgetItem
 
         inline QDomElement getElement(){return _element;};
 
+        PropertiesModel*  _propModel;
+
     protected:
     
         TreeItem(QTreeWidget* aParent,
                      const QDomElement & aElement,
                      PropertiesModel* aPropModel,
-                     PropertiesWidget* aPropWidget,
                      const ItemTypes::Root& aRootType);
 
         TreeItem(QTreeWidgetItem* aParent,
                      const QDomElement & aElement,
                      PropertiesModel* aPropModel,
-                     PropertiesWidget* aPropWidget,
                      const ItemTypes::Sub& aSubType);
 
         // void setText(int column, const QString &text) override;
+
+
 
     private:
 
         friend class TreeItemFactory;
 
-        PropertiesModel*  _propModel;
-        PropertiesWidget* _propWidget;
+
 
         QDomElement _element;
 

@@ -13,7 +13,7 @@ DocumentHandler::~DocumentHandler(){
     writeDocToXML("testPath.xml");
 }
 
-void DocumentHandler::writeDocToXML(const std::string& savePath){
+void DocumentHandler::writeDocToXML(const std::string& savePath) const {
     QFile file(QString::fromStdString(savePath));
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		qDebug() << "Failed to open file for writing.";
@@ -37,8 +37,8 @@ QDomElement DocumentHandler::createRootElement( const ItemTypes::Root& rootType)
     rapidjson::Document rootDocument = JsonParser::initJsonDocument(
         AppDefaults::getInstance().getRootItemsSetupPath());
 
-    JsonParser::PropertiesMap properties = JsonParser::getPropertiesMap(rootDocument,
-                                                                   rootTagLabel);
+    JsonParser::Properties properties = JsonParser::getProperties(rootDocument,
+                                                                  rootTagLabel);
 
     addPropertiesToElement(rootElement, properties);
     this->_appRootElement.appendChild(rootElement);
@@ -56,9 +56,8 @@ QDomElement DocumentHandler::createSubElement(const ItemTypes::Sub& subType,
     rapidjson::Document subDocument = JsonParser::initJsonDocument(
         AppDefaults::getInstance().getSubItemsSetupPath());
 
-    JsonParser::PropertiesMap properties = JsonParser::getPropertiesMap(subDocument,
-                                                                   subTagLabel);
-
+    JsonParser::Properties properties = JsonParser::getProperties(subDocument,
+                                                                  subTagLabel);
 
     QDomElement element = this->_domDocument.createElement(subTagLabel);
     addPropertiesToElement(element, properties);
@@ -67,46 +66,29 @@ QDomElement DocumentHandler::createSubElement(const ItemTypes::Sub& subType,
     return element;
 }
 
-void DocumentHandler::addPropertiesToElement(QDomElement& element, const JsonParser::PropertiesMap& properties){
+void DocumentHandler::addTextNode(QDomElement& aElement, const QString& aValue){
+    QDomText valueNode = _domDocument.createTextNode(aValue);
+    aElement.appendChild(valueNode);
+}
+
+void DocumentHandler::addPropertiesToElement(QDomElement& element, const JsonParser::Properties& properties){
     QDomElement propertiesElement = _domDocument.createElement("Properties");
     for(const auto & property : properties){
         QDomElement propertyElement =_domDocument.createElement(property.first);
 
-        for(const auto & propPair : property.second.values){
-            propertyElement.setAttribute(propPair.first, propPair.second.toString());
+        if(property.second.hasValue){
+            addTextNode(propertyElement, property.second.value.toString());
+        }
+        for(const auto & attribute : property.second.attributes){
+            propertyElement.setAttribute(attribute.first, attribute.second.toString());
         }
         propertiesElement.appendChild(propertyElement);
-    }
 
+    }
     element.appendChild(propertiesElement);
 }
 
-
-QDomElement DocumentHandler::getPropertiesElement(const QDomElement& element){
-    QDomNodeList elementSubNodes = element.childNodes();
-    QDomElement subElement;
-    bool found = false;
-    for (int i = 0; i < elementSubNodes.count(); ++i) {
-        QDomNode node = elementSubNodes.at(i);
-        if (!node.isElement()) {
-            continue;
-        }
-        subElement = node.toElement();
-        if(subElement.tagName() == "Properties"){
-            found = true;
-            break;
-        }
-    }
-    if(!found)
-        qWarning("Could not find Properties element, returning last sub element");
-    return subElement;
-}
-
-void DocumentHandler::setNameProperty(const QDomElement& aElement, const QString& aName){
-    getPropertiesElement(aElement).setAttribute("name", aName);
-}
-
-QList<QDomElement> DocumentHandler::getElementsByType(const ItemTypes::Sub& subType){
+QList<QDomElement> DocumentHandler::getElementsByType(const ItemTypes::Sub& subType) const {
     QList<QDomElement> elements;
     const QString subTypeLabel = ItemTypes::label(subType);
     QDomNodeList nodeList = this->_domDocument.elementsByTagName(subTypeLabel);
@@ -119,23 +101,64 @@ QList<QDomElement> DocumentHandler::getElementsByType(const ItemTypes::Sub& subT
     return elements;
 }
 
-
-QDomElement DocumentHandler::getRootElement(const ItemTypes::Root& rootTag){
+QDomElement DocumentHandler::getRootElement(const ItemTypes::Root& rootTag) const {
     QDomNodeList nodeList = this->_domDocument.elementsByTagName(ItemTypes::label(rootTag));
     QDomElement rootElement = nodeList.at(0).toElement();
     return rootElement;
 }
 
-QString DocumentHandler::getPropertyValue(const QDomElement& element, const QString& propName) {
-    QDomElement propElement = getPropertiesElement(element);
-    QDomNodeList propertiesList = propElement.childNodes();
-
-    for (int i = 0; i < propertiesList.size(); i++) {
-        QDomElement prop = propertiesList.at(i).toElement();
-        if (prop.nodeName() == propName) {
-            return prop.text();
+QDomElement DocumentHandler::getProperties(const QDomElement& aElement) {
+    QDomNodeList elementSubNodes = aElement.childNodes();
+    for (int i = 0; i < elementSubNodes.count(); ++i) {
+        QDomNode node = elementSubNodes.at(i);
+        if (node.isElement()) {
+            QDomElement subElement = node.toElement();
+            if (subElement.tagName() == "Properties") {
+                return subElement;
+            }
         }
     }
-    qWarning() << "Could not find property with name:" << propName;
+    qWarning("Could not find 'Properties' element, returning an empty QDomElement.");
+    return QDomElement();
+}
+
+QDomElement DocumentHandler::getProperty(const QDomElement& aPropertiesElement, const QString aPropName){
+    return findSubElement(aPropertiesElement, aPropName);
+};
+
+QString DocumentHandler::getPropertyValue(const QDomElement& aElement, const QString& propName){
+    QDomElement propElement = getProperty(aElement, propName);
+    return propElement.text();
+};
+
+QString DocumentHandler::getAttribute(const QDomElement& aProp, const QString& aAttributeName) {
+    if(aProp.hasAttribute(aAttributeName)){
+        return aProp.attribute(aAttributeName);
+    }
+    
+    qWarning() << "Could not find attribute: " << aAttributeName << " in element " << aProp.tagName(); 
     return QString();
+}
+
+void DocumentHandler::setAttribute(QDomElement& aProp, const QString& aAttributeName, const QString& aNewValue) {
+    if(aProp.hasAttribute(aAttributeName)){
+        aProp.setAttribute(aAttributeName, aNewValue);
+    }
+    qWarning() << "Could not find attribute: " << aAttributeName;
+}
+
+
+QDomElement DocumentHandler::findSubElement(const QDomElement& aElement, const QString& aSearchedTag){
+    QDomNodeList subNodes = aElement.childNodes();
+    for (int i = 0; i < subNodes.count(); ++i){
+        QDomNode node = subNodes.at(i);
+        if (node.isElement()) {
+            QDomElement subElement = node.toElement();
+            if (subElement.tagName() == aSearchedTag) {
+                return subElement;
+            }
+        }
+    }
+    qWarning() << "Could not find element with tag: " << aSearchedTag;
+    return QDomElement();
 }

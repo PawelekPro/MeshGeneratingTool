@@ -22,12 +22,10 @@
 TreeItem::TreeItem( QTreeWidget* aParent,
                             const QDomElement& aElement,
                             PropertiesModel* aPropModel,
-                            PropertiesWidget* aPropWidget,
                             const ItemTypes::Root& aRootType) : 
                             QTreeWidgetItem(aParent),
                             _element(aElement),
                             _propModel(aPropModel),
-                            _propWidget(aPropWidget),
                             _rootType(aRootType){
                             } 
 
@@ -35,12 +33,10 @@ TreeItem::TreeItem( QTreeWidget* aParent,
 TreeItem::TreeItem( QTreeWidgetItem* aParent,
                             const QDomElement& aElement,
                             PropertiesModel* aPropModel,
-                            PropertiesWidget* aPropWidget,
                             const ItemTypes::Sub & aSubType) : 
                             QTreeWidgetItem(aParent),
                             _element(aElement),
                             _propModel(aPropModel),
-                            _propWidget(aPropWidget),
                             _subType(aSubType),
                             _rootType(ItemTypes::rootType(aSubType))
                             {} 
@@ -48,9 +44,6 @@ TreeItem::TreeItem( QTreeWidgetItem* aParent,
 TreeItem::~TreeItem(){
     if(_propModel){
         delete _propModel;
-    }
-    if(_propWidget){
-        delete _propWidget;
     }
 }
 

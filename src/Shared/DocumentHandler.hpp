@@ -39,25 +39,33 @@ public:
         return instance;                  // Instantiated on first use
     }
 
-    void writeDocToXML(const std::string& savePath);
+    void addTextNode(QDomElement& aElement, const QString& aValue);
+    
     QDomElement createRootElement(const ItemTypes::Root& rootType);
     QDomElement createSubElement(const ItemTypes::Sub& rootType, QDomElement& parentElement);
-    static QDomElement getPropertiesElement(const QDomElement& element);
-    static void setNameProperty(const QDomElement& aElement, const QString& aName);
 
-    QList<QDomElement> getElementsByType(const ItemTypes::Sub& subType);
-    QDomElement getRootElement(const ItemTypes::Root& rootTag);
-    QString getPropertyValue(const QDomElement& element, const QString& propName);
+    QList<QDomElement> getElementsByType(const ItemTypes::Sub& subType) const;
+    QDomElement getRootElement(const ItemTypes::Root& rootTag) const;
+
+    void writeDocToXML(const std::string& savePath) const;
+
+    static QDomElement getProperties(const QDomElement& aElement);
+    static QDomElement getProperty(const QDomElement& aPropertiesElement, const QString aPropName);
+
+    static QString getPropertyValue(const QDomElement& aPropertyElement, const QString& aPropName);
+    static QString getAttribute(const QDomElement& aPropertyElement, const QString& aAttributeName);
+    static void setAttribute(QDomElement& aElement, const QString& aAttributeName, const QString& aNewValue);
 
 private:
-    // Private constructor to prevent instantiation
+
     DocumentHandler();
     ~DocumentHandler();
 
     QDomDocument _domDocument;
     QDomElement _appRootElement;
 
-    void addPropertiesToElement(QDomElement& element, const JsonParser::PropertiesMap& properties);
+    void addPropertiesToElement(QDomElement& element, const JsonParser::Properties& properties);
+    static QDomElement findSubElement(const QDomElement& aElement, const QString& aSearchedTag);
 };
 
-#endif // DOCUMENTHANDLER_HPP
+#endif
