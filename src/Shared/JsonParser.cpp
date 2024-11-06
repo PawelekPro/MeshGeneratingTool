@@ -38,34 +38,34 @@ rapidjson::Document JsonParser::initJsonDocument(const QString &filePath) {
     }
     return document;
 }
-JsonParser::PropertiesMap JsonParser::getPropertiesMap(const rapidjson::Document &document, const QString &entryTag) {
-    PropertiesMap propertiesMap;
+JsonParser::Properties JsonParser::getProperties(const rapidjson::Document & aDocument, const QString &aEntryTag) {
+    Properties properties;
 
-    const char *entryName = entryTag.toStdString().c_str();
-
-    if (!document.HasMember(entryName) || !document[entryName].IsObject()) {
+    std::string entryNameStr = aEntryTag.toStdString();
+    const char *entryName = entryNameStr.c_str();
+    
+    if (!aDocument.HasMember(entryName) || !aDocument[entryName].IsObject()) {
         qWarning() << "Json document does not include entry:" << entryName;
-        return propertiesMap;
+        return properties;
     }
 
-    const rapidjson::Value &entrySection = document[entryName];
+    const rapidjson::Value &entrySection = aDocument[entryName];
 
-    // Check if the entry has a "Properties" object
     if (!entrySection.HasMember("Properties") || !entrySection["Properties"].IsObject()) {
         qWarning() << "Entry does not have a valid Properties object";
-        return propertiesMap;
+        return properties;
     }
 
     const rapidjson::Value &propertiesObject = entrySection["Properties"];
 
     for (auto itr = propertiesObject.MemberBegin(); itr != propertiesObject.MemberEnd(); ++itr) {
         const QString propertyName = QString::fromStdString(itr->name.GetString());
+        
         const rapidjson::Value &jsonPropertyValue = itr->value;
-
         Property property = mapToProperty(propertyName, jsonPropertyValue);
-        propertiesMap[propertyName] = property;
+        properties[propertyName] = property;
     }
-    return propertiesMap;
+    return properties;
 }
 
 JsonParser::Property JsonParser::mapToProperty(const QString &aPropName, const rapidjson::Value &aJsonValue) {
@@ -74,17 +74,24 @@ JsonParser::Property JsonParser::mapToProperty(const QString &aPropName, const r
     for (auto itr = aJsonValue.MemberBegin(); itr != aJsonValue.MemberEnd(); ++itr) {
         const QString key = QString::fromStdString(itr->name.GetString());
         const rapidjson::Value &value = itr->value;
-
+        QVariant valueVariant;
         if (value.IsInt()) {
-            property.values[key] = value.GetInt();
+            valueVariant = value.GetInt();
         } else if (value.IsDouble()) {
-            property.values[key] = value.GetDouble();
+            valueVariant = value.GetDouble();
         } else if (value.IsString()) {
-            property.values[key] = QString::fromStdString(value.GetString());
+            valueVariant = QString::fromStdString(value.GetString());
         } else if (value.IsBool()) {
-            property.values[key] = value.GetBool();
+            valueVariant = value.GetBool();
         } else {
             qWarning() << "Unsupported value type for key:" << key;
+        }
+
+        if (key == "value"){
+            property.value = valueVariant;
+            property.hasValue = true;
+        } else {
+            property.attributes[key] = valueVariant;
         }
     }
     return property;

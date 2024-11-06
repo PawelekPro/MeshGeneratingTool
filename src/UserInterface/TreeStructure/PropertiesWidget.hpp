@@ -17,10 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROPERTIESWIDGET_H
-#define PROPERTIESWIDGET_H
+#ifndef PROPERTIESWIDGET_HPP
+#define PROPERTIESWIDGET_HPP
 
 #include "PropertiesModel.hpp"
+#include "WidgetFactory.hpp"
 
 #include <QList>
 #include <QStyledItemDelegate>
@@ -35,7 +36,14 @@ class PropertiesWidget : public QTableView {
 public:
 	explicit PropertiesWidget(QWidget* parent = nullptr)
 		: QTableView(parent) {};
+		
 	~PropertiesWidget();
+
+	// PropertiesWidget(const PropertiesWidget&) = delete;
+	// PropertiesWidget& operator=(const PropertiesWidget&) = delete;
+
+	// PropertiesWidget(PropertiesWidget&&) = delete;
+	// PropertiesWidget& operator=(PropertiesWidget&&) = delete;
 
 	/**
 	 * Sets the PropertiesModel for the object.
@@ -44,7 +52,7 @@ public:
 	 *
 	 * @returns None
 	 */
-	void setModel(PropertiesModel*);
+	void setModel(PropertiesModel* aModel);
 
 private:
 	// Container for temporary widgets existing between model selection change event
@@ -53,7 +61,7 @@ private:
 	/**
 	 * The height of a row in a table.
 	 */
-	static const int rowHeight = 20;
+	static const int _rowHeight = 20;
 };
 
 #endif

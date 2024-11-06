@@ -19,32 +19,34 @@ class JsonParser {
             Property() : name("Invalid") {};
             Property(const QString &aName) : name(aName) {};
 
-            std::map<QString, QVariant> values;
+            std::map<QString, QVariant> attributes;
 
-            QVariant &at(const QString &key) {
-                return values.at(key);
+            QVariant &at(const QString &attributeKey) {
+                return attributes.at(attributeKey);
             }
 
-            const QVariant &at(const QString &key) const {
-                return values.at(key);
+            const QVariant &at(const QString &attributeKey) const {
+                return attributes.at(attributeKey);
             }
 
-            QVariant &operator[](const QString &key) {
-                return values[key];
+            QVariant &operator[](const QString &attributeKey) {
+                return attributes[attributeKey];
             }
 
-            bool contains(const QString &key) const {
-                return values.find(key) != values.end();
+            bool contains(const QString &attributeKey) const {
+                return attributes.find(attributeKey) != attributes.end();
             }
 
-            void insert(const QString &key, const QVariant &value) {
-                values[key] = value;
+            void insert(const QString &attributeKey, const QVariant &attributeValue) {
+                attributes[attributeKey] = attributeValue;
             }
 
             QString name;
+            QVariant value;
+            bool hasValue = false;
         };
 
-        using PropertiesMap = std::map<QString, Property>;
+        using Properties = std::map<QString, Property>;
 
         /**
          * Create rapidjson::Document object based on the path to .json file
@@ -57,7 +59,7 @@ class JsonParser {
          * @param document rapidjson::Document to be parsed. Can be obtained using initJsonDocument method
          * @param entryName Name of the entry to be parsed.
          */
-        static PropertiesMap getPropertiesMap(const rapidjson::Document &document, const QString &entryTag);
+        static Properties getProperties(const rapidjson::Document &document, const QString &entryTag);
 
     private:
         /**
