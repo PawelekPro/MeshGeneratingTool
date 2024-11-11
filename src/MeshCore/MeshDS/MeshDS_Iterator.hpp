@@ -16,30 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * NetgenPlugin : C++ implementation
- * File      	: MeshHDS_SubMesh.cpp
- * Author    	: Paweł Gilewicz
- * Date      	: 27/10/2024
+ * Mesh      : C++ implementation
+ * File      : MeshDS_Iterator.hpp
+ * Author    : Paweł Gilewicz
+ * Date      : 27/10/2024
  */
 
-#include "MeshHDS_SubMesh.h"
+#ifndef MeshDS_ITERATOR_HPP
+#define MeshDS_ITERATOR_HPP
 
-#include "MeshHDS_Mesh.h"
+// Abstract class for iterators
+template <typename VALUE>
+class MeshDS_Iterator {
+public:
+	typedef VALUE value_type;
 
-#include <utilities.h>
+	/// Return true if and only if there are other object in this iterator
+	virtual bool more() = 0;
 
-//----------------------------------------------------------------------------
-MeshHDS_SubMesh::MeshHDS_SubMesh(const MeshHDS_Mesh* parent, int index)
-	: MeshDS_ElementHolder(parent) {
-	_parent = parent;
-	_index = index;
-}
+	/// Return the current object and step to the next one
+	virtual VALUE next() = 0;
 
-//----------------------------------------------------------------------------
-MeshHDS_SubMesh::~MeshHDS_SubMesh() { }
+	/// Delete the current element and step to the next one
+	virtual void remove() { }
 
-//----------------------------------------------------------------------------
-void MeshHDS_SubMesh::addSubMesh(const MeshHDS_SubMesh* subMesh) {
-	ASSERT(subMesh);
-	_subMeshes.insert(subMesh);
-}
+	/// Provide virtual destructor just for case if some derived iterator
+	/// must have a destructor
+	virtual ~MeshDS_Iterator() { }
+};
+
+#endif

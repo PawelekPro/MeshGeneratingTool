@@ -27,9 +27,14 @@
 
 #include "MeshDS_Mesh.h"
 #include "MeshHDS_Macro.h"
+#include "MeshHDS_SubMesh.h"
+#include "MeshHDS_TSubMeshCollection.hpp"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopoDS_Shape.hxx>
+
+class SubMeshCollection
+	: public MeshHDS_TSubMeshCollection<const MeshHDS_SubMesh> { };
 
 class MeshHDS_EXPORT MeshHDS_Mesh : public MeshDS_Mesh {
 public:
@@ -37,13 +42,27 @@ public:
 	~MeshHDS_Mesh();
 
 	void shapeToMesh(const TopoDS_Shape& shape);
+	const TopoDS_Shape shapeToMesh();
 
 	const int shapeToIndex(const TopoDS_Shape& shape);
+	const TopoDS_Shape& indexToShape(int shapeIndex);
+
+	const MeshHDS_SubMesh* meshElements(const TopoDS_Shape& shape);
+	const MeshHDS_SubMesh* meshElements(const int index);
+
+	const int maxShapeIndex() { return _indexToShape.Extent(); }
+
+	int addCompoundSubmesh(
+		const TopoDS_Shape& shape, TopAbs_ShapeEnum type = TopAbs_SHAPE);
+	MeshHDS_SubMesh* newSubMesh(int index);
+
+	const bool isGroupOfSubShapes(const TopoDS_Shape& subShape);
 
 private:
 	TopoDS_Shape _shape;
 	TopTools_IndexedMapOfShape _indexToShape;
 	int _persistentID;
+	SubMeshCollection* _subMeshHolder;
 };
 
 #endif

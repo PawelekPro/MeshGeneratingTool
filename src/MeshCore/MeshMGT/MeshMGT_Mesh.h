@@ -21,29 +21,49 @@
  * Author    : Paweł Gilewicz
  * Date      : 26/10/2024
  */
+#ifndef MeshMGT_MESH_H
+#define MeshMGT_MESH_H
 
+#include "MeshHDS_Mesh.h"
+#include "MeshHDS_SubMesh.h"
+#include "MeshHDS_TSubMeshCollection.hpp"
 #include "MeshMGT_Macro.h"
 
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopoDS_Shape.hxx>
 
 class MeshHDS_Document;
 class MeshHDS_Mesh;
 class TopoDS_Solid;
+class MeshMGT_SubMesh;
 
 class MeshMGT_EXPORT MeshMGT_Mesh {
 public:
 	MeshMGT_Mesh(int localId, MeshHDS_Document* theDocument);
 	virtual ~MeshMGT_Mesh();
 
-	void shapeToMesh(const TopoDS_Shape& theShape);
+	void shapeToMesh(const TopoDS_Shape& shape);
+	const TopoDS_Shape getShapeToMesh();
 
 	static const TopoDS_Solid& PseudoShape();
 
 	const MeshHDS_Mesh* GetMeshHDS() const { return _meshHDS; }
 	MeshHDS_Mesh* GetMeshHDS() { return _meshHDS; }
+	MeshMGT_SubMesh* GetSubMesh(const TopoDS_Shape& subShape);
+
+private:
+	void fillAncestorsMap(const TopoDS_Shape& shape);
 
 private:
 	int _id;
 	MeshHDS_Mesh* _meshHDS;
 	MeshHDS_Document* _document;
+
+	int _nbSubShapes; //! initial number of subshapes in the shape to mesh
+	bool _isShapeToMesh; //! set to true when a shape is given (only once)
+
+	SubMeshCollection* _subMeshHolder;
+	TopTools_IndexedDataMapOfShapeListOfShape _mapAncestors;
 };
+
+#endif

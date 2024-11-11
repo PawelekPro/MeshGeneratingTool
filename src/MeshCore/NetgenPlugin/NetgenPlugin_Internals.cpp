@@ -25,6 +25,7 @@
 #include "NetgenPlugin_Internals.h"
 #include "MeshHDS_Mesh.h"
 #include "MeshMGT_Mesh.h"
+#include "MeshMGT_SubMesh.h"
 
 #include "TopExp_Explorer.hxx"
 #include "TopoDS_Shape.hxx"
@@ -42,10 +43,9 @@ NetgenPlugin_Internals::NetgenPlugin_Internals(
 
 		// Find not computed internal edges
 
-		for (edge.Init(face.Current().Oriented(TopAbs_FORWARD), TopAbs_EDGE);
-			 edge.More();
-			 edge.Next()) {
+		for (edge.Init(face.Current().Oriented(TopAbs_FORWARD), TopAbs_EDGE); edge.More(); edge.Next()) {
 			if (edge.Current().Orientation() == TopAbs_INTERNAL) {
+				MeshMGT_SubMesh* edgeSubMesh = mesh.GetSubMesh(edge.Current();) if (edgeSubMesh->IsE)
 			}
 		}
 	}

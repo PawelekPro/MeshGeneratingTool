@@ -27,6 +27,8 @@
 #include "MeshDS_ElementHolder.h"
 #include "MeshHDS_Macro.h"
 
+#include <smIdType.hxx>
+
 class MeshHDS_Mesh;
 class MeshHDS_SubMesh;
 typedef std::set<const MeshHDS_SubMesh*> TSubMeshSet;
@@ -36,8 +38,17 @@ public:
 	MeshHDS_SubMesh(const MeshHDS_Mesh* parent, int index);
 	virtual ~MeshHDS_SubMesh();
 
+	virtual const bool isComplexSubmesh() { return !_subMeshes.empty(); }
+	void addSubMesh(const MeshHDS_SubMesh* subMesh);
+
+	virtual smIdType NbElements() const;
+	virtual smIdType NbNodes() const;
+
 private:
 	int _index;
+	smIdType _nbElements;
+	smIdType _nbNodes;
+
 	const MeshHDS_Mesh* _parent;
 	TSubMeshSet _subMeshes;
 };

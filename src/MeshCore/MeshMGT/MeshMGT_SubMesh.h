@@ -24,12 +24,20 @@
 #ifndef MeshMGT_SUBMESH_H
 #define MeshMGT_SUBMESH_H
 
+#include "MeshDS_Iterator.hpp"
 #include "MeshMGT_Macro.h"
 
 #include <TopoDS_Shape.hxx>
 
+#include <memory>
+
 class MeshHDS_Mesh;
 class MeshMGT_Mesh;
+class MeshDS_Mesh;
+class MeshHDS_SubMesh;
+class MeshMGT_SubMesh;
+
+typedef std::shared_ptr<MeshDS_Iterator<MeshMGT_SubMesh*>> MeshMGT_subMeshIteratorPtr;
 
 class MeshMGT_EXPORT MeshMGT_SubMesh {
 public:
@@ -37,8 +45,24 @@ public:
 		int Id, MeshMGT_Mesh* parent, MeshHDS_Mesh* meshHDS, const TopoDS_Shape& subShape);
 	virtual ~MeshMGT_SubMesh();
 
-private:
+	MeshHDS_SubMesh* GetSubMeshDS();
+
+	const MeshMGT_subMeshIteratorPtr getDependsOnIterator(
+		const bool includeSelf, const bool reverse = false);
+
+	void clearAncestors();
+
+	const bool isEmpty();
+
+protected:
 	TopoDS_Shape _subShape;
+	MeshHDS_SubMesh* _subMeshHDS;
+	MeshMGT_Mesh* _parent;
+	int _id;
+
+	std::map<int, MeshMGT_SubMesh*> _mapDepend;
+	bool _dependenceAnalysed;
+	std::vector<MeshMGT_SubMesh*> _ancestors;
 };
 
 #endif
