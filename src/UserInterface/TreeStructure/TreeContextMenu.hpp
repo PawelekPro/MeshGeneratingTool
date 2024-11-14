@@ -31,7 +31,7 @@ class TreeStructure;
 
 class TreeContextMenu : public QObject {
 	Q_OBJECT
-public:
+public :
 	explicit TreeContextMenu(TreeStructure* treeWidget, QObject* parent = nullptr);
 private slots:
 	void showContextMenu(const QPoint& pos);
@@ -40,19 +40,32 @@ private:
 	TreeStructure* _treeWidget;
 
 	// Method to create context menu based on clicked item
-	QMenu* createContextMenu(QTreeWidgetItem* item);
+	QMenu* createContextMenu(TreeItem* item);
 
-	void buildGeometryImportsMenu(QMenu*);
-	void buildGeometryModelMenu(QMenu*);
-	void buildCoordinateSystemMenu(QMenu* menu, QTreeWidgetItem* item);
+	void buildGeometryMenu(QMenu*);
 	void buildMeshMenu(QMenu*);
+	void buildResultsMenu(QMenu*);
+	void buildSolutionMenu(QMenu*);
+
+	void buildDefaultSubItemMenu(QMenu*);
+
 
 	static const int fontSize = 10;
 
-	QAction* renameAction;
+	// Actions shared for all subitems
+	QAction* renameItemAction;
+	QAction* deleteItemAction;
+
+	// Geometry actions
+	QAction* addImporSTEPItemAction;
+	
+	// Mesh actions
 	QAction* genereateMeshAction;
 	QAction* addSizingAction;
-	QAction* removeItemAction;
+
+	// Solution actions
+
+	// Results actions
 };
 
 #endif

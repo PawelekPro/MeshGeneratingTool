@@ -59,6 +59,11 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
+void addSubItem(const ItemTypes::Sub& aSubType){
+	
+}
+
+
 
 TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
 	TreeItem* it = _rootItems.at(aRootType);
@@ -74,5 +79,5 @@ void TreeStructure::renameItem(QTreeWidgetItem* item){
 }
 
 void TreeStructure::removeSubItem(QTreeWidgetItem* item){
-    delete item;
+	delete item;
 }

@@ -58,6 +58,10 @@ class TreeItem : public QTreeWidgetItem
         Actor
         };
 
+        enum class DataRole {
+            PropertiesModel = Qt::UserRole + 1,
+        };
+
         virtual ~TreeItem();
         TreeItem(const TreeItem& item) = delete;
 
@@ -65,6 +69,10 @@ class TreeItem : public QTreeWidgetItem
         inline bool isValid(){return _itemValid;};
 
         inline QDomElement getElement(){return _element;};
+
+        const ItemTypes::Root & rootType(){return _rootType;};
+        const ItemTypes::Sub & subType(){return _subType;};
+        const bool & isRoot(){return _isRoot;}
 
         PropertiesModel*  _propModel;
 
@@ -88,10 +96,9 @@ class TreeItem : public QTreeWidgetItem
 
         friend class TreeItemFactory;
 
-
-
         QDomElement _element;
 
+        bool _isRoot; //TODO: Implement two classes sub and root insted of having this flag here
         bool _itemValid;
         bool _itemActive;
 

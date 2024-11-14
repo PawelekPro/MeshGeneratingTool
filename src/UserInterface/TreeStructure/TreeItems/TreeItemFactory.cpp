@@ -32,15 +32,12 @@ TreeItem* TreeItemFactory::createRootItem (const ItemTypes::Root & aRootItemType
 
     PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
     TreeItem* newRootItem = new TreeItem(_treeStructure, element, propertiesModel, aRootItemType);
+    newRootItem->setData(0, static_cast<int>(TreeItem::DataRole::PropertiesModel), QVariant::fromValue(propertiesModel));
 
-    newRootItem->setData(0, Qt::EditRole, QVariant::fromValue(propertiesModel));
+    QVariant testVariant = newRootItem->data(0, Qt::UserRole + 1);
+    PropertiesModel* testModel = testVariant.value<PropertiesModel*>();
 
-    QVariant testVariant = QVariant::fromValue(propertiesModel);
-    if (!testVariant.isValid()) {
-        qDebug() << "Failed to create a valid QVariant from propertiesModel.";
-    }
-
-    newRootItem->setText(static_cast<int>(TreeItem::Column::Label), ItemTypes::label(aRootItemType));
+    newRootItem->setText(static_cast<int>(TreeStructure::Column::Label), ItemTypes::label(aRootItemType));
    
     return newRootItem;
 }
@@ -54,6 +51,7 @@ TreeItem* TreeItemFactory::createSubItem (TreeItem* aParentItem, const ItemTypes
 
     PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
     TreeItem* newSubItem = new TreeItem(aParentItem, element, propertiesModel, aSubItemType);
+
     
     QString uniqueLabel = getUniqueItemLabel(aSubItemType);
     

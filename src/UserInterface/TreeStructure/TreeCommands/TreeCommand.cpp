@@ -19,10 +19,7 @@
 
 #include "TreeCommand.hpp"
 
-TreeCommand::TreeCommand(TreeStructure* aTreeStructure,
-                         TreeItemFactory* aTreeItemFactory,
-                         TreeItem* aTreeItem
-                        ) : 
+TreeCommand::TreeCommand(TreeStructure* aTreeStructure) : 
                         _treeStructure(aTreeStructure),
-                        _treeItemFactory(aTreeItemFactory),
-                        _treeItem(aTreeItem){}
+                        _treeItem(nullptr)
+                        {}

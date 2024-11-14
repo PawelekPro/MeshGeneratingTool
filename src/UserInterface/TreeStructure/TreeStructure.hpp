@@ -86,18 +86,6 @@ public:
 		Actor
 	};
 
-	/**
-	 * Mapping of role names to corresponding Qt user roles.
-	 */
-	static const inline QMap<QString, int> Role = {
-		{ "Properties", Qt::UserRole + 1 },
-		// { "Advanced", Qt::UserRole + 2 },
-		// { "References", Qt::UserRole + 3 },
-		// { "HiddenText", Qt::UserRole + 4 },
-		// { "Actor", Qt::UserRole + 6 }
-	};
-
-
 	TreeItem* getRootItem(const ItemTypes::Root& aRootType);
 
 	QList<TreeItem*> getSubItems(const ItemTypes::Sub& aRootType);
