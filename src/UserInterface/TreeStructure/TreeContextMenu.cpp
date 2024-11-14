@@ -43,7 +43,7 @@ void TreeContextMenu::showContextMenu(const QPoint& pos) {
 	contextMenu->deleteLater();
 }
 
-QMenu* TreeContextMenu::createContextMenu(QTreeWidgetItem* item) {
+QMenu* TreeContextMenu::createContextMenu(TreeItem* item) {
 	QMenu* contextMenu = new QMenu(this->_treeWidget);
 
 	QFont font;
@@ -51,40 +51,39 @@ QMenu* TreeContextMenu::createContextMenu(QTreeWidgetItem* item) {
 	contextMenu->setFont(font);
 	int column = static_cast<int>(TreeStructure::Column::Label);
 
-	if (item->text(column) == "Geometry Imports") {
-		this->buildGeometryImportsMenu(contextMenu);
-
-	} else if (item->text(column) == "Mesh") {
-		this->buildMeshMenu(contextMenu);
-
-	} else if (item->text(column) == "Geometry Model") {
-		this->buildGeometryModelMenu(contextMenu);
-
+	if(item->isRoot()){
+		switch(item->rootType()){
+			case ItemTypes::Root::Geometry:
+				buildGeometryMenu(contextMenu);
+			case ItemTypes::Root::Mesh:
+				buildMeshMenu(contextMenu);
+			case ItemTypes::Root::Solution:
+				buildSolutionMenu(contextMenu);
+			case ItemTypes::Root::Results:
+				buildResultsMenu(contextMenu);
+		}
 	} else {
-		this->buildCoordinateSystemMenu(contextMenu, item);
+		buildDefaultSubItemMenu(contextMenu);
 	}
-
 	return contextMenu;
 }
 
-void TreeContextMenu::buildGeometryImportsMenu(QMenu* menu) {
-	menu->addAction("Import STEP");
+void buildGeometryMenu(QMenu* aContextMenu){
+
 }
 
-void TreeContextMenu::buildGeometryModelMenu(QMenu* menu) {
-	menu->addAction("New model");
+void buildMeshMenu(QMenu* aContextMenu){
+	
 }
 
-void TreeContextMenu::buildCoordinateSystemMenu(QMenu* menu, QTreeWidgetItem* item) {
-
-	renameAction = menu->addAction("Rename");
-    connect(renameAction, &QAction::triggered, [this, item]() {_treeWidget->renameItem(item); });
-
-	removeItemAction = menu->addAction("Remove");
-	connect(removeItemAction, &QAction::triggered, [this, item](){_treeWidget->removeSubItem(item);});
+void buildSolutionMenu(QMenu* aContextMenu){
+	
 }
 
-void TreeContextMenu::buildMeshMenu(QMenu* menu) {
-	addSizingAction = menu->addAction("Add sizing");
-	// connect(addSizingAction, &QAction::triggered, [this](){_treeWidget->addMeshSizing();});
+void buildResultsMenu(QMenu* aContextMenu){
+	
+}
+
+void buildDefaultSubItemsMenus(QMenu* aContextMenu){
+	
 }

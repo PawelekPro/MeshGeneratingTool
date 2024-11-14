@@ -49,6 +49,7 @@ class TreeItemFactory
         QString getUniqueItemLabel( const ItemTypes::Sub & aSubType ) const;
 
     private:
+    //TODO: Remove the dependency on _treeStructure and make the factory a namespace instead of class
         TreeStructure*  _treeStructure;
 };
 
