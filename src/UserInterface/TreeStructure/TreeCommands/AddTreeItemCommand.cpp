@@ -19,7 +19,14 @@
 
 #include "AddTreeItemCommand.hpp"
 
+AddTreeItemCommand::AddTreeItemCommand(TreeStructure* aTreeStructure,
+                        TreeItemFactory* aTreeItemFactory) :
+                        TreeCommand(aTreeStructure),
+                        _treeItemFactory(aTreeItemFactory)
+                        {}
+
 void AddTreeItemCommand::execute(){
+
     //TODO: add logic that brings back the removed item. I am not sure
     //      where to store the item. When we remove it in TreeStructure
     //      it should still live as long as it is in the CommandHistory

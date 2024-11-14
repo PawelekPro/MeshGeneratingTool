@@ -17,25 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TreeItemTypes.hpp"
-#include "TreeItem.hpp"
-#include "TreeStructure.hpp"
+#include <QStack>
+#include <QList>
 
-#ifndef TREECOMMAND_HPP
-#define TREECOMMAND_HPP
+#include "TreeCommand.hpp"
 
-class TreeCommand{
+class TreeCommandManager {
+public:
+    void executeCommand(TreeCommand* command) {
+        command->execute();
+        _undoStack.push(command);
+        _redoStack.clear();
+    }
 
-    public:
+    void undo() {
+        if (!_undoStack.isEmpty()) {
+            TreeCommand* command = _undoStack.pop();
+            command->undo();
+            _redoStack.push(command);
+        }
+    }
 
-    TreeCommand(TreeStructure* aTreeStructure);
+    void redo() {
+        if (!_redoStack.isEmpty()) {
+            TreeCommand* command = _redoStack.pop();
+            command->execute();
+            _undoStack.push(command);
+        }
+    }
 
-    virtual void execute() = 0;
-    virtual void undo() = 0;
-
-    protected:
-        TreeItem* _treeItem;
-        TreeStructure* _treeStructure;
+private:
+    QStack<TreeCommand*> _undoStack;
+    QStack<TreeCommand*> _redoStack;
 };
-
-#endif
