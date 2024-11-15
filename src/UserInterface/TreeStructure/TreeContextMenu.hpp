@@ -22,9 +22,9 @@
 
 // Forward declaration
 class TreeStructure;
+class TreeItem;
 
 #include "TreeStructure.hpp"
-
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QTreeWidget>
@@ -37,7 +37,8 @@ private slots:
 	void showContextMenu(const QPoint& pos);
 
 private:
-	TreeStructure* _treeWidget;
+	TreeStructure* _treeStructure;
+	TreeItem* _selectedItem;
 
 	// Method to create context menu based on clicked item
 	QMenu* createContextMenu(TreeItem* item);
@@ -49,8 +50,13 @@ private:
 
 	void buildDefaultSubItemMenu(QMenu*);
 
-
 	static const int fontSize = 10;
+
+	QList<QAction*> geometryActions;
+	QList<QAction*> meshActions;
+	QList<QAction*> solutionActions;
+	QList<QAction*> resultsActions;
+	QList<QAction*> defaultSubItemActions;
 
 	// Actions shared for all subitems
 	QAction* renameItemAction;
