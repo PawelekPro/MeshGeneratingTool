@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TREESTRUCTURE_H
-#define TREESTRUCTURE_H
+#ifndef TREESTRUCTURE_HPP
+#define TREESTRUCTURE_HPP
 
 #include "AppDefaults.h"
 #include "PropertiesModel.hpp"
@@ -60,6 +60,8 @@ class TreeStructure : public QTreeWidget {
 public:
 	TreeStructure(QWidget* parent);
 	~TreeStructure();
+
+	void addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
 
 	/**
 	 * Remove QTreeWidgetItem from the TreeStructure

@@ -59,11 +59,9 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-void addSubItem(const ItemTypes::Sub& aSubType){
-	
+void TreeStructure::addSubItem(TreeItem* aParenItem, const ItemTypes::Sub& aSubType){
+	_treeItemFactory->createSubItem(aParenItem, aSubType);
 }
-
-
 
 TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
 	TreeItem* it = _rootItems.at(aRootType);
@@ -71,7 +69,11 @@ TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
 }
 
 QList<TreeItem*> TreeStructure::getSubItems(const ItemTypes::Sub& aSubType){
-	return _subItems.at(aSubType);
+    auto it = _subItems.find(aSubType);
+    if (it != _subItems.end()) {
+        return it->second;
+    } 
+    return {};
 }
 
 void TreeStructure::renameItem(QTreeWidgetItem* item){
