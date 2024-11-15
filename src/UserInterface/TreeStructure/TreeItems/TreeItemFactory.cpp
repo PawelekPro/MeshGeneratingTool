@@ -52,21 +52,23 @@ TreeItem* TreeItemFactory::createSubItem (TreeItem* aParentItem, const ItemTypes
     PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
     TreeItem* newSubItem = new TreeItem(aParentItem, element, propertiesModel, aSubItemType);
 
-    
     QString uniqueLabel = getUniqueItemLabel(aSubItemType);
     
     newSubItem->setText(static_cast<int>(TreeItem::Column::Label), uniqueLabel);
-    newSubItem->setData(0, Qt::EditRole, QVariant::fromValue(propertiesModel));
+    newSubItem->setData(0, Qt::UserRole + 1, QVariant::fromValue(propertiesModel));
 
     return newSubItem;
 }
 
 QString TreeItemFactory::getUniqueItemLabel( const ItemTypes::Sub & aSubType ) const {
 
-    QList<TreeItem*> itemList = _treeStructure->getSubItems(aSubType);
     QString baseLabel = ItemTypes::label(aSubType);
-    int maxLabelNum = 1;
 
+    QList<TreeItem*> itemList = _treeStructure->getSubItems(aSubType);
+    if (itemList.empty()){
+        return baseLabel;
+    }
+    int maxLabelNum = 1;
     int numToAppend = std::accumulate(itemList.begin(), itemList.end(), maxLabelNum, 
     [baseLabel](int currentMax, const TreeItem* item) {
         std::string label = item->text(static_cast<int>(TreeItem::Column::Label)).toStdString();

@@ -21,30 +21,31 @@
 
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
 	: QObject(parent)
-	, _treeWidget(treeWidget) {
+	, _treeStructure(treeWidget) {
 
 	connect(
-		this->_treeWidget, &TreeStructure::customContextMenuRequested,
+		this->_treeStructure, &TreeStructure::customContextMenuRequested,
 		this, &TreeContextMenu::showContextMenu);
 }
 
 void TreeContextMenu::showContextMenu(const QPoint& pos) {
-	QTreeWidgetItem* item = this->_treeWidget->itemAt(pos);
+	TreeItem* item = dynamic_cast<TreeItem*>(this->_treeStructure->itemAt(pos));
 	if (!item)
 		return;
+	_selectedItem = item;
 
 	// Create a context menu based on the clicked item
 	QMenu* contextMenu = createContextMenu(item);
 
 	// Execute the context menu at the given position
-	contextMenu->exec(this->_treeWidget->mapToGlobal(pos));
+	contextMenu->exec(this->_treeStructure->mapToGlobal(pos));
 
 	// Cleanup
 	contextMenu->deleteLater();
 }
 
 QMenu* TreeContextMenu::createContextMenu(TreeItem* item) {
-	QMenu* contextMenu = new QMenu(this->_treeWidget);
+	QMenu* contextMenu = new QMenu(this->_treeStructure);
 
 	QFont font;
 	font.setPointSize(this->fontSize);
@@ -68,22 +69,50 @@ QMenu* TreeContextMenu::createContextMenu(TreeItem* item) {
 	return contextMenu;
 }
 
-void buildGeometryMenu(QMenu* aContextMenu){
+void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu){
+	if(geometryActions.empty()){
+		//TODO: think of moving the actions to another file
+		
+		ItemTypes::Sub importType{ItemTypes::Geometry::ImportSTEP};
+		QString label = ItemTypes::label(importType);
 
+		addImporSTEPItemAction = new QAction(label, _treeStructure);
+
+		connect(addImporSTEPItemAction, &QAction::triggered, _treeStructure,
+        [this, importType]() { 
+            _treeStructure->addSubItem(_selectedItem, importType);
+        });
+		geometryActions.append(addImporSTEPItemAction);
+	}
+	aContextMenu->addActions(geometryActions);
 }
 
-void buildMeshMenu(QMenu* aContextMenu){
+void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu){
+	if(meshActions.empty()){
+		genereateMeshAction = new QAction(_treeStructure);
+		meshActions.append(genereateMeshAction);
+
+		addSizingAction = new QAction(_treeStructure);
+		meshActions.append(addSizingAction);
+	}
+	aContextMenu->addActions(meshActions);
+}
+
+void TreeContextMenu::buildSolutionMenu(QMenu* aContextMenu){
 	
 }
 
-void buildSolutionMenu(QMenu* aContextMenu){
+void TreeContextMenu::buildResultsMenu(QMenu* aContextMenu){
 	
 }
 
-void buildResultsMenu(QMenu* aContextMenu){
-	
-}
-
-void buildDefaultSubItemsMenus(QMenu* aContextMenu){
-	
+void TreeContextMenu::buildDefaultSubItemMenu(QMenu* aContextMenu){
+	if(defaultSubItemActions.empty()){
+		renameItemAction = new QAction(_treeStructure);
+		defaultSubItemActions.append(renameItemAction);
+		
+		deleteItemAction = new QAction(_treeStructure);
+		defaultSubItemActions.append(deleteItemAction);
+	}
+	aContextMenu->addActions(defaultSubItemActions);
 }
