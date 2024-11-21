@@ -18,14 +18,25 @@
  */
 
 #include "AddTreeItemCommand.hpp"
+#include "TreeStructure.hpp"
 
 AddTreeItemCommand::AddTreeItemCommand(TreeStructure* aTreeStructure,
-                        TreeItemFactory* aTreeItemFactory) :
+                        TreeItemFactory* aTreeItemFactory,
+                        TreeItem* aParentItem,
+                        const ItemTypes::Sub& aSubType) :
                         TreeCommand(aTreeStructure),
-                        _treeItemFactory(aTreeItemFactory)
+                        _treeItemFactory(aTreeItemFactory),
+                        _parentItem(aParentItem),
+                        _subType(aSubType)
                         {}
 
 void AddTreeItemCommand::execute(){
+    if(!_parentItem){
+        qWarning("Invalid parent item in addTreeItemCommand");
+        return;
+    }
+
+    _addedItem = _treeStructure->createSubItem(_parentItem, _subType);
 
     //TODO: add logic that brings back the removed item. I am not sure
     //      where to store the item. When we remove it in TreeStructure
@@ -36,7 +47,5 @@ void AddTreeItemCommand::execute(){
 }
 
 void AddTreeItemCommand::undo(){
-    _treeStructure->removeSubItem(_treeItem);
+    _treeStructure->removeSubItem(_addedItem);
 }
-
-

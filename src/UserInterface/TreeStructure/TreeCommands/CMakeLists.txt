@@ -1,6 +1,8 @@
 ADD_LIBRARY(TreeCommands
-  AddTreeItemCommand.cpp
   TreeCommand.cpp
+  AddTreeItemCommand.cpp
+  RemoveTreeItemCommand.cpp
+  TreeCommandManager.cpp
   )
 
 TARGET_LINK_LIBRARIES(TreeCommands PUBLIC

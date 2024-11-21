@@ -17,37 +17,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ADDTREEITEMCOMMAND_HPP
-#define ADDTREEITEMCOMMAND_HPP
+#include "RemoveTreeItemCommand.hpp"
+#include "TreeStructure.hpp"
 
-#include "TreeCommand.hpp"
+RemoveTreeItemCommand::RemoveTreeItemCommand( TreeStructure* aTreeStructure,  TreeItem* aItemToRemove ) 
+                                            : TreeCommand(aTreeStructure),
+                                            _removedItem(aItemToRemove),
+                                            _removedItemParent(dynamic_cast<TreeItem*>(aItemToRemove->parent()))
+{}
 
-class TreeStructure;
-class TreeCommandManager;
+void RemoveTreeItemCommand::execute(){
+    _treeStructure->removeSubItem(_removedItem);
+}
 
-class AddTreeItemCommand : public TreeCommand{
+void RemoveTreeItemCommand::undo(){
+    _treeStructure->addExistingItem(_removedItem, _removedItemParent);
+}
 
-    friend class TreeCommandManager;
-
-    public:
-
-    AddTreeItemCommand(TreeStructure* aTreeStructure,
-                       TreeItemFactory* aTreeItemFactory,
-                       TreeItem* aParentItem,
-                       const ItemTypes::Sub & aSubType);
-
-    private:
-    
-    void execute() override;
-
-    void undo() override;
-    
-    TreeItemFactory* _treeItemFactory;
-    TreeItem* _parentItem;
-    TreeItem* _addedItem;
-    const ItemTypes::Sub _subType;
-
-};
-
-
-#endif
+RemoveTreeItemCommand::~RemoveTreeItemCommand(){
+    if(_removedItem){
+        delete _removedItem;
+    }
+}

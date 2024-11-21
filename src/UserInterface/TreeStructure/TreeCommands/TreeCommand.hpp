@@ -17,25 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef TREECOMMAND_HPP
+#define TREECOMMAND_HPP
+
 #include "TreeItemTypes.hpp"
 #include "TreeItem.hpp"
 #include "TreeStructure.hpp"
 
-#ifndef TREECOMMAND_HPP
-#define TREECOMMAND_HPP
+class TreeCommanManager;
 
 class TreeCommand{
+
+    friend class TreeCommandManager;
 
     public:
 
     TreeCommand(TreeStructure* aTreeStructure);
 
+    protected:
+
     virtual void execute() = 0;
     virtual void undo() = 0;
 
-    protected:
-        TreeItem* _treeItem;
-        TreeStructure* _treeStructure;
+    TreeStructure* _treeStructure;
 };
 
 #endif
