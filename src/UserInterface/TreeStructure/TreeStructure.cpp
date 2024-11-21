@@ -18,6 +18,8 @@
  */
 
 #include "TreeStructure.hpp"
+#include "TreeCommandManager.hpp"
+#include "TreeItemFactory.hpp"
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
@@ -42,7 +44,7 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->header()->setVisible(true);  // Ensure headers are visible
 	this->header()->setSectionResizeMode(QHeaderView::Stretch);
 
-	
+
 	std::for_each(_rootItems.begin(), _rootItems.end(), [this](auto item){this->addTopLevelItem(item.second);});
 }
 
@@ -59,9 +61,20 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addSubItem(TreeItem* aParenItem, const ItemTypes::Sub& aSubType){
-	_treeItemFactory->createSubItem(aParenItem, aSubType);
+void TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType){
+	AddTreeItemCommand* addItemCommand = new AddTreeItemCommand(this, _treeItemFactory, aParentItem, aSubType);
+	TreeCommandManager _commandManager;
+	_commandManager.executeCommand(addItemCommand);
 }
+
+TreeItem* TreeStructure::createSubItem(TreeItem* aParentItem, const ItemTypes::Sub & aSubType)
+{
+	TreeItem* newItem = _treeItemFactory->createSubItem(aParentItem, aSubType);
+	_subItems[aSubType].append(newItem);
+
+	return newItem;
+}
+
 
 TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
 	TreeItem* it = _rootItems.at(aRootType);
@@ -80,6 +93,28 @@ void TreeStructure::renameItem(QTreeWidgetItem* item){
 	this->editItem(item, 0);
 }
 
-void TreeStructure::removeSubItem(QTreeWidgetItem* item){
-	delete item;
+void TreeStructure::removeSubItem(TreeItem* item){
+	if ( item->isRoot() ){
+		qWarning("Cannot remove root item!");
+		return;
+	}
+	ItemTypes::Sub itemType = item->subType();
+	auto it = _subItems.find(itemType);
+	if(it == _subItems.end()){
+		return;
+	} else {
+		it->second.removeOne(item);
+		item->parent()->removeChild(item);
+		return;
+	}
 }
+
+void TreeStructure::deleteSubItem(TreeItem* aItemToDelete){
+	if(!aItemToDelete){
+		return;
+	}
+	removeSubItem(aItemToDelete);
+	delete aItemToDelete;
+}
+
+void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem){};

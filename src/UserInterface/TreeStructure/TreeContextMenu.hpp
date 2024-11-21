@@ -20,14 +20,17 @@
 #ifndef TREECONTEXTMENU_HPP
 #define TREECONTEXTMENU_HPP
 
-// Forward declaration
-class TreeStructure;
-class TreeItem;
-
-#include "TreeStructure.hpp"
+#include <QObject>
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QTreeWidget>
+
+// Include TreeItem header
+#include "TreeItem.hpp"
+
+// Forward declaration for TreeStructure
+class TreeStructure;
+class TreeItem;
 
 class TreeContextMenu : public QObject {
 	Q_OBJECT

@@ -21,8 +21,6 @@
 #define TREEITEMFACTORY_HPP
 
 
-#include "TreeStructure.hpp"
-
 #include "PropertiesModel.hpp"
 #include "PropertiesWidget.hpp"
 #include "TreeItem.hpp"
@@ -33,6 +31,7 @@
 #include <map>  
 
 class TreeItem;
+class TreeStructure;
 
 class TreeItemFactory 
 {
