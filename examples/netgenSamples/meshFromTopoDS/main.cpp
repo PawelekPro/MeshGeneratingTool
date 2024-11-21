@@ -50,35 +50,13 @@ namespace netgen {
 MeshingParameters mparam;
 }
 
-void updateTriangulation(const TopoDS_Shape& shape) {
-
-	try {
-		OCC_CATCH_SIGNALS;
-		BRepMesh_IncrementalMesh e(shape, 0.01, true);
-	} catch (Standard_Failure&) {
-	}
-}
-
 void PrepareOCCGeometry(netgen::OCCGeometry& occgeo, const TopoDS_Shape& shape) {
 	occgeo.shape = shape;
 	occgeo.changed = 1;
 	occgeo.BuildFMap();
 	occgeo.BuildVisualizationMesh(netgen::mparam.minh);
 	occgeo.CalcBoundingBox();
-
 	occgeo.PrintNrShapes();
-
-	// // the shape need to have a starting mesh
-	// updateTriangulation(shape);
-
-	// Bnd_Box bb;
-	// BRepBndLib::Add(shape, bb);
-
-	// double x1, y1, z1, x2, y2, z2;
-	// bb.Get(x1, y1, z1, x2, y2, z2);
-	// netgen::Point<3> p1 = netgen::Point<3>(x1, y1, z1);
-	// netgen::Point<3> p2 = netgen::Point<3>(x2, y2, z2);
-	// occgeo.boundingbox = netgen::Box<3>(p1, p2);
 }
 
 namespace {
@@ -125,20 +103,6 @@ int main(int, char*[]) {
 	}
 
 	Ng_Exit();
-	// std::cout << "Generating volume mesh..." << std::endl;
-
-	// try
-	// {
-	//     OCC_CATCH_SIGNALS;
-
-	//     int err = occgeo.GenerateMesh(meshPtr, mparams);
-
-	//     std::cout << "EXIT CODE: " << err << std::endl;
-	// }
-	// catch (Standard_Failure &ex)
-	// {
-	//     std::cout << "ERROR: " << ex << std::endl;
-	// }
 
 	// Create VTK points and polygons containers
 	auto vtk_points = vtkSmartPointer<vtkPoints>::New();
