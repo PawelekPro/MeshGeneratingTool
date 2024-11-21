@@ -1,3 +1,5 @@
+add_subdirectory(NetgenPlugin)
+
 ADD_LIBRARY(MeshCore 
     Mesh.cpp
     MeshContainers.hpp
