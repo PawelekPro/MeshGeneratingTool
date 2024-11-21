@@ -13,6 +13,10 @@ option(ENABLE_NETGEN "Enable Netgen" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -DDEBUG")
+    message(STATUS "Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+endif()
 
 set(FORMS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/Forms)
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
@@ -163,45 +167,20 @@ INCLUDE_DIRECTORIES(${GMSH_INC})
 
 # Netgen
 ######################################################################
-# if(ENABLE_NETGEN)
-#     set(NETGEN_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/ThirdParty/Netgen)
-# endif(ENABLE_NETGEN)
+if(ENABLE_NETGEN)
+    find_package(Netgen REQUIRED)
 
-# add_subdirectory(src/ThirdParty)
+    if (NETGEN_VERSION)
+        MESSAGE(STATUS "NETGEN FOUND")
+        MESSAGE(STATUS "NETGEN VERSION: ${NETGEN_VERSION_MAJOR}.${NETGEN_VERSION_MINOR}.${NETGEN_VERSION_PATCH}")
+        MESSAGE(STATUS "NETGEN include directory: ${NETGEN_INCLUDE_DIRS}")
+        MESSAGE(STATUS "NETGEN lib directory: ${NETGEN_LIBRARY_DIR}")
+        MESSAGE(STATUS "-------------------------------------------------------------------------------")
+    else()
+        message(WARNING "NETGEN not found!")
+    endif()
+endif()
 
-# # Retrieve variables
-# if(ENABLE_NETGEN)
-#     get_directory_property(Netgen_LIBRARIES
-#       DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ThirdParty/Netgen
-#       DEFINITION Netgen_LIBRARIES
-#     )
-#     # Read the content of gmsh.h into a variable
-#     set(NETGEN_HPP_CONTENT "${NETGEN_ROOT_DIR}/libsrc/include/netgen_version.hpp")
-#     # Extract version information using regular expressions
-#     # Major version
-#     file(STRINGS ${NETGEN_HPP_CONTENT} NETGEN_VERSION_MAJOR
-#         REGEX "#define NETGEN_VERSION_MAJOR.*"
-#     )
-#     string(REGEX MATCH "[0-9]+" NETGEN_VERSION_MAJOR ${NETGEN_VERSION_MAJOR})
-#     # Minor version
-#     file(STRINGS ${NETGEN_HPP_CONTENT} NETGEN_VERSION_MINOR
-#         REGEX "#define NETGEN_VERSION_MINOR.*"
-#     )
-#     string(REGEX MATCH "[0-9]+" NETGEN_VERSION_MINOR ${NETGEN_VERSION_MINOR})
-#     # Patch version
-#     file(STRINGS ${NETGEN_HPP_CONTENT} NETGEN_VERSION_PATCH
-#         REGEX "#define NETGEN_VERSION_PATCH.*"
-#     )
-#     string(REGEX MATCH "[0-9]+" NETGEN_VERSION_PATCH ${NETGEN_VERSION_PATCH})
-
-#     # Print version information
-#     MESSAGE(STATUS "NETGEN FOUND")
-#     MESSAGE(STATUS "NETGEN VERSION: ${NETGEN_VERSION_MAJOR}.${NETGEN_VERSION_MINOR}.${NETGEN_VERSION_PATCH}")
-#     MESSAGE(STATUS "-------------------------------------------------------------------------------")
-# else()
-#     set(Netgen_LIBRARIES)
-#     message(STATUS "Netgen is not enabled and will not be available in the resulting library.")
-# endif(ENABLE_NETGEN)
 
 # rapidjson library for parsing json files
 ######################################################################
