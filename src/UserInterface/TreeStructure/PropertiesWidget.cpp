@@ -24,7 +24,7 @@ PropertiesWidget::~PropertiesWidget() {
 	QAbstractItemModel* model = this->model();
 	if (model) {
 		ModelFilter* proxy = qobject_cast<ModelFilter*>(model);
-		;
+		
 		if (proxy) {
 			for (int i = 0; i < proxy->rowCount(); ++i) {
 				QModelIndex index = proxy->index(i, 1);
@@ -56,3 +56,4 @@ void PropertiesWidget::setModel(PropertiesModel* model) {
         }
     }
 }
+

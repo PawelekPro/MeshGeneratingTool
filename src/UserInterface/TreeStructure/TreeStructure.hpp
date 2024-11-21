@@ -24,8 +24,6 @@
 #include "PropertiesModel.hpp"
 #include "TreeContextMenu.hpp"
 #include "DocumentHandler.hpp"
-#include "TreeItemFactory.hpp"
-#include "TreeCommand.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -44,6 +42,12 @@
 #include <vtkLogger.h>
 
 class TreeContextMenu;
+class AddTreeItemCommand;
+class RemoveTreeItemCommand;
+class TreeCommandManager;
+class TreeItemFactory;
+class TreeItem;
+
 
 namespace fs = std::filesystem;
 /**
@@ -61,6 +65,8 @@ public:
 	TreeStructure(QWidget* parent);
 	~TreeStructure();
 
+	void addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem);
+
 	void addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
 
 	/**
@@ -71,7 +77,7 @@ public:
 	 * @returns None
 	 */
 
-	void removeSubItem(QTreeWidgetItem* itemToRemove);
+
 	/**
 	 * Open an editor in the Name column of a TreeWidgetItem
 	 *
@@ -94,6 +100,15 @@ public:
 	
 private:
 
+	TreeItem* createSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
+    friend class AddTreeItemCommand;
+    friend class AddTreeItemCommand;
+
+	void removeSubItem(TreeItem* itemToRemove);
+    friend class RemoveTreeItemCommand;
+    friend class RemoveTreeItemCommand;
+
+	void deleteSubItem(TreeItem* itemToDelete);
 	/**
 	 * Context menu that appears when item in TreeStructure is right-clicked
 	 */
@@ -103,6 +118,13 @@ private:
 	 * Pointer to document handler that stores data of TreeWidgetItems
 	 */
 	TreeItemFactory* _treeItemFactory;
+
+	/**
+	* Pointer to document handler that stores data of TreeWidgetItems
+	*/
+
+
+	// TreeCommandManager _commandManager;
 
 	const std::unordered_map<ItemTypes::Root, TreeItem*> _rootItems;
 

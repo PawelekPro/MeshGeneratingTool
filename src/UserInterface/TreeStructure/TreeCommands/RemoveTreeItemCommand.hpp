@@ -17,37 +17,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ADDTREEITEMCOMMAND_HPP
-#define ADDTREEITEMCOMMAND_HPP
+#ifndef REMOVETREEITEMCOMMAND_HPP
+#define REMOVETREEITEMCOMMAND_HPP
 
 #include "TreeCommand.hpp"
-
 class TreeStructure;
-class TreeCommandManager;
 
-class AddTreeItemCommand : public TreeCommand{
-
+class RemoveTreeItemCommand : public TreeCommand{
+    
     friend class TreeCommandManager;
 
-    public:
-
-    AddTreeItemCommand(TreeStructure* aTreeStructure,
-                       TreeItemFactory* aTreeItemFactory,
-                       TreeItem* aParentItem,
-                       const ItemTypes::Sub & aSubType);
-
     private:
-    
+
+    RemoveTreeItemCommand( TreeStructure* aTreeStrucure, TreeItem* aItemToRemove );
+
+    ~RemoveTreeItemCommand();
+
     void execute() override;
 
     void undo() override;
+
+    protected:
     
-    TreeItemFactory* _treeItemFactory;
-    TreeItem* _parentItem;
-    TreeItem* _addedItem;
-    const ItemTypes::Sub _subType;
-
+    TreeItem* _removedItemParent;
+    TreeItem* _removedItem;
 };
-
 
 #endif

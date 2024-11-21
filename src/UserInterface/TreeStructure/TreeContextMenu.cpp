@@ -18,6 +18,7 @@
  */
 
 #include "TreeContextMenu.hpp"
+#include "TreeStructure.hpp"
 
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
 	: QObject(parent)

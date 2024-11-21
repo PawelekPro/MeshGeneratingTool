@@ -17,8 +17,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TreeCommand.hpp"
+#include "TreeCommandManager.hpp"
 
-TreeCommand::TreeCommand(TreeStructure* aTreeStructure) : 
-                        _treeStructure(aTreeStructure)
-                        {}
+TreeCommandManager::~TreeCommandManager() {
+    while (!_undoStack.isEmpty()) {
+        delete _undoStack.pop();
+    }
+
+    while (!_redoStack.isEmpty()) {
+        delete _redoStack.pop();
+    }
+}
+
+void TreeCommandManager::executeCommand(TreeCommand* command) {
+    command->execute();
+    _undoStack.push(command);
+    _redoStack.clear();
+}
+
+void TreeCommandManager::undo() {
+    if (!_undoStack.isEmpty()) {
+        TreeCommand* command = _undoStack.pop();
+        command->undo();
+        _redoStack.push(command);
+    }
+}
+
+void TreeCommandManager::redo() {
+    if (!_redoStack.isEmpty()) {
+        TreeCommand* command = _redoStack.pop();
+        command->execute();
+        _undoStack.push(command);
+    }
+}
+
