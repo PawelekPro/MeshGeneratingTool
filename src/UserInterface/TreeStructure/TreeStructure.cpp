@@ -20,6 +20,7 @@
 #include "TreeStructure.hpp"
 #include "TreeCommandManager.hpp"
 #include "TreeItemFactory.hpp"
+#include "TreeItem.hpp"
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)

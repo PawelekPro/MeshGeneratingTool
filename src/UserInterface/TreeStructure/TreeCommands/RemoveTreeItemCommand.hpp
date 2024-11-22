@@ -21,7 +21,6 @@
 #define REMOVETREEITEMCOMMAND_HPP
 
 #include "TreeCommand.hpp"
-class TreeStructure;
 
 class RemoveTreeItemCommand : public TreeCommand{
     

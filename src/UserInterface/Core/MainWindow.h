@@ -30,6 +30,8 @@
 #include "ProgressBar.hpp"
 #include "QVTKRenderWindow.h"
 #include "SARibbon.h"
+#include "TreeStructure.hpp"
+
 #include <QmlStyleUrlInterceptor.h>
 
 #include <QApplication>

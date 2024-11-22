@@ -25,10 +25,6 @@
 #include <QMenu>
 #include <QTreeWidget>
 
-// Include TreeItem header
-#include "TreeItem.hpp"
-
-// Forward declaration for TreeStructure
 class TreeStructure;
 class TreeItem;
 
