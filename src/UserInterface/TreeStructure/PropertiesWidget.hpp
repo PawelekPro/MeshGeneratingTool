@@ -23,6 +23,7 @@
 #include "PropertiesModel.hpp"
 #include "WidgetFactory.hpp"
 
+
 #include <QList>
 #include <QStyledItemDelegate>
 #include <QTableView>

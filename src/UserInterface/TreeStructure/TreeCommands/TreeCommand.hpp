@@ -22,10 +22,9 @@
 
 #include "TreeItemTypes.hpp"
 #include "TreeItem.hpp"
-#include "TreeStructure.hpp"
 
 class TreeCommanManager;
-
+class TreeStructure;
 class TreeCommand{
 
     friend class TreeCommandManager;

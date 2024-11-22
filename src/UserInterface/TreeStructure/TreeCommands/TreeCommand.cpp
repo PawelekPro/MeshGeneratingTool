@@ -18,7 +18,7 @@
  */
 
 #include "TreeCommand.hpp"
-
+#include "TreeStructure.hpp"
 TreeCommand::TreeCommand(TreeStructure* aTreeStructure) : 
                         _treeStructure(aTreeStructure)
                         {}
