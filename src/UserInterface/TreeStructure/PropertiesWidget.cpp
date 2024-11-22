@@ -18,6 +18,7 @@
  */
 
 #include "PropertiesWidget.hpp"
+#include "TreeItem.hpp"
 
 //--------------------------------------------------------------------------------------
 PropertiesWidget::~PropertiesWidget() {

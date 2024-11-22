@@ -18,7 +18,6 @@
  */
 
 #include "TreeStructure.hpp"
-
 #include "TreeItemFactory.hpp"
 #include <utility>
 

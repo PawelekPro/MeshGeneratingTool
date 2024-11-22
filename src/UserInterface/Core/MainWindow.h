@@ -29,6 +29,9 @@
 #include "QVTKRenderWindow.h"
 #include "DocumentHandler.hpp"
 #include "SARibbon.h"
+#include "TreeStructure.hpp"
+
+
 
 #include <QButtonGroup>
 #include <QFileDialog>
