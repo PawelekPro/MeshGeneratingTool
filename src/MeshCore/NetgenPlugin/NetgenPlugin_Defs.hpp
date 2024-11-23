@@ -32,6 +32,10 @@
 #define NETGENPLUGIN_EXPORT __declspec(dllimport)
 #endif
 
+#if defined(NETGEN_V6)
+#define NETGENPLUGIN_DLL_HEADER DLL_HEADER
+#endif
+
 #else
 
 #define NETGENPLUGIN_EXPORT
