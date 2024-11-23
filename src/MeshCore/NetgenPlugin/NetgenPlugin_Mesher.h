@@ -24,6 +24,41 @@
 #ifndef NETGENPLUGIN_MESHER_H
 #define NETGENPLUGIN_MESHER_H
 
-// #include "NetgenPlugin_Defs.hpp"
+#include "NetgenPlugin_Defs.hpp"
+
+namespace netgen {
+class OCCGeometry;
+class Mesh;
+}
+
+class TopoDS_Shape;
+class MGTMesh;
+
+class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
+public:
+	NetgenPlugin_Mesher(MGTMesh* mesh, const TopoDS_Shape& shape, const bool isVolume);
+	~NetgenPlugin_Mesher();
+	bool ComputeMesh();
+
+	static void PrepareOCCgeometry(
+		netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
+	void SetDefaultParameters();
+	double GetDefaultMinSize(const TopoDS_Shape& geom, const double maxSize);
+
+private:
+	MGTMesh* _mesh;
+	const TopoDS_Shape& _shape;
+	bool _isVolume;
+	bool _optimize;
+	int _fineness;
+	bool _isViscousLayers2D;
+
+	netgen::Mesh* _ngMesh;
+	netgen::OCCGeometry* _occgeom;
+
+	// a pointer to NetgenPlugin_Mesher* field of the holder, that will be
+	// nullified at destruction of this
+	NetgenPlugin_Mesher** _selfPtr;
+};
 
 #endif
