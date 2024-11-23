@@ -50,6 +50,7 @@ struct NETGENPLUGIN_EXPORT NetgenPlugin_NetgenLibWrapper {
 	}
 
 	static int& instanceCounter();
+	static void CalcLocalH(netgen::Mesh* ngMesh);
 
 	bool _isComputeOk;
 	netgen::Mesh* _ngMesh;

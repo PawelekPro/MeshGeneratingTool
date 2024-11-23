@@ -51,7 +51,6 @@ extern MeshingParameters mparam;
 //----------------------------------------------------------------------------
 NetgenPlugin_NetgenLibWrapper::NetgenPlugin_NetgenLibWrapper()
 	: _ngMesh(nullptr) {
-
 	if (instanceCounter() == 0) {
 		nglib::Ng_Init();
 		if (!netgen::testout)
@@ -69,15 +68,21 @@ NetgenPlugin_NetgenLibWrapper::NetgenPlugin_NetgenLibWrapper()
 	_ngcout = netgen::mycout;
 	_ngcerr = netgen::myerr;
 	netgen::mycout = new std::ofstream(_outputFileName.c_str());
+	std::ofstream* outFile = dynamic_cast<std::ofstream*>(netgen::mycout);
+
+	if (outFile && !outFile->is_open()) {
+		std::cerr << "Failed to open the output file: " << _outputFileName << std::endl;
+		return;
+	}
+
 	netgen::myerr = netgen::mycout;
 	_coutBuffer = std::cout.rdbuf();
 
 #ifdef _DEBUG_
 	std::cout << "NOTE: netgen output is redirected to file " << _outputFileName << std::endl;
 #else
-	std::cout.rdbuf(netgen::mycout->rdbuf());
+	// std::cout.rdbuf(netgen::mycout->rdbuf());
 #endif
-
 	this->setMesh(nglib::Ng_NewMesh());
 }
 
@@ -85,7 +90,8 @@ NetgenPlugin_NetgenLibWrapper::NetgenPlugin_NetgenLibWrapper()
 NetgenPlugin_NetgenLibWrapper::~NetgenPlugin_NetgenLibWrapper() {
 	--instanceCounter();
 
-	nglib::Ng_DeleteMesh(this->ngMesh());
+	// FIXME: This causes segmentation fault error
+	// nglib::Ng_DeleteMesh(this->ngMesh());
 	nglib::Ng_Exit();
 	if (_coutBuffer)
 		std::cout.rdbuf(_coutBuffer);
@@ -102,6 +108,10 @@ int& NetgenPlugin_NetgenLibWrapper::instanceCounter() {
 //----------------------------------------------------------------------------
 std::string NetgenPlugin_NetgenLibWrapper::getOutputFileName() {
 	std::string tmpDir = std::filesystem::temp_directory_path().string();
+
+	if (!tmpDir.empty() && tmpDir.back() != '/' && tmpDir.back() != '\\') {
+		tmpDir += '/';
+	}
 
 	TCollection_AsciiString aGenericName = tmpDir.c_str();
 	aGenericName += "NETGEN_";
@@ -152,4 +162,9 @@ int NetgenPlugin_NetgenLibWrapper::GenerateMesh(
 	err = occgeo.GenerateMesh(meshPtr, netgen::mparam);
 
 	return err;
+}
+
+//----------------------------------------------------------------------------
+void NetgenPlugin_NetgenLibWrapper::CalcLocalH(netgen::Mesh* ngMesh) {
+	ngMesh->CalcLocalH(netgen::mparam.grading);
 }
