@@ -41,6 +41,10 @@
 #include <QPushButton>
 #include <QString>
 
+#include "MGTMesh.h"
+#include "NetgenPlugin_Mesher.h"
+#include <BRepPrimAPI_MakeBox.hxx>
+
 // Declaration of callable type
 using Callable = std::function<void(QString)>;
 
@@ -119,6 +123,8 @@ public:
 	}
 
 private:
+	std::unique_ptr<NetgenPlugin_Mesher> npm;
+	vtkSmartPointer<MGTMesh> mgtm;
 	Ui::MainWindow* ui;
 
 	// Rendering window widget
