@@ -1,68 +1,76 @@
 {
     "Geometry": {
-        "Properties": {
-            "id0": {
-                "value": "0",
+        "Properties": [
+            {
+                "name": "id0",
                 "label": "Selection scope",
                 "widget": "ComboBoxWidget",
                 "hidden": "no",
-                "model": "SizeModelSelection"
+                "model": "SizeModelSelection",
+                "value": "0"
             },
-            "id1": {
+            {
+                "name": "id1",
                 "label": "Integer-type input",
                 "widget": "IntLineWidget",
                 "value": "420",
                 "hidden": "no",
                 "unit": "unit"
             },
-            "id2": {
+            {
+                "name": "id2",
                 "label": "Double-type input",
                 "widget": "DoubleLineWidget",
                 "value": "2137.69",
                 "hidden": "no",
                 "unit": "unit"
             },
-            "id3": {
+            {
+                "name": "id3",
                 "label": "Entity selection",
                 "widget": "EntityPickWidget",
                 "value": ""
             }
-        }
+        ]
     },
     "Mesh": {
-        "Properties": {
-            "minElementSize": {
+        "Properties": [
+            {
+                "name": "minElementSize",
                 "label": "Min element size",
                 "widget": "DoubleLineWidget",
                 "value": "0.1",
                 "hidden": "no",
                 "unit": "unit"
             },
-            "maxElementSize": {
+            {
+                "name": "maxElementSize",
                 "label": "Max element size",
                 "widget": "DoubleLineWidget",
                 "value": "1",
                 "hidden": "no",
                 "unit": "unit"
             }
-        }
+        ]
     },
     "Solution": {
-        "Properties": {
-            "test": {
+        "Properties": [
+            {
+                "name": "test",
                 "label": "test",
                 "widget": "test",
                 "value": "0"
             }
-        }
+        ]
     },
     "Results": {
-        "Properties": {
-            "test": {
+        "Properties": [
+            {
+                "name": "test",
                 "label": "test",
                 "widget": "test",
                 "value": "0"
             }
-        }
+        ]
     }
 }

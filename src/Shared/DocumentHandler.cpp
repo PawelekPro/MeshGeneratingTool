@@ -74,8 +74,7 @@ void DocumentHandler::addTextNode(QDomElement& aElement, const QString& aValue){
 void DocumentHandler::addPropertiesToElement(QDomElement& element, const JsonParser::Properties& properties){
     QDomElement propertiesElement = _domDocument.createElement("Properties");
     for(const auto & property : properties){
-        QDomElement propertyElement =_domDocument.createElement(property.first);
-
+        QDomElement propertyElement =_domDocument.createElement("Property");
         if(property.second.hasValue){
             addTextNode(propertyElement, property.second.value.toString());
         }
@@ -83,7 +82,6 @@ void DocumentHandler::addPropertiesToElement(QDomElement& element, const JsonPar
             propertyElement.setAttribute(attribute.first, attribute.second.toString());
         }
         propertiesElement.appendChild(propertyElement);
-
     }
     element.appendChild(propertiesElement);
 }
@@ -122,12 +120,22 @@ QDomElement DocumentHandler::getProperties(const QDomElement& aElement) {
     return QDomElement();
 }
 
-QDomElement DocumentHandler::getProperty(const QDomElement& aPropertiesElement, const QString aPropName){
-    return findSubElement(aPropertiesElement, aPropName);
-};
+QDomElement DocumentHandler::getProperty(const QDomElement& aPropertiesElement, const QString& aPropName) {
+    QDomNodeList propertyNodes = aPropertiesElement.elementsByTagName("Property");
+    for (int i = 0; i < propertyNodes.count(); ++i) {
+        QDomElement propertyElement = propertyNodes.at(i).toElement();
+        if (!propertyElement.isNull() && propertyElement.hasAttribute("name")) {
+            if (propertyElement.attribute("name") == aPropName) {
+                return propertyElement;
+            }
+        }
+    }
+    qWarning() << "Could not find property: " << aPropName << " in Properties element - returning empty QDomElement";
+    return QDomElement();
+}
 
-QString DocumentHandler::getPropertyValue(const QDomElement& aElement, const QString& propName){
-    QDomElement propElement = getProperty(aElement, propName);
+QString DocumentHandler::getPropertyValue(const QDomElement& aPropertiesElement, const QString& aPropName){
+    QDomElement propElement = getProperty(aPropertiesElement, aPropName);
     return propElement.text();
 };
 
