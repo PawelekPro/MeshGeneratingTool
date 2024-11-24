@@ -24,6 +24,7 @@
 #include "PropertiesModel.hpp"
 #include "TreeContextMenu.hpp"
 #include "DocumentHandler.hpp"
+#include "TreeItem.hpp"
 
 #include <filesystem>
 #include <fstream>

@@ -50,7 +50,7 @@ public:
     void writeDocToXML(const std::string& savePath) const;
 
     static QDomElement getProperties(const QDomElement& aElement);
-    static QDomElement getProperty(const QDomElement& aPropertiesElement, const QString aPropName);
+    static QDomElement getProperty(const QDomElement& aPropertiesElement, const QString& aPropName);
 
     static QString getPropertyValue(const QDomElement& aPropertyElement, const QString& aPropName);
     static QString getAttribute(const QDomElement& aPropertyElement, const QString& aAttributeName);

@@ -58,12 +58,16 @@ QMenu* TreeContextMenu::createContextMenu(TreeItem* item) {
 		switch(item->rootType()){
 			case ItemTypes::Root::Geometry:
 				buildGeometryMenu(contextMenu);
+				break;
 			case ItemTypes::Root::Mesh:
 				buildMeshMenu(contextMenu);
+				break;
 			case ItemTypes::Root::Solution:
 				buildSolutionMenu(contextMenu);
+				break;
 			case ItemTypes::Root::Results:
 				buildResultsMenu(contextMenu);
+				break;
 		}
 	} else {
 		buildDefaultSubItemMenu(contextMenu);

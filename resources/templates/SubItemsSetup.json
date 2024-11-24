@@ -30,5 +30,14 @@
                 "value": 0
             }
         ]
+    },
+    "ImportSTEP": {
+        "Properties": [
+            {
+                "name": "stepImport",
+                "importFilePath": "",
+                "hidden": "no"
+            }
+        ]
     }
 }

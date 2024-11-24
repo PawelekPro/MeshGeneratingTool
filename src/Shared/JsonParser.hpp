@@ -19,7 +19,7 @@ class JsonParser {
             Property() : name("Invalid") {};
             Property(const QString &aName) : name(aName) {};
 
-            std::map<QString, QVariant> attributes;
+            std::unordered_map<QString, QVariant> attributes;
 
             QVariant &at(const QString &attributeKey) {
                 return attributes.at(attributeKey);
@@ -66,7 +66,7 @@ class JsonParser {
          * Helper method that creates a PropertiesMap of attributes from json value (value in json is defined by {})
          * @param jsonValue
          */
-        static Property mapToProperty(const QString &aPropName, const rapidjson::Value &aJsonValue);
+        static Property mapToProperty(const rapidjson::Value &aJsonValue);
 };
 
 #endif
