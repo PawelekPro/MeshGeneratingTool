@@ -21,10 +21,12 @@
 #define TREEITEM_HPP
 
 #include <QTreeWidgetItem>
-#include "TreeStructure.hpp"
 #include <QtXml/QDomElement>
+
+
 #include "PropertiesModel.hpp"
 #include "PropertiesWidget.hpp"
+
 #include "TreeItemTypes.hpp" 
 #include "TreeItemFactory.hpp"
 #include "DocumentHandler.hpp"

@@ -98,8 +98,7 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 }
 
 //--------------------------------------------------------------------------------------
-bool PropertiesModel::setData(
-	const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
+bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
 	if (!index.isValid() || role != Qt::DisplayRole && role != Qt::EditRole) {
 		return false;
 	}
@@ -176,6 +175,11 @@ QWidget* PropertiesModel::getWidget( const QModelIndex& aIndex, QWidget* aWidget
 	QString widgetName = DocumentHandler::getAttribute(propertyElement, "widget");
 
 	BaseWidget* newWidget= WidgetFactory::createWidget(widgetName, aWidgetParent);
-	newWidget->setIndex(aIndex);
+	if(newWidget){
+		newWidget->setIndex(aIndex);
+	} else {
+		qWarning() << widgetName << " widget could not be added to PropertiesWidget";
+	}
+	
 	return newWidget;
 }

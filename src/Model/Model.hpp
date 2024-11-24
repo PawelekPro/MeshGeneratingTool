@@ -68,4 +68,4 @@ class Model {
 		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 
-#endif // MODEL_H
+#endif
