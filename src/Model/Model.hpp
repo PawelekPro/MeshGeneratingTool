@@ -45,6 +45,9 @@ class Model {
 	Model(std::string modelName);
 	~Model();
 
+	Model(const Model& aOther) = delete;
+	Model& operator=(const Model& aOther) = delete;
+
 	//--------Geometry interface-----// 
     void importSTEP(const std::string& filePath, QWidget* progressBar);
     void importSTL(const std::string& filePath, QWidget* progressBar);
