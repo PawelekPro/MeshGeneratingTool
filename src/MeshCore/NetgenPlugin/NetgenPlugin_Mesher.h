@@ -31,6 +31,7 @@ class OCCGeometry;
 class Mesh;
 }
 
+class gp_XYZ;
 class TopoDS_Shape;
 class MGTMesh;
 
@@ -44,6 +45,10 @@ public:
 		netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
 	void SetDefaultParameters();
 	double GetDefaultMinSize(const TopoDS_Shape& geom, const double maxSize);
+
+	static void RestrictLocalSize(
+		netgen::Mesh& ngMesh, const gp_XYZ& p, double size, const bool overrideMinH = true);
+	static void SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh);
 
 private:
 	MGTMesh* _mesh;

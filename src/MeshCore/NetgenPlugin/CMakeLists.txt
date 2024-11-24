@@ -11,13 +11,15 @@ if(WIN32)
         ${OpenCASCADE_LIBRARIES}
         ${VTK_LIBRARIES}
         ${NETGEN_LIBRARIES}
-        MGTMesh)
+        MGTMesh
+        MGTMeshUtils)
 else()
     TARGET_LINK_LIBRARIES(NetgenPlugin PUBLIC
         ${OCC_LIBRARIES}
         ${VTK_LIBRARIES}
         ${NETGEN_LIBRARIES}
-        MGTMesh)
+        MGTMesh
+        MGTMeshUtils)
 endif()
 
 include_directories(${NETGEN_INCLUDE_DIRS})
@@ -26,4 +28,5 @@ target_compile_definitions(NetgenPlugin PUBLIC NETGENPLUGIN_EXPORTS NETGEN_V6)
 TARGET_INCLUDE_DIRECTORIES(NetgenPlugin PUBLIC
     ${PRJ_SOURCE_DIR}/src/MeshCore/NetgenPlugin
     ${PRJ_SOURCE_DIR}/src/MeshCore/MGTMesh
+    ${PRJ_SOURCE_DIR}/src/MeshCore/MGTMeshUtils
 )

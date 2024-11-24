@@ -53,8 +53,14 @@ NetgenPlugin_NetgenLibWrapper::NetgenPlugin_NetgenLibWrapper()
 	: _ngMesh(nullptr) {
 	if (instanceCounter() == 0) {
 		nglib::Ng_Init();
-		if (!netgen::testout)
-			netgen::testout = new std::ofstream("test.out");
+
+		netgen::testout = new std::ofstream("test.out");
+		ngcore::Logger::SetGlobalLoggingLevel(ngcore::level::trace);
+		ngcore::printmessage_importance = 2;
+		std::cout << "PRINT MSG IMP: " << ngcore::printmessage_importance << std::endl;
+
+		// if (!netgen::testout)
+		// 	netgen::testout = new std::ofstream("test.out");
 	}
 	++instanceCounter();
 
@@ -67,13 +73,13 @@ NetgenPlugin_NetgenLibWrapper::NetgenPlugin_NetgenLibWrapper()
 	_outputFileName = this->getOutputFileName();
 	_ngcout = netgen::mycout;
 	_ngcerr = netgen::myerr;
-	netgen::mycout = new std::ofstream(_outputFileName.c_str());
-	std::ofstream* outFile = dynamic_cast<std::ofstream*>(netgen::mycout);
+	// netgen::mycout = new std::ofstream(_outputFileName.c_str());
+	// std::ofstream* outFile = dynamic_cast<std::ofstream*>(netgen::mycout);
 
-	if (outFile && !outFile->is_open()) {
-		std::cerr << "Failed to open the output file: " << _outputFileName << std::endl;
-		return;
-	}
+	// if (outFile && !outFile->is_open()) {
+	// 	std::cerr << "Failed to open the output file: " << _outputFileName << std::endl;
+	// 	return;
+	// }
 
 	netgen::myerr = netgen::mycout;
 	_coutBuffer = std::cout.rdbuf();
@@ -81,7 +87,7 @@ NetgenPlugin_NetgenLibWrapper::NetgenPlugin_NetgenLibWrapper()
 #ifdef _DEBUG_
 	std::cout << "NOTE: netgen output is redirected to file " << _outputFileName << std::endl;
 #else
-	// std::cout.rdbuf(netgen::mycout->rdbuf());
+	std::cout.rdbuf(netgen::mycout->rdbuf());
 #endif
 	this->setMesh(nglib::Ng_NewMesh());
 }
@@ -131,7 +137,7 @@ std::string NetgenPlugin_NetgenLibWrapper::getOutputFileName() {
 void NetgenPlugin_NetgenLibWrapper::removeOutputFile() {
 	if (!_outputFileName.empty()) {
 		if (_ngcout) {
-			delete netgen::mycout;
+			// delete netgen::mycout;
 			netgen::mycout = _ngcout;
 			netgen::myerr = _ngcerr;
 			_ngcout = 0;

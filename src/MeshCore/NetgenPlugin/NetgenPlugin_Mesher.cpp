@@ -19,11 +19,13 @@
 *=============================================================================
 * File      : NetgenPlugin_Mesher.cpp
 * Author    : Paweł Gilewicz
-* Date      : 21/11/2024
+* Date      : 24/11/2024
 */
 
 #include "NetgenPlugin_Mesher.h"
 #include "MGTMesh.h"
+#include "MGTMeshUtils_ControlPoint.h"
+#include "MGTMesh_Algorithm.h"
 #include "NetgenPlugin_MeshInfo.h"
 #include "NetgenPlugin_Netgen2VTK.h"
 #include "NetgenPlugin_NetgenLibWrapper.h"
@@ -34,19 +36,30 @@
 #include <BRep_Tool.hxx>
 #include <Bnd_B3d.hxx>
 #include <Bnd_Box.hxx>
+#include <Geom_Curve.hxx>
 #include <Poly_Array1OfTriangle.hxx>
 #include <Poly_Triangulation.hxx>
 #include <Standard_Failure.hxx>
+#include <Standard_Real.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopLoc_Location.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_XYZ.hxx>
 
 #ifndef OCCGEOMETRY
 #define OCCGEOMETRY
 #endif
 #include <meshing.hpp>
 #include <occgeom.hpp>
+
+#include <map>
+#include <set>
+#include <vector>
 
 namespace netgen {
 NETGENPLUGIN_DLL_HEADER
@@ -59,12 +72,81 @@ std::map<int, double> EdgeId2LocalSize;
 std::map<int, double> FaceId2LocalSize;
 std::map<int, double> SolidId2LocalSize;
 
+std::vector<MGTMeshUtils::ControlPoint> ControlPoints;
+std::set<int> ShapesWithControlPoints;
+
 //----------------------------------------------------------------------------
 void updateTriangulation(const TopoDS_Shape& shape) {
 
 	try {
 		BRepMesh_IncrementalMesh e(shape, 0.01, true);
 	} catch (Standard_Failure&) {
+	}
+}
+
+//----------------------------------------------------------------------------
+void setLocalSize(const TopoDS_Shape& GeomShape, double LocalSize) {
+	if (GeomShape.IsNull())
+		return;
+	TopAbs_ShapeEnum GeomType = GeomShape.ShapeType();
+	if (GeomType == TopAbs_COMPOUND) {
+		for (TopoDS_Iterator it(GeomShape); it.More(); it.Next()) {
+			setLocalSize(it.Value(), LocalSize);
+		}
+		return;
+	}
+	int key;
+	if (!ShapesWithLocalSize.Contains(GeomShape))
+		key = ShapesWithLocalSize.Add(GeomShape);
+	else
+		key = ShapesWithLocalSize.FindIndex(GeomShape);
+
+	if (GeomType == TopAbs_VERTEX) {
+		VertexId2LocalSize[key] = LocalSize;
+	} else if (GeomType == TopAbs_EDGE) {
+		EdgeId2LocalSize[key] = LocalSize;
+	} else if (GeomType == TopAbs_FACE) {
+		FaceId2LocalSize[key] = LocalSize;
+	} else if (GeomType == TopAbs_SOLID) {
+		SolidId2LocalSize[key] = LocalSize;
+	}
+	return;
+}
+
+//----------------------------------------------------------------------------
+void setLocalSize(
+	const TopoDS_Edge& edge, double size, netgen::Mesh& mesh,
+	const bool overrideMinH = true) {
+	if (size <= std::numeric_limits<double>::min())
+		return;
+
+	Standard_Real u1, u2;
+	Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, u1, u2);
+
+	if (curve.IsNull()) {
+		TopoDS_Iterator vIt(edge);
+		if (!vIt.More())
+			return;
+		gp_Pnt p = BRep_Tool::Pnt(TopoDS::Vertex(vIt.Value()));
+		NetgenPlugin_Mesher::RestrictLocalSize(mesh, p.XYZ(), size, overrideMinH);
+
+	} else {
+		const int nb = (int)(1.5 * MGTMesh_Algorithm::EdgeLength(edge) / size);
+		Standard_Real delta = (u2 - u1) / nb;
+
+		for (int i = 0; i < nb; i++) {
+			Standard_Real u = u1 + delta * i;
+			gp_Pnt p = curve->Value(u);
+			NetgenPlugin_Mesher::RestrictLocalSize(
+				mesh, p.XYZ(), size, overrideMinH);
+			netgen::Point3d pi(p.X(), p.Y(), p.Z());
+			double resultSize = mesh.GetH(pi);
+
+			if (resultSize - size > 0.1 * size)
+				// netgen does restriction iff oldH/newH > 1.2 (localh.cpp:136)
+				NetgenPlugin_Mesher::RestrictLocalSize(
+					mesh, p.XYZ(), resultSize / 1.201, overrideMinH);
+		}
 	}
 }
 
@@ -88,6 +170,8 @@ NetgenPlugin_Mesher::NetgenPlugin_Mesher(
 	EdgeId2LocalSize.clear();
 	FaceId2LocalSize.clear();
 	SolidId2LocalSize.clear();
+	ControlPoints.clear();
+	ShapesWithControlPoints.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -153,7 +237,7 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	NetgenPlugin_MeshInfo initState;
 	int err = 0;
 
-	mparams.maxh = 10.0;
+	mparams.maxh = 5.0;
 	if (mparams.maxh == 0.0)
 		mparams.maxh = occgeo.boundingbox.Diam();
 
@@ -163,7 +247,7 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	std::cout << mparams << std::endl;
 	occgeo.face_maxh = mparams.maxh;
 	int startWith = netgen::MESHCONST_ANALYSE;
-	int endWith = netgen::MESHCONST_MESHSURFACE;
+	int endWith = netgen::MESHCONST_ANALYSE;
 
 	std::cout << "Starting mesh generation process" << std::endl;
 	try {
@@ -181,8 +265,66 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 
 	std::cout << _ngMesh->GetNP() << std::endl;
 
+	if (err)
+		return false;
+
 	if (!mparams.uselocalh)
 		_ngMesh->LocalHFunction().SetGrading(mparams.grading);
+
+	const TopoDS_Shape& shape = occgeo.fmap.FindKey(1);
+	setLocalSize(shape, 2);
+
+	SetLocalSize(occgeo, *_ngMesh);
+
+	// Compute 1D mesh
+	startWith = endWith = netgen::MESHCONST_MESHEDGES;
+	std::cout << "Starting 1D mesh generation process" << std::endl;
+	try {
+		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+		std::cout << err << std::endl;
+	} catch (Standard_Failure& ex) {
+		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+	} catch (netgen::NgException& ex) {
+		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+	}
+
+	if (err)
+		return false;
+
+	// Compute surface mesh
+	mparams.uselocalh = true;
+	startWith = netgen::MESHCONST_MESHSURFACE;
+	endWith = _optimize ? netgen::MESHCONST_OPTSURFACE : netgen::MESHCONST_MESHSURFACE;
+	std::cout << "Starting surface mesh generation process" << std::endl;
+
+	try {
+		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+		std::cout << err << std::endl;
+	} catch (Standard_Failure& ex) {
+		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+	} catch (netgen::NgException& ex) {
+		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+	}
+
+	if (err || !_isVolume)
+		return false;
+
+	// Compute volume mesh
+	startWith = netgen::MESHCONST_MESHVOLUME;
+	endWith = _optimize ? netgen::MESHCONST_OPTVOLUME : netgen::MESHCONST_MESHVOLUME;
+	std::cout << "Starting volume mesh generation process" << std::endl;
+
+	try {
+		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+		std::cout << err << std::endl;
+	} catch (Standard_Failure& ex) {
+		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+	} catch (netgen::NgException& ex) {
+		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+	}
+
+	if (err)
+		return false;
 
 	NetgenPlugin_Netgen2VTK netgen2vtk = NetgenPlugin_Netgen2VTK(*_ngMesh);
 	_mesh->SetInternalMesh(netgen2vtk.GetInternalMesh());
@@ -249,4 +391,72 @@ double NetgenPlugin_Mesher::GetDefaultMinSize(
 		minh = maxSize / 3.0;
 
 	return minh;
+}
+
+//----------------------------------------------------------------------------
+void NetgenPlugin_Mesher::RestrictLocalSize(
+	netgen::Mesh& ngMesh, const gp_XYZ& p, double size, const bool overrideMinH) {
+	if (size <= std::numeric_limits<double>::min())
+		return;
+
+	if (netgen::mparam.minh > size) {
+		if (overrideMinH) {
+			ngMesh.SetMinimalH(size);
+			netgen::mparam.minh = size;
+		} else {
+			size = netgen::mparam.minh;
+		}
+	}
+	netgen::Point3d pi(p.X(), p.Y(), p.Z());
+	ngMesh.RestrictLocalH(pi, size);
+}
+
+//----------------------------------------------------------------------------
+void NetgenPlugin_Mesher::SetLocalSize(
+	netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh) {
+	// edges
+	std::map<int, double>::const_iterator it;
+	for (it = EdgeId2LocalSize.begin(); it != EdgeId2LocalSize.end(); it++) {
+		int key = (*it).first;
+		double hi = (*it).second;
+		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
+		setLocalSize(TopoDS::Edge(shape), hi, ngMesh);
+	}
+
+	// vertices
+	for (it = VertexId2LocalSize.begin(); it != VertexId2LocalSize.end(); it++) {
+		int key = (*it).first;
+		double hi = (*it).second;
+		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
+		gp_Pnt p = BRep_Tool::Pnt(TopoDS::Vertex(shape));
+		NetgenPlugin_Mesher::RestrictLocalSize(ngMesh, p.XYZ(), hi);
+	}
+
+	// faces
+	for (it = FaceId2LocalSize.begin(); it != FaceId2LocalSize.end(); it++) {
+		int key = (*it).first;
+		double val = (*it).second;
+		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
+		int faceNgID = occgeo.fmap.FindIndex(shape);
+
+		if (faceNgID >= 1) {
+			occgeo.SetFaceMaxH(faceNgID, val, netgen::mparam);
+			for (TopExp_Explorer edgeExp(shape, TopAbs_EDGE); edgeExp.More(); edgeExp.Next()) {
+				setLocalSize(TopoDS::Edge(edgeExp.Current()), val, ngMesh);
+			}
+		} else if (!ShapesWithControlPoints.count(key)) {
+			std::cout << "Creating control points for face " << key << std::endl;
+			MGTMeshUtils::createPointsSampleFromFace(TopoDS::Face(shape), val, ControlPoints);
+			ShapesWithControlPoints.insert(key);
+		}
+	}
+	// ToDo: support for solids
+
+	if (!ControlPoints.empty()) {
+		std::cout << "Restricting local size for control point " << std::endl;
+		for (size_t i = 0; i < ControlPoints.size(); ++i)
+			NetgenPlugin_Mesher::RestrictLocalSize(
+				ngMesh, ControlPoints[i].XYZ(), ControlPoints[i].Size());
+	}
+	return;
 }

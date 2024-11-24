@@ -103,7 +103,7 @@ void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh() {
 	// Populate internal mesh data
 	_internalMesh->SetPoints(points);
 	_internalMesh->SetCells(cellTypes, cells);
-	vtkLogF(INFO, "Conversion completed: %d points, %d cells created.",
+	vtkLogF(INFO, "Internal mesh conversion completed: %d points, %d cells created.",
 		points->GetNumberOfPoints(), cells->GetNumberOfCells());
 }
 
@@ -151,7 +151,7 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh() {
 	// Populate poly data
 	_boundaryMesh->SetPoints(points);
 	_boundaryMesh->SetPolys(polygons);
-	vtkLogF(INFO, "Conversion completed: %d points, %d polygons created.",
+	vtkLogF(INFO, "Boundary mesh conversion completed: %d points, %d polygons created.",
 		points->GetNumberOfPoints(), polygons->GetNumberOfCells());
 }
 

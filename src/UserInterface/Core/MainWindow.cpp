@@ -51,6 +51,16 @@ MainWindow::MainWindow(QWidget* parent)
 	TopoDS_Shape box = BRepPrimAPI_MakeBox(100, 100, 100).Shape();
 	npm = std::make_unique<NetgenPlugin_Mesher>(mgtm.GetPointer(), box, true);
 	npm->ComputeMesh();
+
+	auto boundaryMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	boundaryMapper->SetInputData(mgtm->GetBoundaryMesh());
+	auto boundaryActor = vtkSmartPointer<vtkActor>::New();
+	boundaryActor->SetMapper(boundaryMapper);
+	boundaryActor->GetProperty()->SetEdgeVisibility(true);
+	boundaryActor->GetProperty()->SetEdgeColor(1.0, 1.0, 1.0);
+	boundaryActor->GetProperty()->SetColor(0.4, 0.6, 0.8);
+	QVTKRender->addActor(boundaryActor);
+	QVTKRender->fitView();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
