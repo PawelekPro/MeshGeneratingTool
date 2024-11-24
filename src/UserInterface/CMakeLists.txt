@@ -5,16 +5,13 @@ ADD_SUBDIRECTORY(Rendering)
 ADD_SUBDIRECTORY(Widgets)
 ADD_SUBDIRECTORY(Utils)
 
-ADD_LIBRARY(UserInterface)
+ADD_LIBRARY(UserInterface INTERFACE)
 
-TARGET_LINK_LIBRARIES(UserInterface PUBLIC 
-  ${VTK_LIBRARIES}
-  Qt${QT_VERSION_MAJOR}::Widgets
-  Qt${QT_VERSION_MAJOR}::Core
-  Widgets
-  Defaults
-  TreeStructure
-  Rendering
+TARGET_LINK_LIBRARIES(UserInterface INTERFACE
   Core
+  Defaults
+  Rendering
+  TreeStructure
   Utils
+  Widgets
 )

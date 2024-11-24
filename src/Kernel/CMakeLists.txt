@@ -1,3 +1,5 @@
+ADD_SUBDIRECTORY(Config)
+
 ADD_LIBRARY(Kernel 
   AppQuickStart.cpp
 )

@@ -20,7 +20,7 @@
 #ifndef QIVTKUTILS_H
 #define QIVTKUTILS_H
 
-#include "AppDefaults.h"
+#include "AppDefaultColors.hpp"
 
 #include <QColor>
 

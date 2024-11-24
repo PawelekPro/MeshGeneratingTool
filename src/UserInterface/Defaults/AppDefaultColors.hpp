@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,4 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SelectionHandler.hpp"
+#ifndef APPDEFAULTCOLORS_HPP
+#define APPDEFAULTCOLORS_HPP
+
+#include <QColor>
+#include <array>
+
+class AppDefaultColors {
+public:
+	typedef std::array<QColor, 9> GeomColorsArray;
+
+public:
+	AppDefaultColors();
+	~AppDefaultColors() = default;
+
+	static const GeomColorsArray getGeometryEntitiesColorArray();
+
+private:
+	GeomColorsArray _geomEntitiesColors;
+};
+
+#endif

@@ -20,11 +20,8 @@
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
-class MainWindow;
-#include "AppDefaults.h"
-#include "AppTheme.h"
-#include "ColorPickerWIdget.hpp"
-#include "MainWindow.h"
+#include "AppDefaultColors.hpp"
+#include "ColorPickerWidget.hpp"
 
 #include <QColor>
 #include <QDialog>

@@ -13,22 +13,18 @@ ADD_LIBRARY(Widgets
   ${SARIBBON_PATH}/SARibbonBar/resource.qrc
 )
 
-INCLUDE_DIRECTORIES(
-  ${PRJ_SOURCE_DIR}/src/UserInterface/Widgets
-)
-
 TARGET_LINK_LIBRARIES(Widgets PUBLIC 
   ${VTK_LIBRARIES}  
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Core5Compat
+  AppConfig
+  DocumentUtils
   TreeStructure
-  Rendering
-  Defaults
   Core
 )
 
 TARGET_INCLUDE_DIRECTORIES(Widgets PUBLIC
-    ${PRJ_SOURCE_DIR}/src/UserInterface/
-    ${PRJ_SOURCE_DIR}/src/UserInterface/Widgets)
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 

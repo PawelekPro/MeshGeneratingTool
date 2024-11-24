@@ -20,8 +20,7 @@
 #ifndef QIVTKVIEWREPRESENTATION_H
 #define QIVTKVIEWREPRESENTATION_H
 
-#include "AppDefaultColors.h"
-#include "AppDefaults.h"
+#include "AppDefaultColors.hpp"
 #include "QIVtkSelectionPipeline.h"
 #include "QIVtkUtils.h"
 #include "QVTKInteractorStyle.h"

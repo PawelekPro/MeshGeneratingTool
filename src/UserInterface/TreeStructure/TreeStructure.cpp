@@ -57,7 +57,8 @@ TreeStructure::~TreeStructure() {
 	#ifdef linux
 	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
-
+	
+	delete _contextMenu;
 	delete _treeItemFactory;
 }
 
