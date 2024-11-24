@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TreeItemTypes.hpp"
+#include "DocItemTypes.hpp"
 
 namespace ItemTypes{
 

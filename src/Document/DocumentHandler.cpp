@@ -2,10 +2,10 @@
 
 DocumentHandler::DocumentHandler(){
     this->_appRootElement = this->_domDocument.createElement(
-		AppDefaults::getInstance().getAppName());
+		AppInfo::getInstance().getAppName());
 	
     this->_appRootElement.setAttribute(
-		"version", AppDefaults::getInstance().getAppProjFileVersion());
+		"version", AppInfo::getInstance().getAppProjFileVersion());
 
 	this->_domDocument.appendChild(this->_appRootElement);
 }
@@ -35,7 +35,7 @@ QDomElement DocumentHandler::createRootElement( const ItemTypes::Root& rootType)
     QDomElement rootElement = this->_domDocument.createElement(rootTagLabel);
     
     rapidjson::Document rootDocument = JsonParser::initJsonDocument(
-        AppDefaults::getInstance().getRootItemsSetupPath());
+        AppInfo::getInstance().getRootItemsSetupPath());
 
     JsonParser::Properties properties = JsonParser::getProperties(rootDocument,
                                                                   rootTagLabel);
@@ -54,7 +54,7 @@ QDomElement DocumentHandler::createSubElement(const ItemTypes::Sub& subType,
     const QString& subTagLabel = ItemTypes::label(subType);
 
     rapidjson::Document subDocument = JsonParser::initJsonDocument(
-        AppDefaults::getInstance().getSubItemsSetupPath());
+        AppInfo::getInstance().getSubItemsSetupPath());
 
     JsonParser::Properties properties = JsonParser::getProperties(subDocument,
                                                                   subTagLabel);

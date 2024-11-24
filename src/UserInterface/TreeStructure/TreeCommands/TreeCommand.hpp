@@ -20,7 +20,7 @@
 #ifndef TREECOMMAND_HPP
 #define TREECOMMAND_HPP
 
-#include "TreeItemTypes.hpp"
+#include "DocItemTypes.hpp"
 #include "TreeItem.hpp"
 
 class TreeCommanManager;

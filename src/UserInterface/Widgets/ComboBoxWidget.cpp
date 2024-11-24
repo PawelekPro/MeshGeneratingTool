@@ -32,15 +32,12 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_comboBox);
 
-	this->document = AppDefaults::getInstance().getComboBoxModels();
-
 	this->setLayout(layout);
 }
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::~ComboBoxWidget() {
 	_comboBox->deleteLater();
-	// 'document' member is being deleted in AppDefaults class
 }
 
 //----------------------------------------------------------------------------
@@ -67,14 +64,16 @@ void ComboBoxWidget::setIndex(const QModelIndex& index) {
 //----------------------------------------------------------------------------
 QStringListModel* ComboBoxWidget::createQStringListModel(const QString& name) {
 
-	if (!this->document->HasMember(name.toStdString().c_str())
-		|| !(*this->document)[name.toStdString().c_str()].IsObject()) {
+	rapidjson::Document document = JsonParser::initJsonDocument(AppInfo::getInstance().getComboBoxModelsPath());
+
+	if (!document.HasMember(name.toStdString().c_str())
+		|| !(document)[name.toStdString().c_str()].IsObject()) {
 
 		vtkLogF(ERROR, ("No such model: " + name.toStdString()).c_str());
 		return new QStringListModel();
 	}
 
-	const rapidjson::Value& model = (*this->document)[name.toStdString().c_str()];
+	const rapidjson::Value& model = (document)[name.toStdString().c_str()];
 
 	std::vector<int> ids;
 	std::vector<QString> m_list;

@@ -20,7 +20,8 @@
 #ifndef COMBOBOXWIDGET_HPP
 #define COMBOBOXWIDGET_HPP
 
-#include "AppDefaults.h"
+#include "AppInfo.hpp"
+#include "JsonParser.hpp"
 #include "BaseWidget.hpp"
 
 #include "document.h"
@@ -110,7 +111,6 @@ private:
 	QModelIndex _index; /**< The QModelIndex associated with the ComboBoxWidget. */
 
 	// rapidjson document
-	rapidjson::Document* document;
 };
 
 #endif

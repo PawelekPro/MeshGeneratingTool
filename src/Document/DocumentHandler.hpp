@@ -19,13 +19,15 @@
 #ifndef DOCUMENTHANDLER_HPP
 #define DOCUMENTHANDLER_HPP
 
-#include "TreeItemTypes.hpp"
+#include "DocItemTypes.hpp"
 #include "JsonParser.hpp"
-#include "AppDefaults.h"
+#include "AppInfo.hpp"
 
 #include <QMap>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
+
+// TODO: Decouple DocumentHandler from AppInfo somehow. Think of better way to store paths
 
 class DocumentHandler {
 public:

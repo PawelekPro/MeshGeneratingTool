@@ -8,12 +8,11 @@ ADD_LIBRARY(Defaults
 TARGET_LINK_LIBRARIES(Defaults PUBLIC 
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Gui
-  ${VTK_LIBRARIES}  
   QtAdvancedStyleSheets
 )
 
 TARGET_INCLUDE_DIRECTORIES(Defaults PUBLIC
-    ${PRJ_SOURCE_DIR}/src/UserInterface/Defaults
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(Defaults PUBLIC 
