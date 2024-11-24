@@ -24,7 +24,7 @@
 #include "PropertiesModel.hpp"
 #include "PropertiesWidget.hpp"
 #include "TreeItem.hpp"
-#include "TreeItemTypes.hpp"
+#include "DocItemTypes.hpp"
 #include "DocumentHandler.hpp"
 
 #include <QtXml/QDomElement>

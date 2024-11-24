@@ -14,7 +14,7 @@ TARGET_LINK_LIBRARIES(Utils PUBLIC
   TreeStructure
   Rendering
   TreeItems
-  Shared
+  Document
   GeometryCore
   Model
 )

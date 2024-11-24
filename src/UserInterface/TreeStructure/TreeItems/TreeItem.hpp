@@ -23,13 +23,7 @@
 #include <QTreeWidgetItem>
 #include <QtXml/QDomElement>
 
-
-#include "PropertiesModel.hpp"
-#include "PropertiesWidget.hpp"
-
-#include "TreeItemTypes.hpp" 
-#include "TreeItemFactory.hpp"
-#include "DocumentHandler.hpp"
+#include "DocItemTypes.hpp" 
 
 #include <map>  
 
@@ -49,7 +43,8 @@ struct ItemIconsMap
 };
 
 
-
+class TreeItemFactory;
+class PropertiesModel;
 class TreeItem : public QTreeWidgetItem
 {
     public:
@@ -100,12 +95,12 @@ class TreeItem : public QTreeWidgetItem
 
         QDomElement _element;
 
-        bool _isRoot; //TODO: Implement two classes sub and root insted of having this flag here
+        const bool _isRoot; //TODO: Implement two classes sub and root insted of having this flag here
         bool _itemValid;
         bool _itemActive;
 
-        ItemTypes::Root _rootType;
-        ItemTypes::Sub _subType; 
+        const ItemTypes::Root _rootType;
+        const ItemTypes::Sub _subType; 
 
         // bool addPropertiesModel();
         // bool checkModel();

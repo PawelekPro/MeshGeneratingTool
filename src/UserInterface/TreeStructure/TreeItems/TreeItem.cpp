@@ -42,11 +42,7 @@ TreeItem::TreeItem( QTreeWidgetItem* aParent,
                             _isRoot(false)
                             {} 
 
-TreeItem::~TreeItem(){
-    if(_propModel){
-        delete _propModel;
-    }
-}
+TreeItem::~TreeItem(){}
 
 // void TreeItem::setText(int column, const QString &text){
 //   QTreeWidgetItem::setText(column, text);

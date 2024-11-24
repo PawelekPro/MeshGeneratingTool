@@ -20,7 +20,6 @@
 #ifndef TREESTRUCTURE_HPP
 #define TREESTRUCTURE_HPP
 
-#include "AppDefaults.h"
 #include "PropertiesModel.hpp"
 #include "TreeContextMenu.hpp"
 #include "DocumentHandler.hpp"
@@ -127,7 +126,7 @@ private:
 
 	// TreeCommandManager _commandManager;
 
-	const std::unordered_map<ItemTypes::Root, TreeItem*> _rootItems;
+	std::unordered_map<ItemTypes::Root, TreeItem*> _rootItems;
 
 	std::unordered_map<ItemTypes::Sub, QList<TreeItem*>> _subItems;
 };

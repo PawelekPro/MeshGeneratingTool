@@ -17,55 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AppDefaults.h"
+#include "AppInfo.hpp"
 
-const QString AppDefaults::_subItemsSetupPath  = ":templates/templates/SubItemsSetup.json";
-const QString AppDefaults::_rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
-const QString AppDefaults::_comboBoxModelsPath = ":templates/templates/ComboboxModels.json";
+const QString AppInfo::_subItemsSetupPath  = ":templates/templates/SubItemsSetup.json";
+const QString AppInfo::_rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
+const QString AppInfo::_comboBoxModelsPath = ":templates/templates/ComboboxModels.json";
 
 //--------------------------------------------------------------------------------------
-AppDefaults::AppDefaults()
-	: settings("settingsFile.ini", QSettings::IniFormat)
-	, _appDefaultColors(AppDefaultColors()) {
+AppInfo::AppInfo()
+	: settings("settingsFile.ini", QSettings::IniFormat) {
 
 	settings.beginGroup("ApplicationDefaults");
 	settings.setValue("Version", "1.0.0");
 	settings.setValue("ProjFileVersion", "1.0");
 	settings.setValue("Name", "MeshGeneratingTool");
-	// Space for more settings
 	settings.endGroup();
-
-	// Read JSON file representing combobox models
-	QString filePath = this->getComboBoxModelsPath();
-	this->readJSONFile(m_comboBoxModels, filePath);
 }
 
 //--------------------------------------------------------------------------------------
-void AppDefaults::readJSONFile(rapidjson::Document& doc, QString filePath) {
-	QFile jsonFile(filePath);
-
-	if (!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		vtkLogF(ERROR, "Failed to open ComboboxModels.json file.");
-	}
-
-	QByteArray jsonData = jsonFile.readAll();
-	jsonFile.close();
-
-	// Parse the JSON string
-	doc.Parse(jsonData.constData());
-
-	if (doc.HasParseError()) {
-		vtkLogF(ERROR, ("Error parsing JSON file: " + filePath.toStdString()).c_str());
-	}
-}
-
-//--------------------------------------------------------------------------------------
-rapidjson::Document* AppDefaults::getComboBoxModels() {
-	return &m_comboBoxModels;
-}
-
-//--------------------------------------------------------------------------------------
-QString AppDefaults::getValue(const QString& key) {
+QString AppInfo::getValue(const QString& key) {
 	this->settings.beginGroup("ApplicationDefaults");
 	QString value = this->settings.value(key).toString();
 	this->settings.endGroup();
@@ -73,35 +43,30 @@ QString AppDefaults::getValue(const QString& key) {
 }
 
 //--------------------------------------------------------------------------------------
-QString AppDefaults::getAppVersion() {
+QString AppInfo::getAppVersion() {
 	return this->getValue("Version");
 }
 
 //--------------------------------------------------------------------------------------
-QString AppDefaults::getAppName() {
+QString AppInfo::getAppName() {
 	return this->getValue("Name");
 }
 
 //--------------------------------------------------------------------------------------
-QString AppDefaults::getAppProjFileVersion() {
+QString AppInfo::getAppProjFileVersion() {
 	return this->getValue("ProjFileVersion");
 }
 
 //--------------------------------------------------------------------------------------
-const QString AppDefaults::getRootItemsSetupPath() {
+const QString AppInfo::getRootItemsSetupPath() {
 	return this->_rootItemsSetupPath;
 }
 
 //--------------------------------------------------------------------------------------
-const QString AppDefaults::getComboBoxModelsPath() {
+const QString AppInfo::getComboBoxModelsPath() {
 	return this->_comboBoxModelsPath;
 }
 
-const QString AppDefaults::getSubItemsSetupPath(){
+const QString AppInfo::getSubItemsSetupPath(){
 	return this->_subItemsSetupPath;
 };
-
-//--------------------------------------------------------------------------------------
-const AppDefaultColors::GeomColorsArray AppDefaults::getGeometryEntitiesColorArray() {
-	return _appDefaultColors.getGeometryEntitiesColorArray();
-}
