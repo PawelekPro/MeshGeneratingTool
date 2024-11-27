@@ -237,7 +237,7 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	NetgenPlugin_MeshInfo initState;
 	int err = 0;
 
-	mparams.maxh = 5.0;
+	mparams.maxh = 100.0;
 	if (mparams.maxh == 0.0)
 		mparams.maxh = occgeo.boundingbox.Diam();
 
@@ -252,7 +252,6 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	std::cout << "Starting mesh generation process" << std::endl;
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith, _ngMesh);
-		std::cout << err << std::endl;
 	} catch (Standard_Failure& ex) {
 		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
 	} catch (netgen::NgException& ex) {
@@ -263,16 +262,14 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 		return false;
 	ngLib.setMesh((nglib::Ng_Mesh*)_ngMesh);
 
-	std::cout << _ngMesh->GetNP() << std::endl;
-
 	if (err)
 		return false;
 
 	if (!mparams.uselocalh)
 		_ngMesh->LocalHFunction().SetGrading(mparams.grading);
 
-	const TopoDS_Shape& shape = occgeo.fmap.FindKey(1);
-	setLocalSize(shape, 2);
+	// const TopoDS_Shape& shape = occgeo.fmap.FindKey(1);
+	// setLocalSize(shape, 2);
 
 	SetLocalSize(occgeo, *_ngMesh);
 
@@ -281,7 +278,6 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	std::cout << "Starting 1D mesh generation process" << std::endl;
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
-		std::cout << err << std::endl;
 	} catch (Standard_Failure& ex) {
 		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
 	} catch (netgen::NgException& ex) {
@@ -299,7 +295,6 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
-		std::cout << err << std::endl;
 	} catch (Standard_Failure& ex) {
 		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
 	} catch (netgen::NgException& ex) {
@@ -316,7 +311,6 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
-		std::cout << err << std::endl;
 	} catch (Standard_Failure& ex) {
 		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
 	} catch (netgen::NgException& ex) {

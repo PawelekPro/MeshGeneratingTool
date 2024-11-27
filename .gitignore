@@ -37,3 +37,10 @@ build
 
 # XML test file
 test.xml
+
+# LaTeX compilator files
+docs/manual/manual.aux
+docs/manual/manual.log
+docs/manual/manual.synctex.gz
+docs/manual/manual.pdf
+docs/manual/manual.toc
