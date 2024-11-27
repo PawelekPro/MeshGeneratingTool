@@ -1,5 +1,6 @@
 ADD_LIBRARY(MGTMesh 
     MGTMesh_Algorithm.cpp
+    MGTMesh_Scheme.cpp
     MGTMesh.cpp
 )
 
