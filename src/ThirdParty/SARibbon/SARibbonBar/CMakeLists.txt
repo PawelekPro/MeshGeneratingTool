@@ -37,7 +37,7 @@ SET(SARIBBON_HEADER_FILES
     SARibbonCustomizeData.h
     SARibbonCustomizeDialog.h
     SARibbonCustomizeWidget.h
-    SARibbonMainWindow.h
+    SARibbonMainWindow.hpp
     SARibbonSystemButtonBar.h
     SARibbonApplicationButton.h
     SARibbonTabBar.h

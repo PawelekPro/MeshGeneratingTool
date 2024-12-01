@@ -17,16 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #include "./ui_MainWindow.h"
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(std::shared_ptr<ModeInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::MainWindow) {
+	, ui(new Ui::MainWindow)
+	, _modelInterface(aModelInterface) {
+	
 	ui->setupUi(this);
-
-
 	// Set initial sizes of the splitter sections
 	QList<int> sizes;
 	sizes << 100 << 400;
@@ -41,11 +41,11 @@ MainWindow::MainWindow(QWidget* parent)
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
+	_modelHandler = new ModelActionsHandler(this, progressBar, _modelInterface);
+	this->ui->treeWidget->setModelHandler(_modelHandler);
+
 	this->setConnections();
 	this->initializeActions();
-
-	Model::initializeGmsh();
-	newModel();
 
 	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Main));
@@ -61,6 +61,7 @@ MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
+	delete _modelHandler;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
@@ -69,11 +70,11 @@ MainWindow::~MainWindow() {
 //----------------------------------------------------------------------------
 void MainWindow::setConnections() {
 	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
-		openFileDialog([this](QString fname) { importSTEP(fname); }, "Import", filters::StepFilter);
+		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTEP);
 	});
 
 	connect(ui->actionImportSTL, &QAction::triggered, [this]() {
-		openFileDialog([this](QString fname) { importSTL(fname); }, "Import", filters::StlFilter);
+		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTL);
 	});
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),

@@ -20,9 +20,9 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#include "DocumentHandler.hpp"
 #include "Geometry.hpp"
 #include "Mesh.h"
+#include "DocumentHandler.hpp"
 
 #ifdef _WIN32
 #include <gmsh.h_cwrap>

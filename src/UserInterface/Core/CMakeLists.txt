@@ -1,5 +1,3 @@
-add_subdirectory(Actions)
-
 ADD_LIBRARY(Core 
   MainWindow.cpp
   PreferencesDialog.cpp

@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROGRESSBAR_H
-#define PROGRESSBAR_H
+#ifndef PROGRESSBAR_HPP
+#define PROGRESSBAR_HPP
 
 #include <iostream>
 

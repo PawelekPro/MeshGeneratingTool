@@ -1,10 +1,8 @@
-add_library(ModelInterface  
-    ModelInterface.cpp
-    ModelManager.cpp
+add_library(ModelInterface 
+    ModelIntreface.cpp
 )
 
 target_link_libraries(ModelInterface PUBLIC
-    Qt${QT_VERSION_MAJOR}::Core
     Model
 )
 

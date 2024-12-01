@@ -17,15 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ModelManager.hpp"
+#include "GeometryActionsHandler.hpp"
 
- void ModelManager::createNewModel(const QString& aNewModelName) {
-    _model = std::make_unique<Model>(aNewModelName.toStdString());
-}
-
-Model& ModelManager::getModel() {
-    if (!_model) {
-        throw std::runtime_error("Model does not exist. Please create a model first.");
-    }
-    return *_model;
-}
+GeometryActionsHandler::GeometryActionsHandler(QObject* aParent,
+                                               QWidget* aProgressBar,
+                                               std::shared_ptr<ModelInterface> aModelInterface) :
+                                                QObject(aParent),
+                                                _progressBar(aProgressBar),
+                                                _modelInterface(aModelInterface){};
