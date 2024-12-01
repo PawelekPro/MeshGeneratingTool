@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,38 +17,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// TODO: Split this logic into GeometryInterface when the Model itsefl goes into rework
+#ifndef MODELACTIONSHANDLER_HPP
+#define MODELACTIONSHANDLER_HPP
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
-
-#include "ModelManager.hpp"
 #include <QObject>
-
-#include "ModelManager.hpp"
-#include <QObject>
-#include <QString>
-#include <QWidget>
 #include <memory>
 
-class ModelInterface : public QObject {
+#include "ProgressBar.hpp"
+#include "ModelInterface.hpp"
+
+#include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
+
+class ModelActionsHandler : QObject {
     Q_OBJECT
 
-public:
-    explicit ModelInterface(ModelManager& modelManager, QObject* parent = nullptr)
-        : QObject(parent), _modelManager(modelManager) {}
+    public:
+    
+    ModelActionsHandler(QObject* aParent, QWidget* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface);
 
-signals:
-    void someSignal();
+    void renameModel();
+    void createNewModel();
 
-public slots:
-    void importSTEP(const QString& filePath, QWidget* progressBar);
-    void meshSurface();
-    void meshVolume();
+    private:
+    
+    ProgressBar* _progressBar;
 
+    GeometryActionsHandler* _geometryHandler;
+    MeshActionsHandler* _meshHandler;
 
-private:
-    ModelManager& _modelManager;
-};
+    std::shared_ptr<ModelInterface> _modelInterface;
+}
+
 
 #endif

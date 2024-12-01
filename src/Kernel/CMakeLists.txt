@@ -8,7 +8,7 @@ TARGET_LINK_LIBRARIES(Kernel PRIVATE
   ${VTK_LIBRARIES}
   Qt${QT_VERSION_MAJOR}::Widgets
   UserInterface
-  ModelInterface
+  Model
 )
 
 TARGET_INCLUDE_DIRECTORIES(Kernel PUBLIC

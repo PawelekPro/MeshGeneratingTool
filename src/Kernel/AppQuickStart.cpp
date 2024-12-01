@@ -18,13 +18,16 @@
  */
 
 #include "AppInfo.h"
-#include "MainWindow.h"
+#include "MainWindow.hpp"
+#include "ModelInterface"
+#include "ModelLifetCycleManager.hpp"
 
 #include <QApplication>
 #include <QCoreApplication>
 #include <QLocale>
 #include <QTranslator>
 #include <QVTKOpenGLNativeWidget.h>
+#include <memory>
 
 int main(int argc, char* argv[]) {
 	// Before initializing QApplication, set the default surface format
@@ -47,7 +50,11 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 	}
-	MainWindow window;
+
+	ModelLifecycleManager modelManager;
+	modelManager.createNewModel("NewModel");
+	std::shared_ptr<ModelInterface> = std::make_shared<ModelInterface>(modelManager);
+	MainWindow window(modelInterface);
 	window.showMaximized();
 	return application.exec();
 }

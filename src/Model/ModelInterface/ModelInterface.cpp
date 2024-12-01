@@ -17,11 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GEOMETRYACTIONS_HPP
-#define GEOMETRYACTIONS_HPP
+#include "ModelInterface.hpp"
+
+ModelInterface::ModelInterface(const ModelLifecycleManager& aManager) :
+                              _modelManager(aManager){};
 
 
-
-
-#endif
-
+int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget){
+    Model& model = _modelManager.getModel();
+    model.importSTEP(aFilePath.toStdString(), aWidget);
+    return 0; //TODO return tags of imported shapes
+}

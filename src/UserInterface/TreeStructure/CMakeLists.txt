@@ -20,6 +20,7 @@ TARGET_LINK_LIBRARIES(TreeStructure PUBLIC
   TreeItems
   TreeCommands
   Document
+  ModelInterface
 )
 
 TARGET_INCLUDE_DIRECTORIES(TreeStructure PUBLIC

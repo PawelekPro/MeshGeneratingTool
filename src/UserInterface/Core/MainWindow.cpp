@@ -17,16 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #include "./ui_MainWindow.h"
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(std::shared_ptr<ModeInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::MainWindow) {
+	, ui(new Ui::MainWindow)
+	, _modelInterface(aModelInterface) {
+
 	ui->setupUi(this);
-
-
 	// Set initial sizes of the splitter sections
 	QList<int> sizes;
 	sizes << 100 << 400;
@@ -40,6 +40,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
+
+	_modelHandler = new ModelActionsHandler(this, progressBar, _modelInterface);
+	this->ui->treeWidget->setModelHandler(_modelHandler);
 
 	this->setConnections();
 	this->initializeActions();
@@ -58,6 +61,7 @@ MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
+	delete _modelHandler;
 	delete documentHandler;
 	delete QVTKRender;
 	delete progressBar;
@@ -67,11 +71,11 @@ MainWindow::~MainWindow() {
 //----------------------------------------------------------------------------
 void MainWindow::setConnections() {
 	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
-		openFileDialog([this](QString fname) { importSTEP(fname); }, "Import", filters::StepFilter);
+		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar); }, "Import", FileDialogUtils::FilterSTEP);
 	});
 
 	connect(ui->actionImportSTL, &QAction::triggered, [this]() {
-		openFileDialog([this](QString fname) { importSTL(fname); }, "Import", filters::StlFilter);
+		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar); }, "Import", FileDialogUtils::FilterSTL);
 	});
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
@@ -248,29 +252,29 @@ void MainWindow::showGeometry() {
 
 //----------------------------------------------------------------------------
 void MainWindow::onItemSelectionChanged() {
-    QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
+	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
 
-    // Proceed only if there is a selected item
-    if (!itemsList.isEmpty()) {
-        // Cast the first selected item to TreeItem
-        TreeItem* item = dynamic_cast<TreeItem*>(itemsList.takeFirst());
-        
-        // Check if the cast was successful and the item is a valid TreeItem
-        if (item && item->_propModel) {
-            PropertiesModel* model = item->_propModel;
-            
-            // Set the properties table model
-            this->ui->propertiesTable->setModel(model);
-            
-            // Configure the header
-            QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
-            header->setSectionResizeMode(QHeaderView::ResizeToContents);
-            header->setStretchLastSection(true);
-            header->setSectionResizeMode(QHeaderView::Interactive);
-        } else {
-            qDebug() << "Selected item is not a TreeItem or has a null PropertiesModel pointer.";
-        }
-    }
+	// Proceed only if there is a selected item
+	if (!itemsList.isEmpty()) {
+		// Cast the first selected item to TreeItem
+		TreeItem* item = dynamic_cast<TreeItem*>(itemsList.takeFirst());
+
+		// Check if the cast was successful and the item is a valid TreeItem
+		if (item && item->_propModel) {
+			PropertiesModel* model = item->_propModel;
+
+			// Set the properties table model
+			this->ui->propertiesTable->setModel(model);
+
+			// Configure the header
+			QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
+			header->setSectionResizeMode(QHeaderView::ResizeToContents);
+			header->setStretchLastSection(true);
+			header->setSectionResizeMode(QHeaderView::Interactive);
+		} else {
+			qDebug() << "Selected item is not a TreeItem or has a null PropertiesModel pointer.";
+		}
+	}
 }
 
 void MainWindow::onShowDialogButtonClicked() {

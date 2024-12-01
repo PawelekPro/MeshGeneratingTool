@@ -1,9 +1,12 @@
-ADD_LIBRARY(Model 
-    Model.cpp
-)
-
 add_subdirectory(GeometryCore)
 add_subdirectory(MeshCore)
+add_subdirectory(ModelInterface)
+
+ADD_LIBRARY(Model 
+    Model.cpp
+    ModelLifecycleManagers.cpp
+)
+
 
 if(WIN32)
     TARGET_LINK_LIBRARIES(Model PUBLIC 

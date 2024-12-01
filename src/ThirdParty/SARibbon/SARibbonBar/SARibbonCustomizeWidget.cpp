@@ -16,7 +16,7 @@
 #include <QtWidgets/QListView>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-#include "SARibbonMainWindow.h"
+#include "SARibbonMainWindow.hpp"
 #include "SARibbonPannel.h"
 #include <QStandardItemModel>
 #include <QButtonGroup>

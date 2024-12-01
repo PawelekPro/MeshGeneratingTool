@@ -24,6 +24,8 @@
 #include "TreeContextMenu.hpp"
 #include "DocumentHandler.hpp"
 #include "TreeItem.hpp"
+#include "ModelInterface.hpp"
+#include "ImportManager.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -47,7 +49,6 @@ class RemoveTreeItemCommand;
 class TreeCommandManager;
 class TreeItemFactory;
 class TreeItem;
-
 
 namespace fs = std::filesystem;
 /**
@@ -97,6 +98,9 @@ public:
 	TreeItem* getRootItem(const ItemTypes::Root& aRootType);
 
 	QList<TreeItem*> getSubItems(const ItemTypes::Sub& aRootType);
+
+	void setModelHandler(ModelActionsHandler* aModelHandler);
+	ModelActionsHandler* modelHandler(){return _modelHandler;};
 	
 private:
 
@@ -122,7 +126,10 @@ private:
 	/**
 	* Pointer to document handler that stores data of TreeWidgetItems
 	*/
-
+	ModelActionsHandler* _modelHandler;
+	/**
+	* Pointer to document handler that stores data of TreeWidgetItems
+	*/
 
 	// TreeCommandManager _commandManager;
 

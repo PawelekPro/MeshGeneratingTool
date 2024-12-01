@@ -26,6 +26,7 @@
 TreeStructure::TreeStructure(QWidget* parent)
 	: QTreeWidget(parent),
 	  _treeItemFactory(new TreeItemFactory(this)),
+	  _modelInterface(nullptr),
 	  _rootItems({
           {ItemTypes::Root::Geometry, _treeItemFactory->createRootItem(ItemTypes::Root::Geometry)},
           {ItemTypes::Root::Mesh, 	  _treeItemFactory->createRootItem(ItemTypes::Root::Mesh)},
@@ -45,8 +46,13 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->header()->setVisible(true);  // Ensure headers are visible
 	this->header()->setSectionResizeMode(QHeaderView::Stretch);
 
-
 	std::for_each(_rootItems.begin(), _rootItems.end(), [this](auto item){this->addTopLevelItem(item.second);});
+}
+
+void TreeStructure::setModelInterface(ModelInterface* aModelInterface){
+	if(aModelInterface){
+		_modelInterface = aModelInterface;
+	}
 }
 
 //--------------------------------------------------------------------------------------
@@ -61,6 +67,12 @@ TreeStructure::~TreeStructure() {
 	delete _contextMenu;
 	delete _treeItemFactory;
 }
+void TreeStructure::setModelHandler(ModelHadler* aModelHandler){
+	if(aModelHandler){
+		_modelHandler = aModelHandler;
+	}
+}
+
 
 //--------------------------------------------------------------------------------------
 void TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType){
@@ -68,6 +80,7 @@ void TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSub
 	TreeCommandManager _commandManager;
 	_commandManager.executeCommand(addItemCommand);
 }
+
 
 TreeItem* TreeStructure::createSubItem(TreeItem* aParentItem, const ItemTypes::Sub & aSubType)
 {

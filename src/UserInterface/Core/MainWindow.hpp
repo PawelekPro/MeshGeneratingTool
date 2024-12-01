@@ -17,24 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOW_HPP
+#define MAINWINDOW_HPP
 
 #include <functional>
 
-#include "AppTheme.h"
-#include "Configuration.h"
+#include "Configuration.hpp"
+#include "Model.hpp"
+#include "ModelActionsHandler.hpp"
+#include "ModelInterface.hpp"
+
 #include "DocumentHandler.hpp"
-#include "Model.h"
+#include "ImportManager.hpp"
 #include "PreferencesDialog.h"
 #include "ProgressBar.hpp"
 #include "QVTKRenderWindow.h"
 #include "SARibbon.h"
 #include "TreeStructure.hpp"
 
-#include <QmlStyleUrlInterceptor.h>
+#include "FileDialogUtils.hpp"
 
-#include <QApplication>
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -42,13 +44,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QString>
-
-#include "MGTMesh.h"
-#include "NetgenPlugin_Mesher.h"
-#include <BRepPrimAPI_MakeBox.hxx>
-
-// Declaration of callable type
-using Callable = std::function<void(QString)>;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -60,10 +55,8 @@ class MainWindow : public QMainWindow {
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget* parent = nullptr);
+	MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent = nullptr);
 	~MainWindow();
-
-	std::shared_ptr<Model> model;
 
 	/**
 	 * @brief  Open system dialog for selecting file and perform defined action with selected file.
@@ -125,12 +118,12 @@ public:
 	}
 
 private:
-	std::unique_ptr<NetgenPlugin_Mesher> npm;
-	vtkSmartPointer<MGTMesh> mgtm;
 	Ui::MainWindow* ui;
+	std::shared_ptr<ModelInterface> _modelInterface;
 
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
+	ModelActionsHandler* _modelHandler;
 
 	/**
 	 * @brief Connect widgets to the methods.

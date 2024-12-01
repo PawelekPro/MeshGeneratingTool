@@ -79,7 +79,7 @@ HEADERS  += \
     $$PWD/SARibbonCustomizeDialog.h \
     $$PWD/SARibbonCustomizeWidget.h \
     $$PWD/SARibbonElementFactory.h \
-    $$PWD/SARibbonMainWindow.h \
+    $$PWD/SARibbonMainWindow.hpp \
     $$PWD/SARibbonSystemButtonBar.h \
     $$PWD/SARibbonApplicationButton.h \
     $$PWD/SARibbonTabBar.h \
