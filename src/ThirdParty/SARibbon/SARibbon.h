@@ -3429,7 +3429,7 @@ private:
 
 /*** End of inlined file: SARibbonCustomizeDialog.h ***/
 
-/*** Start of inlined file: SARibbonMainWindow.h ***/
+/*** Start of inlined file: SARibbonMainWindow.hpp ***/
 #ifndef SARIBBONMAINWINDOW_H
 #define SARIBBONMAINWINDOW_H
 
@@ -3524,7 +3524,7 @@ void SA_RIBBON_EXPORT sa_set_ribbon_theme(QWidget* w, SARibbonTheme theme);
 
 #endif // SARIBBONMAINWINDOW_H
 
-/*** End of inlined file: SARibbonMainWindow.h ***/
+/*** End of inlined file: SARibbonMainWindow.hpp ***/
 
 /*** End of inlined file: SARibbonAmalgamTemplatePublicHeaders.h ***/
 

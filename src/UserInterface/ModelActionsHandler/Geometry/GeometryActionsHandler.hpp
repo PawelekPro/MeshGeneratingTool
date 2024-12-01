@@ -17,31 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELMANAGER_HPP
-#define MODELMANAGER_HPP
 
-#include "Model.hpp"
-#include <memory>
-#include <stdexcept>
-#include <QString>
+#ifndef GEOMETRYACTIONSHANDELR_HPP
+#define GEOMETRYACTIONSHANDELR_HPP
+
+#include "ModelInterface.hpp"
+#include "ModelAc"
+
+#include "FileDialogUtils.hpp"
+#include "ProgressBar.hpp"
+
+#include <functional>
+#include <QObject>
+
+class GeometryActionsHandler : QObject{
+    Q_OBJECT
+
+    GeometryActionsHandler(QObject* aParent, ModelInterface* aModelInterface, ProgressBar* aProgressBar);
+
+    void importSTEP(const QString& aFilePath);
+    void importSTL(const QString& aFilePath);
 
 
-class ModelManager {
-
-    public:
-
-    ModelManager() = default;
-    ~ModelManager() = default;
-
-    ModelManager(const ModelManager& aOther) = delete;
-    ModelManager& operator=(const ModelManager& aOther) = delete;
+    signals:
     
-    void createNewModel(const QString& aNewModelName);
-    Model& getModel();
-
     private:
-    
-    std::unique_ptr<Model> _model;
+        
+    ModelInterface _modelInterface
+    ProgressBar _progressBar;
 };
 
 #endif

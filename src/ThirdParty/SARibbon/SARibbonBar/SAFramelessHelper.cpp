@@ -5,7 +5,7 @@
 #include <QHoverEvent>
 #include <QApplication>
 #include <QDebug>
-#include "SARibbonMainWindow.h"
+#include "SARibbonMainWindow.hpp"
 class SAPrivateFramelessWidgetData;
 
 /*****

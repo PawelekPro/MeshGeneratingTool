@@ -16,3 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifndef MODELINTERFACE_HPP
+#define MODELINTERFACE_HPP
+
+#include "Model.hpp"
+#include "ModelLifecycleManager.hpp"
+
+class ModelInterface{
+
+    public:
+        ModelInterface(const ModelLifecycleManager& aModelManager);
+
+        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
+
+    private:
+        ModelLifecycleManager& _modelManager;
+
+}; 
+
+#endif

@@ -98,8 +98,19 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu){
 		genereateMeshAction = new QAction(_treeStructure);
 		meshActions.append(genereateMeshAction);
 
-		addSizingAction = new QAction(_treeStructure);
+		connect(genereateMeshAction, &QAction::triggered, _treeStructure->modelInterface(),
+				&ModelInterface::meshSurface);
+
+		ItemTypes::Sub sizingType{ItemTypes::Mesh::ElementSizing};
+		QString label = ItemTypes::label(sizingType);
+
+		addSizingAction = new QAction(label, _treeStructure);
 		meshActions.append(addSizingAction);
+
+		connect(addSizingAction, &QAction::triggered, _treeStructure,
+			[this, sizingType]() { 
+				_treeStructure->addSubItem(_selectedItem, sizingType);
+			});
 	}
 	aContextMenu->addActions(meshActions);
 }

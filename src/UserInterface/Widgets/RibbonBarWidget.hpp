@@ -20,7 +20,7 @@
 #ifndef RIBBONBARWIDGET_HPP
 #define RIBBONBARWIDGET_HPP
 
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #include "QIVtkViewRepresentation.h"
 #include "SARibbon.h"
 
