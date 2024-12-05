@@ -17,22 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#ifndef GEOMETRYACTIONSHANDELR_HPP
+#define GEOMETRYACTIONSHANDELR_HPP
 
-#include "Model.hpp"
-#include "ModelLifecycleManager.hpp"
+#include "ModelInterface.hpp"
+#include "ProgressBar.hpp"
+#include "FileDialogUtils.hpp"
 
-class ModelInterface{
+#include <memory>
+#include <functional>
+#include <QObject>
+#include <QWidget>
+
+class GeometryActionsHandler : public QObject{
+    Q_OBJECT
 
     public:
-        ModelInterface(ModelLifecycleManager& aModelManager);
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
+    GeometryActionsHandler( QObject* aParent,
+                            ProgressBar* aProgressBar,
+                            std::shared_ptr<ModelInterface> aModelInterface);
 
+    void importSTEP();
+    void importSTL();
+
+    signals:
+    
     private:
-        ModelLifecycleManager& _modelManager;
-
-}; 
+        
+    std::shared_ptr<ModelInterface> _modelInterface;
+    ProgressBar* _progressBar;
+};
 
 #endif

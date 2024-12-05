@@ -31,19 +31,12 @@ namespace FileDialogUtils {
     constexpr auto FilterSTL  = "STL Files (*.stl)";
     constexpr auto FilterAll  = "All Files (*)";
 
-    int getFileSelection(std::function<void(QString)> action, const QString& actionName, const QString& filter, QWidget* parent = nullptr) {
-        QFileDialog dlg(parent);
-        dlg.setWindowTitle("Select file to " + actionName);
-        dlg.setNameFilter(filter);
+    QString getFileSelection(const QString& actionName, const QString& filter, QWidget* parent = nullptr);
 
-        QString fname = dlg.getOpenFileName(parent, actionName, "", filter);
+    int executeWithFileSelection(std::function<void(QString)> action,
+                                 const QString& actionName,
+                                 const QString& filter,
+                                 QWidget* parent = nullptr);
 
-        if (!fname.isEmpty()) {
-            action(fname);
-            return QMessageBox::Accepted;
-        }
-        return QMessageBox::Rejected;
-    }
 }
-
 #endif

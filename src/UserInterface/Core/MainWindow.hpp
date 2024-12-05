@@ -23,8 +23,7 @@
 #include <functional>
 
 #include "Configuration.hpp"
-#include "Model.hpp"
-#include "ModelInterface.hpp"
+
 #include "ModelActionsHandler.hpp"
 
 #include "PreferencesDialog.h"
@@ -33,9 +32,7 @@
 #include "DocumentHandler.hpp"
 #include "SARibbon.h"
 #include "TreeStructure.hpp"
-#include "ImportManager.hpp"
-
-
+ 
 #include "FileDialogUtils.hpp"
 
 #include <QButtonGroup>
@@ -58,16 +55,6 @@ class MainWindow : public QMainWindow {
 public:
 	MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent = nullptr);
 	~MainWindow();
-
-	/**
-	 * @brief  Open system dialog for selecting file and perform defined action with selected file.
-	 *
-	 * @param  {Callable} action    : Action to be performed.
-	 * @param  {QString} actionName : Action name to be displayed in dialog box.
-	 * @param  {QString} filter     : Filter of files format that can be selected.
-	 * @return {int}                : Accepted code if worked, Rejected code otherwise.
-	 */
-	int openFileDialog(Callable action, QString actionName, QString filter);
 
 	/**
 	 * @brief  Import step file, load it to project DOM and render geometry.

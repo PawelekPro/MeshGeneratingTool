@@ -18,10 +18,11 @@
  */
 
 #include "MainWindow.hpp"
+#include "ModelInterface.hpp"
 #include "./ui_MainWindow.h"
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow(std::shared_ptr<ModeInterface> aModelInterface, QWidget* parent)
+MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 	, _modelInterface(aModelInterface) {
@@ -69,20 +70,20 @@ MainWindow::~MainWindow() {
 
 //----------------------------------------------------------------------------
 void MainWindow::setConnections() {
-	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
-		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTEP);
-	});
+	// connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
+	// 	FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTEP);
+	// });
 
-	connect(ui->actionImportSTL, &QAction::triggered, [this]() {
-		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTL);
-	});
+	// connect(ui->actionImportSTL, &QAction::triggered, [this]() {
+	// 	FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTL);
+	// });
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
 		
-	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
-		generateMesh();
-	});
+	// connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
+	// 	generateMesh();
+	// });
 	connect(ui->actionShowMesh, &QAction::toggled, [this](bool checked) {
 		if (checked) {
 			showMesh();
@@ -95,64 +96,6 @@ void MainWindow::setConnections() {
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 }
 
-//----------------------------------------------------------------------------
-int MainWindow::openFileDialog(Callable action, QString actionName, QString filter) {
-	QFileDialog dlg(this);
-	dlg.setWindowTitle("Select file to " + actionName);
-	dlg.setNameFilter(filter);
-
-	QString fname = dlg.getOpenFileName(this, actionName, "", filter);
-
-	if (!fname.isEmpty()) {
-		action(fname);
-		return QMessageBox::Accepted;
-	}
-	return QMessageBox::Rejected;
-}
-
-//----------------------------------------------------------------------------
-void MainWindow::importSTEP(QString fileName) {
-	QPointer<ProgressBar> progressBar = this->getProgressBar();
-	const std::string& filePath = fileName.toStdString();
-	try {
-		this->model->importSTEP(filePath, this->progressBar);
-		const GeometryCore::PartsMap& shapesMap = model->geometry.getShapesMap();
-		for(auto shape : shapesMap){
-			this->QVTKRender->addShapeToRenderer(shape.second);
-		}
-	} catch (std::filesystem::filesystem_error) {
-		this->progressBar->setTerminateIndicator(false);
-		std::cout << "Display some message or dialog box..." << std::endl;
-		return;
-	}
-
-	QFileInfo fileInfo(fileName); 
-	QVTKRender->fitView();
-}
-
-//----------------------------------------------------------------------------
-void MainWindow::importSTL(QString fileName) {
-	ProgressBar* progressBar = this->getProgressBar();
-
-	const std::string& filePath = fileName.toStdString();
-	this->model->geometry.importSTL(filePath, this->progressBar);
-	// this->QVTKRender->updateGeometryActors(this->model->geometry);
-
-	QVTKRender->fitView();
-}
-//----------------------------------------------------------------------------
-void MainWindow::newModel() {
-	std::string modelName = "Model_1";
-	this->model = std::make_shared<Model>(modelName);
-	this->QVTKRender->model = this->model;
-	// enable imports
-	ui->actionImportSTEP->setEnabled(true);
-	ui->actionImportSTL->setEnabled(true);
-	ui->actionGenerateMesh->setEnabled(true);
-}
-void MainWindow::generateMesh() {
-	this->model->meshSurface();
-}
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
@@ -174,7 +117,7 @@ void MainWindow::initializeActions() {
 
 void MainWindow::showMesh() {
 	this->QVTKRender->clearRenderer();
-	this->QVTKRender->addActor(this->model->getMeshActor());
+	// this->QVTKRender->addActor(this->model->getMeshActor());
 	this->QVTKRender->RenderScene();
 }
 void MainWindow::showGeometry(){

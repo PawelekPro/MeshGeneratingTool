@@ -19,7 +19,7 @@
 
 #include "ModelInterface.hpp"
 
-ModelInterface::ModelInterface(const ModelLifecycleManager& aManager) :
+ModelInterface::ModelInterface(ModelLifecycleManager& aManager) :
                               _modelManager(aManager){};
 
 

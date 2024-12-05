@@ -84,11 +84,7 @@ void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu){
 
 		addImporSTEPItemAction = new QAction(label, _treeStructure);
 
-		connect(addImporSTEPItemAction, &QAction::triggered, _treeStructure,
-        [this, importType]() { 
-            _treeStructure->addSubItem(_selectedItem, importType);
-        });
-		geometryActions.append(addImporSTEPItemAction);
+		connect(addImporSTEPItemAction, &QAction::triggered, _treeStructure->geoHandler(), &GeometryActionsHandler::importSTEP);
 	}
 	aContextMenu->addActions(geometryActions);
 }
@@ -98,8 +94,8 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu){
 		genereateMeshAction = new QAction(_treeStructure);
 		meshActions.append(genereateMeshAction);
 
-		connect(genereateMeshAction, &QAction::triggered, _treeStructure->modelInterface(),
-				&ModelInterface::meshSurface);
+		// connect(genereateMeshAction, &QAction::triggered, _treeStructure->meshHandler(),
+		// 		&MeshActionHandler::meshSurface);
 
 		ItemTypes::Sub sizingType{ItemTypes::Mesh::ElementSizing};
 		QString label = ItemTypes::label(sizingType);
