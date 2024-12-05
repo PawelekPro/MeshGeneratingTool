@@ -17,34 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef GEOMETRYACTIONSHANDELR_HPP
-#define GEOMETRYACTIONSHANDELR_HPP
-
-#include "ModelInterface.hpp"
-#include "ModelAc"
-
-#include "FileDialogUtils.hpp"
-#include "ProgressBar.hpp"
-
-#include <functional>
-#include <QObject>
-
-class GeometryActionsHandler : QObject{
-    Q_OBJECT
-
-    GeometryActionsHandler(QObject* aParent, ModelInterface* aModelInterface, ProgressBar* aProgressBar);
-
-    void importSTEP(const QString& aFilePath);
-    void importSTL(const QString& aFilePath);
+#include "ImportGeometryCommand.hpp"
 
 
-    signals:
-    
-    private:
-        
-    ModelInterface _modelInterface
-    ProgressBar _progressBar;
-};
+ImportGeometryCommand::ImportGeometryCommand(ModelActionsHandler* aModelHandler, const QString& aFilePath) :
+    ModelCommand(aModelHandler),
+    _importedFilePath(aFilePath){}
 
-#endif
+ImportGeometryCommand::execute(){
+
+}
+
+ImportGeometryCommand::undo(){
+
+
+}

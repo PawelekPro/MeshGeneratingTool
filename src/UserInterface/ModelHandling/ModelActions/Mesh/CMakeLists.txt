@@ -1,5 +1,5 @@
 ADD_LIBRARY(MeshActionsHandler
-  MeshActionsHandlerr.cpp
+  MeshActionsHandler.cpp
 )
 
 TARGET_LINK_LIBRARIES(MeshActionsHandler PUBLIC

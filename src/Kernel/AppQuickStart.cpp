@@ -18,11 +18,9 @@
  */
 
 #include "MainWindow.hpp"
-#include "ModelInterface"
-#include "ModelLifetCycleManager.hpp"
+#include "ModelInterface.hpp"
 
 #include <QApplication>
-#include <QCoreApplication>
 #include <QLocale>
 #include <QTranslator>
 #include <QVTKOpenGLNativeWidget.h>
@@ -34,9 +32,6 @@ int main(int argc, char* argv[]) {
 	auto format = QVTKOpenGLNativeWidget::defaultFormat();
 	format.setProfile(QSurfaceFormat::CompatibilityProfile);
 	QSurfaceFormat::setDefaultFormat(format);
-
-	QCoreApplication::setOrganizationName(AppInfo::appName);
-	QCoreApplication::setApplicationName(AppInfo::appName);
 
 	QApplication application(argc, argv);
 
@@ -52,7 +47,7 @@ int main(int argc, char* argv[]) {
 
 	ModelLifecycleManager modelManager;
 	modelManager.createNewModel("NewModel");
-	std::shared_ptr<ModelInterface> = std::make_shared<ModelInterface>(modelManager);
+	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);
 	MainWindow window(modelInterface);
 	window.showMaximized();
 	return application.exec();

@@ -17,11 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MeshActionsHandler.hpp"
+#ifndef MESHACTIONSHANDELR_HPP
+#define MESHACTIONSHANDELR_HPP
 
-MeshActionsHandler::MeshActionsHandler(QObject* aParent,
-                                            QWidget* aProgressBar,
-                                            std::shared_ptr<ModelInterface> aModelInterface) :
-                                            QObject(aParent),
-                                            _progressBar(aProgressBar),
-                                            _modelInterface(aModelInterface){};
+#include <QObject>
+#include <QWidget>
+#include <memory>
+#include <functional>
+
+#include "ModelInterface.hpp"
+
+class MeshActionsHandler : public QObject {
+    Q_OBJECT
+
+public:
+    MeshActionsHandler(QObject* aParent,
+                       ProgressBar* aProgressBar,
+                       std::shared_ptr<ModelInterface> aModelInterface);
+
+    void meshSurface();
+    void meshVolume();
+
+signals:
+
+private:
+    std::shared_ptr<ModelInterface> _modelInterface;
+    ProgressBar* _progressBar;
+};
+
+#endif

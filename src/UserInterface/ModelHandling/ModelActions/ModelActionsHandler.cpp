@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,22 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#include "ModelActionsHandler.hpp"
+#include "ProgressBar.hpp"
 
-#include "Model.hpp"
-#include "ModelLifecycleManager.hpp"
+ModelActionsHandler::ModelActionsHandler(QObject* aParent, ProgressBar* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface) :
+                                         QObject(aParent),
+                                         _progressBar(aProgressBar),
+                                         _modelInterface(aModelInterface),
+                                         _geometryHandler(new GeometryActionsHandler(this, aProgressBar, aModelInterface)),
+                                         _meshHandler(new MeshActionsHandler(this, aProgressBar, aModelInterface)){};
 
-class ModelInterface{
 
-    public:
-        ModelInterface(ModelLifecycleManager& aModelManager);
-
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-
-    private:
-        ModelLifecycleManager& _modelManager;
-
-}; 
-
-#endif

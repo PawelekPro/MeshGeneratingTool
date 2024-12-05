@@ -17,11 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "GeometryActionsHandler.hpp"
+#ifndef MODELCOMMAND_HPP
+#define MODELCOMMAND_HPP
 
-GeometryActionsHandler::GeometryActionsHandler(QObject* aParent,
-                                               QWidget* aProgressBar,
-                                               std::shared_ptr<ModelInterface> aModelInterface) :
-                                                QObject(aParent),
-                                                _progressBar(aProgressBar),
-                                                _modelInterface(aModelInterface){};
+#include "ModelActionsHandler.hpp"
+
+class ModelCommand{
+
+    public:
+
+    ModelCommand(ModelActionsHandler* aModelHandler) : _modelHandler(aModelHandler){};
+
+    protected:
+
+    virtual void execute() = 0;
+    virtual void undo() = 0;
+
+   ModelActionsHandler* _modelHandler;
+
+};
+
+#endif

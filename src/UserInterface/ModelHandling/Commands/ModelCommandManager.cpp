@@ -17,35 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ModelCommandManger.hpp"
 
-#ifndef MESHACTIONSHANDELR_HPP
-#define MESHACTIONSHANDELR_HPP
 
-#include "ModelInterface.hpp"
-#include "ModelAc"
+void ModelCommandManager::executeCommand(ModelCommand* command) {
+    if (!command) return;
 
-#include "FileDialogUtils.hpp"
-#include "ProgressBar.hpp"
+    command->execute();
 
-#include <functional>
-#include <QObject>
+    _undoStack.push(command);
+    while (!_redoStack.isEmpty()) {
+        delete _redoStack.pop();
+    }
+}
 
-class MeshActionsHandler : QObject{
-    Q_OBJECT
+void ModelCommandManager::undo() {
+    if (_undoStack.isEmpty()) return;
 
-    MeshActionsHandler(QObject* aParent, ModelInterface* aModelInterface, ProgressBar* aProgressBar);
+    ModelCommand* command = _undoStack.pop();
+    command->undo();
+    _redoStack.push(command);
+}
 
-    void meshSurface();
-    void meshVolume();
+void ModelCommandManager::redo() {
+    if (_redoStack.isEmpty()) return;
+    ModelCommand* command = _redoStack.pop();
 
-    
-
-    signals:
-    
-    private:
-        
-    ModelInterface _modelInterface
-    ProgressBar _progressBar;
-};
-
-#endif
+    command->execute();
+    _undoStack.push(command);
+}
