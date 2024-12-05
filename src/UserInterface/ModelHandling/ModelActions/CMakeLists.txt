@@ -1,3 +1,5 @@
+add_subdirectory(Geometry)
+add_subdirectory(Mesh)
 ADD_LIBRARY(ModelActionsHandler
   ModelActionsHandler.cpp
 )
@@ -8,6 +10,7 @@ TARGET_LINK_LIBRARIES(ModelActionsHandler PUBLIC
   Utils
   ModelInterface
   GeometryActionsHandler
+  MeshActionsHandler
 )
 
 target_include_directories(ModelActionsHandler PUBLIC

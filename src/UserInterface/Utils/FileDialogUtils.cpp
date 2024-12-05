@@ -17,22 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#include "FileDialogUtils.hpp"
 
-#include "Model.hpp"
-#include "ModelLifecycleManager.hpp"
+QString FileDialogUtils::getFileSelection(const QString& actionName, const QString& filter, QWidget* parent) {
+        QFileDialog dlg(parent);
+        dlg.setWindowTitle("Select file to " + actionName);
+        dlg.setNameFilter(filter);
 
-class ModelInterface{
+        QString fname = dlg.getOpenFileName(parent, actionName, "", filter);
+        return fname;    
+}
 
-    public:
-        ModelInterface(ModelLifecycleManager& aModelManager);
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-
-    private:
-        ModelLifecycleManager& _modelManager;
-
-}; 
-
-#endif
+int FileDialogUtils::executeWithFileSelection(std::function<void(QString)> action, const QString& actionName, const QString& filter, QWidget* parent) {
+        QString fname = getFileSelection(actionName, filter, parent);
+        if (!fname.isEmpty()) {
+            action(fname);
+            return QMessageBox::Accepted;
+        }
+        return QMessageBox::Rejected;
+}

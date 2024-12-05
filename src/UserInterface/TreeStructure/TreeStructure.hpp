@@ -24,8 +24,7 @@
 #include "TreeContextMenu.hpp"
 #include "DocumentHandler.hpp"
 #include "TreeItem.hpp"
-#include "ModelInterface.hpp"
-#include "ImportManager.hpp"
+#include "ModelActionsHandler.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -100,7 +99,8 @@ public:
 	QList<TreeItem*> getSubItems(const ItemTypes::Sub& aRootType);
 
 	void setModelHandler(ModelActionsHandler* aModelHandler);
-	ModelActionsHandler* modelHandler(){return _modelHandler;};
+	MeshActionsHandler* meshHandler(){return _modelHandler->_meshHandler;};
+	GeometryActionsHandler* geoHandler(){return _modelHandler->_geometryHandler;};
 	
 private:
 

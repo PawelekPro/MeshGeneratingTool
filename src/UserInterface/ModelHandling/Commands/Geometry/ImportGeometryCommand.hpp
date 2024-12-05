@@ -17,22 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#ifndef IMPORTGEOMETRYCOMMAND_HPP
+#define IMPORTGEOMETRYCOMMAND_HPP
 
-#include "Model.hpp"
-#include "ModelLifecycleManager.hpp"
+#include "ModelCommand.hpp"
+#include <QString>
 
-class ModelInterface{
+class CommandFactory;
+class ImportGeometryCommand : public ModelCommand{
 
-    public:
-        ModelInterface(ModelLifecycleManager& aModelManager);
+    friend class CommandFactory;
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
+    public: 
+    
+    void execute() override;
+    void undo() override;
+
 
     private:
-        ModelLifecycleManager& _modelManager;
+    
+    ImportGeometryCommand(ModelActionsHandler* aModelHandler, const QString& aFilePath);
+    QString _importedFilePath;
 
-}; 
+};
 
 #endif

@@ -17,22 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#include "MeshActionsHandler.hpp"
+#include "ProgressBar.hpp"
 
-#include "Model.hpp"
-#include "ModelLifecycleManager.hpp"
+MeshActionsHandler::MeshActionsHandler( QObject* aParent,
+                                        ProgressBar* aProgressBar,
+                                        std::shared_ptr<ModelInterface> aModelInterface) :
+                                        QObject(aParent),
+                                        _progressBar(aProgressBar),
+                                        _modelInterface(aModelInterface){};
 
-class ModelInterface{
+void MeshActionsHandler::meshSurface(){
+    // _modelInterface->meshSurface();
+    //TODO: send signal to update the renderer
+    return;
+}
 
-    public:
-        ModelInterface(ModelLifecycleManager& aModelManager);
-
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-
-    private:
-        ModelLifecycleManager& _modelManager;
-
-}; 
-
-#endif
+void MeshActionsHandler::meshVolume(){
+    // _modelInterface->meshVolume();
+    //TODO: send signal to update the renderer
+    return;
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,37 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELACTIONSHANDLER_HPP
-#define MODELACTIONSHANDLER_HPP
+#ifndef MODELCOMMANDMANAGER_HPP
+#define MODELCOMMANDMANAGER_HPP
 
-#include <QObject>
-#include <memory>
+#include <QStack>
+#include <QList>
 
-#include "ProgressBar.hpp"
-#include "ModelInterface.hpp"
+#include "ModelCommand.hpp"
 
-#include "GeometryActionsHandler.hpp"
-#include "MeshActionsHandler.hpp"
-
-class ModelActionsHandler : QObject {
-    Q_OBJECT
+class ModelCommandManager {
 
     public:
-    
-    ModelActionsHandler(QObject* aParent, QWidget* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface);
+    ModelCommandManager() = default;
+    ~ModelCommandManager();
+    ModelCommandManager(const ModelCommandManager& aOther) = delete;
 
-    void renameModel();
-    void createNewModel();
+    void executeCommand(ModelCommand* command);
+    void undo();
+    void redo();
 
     private:
-    
-    ProgressBar* _progressBar;
 
-    GeometryActionsHandler* _geometryHandler;
-    MeshActionsHandler* _meshHandler;
-
-    std::shared_ptr<ModelInterface> _modelInterface;
-}
-
+    QStack<ModelCommand*> _undoStack;
+    QStack<ModelCommand*> _redoStack;
+};
 
 #endif

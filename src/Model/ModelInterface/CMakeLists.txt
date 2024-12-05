@@ -1,5 +1,5 @@
 add_library(ModelInterface 
-    ModelIntreface.cpp
+    ModelInterface.cpp
 )
 
 target_link_libraries(ModelInterface PUBLIC

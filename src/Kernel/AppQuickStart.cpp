@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 
 	ModelLifecycleManager modelManager;
 	modelManager.createNewModel("NewModel");
-	std::shared_ptr<ModelInterface> = std::make_shared<ModelInterface>(modelManager);
+	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);
 	MainWindow window(modelInterface);
 	window.showMaximized();
 	return application.exec();

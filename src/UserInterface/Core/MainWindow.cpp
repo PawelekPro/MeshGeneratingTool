@@ -18,10 +18,11 @@
  */
 
 #include "MainWindow.hpp"
+#include "ModelInterface.hpp"
 #include "./ui_MainWindow.h"
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow(std::shared_ptr<ModeInterface> aModelInterface, QWidget* parent)
+MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 	, _modelInterface(aModelInterface) {
@@ -70,6 +71,7 @@ MainWindow::~MainWindow() {
 
 //----------------------------------------------------------------------------
 void MainWindow::setConnections() {
+<<<<<<< HEAD
 	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
 		FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar); }, "Import", FileDialogUtils::FilterSTEP);
 	});
@@ -84,6 +86,22 @@ void MainWindow::setConnections() {
 	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
 		generateMesh();
 	});
+=======
+	// connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
+	// 	FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTEP);
+	// });
+
+	// connect(ui->actionImportSTL, &QAction::triggered, [this]() {
+	// 	FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTL);
+	// });
+
+	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
+		this, &MainWindow::handleSelectorButtonClicked);
+		
+	// connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
+	// 	generateMesh();
+	// });
+>>>>>>> 86ad1fe ([WIP] added modelActionHandlers and modelCommands. Adjusted architecture to use those managers)
 	connect(ui->actionShowMesh, &QAction::toggled, [this](bool checked) {
 		if (checked) {
 			showMesh();
@@ -112,6 +130,7 @@ void MainWindow::setConnections() {
 }
 
 //----------------------------------------------------------------------------
+<<<<<<< HEAD
 int MainWindow::openFileDialog(Callable action, QString actionName, QString filter) {
 	QFileDialog dlg(this);
 	dlg.setWindowTitle("Select file to " + actionName);
@@ -221,6 +240,8 @@ void MainWindow::generateMesh() {
 	// this->model->meshSurface();
 }
 //----------------------------------------------------------------------------
+=======
+>>>>>>> 86ad1fe ([WIP] added modelActionHandlers and modelCommands. Adjusted architecture to use those managers)
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
 		if (btn != button)
@@ -241,7 +262,7 @@ void MainWindow::initializeActions() {
 
 void MainWindow::showMesh() {
 	this->QVTKRender->clearRenderer();
-	this->QVTKRender->addActor(this->model->getMeshActor());
+	// this->QVTKRender->addActor(this->model->getMeshActor());
 	this->QVTKRender->RenderScene();
 }
 void MainWindow::showGeometry() {
