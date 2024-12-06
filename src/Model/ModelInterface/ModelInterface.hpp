@@ -30,6 +30,8 @@ class ModelInterface{
 
         int importSTEP(const QString& aFilePath,  QWidget* progressBar);
 
+        void createNewModel(const QString& aNewModelName);
+
     private:
         ModelLifecycleManager& _modelManager;
 

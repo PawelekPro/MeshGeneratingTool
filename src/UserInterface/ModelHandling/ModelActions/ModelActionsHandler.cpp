@@ -27,4 +27,8 @@ ModelActionsHandler::ModelActionsHandler(QObject* aParent, ProgressBar* aProgres
                                          _geometryHandler(new GeometryActionsHandler(this, aProgressBar, aModelInterface)),
                                          _meshHandler(new MeshActionsHandler(this, aProgressBar, aModelInterface)){};
 
-
+void ModelActionsHandler::createNewModel(){
+    //TODO: Handle new model name
+    //TODO: send signals that will clear renderer, treeStructure etc.
+    _modelInterface->createNewModel("NewModel");
+}

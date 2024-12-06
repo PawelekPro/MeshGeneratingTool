@@ -26,7 +26,8 @@ Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
-        };
+    };
+
 Model::~Model(){
     gmsh::finalize();
 }

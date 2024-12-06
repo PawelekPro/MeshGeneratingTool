@@ -28,3 +28,8 @@ int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget){
     model.importSTEP(aFilePath.toStdString(), aWidget);
     return 0; //TODO return tags of imported shapes
 }
+
+void ModelInterface::createNewModel(const QString& aNewModelName){
+    _modelManager.createNewModel(aNewModelName);
+    return;
+}
