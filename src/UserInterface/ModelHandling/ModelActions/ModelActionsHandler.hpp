@@ -35,8 +35,7 @@ class ModelActionsHandler : QObject {
     
     ModelActionsHandler(QObject* aParent, ProgressBar* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface);
 
-    // void renameModel();
-    // void createNewModel();
+    void createNewModel();
 
     GeometryActionsHandler* _geometryHandler;
     MeshActionsHandler* _meshHandler;

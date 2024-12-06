@@ -57,30 +57,6 @@ public:
 	~MainWindow();
 
 	/**
-	 * @brief  Import step file, load it to project DOM and render geometry.
-	 *
-	 * @param  {QString} fileName : Path to the physical STEP file.
-	 */
-	void importSTEP(QString fileName);
-
-	/**
-	 * @brief  Import stl file, load it to project DOM and render geometry.
-	 *
-	 * @param  {QString} fileName : Path to the STL file.
-	 */
-	void importSTL(QString fileName);
-
-	/**
-	 * @brief  Create an empty model.
-	 */
-	void newModel();
-
-	/**
-	 * @brief  Generate mesh based on current settings.
-	 */
-	void generateMesh();
-
-	/**
 	 * @brief  Toggle mesh view on -> add Model mesh actor to renderer
 	 */
 	void showMesh();
