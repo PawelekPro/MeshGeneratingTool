@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	Model::initializeGmsh();
-	ModelLifecycleManager modelManager;
+	ModelManager modelManager;
 	modelManager.createNewModel("NewModel");
 	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);
 	MainWindow window(modelInterface);

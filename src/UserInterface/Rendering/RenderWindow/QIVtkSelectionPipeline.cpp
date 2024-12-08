@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "QIVtkSelectionPipeline.h"
+#include "QIVtkSelectionPipeline.hpp"
 
 // prevent disabling some MSVC warning messages by VTK headers
 #include <Standard_WarningsDisable.hxx>

@@ -30,13 +30,14 @@ GeometryActionsHandler::GeometryActionsHandler( QObject* aParent,
 void GeometryActionsHandler::importSTEP(){
     QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
     _modelInterface->importSTEP(filePath, _progressBar);
+    // TODO: addShapes should send only the new shapes ids
+    emit addShapes();
     return;
-// TODO send signal to renderer to update the shapes
 }
 
 void GeometryActionsHandler::importSTL(){
-
-    // _modelInterface->importSTL(aFilePath, _progressBar);
+    QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
+    _modelInterface->importSTL(filePath, _progressBar);
+    emit addShapes();
     return;
-// TODO send signal to renderer to update the shapes
 }

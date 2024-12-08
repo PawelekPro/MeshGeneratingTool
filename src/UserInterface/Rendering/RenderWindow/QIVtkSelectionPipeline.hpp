@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QIVtkSelectionPipeline_H
-#define QIVtkSelectionPipeline_H
+#ifndef QIVTKSELECTIONPIPELINE_HPP
+#define QIVTKSELECTIONPIPELINE_HPP
 
-#include "QIVtkUtils.h"
+#include "QIVtkUtils.hpp"
 
 #include <NCollection_Shared.hxx>
 #include <Standard_Transient.hxx>

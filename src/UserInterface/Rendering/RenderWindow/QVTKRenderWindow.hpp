@@ -17,16 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QVTKRENDERWINDOW_H
-#define QVTKRENDERWINDOW_H
+#ifndef QVTKRENDERWINDOW_HPP
+#define QVTKRENDERWINDOW_HPP
 
 // forward declarations
 class QVTKInteractorStyle;
 class QIVtkViewRepresentation;
 
-#include "QIVtkViewRepresentation.h"
-#include "QVTKInteractorStyle.h"
-#include "QVTKCameraOrientationWidget.h"
+#include "QIVtkViewRepresentation.hpp"
+#include "QVTKInteractorStyle.hpp"
 
 #include "Model.hpp"
 
@@ -39,6 +38,7 @@ class QIVtkViewRepresentation;
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
+#include <vtkCameraOrientationWidget.h>
 #include <vtkCaptionActor2D.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkInteractorStyle.h>
@@ -134,18 +134,13 @@ public:
 	 */
 	void clearRenderer();
 
-/**
+	/**
 	 * @brief  Get interactor style (in order to interact with selected shapes outside renderWindow)
 	 *
 	 */
-	vtkSmartPointer<QVTKInteractorStyle> getInteractorStyle(){return _interactorStyle;};
-
+	vtkSmartPointer<QVTKInteractorStyle> getInteractorStyle() { return _interactorStyle; };
 
 	QIVtkViewRepresentation* getViewRepresentation();
-
-	void setBackground(
-		vtkRenderer::GradientModes mode, const double* col1 = nullptr, const double* col2 = nullptr);
-	void setBackground(const double* col1 = nullptr);
 
 public:
 	std::shared_ptr<Model> model;
@@ -176,7 +171,7 @@ private:
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 
 	// ! Navigation widget
-	vtkNew<QVTKCameraOrientationWidget> _camOrientManipulator;
+	vtkNew<vtkCameraOrientationWidget> _camOrientManipulator;
 
 	// ! Water mark
 	vtkSmartPointer<vtkLogoWidget> _logoWidget;

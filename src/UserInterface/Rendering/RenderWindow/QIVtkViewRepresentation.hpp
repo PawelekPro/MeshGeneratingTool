@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QIVTKVIEWREPRESENTATION_H
-#define QIVTKVIEWREPRESENTATION_H
+#ifndef QIVTKVIEWREPRESENTATION_HPP
+#define QIVTKVIEWREPRESENTATION_HPP
 
 #include "AppDefaultColors.hpp"
-#include "QIVtkSelectionPipeline.h"
-#include "QIVtkUtils.h"
-#include "QVTKInteractorStyle.h"
+#include "QIVtkSelectionPipeline.hpp"
+#include "QIVtkUtils.hpp"
+#include "QVTKInteractorStyle.hpp"
 
 #include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>

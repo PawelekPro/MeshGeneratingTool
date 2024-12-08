@@ -4,7 +4,7 @@ add_subdirectory(ModelInterface)
 
 ADD_LIBRARY(Model 
     Model.cpp
-    ModelLifecycleManager.cpp
+    ModelManager.cpp
 )
 
 

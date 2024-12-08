@@ -17,13 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ModelLifecycleManager.hpp"
+#include "ModelManager.hpp"
 
- void ModelLifecycleManager::createNewModel(const QString& aNewModelName) {
+ void ModelManager::createNewModel(const QString& aNewModelName) {
     _model = std::make_unique<Model>(aNewModelName.toStdString());
 }
 
-Model& ModelLifecycleManager::getModel() {
+Model& ModelManager::getModel() {
+    if (!_model) {
+        throw std::runtime_error("Model does not exist. Please create a model first.");
+    }
+    return *_model;
+}
+
+const Model& ModelManager::getModel() const {
     if (!_model) {
         throw std::runtime_error("Model does not exist. Please create a model first.");
     }

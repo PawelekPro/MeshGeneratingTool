@@ -42,7 +42,16 @@ class GeometryActionsHandler : public QObject{
     void importSTL();
 
     signals:
-    
+
+    //TODO: make those pass shapes or rags to update only necessary shapes in the render    
+    void addShape();
+    void removeShape();
+    void modifyShape();
+
+    void addShapes();
+    void removeShapes();
+    void modifyShapes();
+
     private:
         
     std::shared_ptr<ModelInterface> _modelInterface;

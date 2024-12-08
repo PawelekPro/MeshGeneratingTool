@@ -1,5 +1,6 @@
 add_library(ModelInterface 
     ModelInterface.cpp
+    ModelDataView.cpp
 )
 
 target_link_libraries(ModelInterface PUBLIC
