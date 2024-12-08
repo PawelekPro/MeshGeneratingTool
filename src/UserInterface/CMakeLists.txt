@@ -11,7 +11,7 @@ ADD_LIBRARY(UserInterface INTERFACE)
 TARGET_LINK_LIBRARIES(UserInterface INTERFACE
   Core
   Defaults
-  Rendering
+  RenderWindow
   TreeStructure
   Utils
   Widgets

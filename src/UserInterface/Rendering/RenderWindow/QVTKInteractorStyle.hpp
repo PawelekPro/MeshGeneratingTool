@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QVTKINTERACTORSTYLE_H
-#define QVTKINTERACTORSTYLE_H
+#ifndef QVTKINTERACTORSTYLE_HPP
+#define QVTKINTERACTORSTYLE_HPP
 
 // Forward declaration
 namespace Rendering {
@@ -27,8 +27,8 @@ class QVTKRenderWindow;
 
 #include <functional>
 
-#include "QIVtkSelectionPipeline.h"
-#include "QVTKRenderWindow.h"
+#include "QIVtkSelectionPipeline.hpp"
+#include "QVTKRenderWindow.hpp"
 
 // VTK includes
 #include <vtkCellPicker.h>

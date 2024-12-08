@@ -9,7 +9,8 @@ TARGET_LINK_LIBRARIES(Core PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   Defaults
   TreeStructure
-  Rendering
+  RenderWindow
+  RenderingSignalHandlers
   Widgets
   ModelInterface
   ModelActionsHandler

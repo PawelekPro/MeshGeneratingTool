@@ -20,21 +20,25 @@
 #ifndef MODELINTERFACE_HPP
 #define MODELINTERFACE_HPP
 
-#include "Model.hpp"
-#include "ModelLifecycleManager.hpp"
+#include "ModelManager.hpp"
+#include "ModelDataView.hpp"
 
 class ModelInterface{
 
     public:
-        ModelInterface(ModelLifecycleManager& aModelManager);
+        ModelInterface(ModelManager& aModelManager);
 
         int importSTEP(const QString& aFilePath,  QWidget* progressBar);
+        int importSTL(const QString& aFilePath,  QWidget* progressBar);
 
         void createNewModel(const QString& aNewModelName);
 
-    private:
-        ModelLifecycleManager& _modelManager;
+        const ModelDataView& modelDataView(){return _modelDataView;};
 
+    private:
+
+        ModelManager& _modelManager;
+        const ModelDataView _modelDataView;
 }; 
 
 #endif

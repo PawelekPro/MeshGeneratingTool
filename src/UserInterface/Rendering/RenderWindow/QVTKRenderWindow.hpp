@@ -17,16 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QVTKRENDERWINDOW_H
-#define QVTKRENDERWINDOW_H
+#ifndef QVTKRENDERWINDOW_HPP
+#define QVTKRENDERWINDOW_HPP
 
 // forward declarations
 class QVTKInteractorStyle;
 class QIVtkViewRepresentation;
 
+<<<<<<< HEAD:src/UserInterface/Rendering/QVTKRenderWindow.h
 #include "QIVtkViewRepresentation.h"
 #include "QVTKInteractorStyle.h"
 #include "QVTKCameraOrientationWidget.h"
+=======
+#include "QIVtkViewRepresentation.hpp"
+#include "QVTKInteractorStyle.hpp"
+>>>>>>> 4e969e1 ([WIP] added working render signal receiver):src/UserInterface/Rendering/RenderWindow/QVTKRenderWindow.hpp
 
 #include "Model.hpp"
 

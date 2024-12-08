@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ADD_LIBRARY(Rendering 
   QVTKInteractorStyle.cpp
   QVTKRenderWindow.cpp
@@ -40,3 +41,8 @@ endif()
 TARGET_INCLUDE_DIRECTORIES(Rendering PUBLIC
     ${PRJ_SOURCE_DIR}/src/UserInterface/Rendering
 )
+=======
+add_subdirectory(RenderWindow)
+add_subdirectory(RenderingUtils)
+add_subdirectory(RenderingSignalHandlers)
+>>>>>>> 4e969e1 ([WIP] added working render signal receiver)
