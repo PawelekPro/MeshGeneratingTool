@@ -39,10 +39,13 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->QVTKRender->enableWaterMark();
 	this->ui->ribbonBar->initialize();
 
-	this->progressBar = new ProgressBar(this);
-	this->ui->statusBar->addWidget(progressBar);
-
+	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_modelHandler = new ModelActionsHandler(this, progressBar, _modelInterface);
+	this->connectModelToRenderWindow(_modelHandler, _renderSignalHandler);
+
+	this->progressBar = new ProgressBar(this);
+ 	this->ui->statusBar->addWidget(progressBar);
+
 	this->ui->treeWidget->setModelHandler(_modelHandler);
 
 	this->setConnections();
@@ -94,6 +97,37 @@ void MainWindow::setConnections() {
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
+}
+
+//----------------------------------------------------------------------------
+void MainWindow::connectModelToRenderWindow(ModelActionsHandler* aModelHandler, Rendering::RenderSignalHandler* aRenderHandler){
+	//TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
+	//TODO: Fun task - encapsulate the connections in a helper map/class/namespace 
+	GeometryActionsHandler* geoActions = aModelHandler->_geometryHandler;
+	Rendering::GeometryRenderHandler* geoRender = aRenderHandler->geometry();
+
+    // QObject::connect(geoActions, &GeometryActionsHandler::addShape,
+    //                  geoRender, &Rendering::GeometryRenderHandler::shapeAdded);
+
+    // QObject::connect(geoActions, &GeometryActionsHandler::removeShape,
+    //                  geoRender, &Rendering::GeometryRenderHandler::shapeRemoved);
+
+    // QObject::connect(geoActions, &GeometryActionsHandler::modifyShape,
+    //                  geoRender, &Rendering::GeometryRenderHandler::shapeModified);
+
+
+
+    QObject::connect(geoActions, &GeometryActionsHandler::addShapes,
+                     geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
+
+    // QObject::connect(geoActions, &GeometryActionsHandler::removeShapes,
+    //                  geoRender, &Rendering::GeometryRenderHandler::shapesRemoved);
+
+    // QObject::connect(geoActions, &GeometryActionsHandler::modifyShapes,
+    //                  geoRender, &Rendering::GeometryRenderHandler::shapesModified);
+
+
+	// MeshActionsHandler* meshHandler = aModelHandler->_meshHandler;
 }
 
 //----------------------------------------------------------------------------

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "QVTKInteractorStyle.h"
+#include "QVTKInteractorStyle.hpp"
 
 #include <Message.hxx>
 #include <Message_Messenger.hxx>

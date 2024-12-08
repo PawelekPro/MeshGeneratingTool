@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QIVTKUTILS_H
-#define QIVTKUTILS_H
+#ifndef QIVTKUTILS_HPP
+#define QIVTKUTILS_HPP
 
 #include "AppDefaultColors.hpp"
 

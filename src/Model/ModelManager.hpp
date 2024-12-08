@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELLIFECYCLEMANAGER_HPP
-#define MODELLIFECYCLEMANAGER_HPP
+#ifndef MODELMANAGER_HPP
+#define MODELMANAGER_HPP
 
 #include "Model.hpp"
 #include <memory>
@@ -26,18 +26,19 @@
 #include <QString>
 
 
-class ModelLifecycleManager {
+class ModelManager {
 
     public:
 
-    ModelLifecycleManager() = default;
-    ~ModelLifecycleManager() = default;
+    ModelManager() = default;
+    ~ModelManager() = default;
 
-    ModelLifecycleManager(const ModelLifecycleManager& aOther) = delete;
-    ModelLifecycleManager& operator=(const ModelLifecycleManager& aOther) = delete;
+    ModelManager(const ModelManager& aOther) = delete;
+    ModelManager& operator=(const ModelManager& aOther) = delete;
     
     void createNewModel(const QString& aNewModelName);
     Model& getModel();
+    const Model& getModel() const;
 
     private:
     

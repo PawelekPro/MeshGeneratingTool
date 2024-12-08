@@ -17,15 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QVTKRENDERWINDOW_H
-#define QVTKRENDERWINDOW_H
+#ifndef QVTKRENDERWINDOW_HPP
+#define QVTKRENDERWINDOW_HPP
 
 // forward declarations
 class QVTKInteractorStyle;
 class QIVtkViewRepresentation;
 
-#include "QIVtkViewRepresentation.h"
-#include "QVTKInteractorStyle.h"
+#include "QIVtkViewRepresentation.hpp"
+#include "QVTKInteractorStyle.hpp"
 
 #include "Model.hpp"
 

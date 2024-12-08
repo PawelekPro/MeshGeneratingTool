@@ -17,35 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELACTIONSHANDLER_HPP
-#define MODELACTIONSHANDLER_HPP
+#include "RenderSignalHandler.hpp"
 
-#include <QObject>
-#include <memory>
+namespace Rendering{
 
-#include "ModelInterface.hpp"
-#include "GeometryActionsHandler.hpp"
-#include "MeshActionsHandler.hpp"
+RenderSignalHandler::RenderSignalHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent) : 
+    QObject(aParent),
+    _renderWindow(aRenderWindow),
+    _modelDataView(aModelDataView),
+    _meshRenderHandler(new MeshRenderHandler(aRenderWindow, aModelDataView, this)),
+    _geometryRenderHandler(new GeometryRenderHandler(aRenderWindow, aModelDataView, this)){};
 
-class ProgressBar;
-class ModelActionsHandler : QObject {
-    Q_OBJECT
-
-    public:
-    
-    ModelActionsHandler(QObject* aParent, ProgressBar* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface);
-
-    void createNewModel();
-
-    GeometryActionsHandler* _geometryHandler;
-    MeshActionsHandler* _meshHandler;
- 
-    private:
-    
-    ProgressBar* _progressBar;
-
-    std::shared_ptr<ModelInterface> _modelInterface;
-};
-
-
-#endif
+}

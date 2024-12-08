@@ -17,35 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELACTIONSHANDLER_HPP
-#define MODELACTIONSHANDLER_HPP
+#ifndef MODELDATAVIEW_HPP
+#define MODELDATAVIEW_HPP
 
-#include <QObject>
-#include <memory>
+#include "ModelManager.hpp"
 
-#include "ModelInterface.hpp"
-#include "GeometryActionsHandler.hpp"
-#include "MeshActionsHandler.hpp"
+class ModelDataView{
 
-class ProgressBar;
-class ModelActionsHandler : QObject {
-    Q_OBJECT
+    using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
 
     public:
-    
-    ModelActionsHandler(QObject* aParent, ProgressBar* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface);
+        ModelDataView(const ModelManager& aModelManger);
+        ~ModelDataView() = default;
 
-    void createNewModel();
+        const GeometryCore::PartsMap& getPartsMap() const;
 
-    GeometryActionsHandler* _geometryHandler;
-    MeshActionsHandler* _meshHandler;
- 
+        const TopoDS_Shape& getShape(int aShapeTag) const;
+        const TopoDS_Shape& getShape(const std::string& aShapeName) const;
+
+        const std::vector<ShapeRef> getShapes(const std::vector<int>& aShapesTags) const;
+        const std::vector<ShapeRef> getShapes(const std::vector<std::string>& aShapesNames) const;
+
+        int getShapeTag(const TopoDS_Shape&) const;
+        std::string getShapeName(const TopoDS_Shape&) const;
+
     private:
-    
-    ProgressBar* _progressBar;
-
-    std::shared_ptr<ModelInterface> _modelInterface;
+        const ModelManager& _modelManager;
 };
-
 
 #endif

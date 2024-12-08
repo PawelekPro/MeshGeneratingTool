@@ -21,7 +21,7 @@
 #define RIBBONBARWIDGET_HPP
 
 #include "MainWindow.hpp"
-#include "QIVtkViewRepresentation.h"
+#include "QIVtkViewRepresentation.hpp"
 #include "SARibbon.h"
 
 #include <QActionGroup>

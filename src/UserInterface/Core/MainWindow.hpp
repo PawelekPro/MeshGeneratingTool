@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -28,7 +28,8 @@
 
 #include "PreferencesDialog.h"
 #include "ProgressBar.hpp"
-#include "QVTKRenderWindow.h"
+#include "QVTKRenderWindow.hpp"
+#include "RenderSignalHandler.hpp"
 #include "DocumentHandler.hpp"
 #include "SARibbon.h"
 #include "TreeStructure.hpp"
@@ -87,6 +88,7 @@ private:
 
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
+	Rendering::RenderSignalHandler* _renderSignalHandler;
 	ModelActionsHandler* _modelHandler;
 
 	/**
@@ -103,6 +105,9 @@ private:
 	 * model is created
 	 */
 	void initializeActions();
+
+
+	void connectModelToRenderWindow(ModelActionsHandler* aModelHandler, Rendering::RenderSignalHandler* aRenderHandler);
 
 private slots:
 	/**
