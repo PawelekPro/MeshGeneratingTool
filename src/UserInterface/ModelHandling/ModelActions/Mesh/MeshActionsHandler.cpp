@@ -18,14 +18,12 @@
  */
 
 #include "MeshActionsHandler.hpp"
-#include "ProgressBar.hpp"
 
-MeshActionsHandler::MeshActionsHandler( QObject* aParent,
-                                        ProgressBar* aProgressBar,
-                                        std::shared_ptr<ModelInterface> aModelInterface) :
-                                        QObject(aParent),
-                                        _progressBar(aProgressBar),
-                                        _modelInterface(aModelInterface){};
+MeshActionsHandler::MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                                       ProgressBar* aProgressBar, 
+                                       ModelCommandManager* aModelCommandManager,
+                                       QObject* aParent) : 
+                                       BaseActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent){};
 
 void MeshActionsHandler::meshSurface(){
     // _modelInterface->meshSurface();

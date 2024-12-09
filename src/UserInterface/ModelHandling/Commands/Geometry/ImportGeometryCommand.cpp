@@ -19,16 +19,19 @@
 
 #include "ImportGeometryCommand.hpp"
 
-
-ImportGeometryCommand::ImportGeometryCommand(ModelActionsHandler* aModelHandler, const QString& aFilePath) :
-    ModelCommand(aModelHandler),
+ImportGeometryCommand::ImportGeometryCommand(ModelInterface* aModelInterface, ProgressBar* aProgressBar, const QString& aFilePath) :
+    ModelCommand(aModelInterface),
+    _progressBar(aProgressBar),
     _importedFilePath(aFilePath){}
 
-ImportGeometryCommand::execute(){
+void ImportGeometryCommand::execute(){
+    
+    _modelInterface->importSTEP(_importedFilePath, _progressBar);
+
 
 }
 
-ImportGeometryCommand::undo(){
+void ImportGeometryCommand::undo(){
 
 
 }

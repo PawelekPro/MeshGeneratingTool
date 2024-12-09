@@ -18,14 +18,15 @@
  */
 
 #include "MainWindow.hpp"
+
 #include "./ui_MainWindow.h"
-#include "ModelInterface.hpp"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
-	, _modelInterface(aModelInterface) {
+	, _modelInterface(aModelInterface)
+	, _modelCommandManager(new ModelCommandManager()) {
 
 	ui->setupUi(this);
 	// Set initial sizes of the splitter sections
@@ -40,11 +41,11 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->ui->ribbonBar->initialize();
 
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
-	_modelHandler = new ModelActionsHandler(this, progressBar, _modelInterface);
+	_modelHandler = new ModelActionsHandler(_modelInterface, progressBar, _modelCommandManager, this);
 	this->connectModelToRenderWindow(_modelHandler, _renderSignalHandler);
 
 	this->progressBar = new ProgressBar(this);
- 	this->ui->statusBar->addWidget(progressBar);
+	this->ui->statusBar->addWidget(progressBar);
 
 	this->ui->treeWidget->setModelHandler(_modelHandler);
 
@@ -100,32 +101,29 @@ void MainWindow::setConnections() {
 }
 
 //----------------------------------------------------------------------------
-void MainWindow::connectModelToRenderWindow(ModelActionsHandler* aModelHandler, Rendering::RenderSignalHandler* aRenderHandler){
-	//TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
-	//TODO: Fun task - encapsulate the connections in a helper map/class/namespace 
+void MainWindow::connectModelToRenderWindow(ModelActionsHandler* aModelHandler, Rendering::RenderSignalHandler* aRenderHandler) {
+	// TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
+	// TODO: Fun task - encapsulate the connections in a helper map/class/namespace
 	GeometryActionsHandler* geoActions = aModelHandler->_geometryHandler;
 	Rendering::GeometryRenderHandler* geoRender = aRenderHandler->geometry();
 
-    // QObject::connect(geoActions, &GeometryActionsHandler::addShape,
-    //                  geoRender, &Rendering::GeometryRenderHandler::shapeAdded);
+	// QObject::connect(geoActions, &GeometryActionsHandler::addShape,
+	//                  geoRender, &Rendering::GeometryRenderHandler::shapeAdded);
 
-    // QObject::connect(geoActions, &GeometryActionsHandler::removeShape,
-    //                  geoRender, &Rendering::GeometryRenderHandler::shapeRemoved);
+	// QObject::connect(geoActions, &GeometryActionsHandler::removeShape,
+	//                  geoRender, &Rendering::GeometryRenderHandler::shapeRemoved);
 
-    // QObject::connect(geoActions, &GeometryActionsHandler::modifyShape,
-    //                  geoRender, &Rendering::GeometryRenderHandler::shapeModified);
+	// QObject::connect(geoActions, &GeometryActionsHandler::modifyShape,
+	//                  geoRender, &Rendering::GeometryRenderHandler::shapeModified);
 
+	QObject::connect(geoActions, &GeometryActionsHandler::addShapes,
+		geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
 
+	// QObject::connect(geoActions, &GeometryActionsHandler::removeShapes,
+	//                  geoRender, &Rendering::GeometryRenderHandler::shapesRemoved);
 
-    QObject::connect(geoActions, &GeometryActionsHandler::addShapes,
-                     geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
-
-    // QObject::connect(geoActions, &GeometryActionsHandler::removeShapes,
-    //                  geoRender, &Rendering::GeometryRenderHandler::shapesRemoved);
-
-    // QObject::connect(geoActions, &GeometryActionsHandler::modifyShapes,
-    //                  geoRender, &Rendering::GeometryRenderHandler::shapesModified);
-
+	// QObject::connect(geoActions, &GeometryActionsHandler::modifyShapes,
+	//                  geoRender, &Rendering::GeometryRenderHandler::shapesModified);
 
 	// MeshActionsHandler* meshHandler = aModelHandler->_meshHandler;
 }

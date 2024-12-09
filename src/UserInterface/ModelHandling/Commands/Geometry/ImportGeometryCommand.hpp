@@ -20,10 +20,13 @@
 #ifndef IMPORTGEOMETRYCOMMAND_HPP
 #define IMPORTGEOMETRYCOMMAND_HPP
 
+#include "ModelInterface.hpp"
 #include "ModelCommand.hpp"
 #include <QString>
 
-class CommandFactory;
+class ProgressBar;
+
+// TODO: impolement a command factory that executes command in modelCommandManager
 class ImportGeometryCommand : public ModelCommand{
 
     friend class CommandFactory;
@@ -33,12 +36,13 @@ class ImportGeometryCommand : public ModelCommand{
     void execute() override;
     void undo() override;
 
-
     private:
     
-    ImportGeometryCommand(ModelActionsHandler* aModelHandler, const QString& aFilePath);
-    QString _importedFilePath;
-
+    ImportGeometryCommand(ModelInterface* aModelInterface, ProgressBar* aProgressBar, const QString& aFilePath);
+    
+    ProgressBar* _progressBar;
+    const QString _importedFilePath;
+    std::vector<int> _importedShapesTags;
 };
 
 #endif
