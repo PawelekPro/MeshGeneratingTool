@@ -1,11 +1,11 @@
-add_library(RenderingSignalHandlers
+add_library(RenderSignalHandlers
   RenderSignalHandler.cpp
   BaseRenderHandler.cpp
   GeometryRenderHandler.cpp
   MeshRenderHandler.cpp
 )
 
-target_link_libraries( RenderingSignalHandlers PUBLIC
+target_link_libraries( RenderSignalHandlers PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   RenderWindow
   ModelInterface
@@ -14,6 +14,6 @@ target_link_libraries( RenderingSignalHandlers PUBLIC
   Utils
 )
 
-target_include_directories(ModelActionsHandler PUBLIC
+target_include_directories(RenderSignalHandlers PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )

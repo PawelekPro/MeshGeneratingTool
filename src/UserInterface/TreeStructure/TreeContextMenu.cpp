@@ -21,6 +21,8 @@
 #include "TreeStructure.hpp"
 #include "TreeItem.hpp"
 
+#include "GeometryActionsHandler.hpp"
+
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
 	: QObject(parent)
 	, _treeStructure(treeWidget) {

@@ -21,28 +21,24 @@
 #define MESHACTIONSHANDELR_HPP
 
 #include <QObject>
-#include <QWidget>
 #include <memory>
-#include <functional>
 
-#include "ModelInterface.hpp"
+#include "BaseActionsHandler.hpp"
 
-class MeshActionsHandler : public QObject {
+class MeshActionsHandler : public BaseActionsHandler {
     Q_OBJECT
 
 public:
-    MeshActionsHandler(QObject* aParent,
-                       ProgressBar* aProgressBar,
-                       std::shared_ptr<ModelInterface> aModelInterface);
 
+    MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                       ProgressBar* aProgressBar, 
+                       ModelCommandManager* aModelCommandManager,
+                       QObject* aParent);
+
+public slots:
     void meshSurface();
     void meshVolume();
 
-signals:
-
-private:
-    std::shared_ptr<ModelInterface> _modelInterface;
-    ProgressBar* _progressBar;
 };
 
 #endif

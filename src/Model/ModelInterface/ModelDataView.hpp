@@ -24,6 +24,7 @@
 
 class ModelDataView{
 
+    using ShapesTags = std::vector<int>; 
     using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
 
     public:

@@ -1,15 +1,32 @@
 add_subdirectory(Geometry)
 add_subdirectory(Mesh)
+
 ADD_LIBRARY(ModelActionsHandler
   ModelActionsHandler.cpp
+)
+
+add_library(BaseActionsHandler
+  BaseActionsHandler.cpp
 )
 
 TARGET_LINK_LIBRARIES(ModelActionsHandler PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   Utils
   ModelInterface
+  ModelCommands
   GeometryActionsHandler
   MeshActionsHandler
+)
+
+TARGET_LINK_LIBRARIES(BaseActionsHandler PUBLIC
+  Qt${QT_VERSION_MAJOR}::Core
+  ModelInterface
+  ModelCommands
+  Utils
+)
+
+target_include_directories(BaseActionsHandler PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_include_directories(ModelActionsHandler PUBLIC

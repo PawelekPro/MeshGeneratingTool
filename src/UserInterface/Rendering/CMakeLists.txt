@@ -44,5 +44,9 @@ TARGET_INCLUDE_DIRECTORIES(Rendering PUBLIC
 =======
 add_subdirectory(RenderWindow)
 add_subdirectory(RenderingUtils)
+<<<<<<< HEAD
 add_subdirectory(RenderingSignalHandlers)
 >>>>>>> 4e969e1 ([WIP] added working render signal receiver)
+=======
+add_subdirectory(RenderSignalHandlers)
+>>>>>>> d50f60d ([WIP] compilable finalized ui structure - needs implementation)

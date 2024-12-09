@@ -18,18 +18,19 @@
  */
 
 #include "GeometryActionsHandler.hpp"
+#include "FileDialogUtils.hpp"
+#include "ModelInterface.hpp"
 
-GeometryActionsHandler::GeometryActionsHandler( QObject* aParent,
-                                                ProgressBar* aProgressBar,
-                                                std::shared_ptr<ModelInterface> aModelInterface) :
-                                                QObject(aParent),
-                                                _progressBar(aProgressBar),
-                                                _modelInterface(aModelInterface){};
-
+GeometryActionsHandler::GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                                               ProgressBar* aProgressBar, 
+                                               ModelCommandManager* aModelCommandManager,
+                                               QObject* aParent) : 
+                                               BaseActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent){};
 
 void GeometryActionsHandler::importSTEP(){
     QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
     _modelInterface->importSTEP(filePath, _progressBar);
+
     // TODO: addShapes should send only the new shapes ids
     emit addShapes();
     return;

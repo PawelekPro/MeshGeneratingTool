@@ -17,36 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELACTIONSHANDLER_HPP
-#define MODELACTIONSHANDLER_HPP
+#ifndef BASEACTIONSHANDLER_HPP
+#define BASEACTIONSHANDLER_HPP
 
 #include <QObject>
 #include <memory>
 
-#include "BaseActionsHandler.hpp"
-
+class ModelInterface;
 class ProgressBar;
 class ModelCommandManager;
-class GeometryActionsHandler;
-class MeshActionsHandler;
 
-class ModelActionsHandler : BaseActionsHandler {
+class BaseActionsHandler : public QObject{
     Q_OBJECT
+
     public:
-    
-    ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+    BaseActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
                        ProgressBar* aProgressBar, 
                        ModelCommandManager* aModelCommandManager,
                        QObject* aParent); 
 
-    void createNewModel();
+    virtual ~BaseActionsHandler() = default;
 
-    GeometryActionsHandler* _geometryHandler;
-    MeshActionsHandler* _meshHandler;
- 
-    private:
+    protected:
+    std::shared_ptr<ModelInterface> _modelInterface;
+    ProgressBar* _progressBar;
+    ModelCommandManager* _commandManager;
 
 };
-
 
 #endif

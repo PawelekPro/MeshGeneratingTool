@@ -1,2 +1,2 @@
-ADD_SUBDIRECTORY(Commands)
-ADD_SUBDIRECTORY(ModelActions)
+add_subdirectory(Commands)
+add_subdirectory(ModelActions)

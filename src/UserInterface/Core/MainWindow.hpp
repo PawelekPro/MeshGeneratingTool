@@ -27,9 +27,18 @@
 #include "Model.hpp"
 =======
 
+<<<<<<< HEAD
 >>>>>>> 86ad1fe ([WIP] added modelActionHandlers and modelCommands. Adjusted architecture to use those managers)
 #include "ModelActionsHandler.hpp"
 #include "ModelInterface.hpp"
+=======
+#include "ModelInterface.hpp"
+#include "ModelCommandManger.hpp"
+
+#include "ModelActionsHandler.hpp"
+#include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
+>>>>>>> d50f60d ([WIP] compilable finalized ui structure - needs implementation)
 
 #include "DocumentHandler.hpp"
 #include "ImportManager.hpp"
@@ -104,6 +113,7 @@ private:
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 	Rendering::RenderSignalHandler* _renderSignalHandler;
+	ModelCommandManager* _modelCommandManager;
 	ModelActionsHandler* _modelHandler;
 
 	/**
