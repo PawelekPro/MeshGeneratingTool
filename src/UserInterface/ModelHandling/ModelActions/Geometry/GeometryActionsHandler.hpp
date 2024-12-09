@@ -20,23 +20,20 @@
 #ifndef GEOMETRYACTIONSHANDELR_HPP
 #define GEOMETRYACTIONSHANDELR_HPP
 
-#include "ModelInterface.hpp"
-#include "ProgressBar.hpp"
-#include "FileDialogUtils.hpp"
-
 #include <memory>
-#include <functional>
 #include <QObject>
-#include <QWidget>
 
-class GeometryActionsHandler : public QObject{
+#include "BaseActionsHandler.hpp"
+
+class GeometryActionsHandler : public BaseActionsHandler{
     Q_OBJECT
 
     public:
 
-    GeometryActionsHandler( QObject* aParent,
-                            ProgressBar* aProgressBar,
-                            std::shared_ptr<ModelInterface> aModelInterface);
+    GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                           ProgressBar* aProgressBar, 
+                           ModelCommandManager* aModelCommandManager,
+                           QObject* aParent);
 
     void importSTEP();
     void importSTL();
@@ -51,11 +48,6 @@ class GeometryActionsHandler : public QObject{
     void addShapes();
     void removeShapes();
     void modifyShapes();
-
-    private:
-        
-    std::shared_ptr<ModelInterface> _modelInterface;
-    ProgressBar* _progressBar;
 };
 
 #endif

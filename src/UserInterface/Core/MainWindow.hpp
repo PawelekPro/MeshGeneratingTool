@@ -24,7 +24,12 @@
 
 #include "Configuration.hpp"
 
+#include "ModelInterface.hpp"
+#include "ModelCommandManger.hpp"
+
 #include "ModelActionsHandler.hpp"
+#include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
 
 #include "PreferencesDialog.h"
 #include "ProgressBar.hpp"
@@ -89,6 +94,7 @@ private:
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 	Rendering::RenderSignalHandler* _renderSignalHandler;
+	ModelCommandManager* _modelCommandManager;
 	ModelActionsHandler* _modelHandler;
 
 	/**

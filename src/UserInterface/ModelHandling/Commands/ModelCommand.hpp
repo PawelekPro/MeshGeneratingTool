@@ -20,20 +20,24 @@
 #ifndef MODELCOMMAND_HPP
 #define MODELCOMMAND_HPP
 
-#include "ModelActionsHandler.hpp"
+#include <memory>
+
+class ModelInterface;
 
 class ModelCommand{
 
+    friend class ModelCommandManager;
+
     public:
 
-    ModelCommand(ModelActionsHandler* aModelHandler) : _modelHandler(aModelHandler){};
+    ModelCommand(ModelInterface* aModelInterface) : _modelInterface(aModelInterface){};
 
     protected:
 
     virtual void execute() = 0;
     virtual void undo() = 0;
 
-   ModelActionsHandler* _modelHandler;
+    ModelInterface* _modelInterface;
 
 };
 

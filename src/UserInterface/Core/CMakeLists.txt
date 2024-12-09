@@ -10,7 +10,7 @@ TARGET_LINK_LIBRARIES(Core PUBLIC
   Defaults
   TreeStructure
   RenderWindow
-  RenderingSignalHandlers
+  RenderSignalHandlers
   Widgets
   ModelInterface
   ModelActionsHandler

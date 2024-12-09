@@ -18,14 +18,15 @@
  */
 
 #include "MainWindow.hpp"
-#include "ModelInterface.hpp"
+
 #include "./ui_MainWindow.h"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
-	, _modelInterface(aModelInterface) {
+	, _modelInterface(aModelInterface)
+	, _modelCommandManager(new ModelCommandManager()) {
 	
 	ui->setupUi(this);
 	// Set initial sizes of the splitter sections
@@ -39,8 +40,9 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->QVTKRender->enableWaterMark();
 	this->ui->ribbonBar->initialize();
 
+
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
-	_modelHandler = new ModelActionsHandler(this, progressBar, _modelInterface);
+	_modelHandler = new ModelActionsHandler(_modelInterface, progressBar, _modelCommandManager, this);
 	this->connectModelToRenderWindow(_modelHandler, _renderSignalHandler);
 
 	this->progressBar = new ProgressBar(this);

@@ -1,3 +1,3 @@
 add_subdirectory(RenderWindow)
 add_subdirectory(RenderingUtils)
-add_subdirectory(RenderingSignalHandlers)
+add_subdirectory(RenderSignalHandlers)

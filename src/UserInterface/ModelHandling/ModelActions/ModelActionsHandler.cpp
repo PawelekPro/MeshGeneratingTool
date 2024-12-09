@@ -18,15 +18,19 @@
  */
 
 #include "ModelActionsHandler.hpp"
-#include "ProgressBar.hpp"
+#include "ModelInterface.hpp"
 
-ModelActionsHandler::ModelActionsHandler(QObject* aParent, ProgressBar* aProgressBar, std::shared_ptr<ModelInterface> aModelInterface) :
-                                         QObject(aParent),
-                                         _progressBar(aProgressBar),
-                                         _modelInterface(aModelInterface),
-                                         _geometryHandler(new GeometryActionsHandler(this, aProgressBar, aModelInterface)),
-                                         _meshHandler(new MeshActionsHandler(this, aProgressBar, aModelInterface)){};
+#include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
 
+ModelActionsHandler::ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                       ProgressBar* aProgressBar, 
+                       ModelCommandManager* aModelCommandManager,
+                       QObject* aParent) : 
+                       BaseActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent),
+                       _geometryHandler(new GeometryActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent)),
+                       _meshHandler(new MeshActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent)){};
+                       
 void ModelActionsHandler::createNewModel(){
     //TODO: Handle new model name
     //TODO: send signals that will clear renderer, treeStructure etc.
