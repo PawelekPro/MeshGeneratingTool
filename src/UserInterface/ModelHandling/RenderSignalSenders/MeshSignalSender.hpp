@@ -17,13 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BaseActionsHandler.hpp"
+#ifndef MESHSIGNALSENDER_HPP
+#define MESHSIGNALSENDER_HPP
 
-BaseActionsHandler::BaseActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                                       ProgressBar* aProgressBar, 
-                                       ModelCommandManager* aModelCommandManager,
-                                       QObject* aParent) : 
-                                       QObject(aParent),
-                                       _modelInterface(aModelInterface),
-                                       _progressBar(aProgressBar),
-                                       _commandManager(aModelCommandManager){};
+#include <QObject>
+
+class MeshSignalSender : QObject{
+    Q_OBJECT
+
+    public:
+    MeshSignalSender(QObject* aParent);
+
+    signals:
+
+    void addShape();
+    // void removeShape();
+    // void modifyShape();
+
+    // void addShapes();
+    // void removeShapes();
+    // void modifyShapes();
+
+};
+
+
+#endif

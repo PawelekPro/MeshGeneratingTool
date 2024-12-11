@@ -19,18 +19,36 @@
 
 #include "ModelActionsHandler.hpp"
 #include "ModelInterface.hpp"
+#include "ModelCommandManager.hpp"
 
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
+#include "RenderSignalSender.hpp"
 
-ModelActionsHandler::ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                       ProgressBar* aProgressBar, 
-                       ModelCommandManager* aModelCommandManager,
-                       QObject* aParent) : 
-                       BaseActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent),
-                       _geometryHandler(new GeometryActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent)),
-                       _meshHandler(new MeshActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent)){};
-                       
+ModelActionsHandler::ModelActionsHandler(
+    std::shared_ptr<ModelInterface> aModelInterface, 
+    RenderSignalSender* aSignalSender,
+    ProgressBar* aProgressBar, 
+    QObject* aParent
+    ) :
+    QObject(aParent),
+    _modelInterface(aModelInterface),
+    _commandManager(new ModelCommandManager(this)),
+    _renderSignalSender(aSignalSender),
+    _progressBar(aProgressBar)
+    {
+        _geometryHandler = new GeometryActionsHandler(aModelInterface,
+        _commandManager,
+        _renderSignalSender->geometrySignals,
+        aProgressBar,
+        aParent);
+
+        _meshHandler = new MeshActionsHandler(aModelInterface,
+        _commandManager,
+        _renderSignalSender->meshSignals,
+        aProgressBar,
+        aParent);
+    };
 void ModelActionsHandler::createNewModel(){
     //TODO: Handle new model name
     //TODO: send signals that will clear renderer, treeStructure etc.

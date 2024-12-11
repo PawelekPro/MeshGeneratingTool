@@ -23,29 +23,36 @@
 #include <QObject>
 #include <memory>
 
-#include "BaseActionsHandler.hpp"
-
-class ProgressBar;
+class ModelInterface;
 class ModelCommandManager;
-class GeometryActionsHandler;
-class MeshActionsHandler;
+class RenderSignalSender;
+class ProgressBar;
 
-class ModelActionsHandler : BaseActionsHandler {
+class MeshActionsHandler;
+class GeometryActionsHandler;
+
+class ModelActionsHandler : public QObject {
     Q_OBJECT
     public:
     
     ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                       RenderSignalSender* aSignalSender,
                        ProgressBar* aProgressBar, 
-                       ModelCommandManager* aModelCommandManager,
                        QObject* aParent); 
 
     void createNewModel();
 
     GeometryActionsHandler* _geometryHandler;
     MeshActionsHandler* _meshHandler;
- 
+
     private:
 
+    std::shared_ptr<ModelInterface> _modelInterface;
+
+    RenderSignalSender* _renderSignalSender;
+    ModelCommandManager* _commandManager;
+
+    ProgressBar* _progressBar;
 };
 
 

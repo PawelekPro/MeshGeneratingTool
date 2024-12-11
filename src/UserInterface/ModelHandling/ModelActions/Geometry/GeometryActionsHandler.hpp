@@ -23,31 +23,37 @@
 #include <memory>
 #include <QObject>
 
-#include "BaseActionsHandler.hpp"
+#include "GeometrySignalSender.hpp"
 
-class GeometryActionsHandler : public BaseActionsHandler{
+class ModelInterface;
+class ModelCommandManager;
+class ProgressBar;
+
+class GeometryActionsHandler : public QObject{
     Q_OBJECT
 
     public:
 
     GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                           ProgressBar* aProgressBar, 
                            ModelCommandManager* aModelCommandManager,
+                           GeometrySignalSender* aGeometrySignalSender,
+                           ProgressBar* aProgressBar, 
                            QObject* aParent);
 
+
+
+    private:
+
+    std::shared_ptr<ModelInterface> _modelInterface;
+    
+    ModelCommandManager* _commandManager;
+    GeometrySignalSender* _geometrySignalSender;
+
+    ProgressBar* _progressBar;
+
+    public slots:
     void importSTEP();
     void importSTL();
 
-    signals:
-
-    //TODO: make those pass shapes or rags to update only necessary shapes in the render    
-    void addShape();
-    void removeShape();
-    void modifyShape();
-
-    void addShapes();
-    void removeShapes();
-    void modifyShapes();
 };
-
 #endif

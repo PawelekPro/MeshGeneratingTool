@@ -33,12 +33,14 @@
 #include "ModelInterface.hpp"
 =======
 #include "ModelInterface.hpp"
-#include "ModelCommandManger.hpp"
-
 #include "ModelActionsHandler.hpp"
+<<<<<<< HEAD
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
 >>>>>>> d50f60d ([WIP] compilable finalized ui structure - needs implementation)
+=======
+#include "RenderSignalSender.hpp"
+>>>>>>> 2304ff1 ([WIP] added signal senders to clarify connections in mainwindow)
 
 #include "DocumentHandler.hpp"
 #include "ImportManager.hpp"
@@ -113,7 +115,7 @@ private:
 	// Rendering window widget
 	Rendering::QVTKRenderWindow* QVTKRender;
 	Rendering::RenderSignalHandler* _renderSignalHandler;
-	ModelCommandManager* _modelCommandManager;
+	RenderSignalSender* _renderSignalSender;
 	ModelActionsHandler* _modelHandler;
 
 	/**

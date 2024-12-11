@@ -30,14 +30,14 @@ class ModelCommand{
 
     public:
 
-    ModelCommand(ModelInterface* aModelInterface) : _modelInterface(aModelInterface){};
-
+    ModelCommand(std::shared_ptr<ModelInterface> aModelInterface) : _modelInterface(aModelInterface){};
+    virtual ~ModelCommand() = default;
     protected:
 
     virtual void execute() = 0;
     virtual void undo() = 0;
 
-    ModelInterface* _modelInterface;
+    std::shared_ptr<ModelInterface> _modelInterface;
 
 };
 
