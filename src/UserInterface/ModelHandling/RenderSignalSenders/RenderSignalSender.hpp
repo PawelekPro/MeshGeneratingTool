@@ -17,31 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BASEACTIONSHANDLER_HPP
-#define BASEACTIONSHANDLER_HPP
+#ifndef RENDERSIGNALSENDER_HPP
+#define RENDERSIGNALSENDER_HPP
 
+#include "GeometrySignalSender.hpp"
+#include "MeshSignalSender.hpp"
 #include <QObject>
-#include <memory>
 
-class ModelInterface;
-class ProgressBar;
-class ModelCommandManager;
-
-class BaseActionsHandler : public QObject{
+class RenderSignalSender : public QObject{
     Q_OBJECT
 
     public:
-    BaseActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                       ProgressBar* aProgressBar, 
-                       ModelCommandManager* aModelCommandManager,
-                       QObject* aParent); 
+    RenderSignalSender(QObject* aParent);
 
-    virtual ~BaseActionsHandler() = default;
-
-    protected:
-    std::shared_ptr<ModelInterface> _modelInterface;
-    ProgressBar* _progressBar;
-    ModelCommandManager* _commandManager;
+    GeometrySignalSender* geometrySignals;
+    MeshSignalSender* meshSignals;
+    signals:
 
 };
 

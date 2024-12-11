@@ -17,35 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef IMPORTGEOMETRYCOMMAND_HPP
-#define IMPORTGEOMETRYCOMMAND_HPP
+#ifndef MODELCOMMANDMANAGER_HPP
+#define MODELCOMMANDMANAGER_HPP
 
-#include "ModelInterface.hpp"
+#include <QStack>
+#include <QList>
+#include <QObject>
+
 #include "ModelCommand.hpp"
-#include "GeometrySignalSender.hpp"
 
-#include <QString>
+class ModelCommandManager : public QObject{
+    Q_OBJECT
 
-class ProgressBar;
+    public:
+    ModelCommandManager(QObject* aParent);
 
-// TODO: impolement a command factory that executes command in modelCommandManager
-class ImportGeometryCommand : public ModelCommand{
+    void executeCommand(ModelCommand* command);
+    void undo();
+    void redo();
 
-
-    public: 
-    
-    ImportGeometryCommand(std::shared_ptr<ModelInterface> aModelInterface,
-                          ProgressBar* aProgressBar,
-                          GeometrySignalSender* aSignalSender,
-                          const QString& aFilePath);
-
-    void execute() override;
-    void undo() override;
     private:
-    ProgressBar* _progressBar;
-    const QString _importedFilePath;
-    std::vector<int> _importedShapesTags;
-    GeometrySignalSender* _signalSender;
+
+    QStack<ModelCommand*> _undoStack;
+    QStack<ModelCommand*> _redoStack;
 };
 
 #endif

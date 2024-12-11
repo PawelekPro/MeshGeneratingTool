@@ -25,8 +25,7 @@
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
-	, _modelInterface(aModelInterface)
-	, _modelCommandManager(new ModelCommandManager()) {
+	, _modelInterface(aModelInterface) {
 
 	ui->setupUi(this);
 	// Set initial sizes of the splitter sections
@@ -41,7 +40,8 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->ui->ribbonBar->initialize();
 
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
-	_modelHandler = new ModelActionsHandler(_modelInterface, progressBar, _modelCommandManager, this);
+	_renderSignalSender = new RenderSignalSender(this);
+	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, progressBar, this);
 	this->connectModelToRenderWindow(_modelHandler, _renderSignalHandler);
 
 	this->progressBar = new ProgressBar(this);
@@ -116,8 +116,8 @@ void MainWindow::connectModelToRenderWindow(ModelActionsHandler* aModelHandler, 
 	// QObject::connect(geoActions, &GeometryActionsHandler::modifyShape,
 	//                  geoRender, &Rendering::GeometryRenderHandler::shapeModified);
 
-	QObject::connect(geoActions, &GeometryActionsHandler::addShapes,
-		geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
+	// QObject::connect(geoActions, &GeometryActionsHandler::addShapes,
+	//                  geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
 
 	// QObject::connect(geoActions, &GeometryActionsHandler::removeShapes,
 	//                  geoRender, &Rendering::GeometryRenderHandler::shapesRemoved);

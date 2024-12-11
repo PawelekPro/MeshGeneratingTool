@@ -19,15 +19,19 @@
 
 #include "ImportGeometryCommand.hpp"
 
-ImportGeometryCommand::ImportGeometryCommand(ModelInterface* aModelInterface, ProgressBar* aProgressBar, const QString& aFilePath) :
+ImportGeometryCommand::ImportGeometryCommand(std::shared_ptr<ModelInterface> aModelInterface,
+ ProgressBar* aProgressBar,
+ GeometrySignalSender* aSignalSender,
+ const QString& aFilePath) :
     ModelCommand(aModelInterface),
     _progressBar(aProgressBar),
+    _signalSender(aSignalSender),
     _importedFilePath(aFilePath){}
 
 void ImportGeometryCommand::execute(){
     
     _modelInterface->importSTEP(_importedFilePath, _progressBar);
-
+    emit _signalSender->addShape();
 
 }
 

@@ -17,29 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELCOMMANDMANAGER_HPP
-#define MODELCOMMANDMANAGER_HPP
+#ifndef GEOMETRYSIGNALSENDER_HPP
+#define GEOMETRYSIGNALSENDER_HPP
 
-#include <QStack>
-#include <QList>
+#include <QObject>
 
-#include "ModelCommand.hpp"
-
-class ModelCommandManager {
+class GeometrySignalSender : QObject{
+    Q_OBJECT
 
     public:
-    ModelCommandManager() = default;
-    ~ModelCommandManager();
-    ModelCommandManager(const ModelCommandManager& aOther) = delete;
+    GeometrySignalSender(QObject* aParent);
 
-    void executeCommand(ModelCommand* command);
-    void undo();
-    void redo();
+    signals:
 
-    private:
+    void addShape();
+    // void removeShape();
+    // void modifyShape();
 
-    QStack<ModelCommand*> _undoStack;
-    QStack<ModelCommand*> _redoStack;
+    // void addShapes();
+    // void removeShapes();
+    // void modifyShapes();
+
 };
+
 
 #endif

@@ -5,9 +5,6 @@ ADD_LIBRARY(ModelActionsHandler
   ModelActionsHandler.cpp
 )
 
-add_library(BaseActionsHandler
-  BaseActionsHandler.cpp
-)
 
 TARGET_LINK_LIBRARIES(ModelActionsHandler PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
@@ -16,17 +13,7 @@ TARGET_LINK_LIBRARIES(ModelActionsHandler PUBLIC
   ModelCommands
   GeometryActionsHandler
   MeshActionsHandler
-)
-
-TARGET_LINK_LIBRARIES(BaseActionsHandler PUBLIC
-  Qt${QT_VERSION_MAJOR}::Core
-  ModelInterface
-  ModelCommands
-  Utils
-)
-
-target_include_directories(BaseActionsHandler PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  RenderSignalSenders
 )
 
 target_include_directories(ModelActionsHandler PUBLIC
