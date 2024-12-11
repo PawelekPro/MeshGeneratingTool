@@ -23,17 +23,30 @@
 #include <QObject>
 #include <memory>
 
-#include "BaseActionsHandler.hpp"
+#include "MeshSignalSender.hpp"
 
-class MeshActionsHandler : public BaseActionsHandler {
+class ModelInterface;
+class ModelCommandManager;
+class ProgressBar;
+
+class MeshActionsHandler : public QObject {
     Q_OBJECT
 
 public:
 
     MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                       ProgressBar* aProgressBar, 
                        ModelCommandManager* aModelCommandManager,
+                       MeshSignalSender* aSignalSender,
+                       ProgressBar* aProgressBar, 
                        QObject* aParent);
+
+private:
+    std::shared_ptr<ModelInterface> _modelInterface;
+    
+    ModelCommandManager* _commandManager;
+    MeshSignalSender* _meshSignalSender;
+
+    ProgressBar* _progressBar;
 
 public slots:
     void meshSurface();

@@ -17,34 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ModelCommandManager.hpp"
+#include "RenderSignalSender.hpp"
 
-ModelCommandManager::ModelCommandManager(QObject* aParent) : QObject(aParent){}
-
-
-void ModelCommandManager::executeCommand(ModelCommand* command) {
-    if (!command) return;
-
-    command->execute();
-
-    _undoStack.push(command);
-    while (!_redoStack.isEmpty()) {
-        delete _redoStack.pop();
-    }
-}
-
-void ModelCommandManager::undo() {
-    if (_undoStack.isEmpty()) return;
-
-    ModelCommand* command = _undoStack.pop();
-    command->undo();
-    _redoStack.push(command);
-}
-
-void ModelCommandManager::redo() {
-    if (_redoStack.isEmpty()) return;
-    ModelCommand* command = _redoStack.pop();
-
-    command->execute();
-    _undoStack.push(command);
-}
+RenderSignalSender::RenderSignalSender(QObject* aParent) : QObject(aParent),
+                                        geometrySignals(new GeometrySignalSender(aParent)),
+                                        meshSignals(new MeshSignalSender(aParent))
+                                        {};

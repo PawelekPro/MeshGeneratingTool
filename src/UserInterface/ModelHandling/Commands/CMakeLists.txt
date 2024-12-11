@@ -9,8 +9,8 @@ TARGET_LINK_LIBRARIES(ModelCommands PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   ModelInterface
   GeometryCommands
-  # MeshCommands
   Utils
+  RenderSignalSenders
 )
 
 target_include_directories(ModelCommands PUBLIC

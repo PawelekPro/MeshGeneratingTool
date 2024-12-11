@@ -8,7 +8,6 @@ TARGET_LINK_LIBRARIES(MeshActionsHandler PUBLIC
     ModelCommands
     Utils
     ModelInterface
-    BaseActionsHandler
 )
 
 target_include_directories(MeshActionsHandler PUBLIC

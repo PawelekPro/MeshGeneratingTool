@@ -20,25 +20,40 @@
 #include "GeometryActionsHandler.hpp"
 #include "FileDialogUtils.hpp"
 #include "ModelInterface.hpp"
+#include "ImportGeometryCommand.hpp"
+#include "ModelCommandManager.hpp"
 
-GeometryActionsHandler::GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                                               ProgressBar* aProgressBar, 
-                                               ModelCommandManager* aModelCommandManager,
-                                               QObject* aParent) : 
-                                               BaseActionsHandler(aModelInterface, aProgressBar, aModelCommandManager, aParent){};
-
+GeometryActionsHandler::GeometryActionsHandler(
+    std::shared_ptr<ModelInterface> aModelInterface, 
+    ModelCommandManager* aModelCommandManager,
+    GeometrySignalSender* aSignalSender,
+    ProgressBar* aProgressBar, 
+    QObject* aParent
+    ) :
+    QObject(aParent),
+    _modelInterface(aModelInterface),
+    _commandManager(aModelCommandManager),
+    _geometrySignalSender(aSignalSender),
+    _progressBar(aProgressBar){};
+    
 void GeometryActionsHandler::importSTEP(){
     QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
-    _modelInterface->importSTEP(filePath, _progressBar);
+
+    ImportGeometryCommand* importCommand = new ImportGeometryCommand(
+        _modelInterface, 
+        _progressBar, 
+        _geometrySignalSender, 
+        filePath
+        );
+
+    _commandManager->executeCommand(importCommand);
 
     // TODO: addShapes should send only the new shapes ids
-    emit addShapes();
     return;
 }
 
 void GeometryActionsHandler::importSTL(){
     QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
     _modelInterface->importSTL(filePath, _progressBar);
-    emit addShapes();
     return;
 }
