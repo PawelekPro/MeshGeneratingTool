@@ -109,8 +109,7 @@ private:
 	 */
 	void initializeActions();
 
-
-	void connectModelToRenderWindow(ModelActionsHandler* aModelHandler, Rendering::RenderSignalHandler* aRenderHandler);
+	void connectModelToRenderWindow(RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler);
 
 private slots:
 	/**

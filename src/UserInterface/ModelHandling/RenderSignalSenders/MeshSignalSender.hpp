@@ -22,7 +22,7 @@
 
 #include <QObject>
 
-class MeshSignalSender : QObject{
+class MeshSignalSender : public QObject{
     Q_OBJECT
 
     public:
@@ -39,6 +39,5 @@ class MeshSignalSender : QObject{
     // void modifyShapes();
 
 };
-
 
 #endif
