@@ -22,7 +22,7 @@
 
 #include <QObject>
 
-class GeometrySignalSender : QObject{
+class GeometrySignalSender : public QObject{
     Q_OBJECT
 
     public:
@@ -30,11 +30,11 @@ class GeometrySignalSender : QObject{
 
     signals:
 
-    void addShape();
+    // void addShape();
     // void removeShape();
     // void modifyShape();
 
-    // void addShapes();
+    void addShapes();
     // void removeShapes();
     // void modifyShapes();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -18,8 +18,12 @@
  */
 
 #include "MainWindow.hpp"
-
 #include "./ui_MainWindow.h"
+
+#include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
+
+#include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
@@ -39,12 +43,13 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->QVTKRender->enableWaterMark();
 	this->ui->ribbonBar->initialize();
 
+	this->progressBar = new ProgressBar(this);
+
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_renderSignalSender = new RenderSignalSender(this);
 	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, progressBar, this);
-	this->connectModelToRenderWindow(_modelHandler, _renderSignalHandler);
+	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
 
-	this->progressBar = new ProgressBar(this);
 	this->ui->statusBar->addWidget(progressBar);
 
 	this->ui->treeWidget->setModelHandler(_modelHandler);
@@ -74,13 +79,10 @@ MainWindow::~MainWindow() {
 
 //----------------------------------------------------------------------------
 void MainWindow::setConnections() {
-	// connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
-	// 	FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTEP);
-	// });
 
-	// connect(ui->actionImportSTL, &QAction::triggered, [this]() {
-	// 	FileDialogUtils::executeWithFileSelection([this](const QString fname) { _modelInterface->importSTEP(fname, progressBar);}, "Import", FileDialogUtils::FilterSTL);
-	// });
+	connect(ui->actionImportSTEP, &QAction::triggered, _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
+
+	connect(ui->actionImportSTL, &QAction::triggered, _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
@@ -101,31 +103,14 @@ void MainWindow::setConnections() {
 }
 
 //----------------------------------------------------------------------------
-void MainWindow::connectModelToRenderWindow(ModelActionsHandler* aModelHandler, Rendering::RenderSignalHandler* aRenderHandler) {
+void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler) {
 	// TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
 	// TODO: Fun task - encapsulate the connections in a helper map/class/namespace
-	GeometryActionsHandler* geoActions = aModelHandler->_geometryHandler;
-	Rendering::GeometryRenderHandler* geoRender = aRenderHandler->geometry();
+	GeometrySignalSender* geoSender = aSignalSender->geometrySignals;
+	Rendering::GeometryRenderHandler* geoRender = aSignalHandler->geometry();
 
-	// QObject::connect(geoActions, &GeometryActionsHandler::addShape,
-	//                  geoRender, &Rendering::GeometryRenderHandler::shapeAdded);
-
-	// QObject::connect(geoActions, &GeometryActionsHandler::removeShape,
-	//                  geoRender, &Rendering::GeometryRenderHandler::shapeRemoved);
-
-	// QObject::connect(geoActions, &GeometryActionsHandler::modifyShape,
-	//                  geoRender, &Rendering::GeometryRenderHandler::shapeModified);
-
-	// QObject::connect(geoActions, &GeometryActionsHandler::addShapes,
-	//                  geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
-
-	// QObject::connect(geoActions, &GeometryActionsHandler::removeShapes,
-	//                  geoRender, &Rendering::GeometryRenderHandler::shapesRemoved);
-
-	// QObject::connect(geoActions, &GeometryActionsHandler::modifyShapes,
-	//                  geoRender, &Rendering::GeometryRenderHandler::shapesModified);
-
-	// MeshActionsHandler* meshHandler = aModelHandler->_meshHandler;
+	QObject::connect(geoSender, &GeometrySignalSender::addShapes,
+		geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
 }
 
 //----------------------------------------------------------------------------
@@ -142,7 +127,7 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 }
 
 void MainWindow::initializeActions() {
-	ui->actionImportSTEP->setEnabled(false);
+	// ui->actionImportSTEP->setEnabled(false);
 	ui->actionImportSTL->setEnabled(false);
 	ui->actionGenerateMesh->setEnabled(false);
 }

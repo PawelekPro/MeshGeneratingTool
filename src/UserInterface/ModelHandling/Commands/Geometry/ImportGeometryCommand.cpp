@@ -31,7 +31,7 @@ ImportGeometryCommand::ImportGeometryCommand(std::shared_ptr<ModelInterface> aMo
 void ImportGeometryCommand::execute(){
     
     _modelInterface->importSTEP(_importedFilePath, _progressBar);
-    emit _signalSender->addShape();
+    emit _signalSender->addShapes();
 
 }
 
