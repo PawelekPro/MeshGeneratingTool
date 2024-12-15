@@ -20,32 +20,40 @@
 #ifndef IMPORTGEOMETRYCOMMAND_HPP
 #define IMPORTGEOMETRYCOMMAND_HPP
 
-#include "ModelInterface.hpp"
-#include "ModelCommand.hpp"
-#include "GeometrySignalSender.hpp"
 
+#include "Command.hpp"
+
+#include <memory>
 #include <QString>
 
 class ProgressBar;
+class TreeStructure;
+class TreeItem;
+class ModelInterface;
+class GeometrySignalSender;
 
-// TODO: impolement a command factory that executes command in modelCommandManager
-class ImportGeometryCommand : public ModelCommand{
-
+// TODO: impolement a command factory that executes command in CommandManager
+class ImportGeometryCommand : public Command{
 
     public: 
-    
     ImportGeometryCommand(std::shared_ptr<ModelInterface> aModelInterface,
                           ProgressBar* aProgressBar,
                           GeometrySignalSender* aSignalSender,
+                          TreeStructure* aTreeStructure,
                           const QString& aFilePath);
 
     void execute() override;
     void undo() override;
+
     private:
     ProgressBar* _progressBar;
+    GeometrySignalSender* _signalSender;
+    TreeStructure* _treeStructure;
+    std::shared_ptr<ModelInterface> _modelInterface;
+
     const QString _importedFilePath;
     std::vector<int> _importedShapesTags;
-    GeometrySignalSender* _signalSender;
+    TreeItem* _treeItem;
 };
 
 #endif

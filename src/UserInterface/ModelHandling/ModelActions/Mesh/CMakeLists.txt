@@ -5,7 +5,7 @@ ADD_LIBRARY(MeshActionsHandler
 TARGET_LINK_LIBRARIES(MeshActionsHandler PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
-    ModelCommands
+    Commands
     Utils
     ModelInterface
 )

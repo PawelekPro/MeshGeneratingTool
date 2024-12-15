@@ -26,8 +26,9 @@
 #include "GeometrySignalSender.hpp"
 
 class ModelInterface;
-class ModelCommandManager;
+class CommandManager;
 class ProgressBar;
+class TreeStructure;
 
 class GeometryActionsHandler : public QObject{
     Q_OBJECT
@@ -35,20 +36,20 @@ class GeometryActionsHandler : public QObject{
     public:
 
     GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                           ModelCommandManager* aModelCommandManager,
+                           CommandManager* aCommandManager,
                            GeometrySignalSender* aGeometrySignalSender,
+                           TreeStructure* aTreeStructure,
                            ProgressBar* aProgressBar, 
                            QObject* aParent);
-
-
 
     private:
 
     std::shared_ptr<ModelInterface> _modelInterface;
     
-    ModelCommandManager* _commandManager;
+    CommandManager* _commandManager;
     GeometrySignalSender* _geometrySignalSender;
 
+    TreeStructure* _treeStructure;
     ProgressBar* _progressBar;
 
     public slots:

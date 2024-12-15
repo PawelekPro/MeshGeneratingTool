@@ -7,7 +7,8 @@ TARGET_LINK_LIBRARIES(GeometryCommands PUBLIC
     Qt${QT_VERSION_MAJOR}::Widgets
     Utils
     ModelInterface
-    ModelCommands
+    Commands
+    TreeStructure
 )
 
 target_include_directories(GeometryCommands PUBLIC

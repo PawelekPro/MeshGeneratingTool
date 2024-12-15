@@ -10,7 +10,7 @@ TARGET_LINK_LIBRARIES(ModelActionsHandler PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   Utils
   ModelInterface
-  ModelCommands
+  Commands
   GeometryActionsHandler
   MeshActionsHandler
   RenderSignalSenders

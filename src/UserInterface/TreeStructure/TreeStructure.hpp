@@ -43,13 +43,9 @@
 #include <vtkLogger.h>
 
 class TreeContextMenu;
-class AddTreeItemCommand;
-class RemoveTreeItemCommand;
-class TreeCommandManager;
 class TreeItemFactory;
 class TreeItem;
 
-namespace fs = std::filesystem;
 /**
  * Represents a custom tree structure widget for displaying hierarchical data.
  *
@@ -67,7 +63,11 @@ public:
 
 	void addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem);
 
-	void addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
+	TreeItem* addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
+	TreeItem* addImportSTEPItem(const QString& aFilePath);
+
+
+	void removeSubItem(TreeItem* itemToRemove);
 
 	/**
 	 * Remove QTreeWidgetItem from the TreeStructure
@@ -104,13 +104,6 @@ public:
 	
 private:
 
-	TreeItem* createSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
-    friend class AddTreeItemCommand;
-    friend class AddTreeItemCommand;
-
-	void removeSubItem(TreeItem* itemToRemove);
-    friend class RemoveTreeItemCommand;
-    friend class RemoveTreeItemCommand;
 
 	void deleteSubItem(TreeItem* itemToDelete);
 	/**
@@ -134,7 +127,6 @@ private:
 	// TreeCommandManager _commandManager;
 
 	std::unordered_map<ItemTypes::Root, TreeItem*> _rootItems;
-
 	std::unordered_map<ItemTypes::Sub, QList<TreeItem*>> _subItems;
 };
 

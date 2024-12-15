@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
+ * Copyright (C) 2024 Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,8 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TreeCommand.hpp"
-#include "TreeStructure.hpp"
-TreeCommand::TreeCommand(TreeStructure* aTreeStructure) : 
-                        _treeStructure(aTreeStructure)
-                        {}
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
+
+#include <memory>
+
+
+class Command{
+
+    friend class CommandManager;
+
+    public:
+
+    Command(){};
+    virtual ~Command() = default;
+
+    protected:
+
+    virtual void execute() = 0;
+    virtual void undo() = 0;
+
+};
+
+#endif

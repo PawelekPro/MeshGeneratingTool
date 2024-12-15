@@ -21,19 +21,21 @@
 #include "FileDialogUtils.hpp"
 #include "ModelInterface.hpp"
 #include "ImportGeometryCommand.hpp"
-#include "ModelCommandManager.hpp"
+#include "CommandManager.hpp"
 
 GeometryActionsHandler::GeometryActionsHandler(
     std::shared_ptr<ModelInterface> aModelInterface, 
-    ModelCommandManager* aModelCommandManager,
+    CommandManager* aCommandManager,
     GeometrySignalSender* aSignalSender,
+    TreeStructure* aTreeStructure,
     ProgressBar* aProgressBar, 
     QObject* aParent
     ) :
     QObject(aParent),
     _modelInterface(aModelInterface),
-    _commandManager(aModelCommandManager),
+    _commandManager(aCommandManager),
     _geometrySignalSender(aSignalSender),
+    _treeStructure(aTreeStructure),
     _progressBar(aProgressBar){};
     
 void GeometryActionsHandler::importSTEP(){
@@ -43,6 +45,7 @@ void GeometryActionsHandler::importSTEP(){
         _modelInterface, 
         _progressBar, 
         _geometrySignalSender, 
+        _treeStructure,
         filePath
         );
 

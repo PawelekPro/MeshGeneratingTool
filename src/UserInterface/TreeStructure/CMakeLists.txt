@@ -1,5 +1,4 @@
 ADD_SUBDIRECTORY(TreeItems)
-ADD_SUBDIRECTORY(TreeCommands)
 
 ADD_LIBRARY(TreeStructure 
   PropertiesModel.cpp
@@ -18,7 +17,6 @@ TARGET_LINK_LIBRARIES(TreeStructure PUBLIC
   Widgets
   Utils
   TreeItems
-  TreeCommands
   Document
   ModelActionsHandler
 )
