@@ -17,34 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ModelCommandManager.hpp"
+#ifndef COMMANDMANAGER_HPP
+#define COMMANDMANAGER_HPP
 
-ModelCommandManager::ModelCommandManager(QObject* aParent) : QObject(aParent){}
+#include <QStack>
+#include <QList>
+#include <QObject>
 
+#include "Command.hpp"
 
-void ModelCommandManager::executeCommand(ModelCommand* command) {
-    if (!command) return;
+class CommandManager : public QObject{
+    Q_OBJECT
 
-    command->execute();
+    public:
+    CommandManager(QObject* aParent);
 
-    _undoStack.push(command);
-    while (!_redoStack.isEmpty()) {
-        delete _redoStack.pop();
-    }
-}
+    void executeCommand(Command* command);
+    void undo();
+    void redo();
 
-void ModelCommandManager::undo() {
-    if (_undoStack.isEmpty()) return;
+    private:
 
-    ModelCommand* command = _undoStack.pop();
-    command->undo();
-    _redoStack.push(command);
-}
+    QStack<Command*> _undoStack;
+    QStack<Command*> _redoStack;
+};
 
-void ModelCommandManager::redo() {
-    if (_redoStack.isEmpty()) return;
-    ModelCommand* command = _redoStack.pop();
-
-    command->execute();
-    _undoStack.push(command);
-}
+#endif

@@ -45,6 +45,8 @@ class TreeItemFactory
         TreeItem* createSubItem( TreeItem* aParentItem,
                                  const ItemTypes::Sub  & aSubItemType );
 
+        TreeItem* createItemImportSTEP(const QString& aFilePath);
+
         QString getUniqueItemLabel( const ItemTypes::Sub & aSubType ) const;
 
     private:

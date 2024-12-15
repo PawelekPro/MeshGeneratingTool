@@ -18,24 +18,30 @@
  */
 
 #include "ImportGeometryCommand.hpp"
+#include "TreeStructure.hpp"
+#include "ModelInterface.hpp"
+#include "GeometrySignalSender.hpp"
 
 ImportGeometryCommand::ImportGeometryCommand(std::shared_ptr<ModelInterface> aModelInterface,
- ProgressBar* aProgressBar,
- GeometrySignalSender* aSignalSender,
- const QString& aFilePath) :
-    ModelCommand(aModelInterface),
+    ProgressBar* aProgressBar,
+    GeometrySignalSender* aSignalSender,
+    TreeStructure* aTreeStructure,
+    const QString& aFilePath) :
+    Command(),
     _progressBar(aProgressBar),
     _signalSender(aSignalSender),
-    _importedFilePath(aFilePath){}
+    _importedFilePath(aFilePath),
+    _treeStructure(aTreeStructure),
+    _modelInterface(aModelInterface){}
 
 void ImportGeometryCommand::execute(){
-    
     _modelInterface->importSTEP(_importedFilePath, _progressBar);
+    _treeItem = _treeStructure->addImportSTEPItem(_importedFilePath);    
     emit _signalSender->geometryImported();
-
 }
 
 void ImportGeometryCommand::undo(){
-
-
+    _treeStructure->removeSubItem(_treeItem);
+    delete _treeItem;
+    //TODO: remove shapes from geometry
 }

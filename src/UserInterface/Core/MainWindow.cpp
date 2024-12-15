@@ -48,7 +48,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_renderSignalSender = new RenderSignalSender(this);
-	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, progressBar, this);
+	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
 
  	this->ui->statusBar->addWidget(progressBar);
 

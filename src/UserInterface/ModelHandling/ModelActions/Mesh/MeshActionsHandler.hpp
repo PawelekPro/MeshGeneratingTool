@@ -26,8 +26,9 @@
 #include "MeshSignalSender.hpp"
 
 class ModelInterface;
-class ModelCommandManager;
+class CommandManager;
 class ProgressBar;
+class TreeStructure;
 
 class MeshActionsHandler : public QObject {
     Q_OBJECT
@@ -35,17 +36,19 @@ class MeshActionsHandler : public QObject {
 public:
 
     MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                       ModelCommandManager* aModelCommandManager,
+                       CommandManager* aCommandManager,
                        MeshSignalSender* aSignalSender,
+                       TreeStructure* aTreeStructure,
                        ProgressBar* aProgressBar, 
                        QObject* aParent);
 
 private:
     std::shared_ptr<ModelInterface> _modelInterface;
     
-    ModelCommandManager* _commandManager;
+    CommandManager* _commandManager;
     MeshSignalSender* _meshSignalSender;
 
+    TreeStructure* _treeStructure;
     ProgressBar* _progressBar;
 
 public slots:

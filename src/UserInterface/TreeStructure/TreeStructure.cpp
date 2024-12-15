@@ -18,7 +18,6 @@
  */
 
 #include "TreeStructure.hpp"
-#include "TreeCommandManager.hpp"
 #include "TreeItemFactory.hpp"
 #include "TreeItem.hpp"
 
@@ -69,21 +68,17 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-void TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType){
-	AddTreeItemCommand* addItemCommand = new AddTreeItemCommand(this, _treeItemFactory, aParentItem, aSubType);
-	TreeCommandManager _commandManager;
-	_commandManager.executeCommand(addItemCommand);
-}
-
-
-TreeItem* TreeStructure::createSubItem(TreeItem* aParentItem, const ItemTypes::Sub & aSubType)
-{
+TreeItem* TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType){
 	TreeItem* newItem = _treeItemFactory->createSubItem(aParentItem, aSubType);
 	_subItems[aSubType].append(newItem);
-
 	return newItem;
 }
 
+TreeItem* TreeStructure::addImportSTEPItem(const QString& aFilePath){
+	TreeItem* newItem = _treeItemFactory->createItemImportSTEP(aFilePath);
+	_subItems[ItemTypes::Geometry::ImportSTEP].append(newItem);
+	return newItem;
+}
 
 TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
 	TreeItem* it = _rootItems.at(aRootType);

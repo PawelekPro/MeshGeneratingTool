@@ -24,6 +24,14 @@
 TreeItemFactory::TreeItemFactory(TreeStructure* aTreeStructure) : 
                                  _treeStructure(aTreeStructure){};
 
+TreeItem* TreeItemFactory::createItemImportSTEP(const QString& aFilePath){
+    
+    TreeItem* geometryItem = _treeStructure->getRootItem(ItemTypes::Root::Geometry);
+    TreeItem* importItem = createSubItem(geometryItem, ItemTypes::Geometry::ImportSTEP);
+    QDomElement element = importItem->getElement();
+    DocumentHandler::setAttribute(element, "importFilePath", aFilePath);
+    return importItem;
+}
 
 TreeItem* TreeItemFactory::createRootItem (const ItemTypes::Root & aRootItemType) {
 
