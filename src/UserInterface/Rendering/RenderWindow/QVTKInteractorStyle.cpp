@@ -177,9 +177,9 @@ void QVTKInteractorStyle::createContextMenu() {
 		QObject::connect(_fitViewAction, &QAction::triggered,
 			[this]() { _qvtkRenderWindow->fitView(); });
 
-		_addSizingAction = new QAction("Add sizing", _contextMenu);
-		QObject::connect(_addSizingAction, &QAction::triggered, 
-			[this]() {_qvtkRenderWindow->model->addSizing(this->_selectedShapes);});
+		// _addSizingAction = new QAction("Add sizing", _contextMenu);
+		// QObject::connect(_addSizingAction, &QAction::triggered, 
+		// 	[this]() {_qvtkRenderWindow->model->addSizing(this->_selectedShapes);});
 
 		_contextMenu->addAction(_fitViewAction);
 		_contextMenu->addAction(_addSizingAction);

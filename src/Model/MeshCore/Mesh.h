@@ -44,7 +44,7 @@ namespace MeshCore{
 
             vtkSmartPointer<vtkPoints> getVtkPoints();
             vtkSmartPointer<vtkCellArray> getVtkCellArray(ElementType ElementType);
-            vtkSmartPointer<vtkActor> getMeshActor(){return this->_meshActor;};
+            vtkSmartPointer<vtkActor> getMeshActor() const {return this->_meshActor;};
         
         public slots:
             void setMaxElementSize(double maxSize);

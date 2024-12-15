@@ -18,6 +18,7 @@
  */
 
 #include "MeshActionsHandler.hpp"
+#include "ModelInterface.hpp"
 
 MeshActionsHandler::MeshActionsHandler(
     std::shared_ptr<ModelInterface> aModelInterface, 
@@ -33,8 +34,8 @@ MeshActionsHandler::MeshActionsHandler(
     _progressBar(aProgressBar){};
 
 void MeshActionsHandler::meshSurface(){
-    // _modelInterface->meshSurface();
-    //TODO: send signal to update the renderer
+    _modelInterface->meshSurface();
+    emit _meshSignalSender->meshGenerated();
     return;
 }
 

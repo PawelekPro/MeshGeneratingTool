@@ -28,10 +28,13 @@ class ModelInterface{
     public:
         ModelInterface(ModelManager& aModelManager);
 
+        void createNewModel(const QString& aNewModelName);
+
         int importSTEP(const QString& aFilePath,  QWidget* progressBar);
         int importSTL(const QString& aFilePath,  QWidget* progressBar);
 
-        void createNewModel(const QString& aNewModelName);
+        void meshSurface();
+        void meshVolume();
 
         const ModelDataView& modelDataView(){return _modelDataView;};
 
