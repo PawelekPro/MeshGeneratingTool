@@ -30,13 +30,7 @@ class MeshSignalSender : public QObject{
 
     signals:
 
-    void addShape();
-    // void removeShape();
-    // void modifyShape();
-
-    // void addShapes();
-    // void removeShapes();
-    // void modifyShapes();
+    void meshGenerated();
 
 };
 

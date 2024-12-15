@@ -54,3 +54,9 @@ int ModelDataView::getShapeTag(const TopoDS_Shape&) const {
 std::string ModelDataView::getShapeName(const TopoDS_Shape&) const {
     return "notImplementedYet";
 };
+
+vtkSmartPointer<vtkActor> ModelDataView::getMeshActor() const {
+    const Model& model =  _modelManager.getModel();
+    vtkSmartPointer<vtkActor> meshActor = model.mesh.getMeshActor();
+    return meshActor;
+}

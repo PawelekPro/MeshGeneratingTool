@@ -54,14 +54,14 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_renderSignalSender = new RenderSignalSender(this);
 	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, progressBar, this);
-	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
 
  	this->ui->statusBar->addWidget(progressBar);
 
 	this->ui->treeWidget->setModelHandler(_modelHandler);
 
-	this->setConnections();
-	this->initializeActions();
+	this->connectActionsToModel();
+	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
+
 
 	AppTheme& appTheme = AppTheme::getInstance();
 	appTheme.initializeAppStylesheet();
@@ -85,6 +85,7 @@ MainWindow::~MainWindow() {
 }
 
 //----------------------------------------------------------------------------
+<<<<<<< HEAD
 void MainWindow::setConnections() {
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -108,14 +109,20 @@ void MainWindow::setConnections() {
 	// });
 =======
 >>>>>>> 2314c08 ([WIP] working state of signal handler)
+=======
+void MainWindow::connectActionsToModel() {
+>>>>>>> 131b9f3 ([WIP] working import and showMesh toggle)
 
-	connect(ui->actionImportSTEP, &QAction::triggered, _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
+	connect(ui->actionImportSTEP, &QAction::triggered,
+	 _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
 
-	connect(ui->actionImportSTL, &QAction::triggered, _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
+	connect(ui->actionImportSTL, &QAction::triggered, 
+	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
 		
+<<<<<<< HEAD
 	// connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
 	// 	generateMesh();
 	// });
@@ -127,6 +134,12 @@ void MainWindow::setConnections() {
 			showGeometry();
 		}
 	});
+=======
+	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
+		_modelHandler->_meshHandler->meshSurface();
+		ui->actionShowMesh->setChecked(true);
+		});
+>>>>>>> 131b9f3 ([WIP] working import and showMesh toggle)
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
@@ -269,11 +282,25 @@ void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, R
 >>>>>>> 2314c08 ([WIP] working state of signal handler)
 	//TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
 	//TODO: Fun task - encapsulate the connections in a helper map/class/namespace 
-	GeometrySignalSender* geoSender = aSignalSender->geometrySignals;
+	GeometrySignalSender* geometrySignals = aSignalSender->geometrySignals;
 	Rendering::GeometryRenderHandler* geoRender = aSignalHandler->geometry();
 
-    QObject::connect(geoSender, &GeometrySignalSender::addShapes,
-                     geoRender, &Rendering::GeometryRenderHandler::shapesAdded);
+	MeshSignalSender* meshSignals = aSignalSender->meshSignals;
+	Rendering::MeshRenderHandler* meshRender = aSignalHandler->mesh();
+
+    QObject::connect(geometrySignals, &GeometrySignalSender::geometryImported,
+                     geoRender, &Rendering::GeometryRenderHandler::addAllShapesToRenderer);
+
+	QObject::connect(meshSignals, &MeshSignalSender::meshGenerated,
+					 meshRender, &Rendering::MeshRenderHandler::showMeshActor);
+
+    QObject::connect(ui->actionShowMesh, &QAction::toggled, [geoRender, meshRender](bool checked) {
+        if (checked) {
+            meshRender->showMeshActor();
+        } else {
+            geoRender->showExistingShapes();
+        }
+    });
 }
 
 //----------------------------------------------------------------------------
@@ -289,6 +316,7 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
 	// 	buttonGroup.id(button)));
 }
+<<<<<<< HEAD
 
 void MainWindow::initializeActions() {
 	// ui->actionImportSTEP->setEnabled(false);
@@ -307,6 +335,8 @@ void MainWindow::showGeometry() {
 	this->QVTKRender->RenderScene();
 }
 
+=======
+>>>>>>> 131b9f3 ([WIP] working import and showMesh toggle)
 //----------------------------------------------------------------------------
 void MainWindow::onItemSelectionChanged() {
 	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();

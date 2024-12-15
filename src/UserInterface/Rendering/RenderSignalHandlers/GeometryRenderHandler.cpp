@@ -26,11 +26,20 @@ namespace Rendering{
     GeometryRenderHandler::GeometryRenderHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent) : 
         BaseRenderHandler(aRenderWindow, aModelDataView, aParent){};
 
-    void GeometryRenderHandler::shapesAdded(){
+
+    void GeometryRenderHandler::addAllShapesToRenderer(){
         const PartsMap& shapesMap = _modelDataView.getPartsMap();
-        // TODO: clear renderer if we are readding all shapes, alternatively add only required shapes - shapesAdded should take ids as input
+        _renderWindow->clearRenderer();
         for (const auto shapePair : shapesMap){
             _renderWindow->addShapeToRenderer(shapePair.second);
-        } 
+        }
+    }
+
+    void GeometryRenderHandler::showExistingShapes(){
+        const PartsMap& shapesMap = _modelDataView.getPartsMap();
+        // TODO: clear renderer if we are readding all shapes, alternatively add only required shapes - shapesAdded should take ids as input
+        _renderWindow->clearRenderer();
+        _renderWindow->addPipelinesToRenderer();
+        _renderWindow->RenderScene();
     }
 }

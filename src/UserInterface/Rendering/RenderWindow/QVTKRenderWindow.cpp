@@ -156,15 +156,22 @@ void Rendering::QVTKRenderWindow::enableWaterMark() {
 
 //----------------------------------------------------------------------------
 void Rendering::QVTKRenderWindow::clearRenderer() {
-	this->_renderer->Clear();
-	this->_renderer->RemoveActor(this->model->getMeshActor());
 
 	NCollection_List<Handle(QIVtkSelectionPipeline)> pipelinesList
 		= _interactorStyle->getPipelines();
 	NCollection_List<Handle(QIVtkSelectionPipeline)>::Iterator pIt(pipelinesList);
 	for (; pIt.More(); pIt.Next()) {
 		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
-		pipeline->RemoveFromRenderer(_renderer);
+		if (pipeline) {
+			pipeline->RemoveFromRenderer(_renderer);
+        }
+	}
+
+	vtkActorCollection* actors = this->_renderer->GetActors();
+	actors->InitTraversal();
+	vtkActor* actor = nullptr;
+	while ((actor = actors->GetNextActor())) {
+		this->_renderer->RemoveActor(actor);
 	}
 }
 

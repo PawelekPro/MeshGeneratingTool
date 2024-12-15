@@ -44,7 +44,9 @@ namespace Rendering{
         // void shapeRemoved();
         // void shapeModified();
 
-        void shapesAdded();
+        void addAllShapesToRenderer();
+        void showExistingShapes();
+
         // void shapesRemoved();
         // void shapesModified();
 

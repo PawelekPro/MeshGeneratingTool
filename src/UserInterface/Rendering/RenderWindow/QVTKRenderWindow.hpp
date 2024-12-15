@@ -33,8 +33,6 @@ class QIVtkViewRepresentation;
 #include "QVTKInteractorStyle.hpp"
 >>>>>>> 4e969e1 ([WIP] added working render signal receiver):src/UserInterface/Rendering/RenderWindow/QVTKRenderWindow.hpp
 
-#include "Model.hpp"
-
 #include <algorithm>
 #include <array>
 #include <numeric>
@@ -148,6 +146,7 @@ public:
 
 	QIVtkViewRepresentation* getViewRepresentation();
 
+<<<<<<< HEAD
 	void setBackground(
 		vtkRenderer::GradientModes mode, const double* col1 = nullptr, const double* col2 = nullptr);
 	void setBackground(const double* col1 = nullptr);
@@ -155,6 +154,8 @@ public:
 public:
 	std::shared_ptr<Model> model;
 
+=======
+>>>>>>> 131b9f3 ([WIP] working import and showMesh toggle)
 private:
 	// ! Container widget
 	QPointer<QWidget> _widget;
