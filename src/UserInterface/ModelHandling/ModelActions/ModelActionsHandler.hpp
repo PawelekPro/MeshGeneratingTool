@@ -24,9 +24,10 @@
 #include <memory>
 
 class ModelInterface;
-class ModelCommandManager;
+class CommandManager;
 class RenderSignalSender;
 class ProgressBar;
+class TreeStructure;
 
 class MeshActionsHandler;
 class GeometryActionsHandler;
@@ -37,6 +38,7 @@ class ModelActionsHandler : public QObject {
     
     ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
                        RenderSignalSender* aSignalSender,
+                       TreeStructure* aTreeStructure,
                        ProgressBar* aProgressBar, 
                        QObject* aParent); 
 
@@ -50,8 +52,9 @@ class ModelActionsHandler : public QObject {
     std::shared_ptr<ModelInterface> _modelInterface;
 
     RenderSignalSender* _renderSignalSender;
-    ModelCommandManager* _commandManager;
+    CommandManager* _commandManager;
 
+    TreeStructure* _treeStructure;
     ProgressBar* _progressBar;
 };
 

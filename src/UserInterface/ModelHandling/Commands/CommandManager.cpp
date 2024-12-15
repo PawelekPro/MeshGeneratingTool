@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
+ * Copyright (C) 2024 Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,28 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TREECOMMAND_HPP
-#define TREECOMMAND_HPP
+#include "CommandManager.hpp"
 
-#include "DocItemTypes.hpp"
-#include "TreeItem.hpp"
+CommandManager::CommandManager(QObject* aParent) : QObject(aParent){}
 
-class TreeCommanManager;
-class TreeStructure;
-class TreeCommand{
 
-    friend class TreeCommandManager;
+void CommandManager::executeCommand(Command* command) {
+    if (!command) return;
 
-    public:
+    command->execute();
 
-    TreeCommand(TreeStructure* aTreeStructure);
+    _undoStack.push(command);
+    while (!_redoStack.isEmpty()) {
+        delete _redoStack.pop();
+    }
+}
 
-    protected:
+void CommandManager::undo() {
+    if (_undoStack.isEmpty()) return;
 
-    virtual void execute() = 0;
-    virtual void undo() = 0;
+    Command* command = _undoStack.pop();
+    command->undo();
+    _redoStack.push(command);
+}
 
-    TreeStructure* _treeStructure;
-};
+void CommandManager::redo() {
+    if (_redoStack.isEmpty()) return;
+    Command* command = _redoStack.pop();
 
-#endif
+    command->execute();
+    _undoStack.push(command);
+}

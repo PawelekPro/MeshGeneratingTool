@@ -22,15 +22,17 @@
 
 MeshActionsHandler::MeshActionsHandler(
     std::shared_ptr<ModelInterface> aModelInterface, 
-    ModelCommandManager* aModelCommandManager,
+    CommandManager* aCommandManager,
     MeshSignalSender* aSignalSender,
+    TreeStructure* aTreeStructure,
     ProgressBar* aProgressBar, 
     QObject* aParent
     ) :
     QObject(aParent),
     _modelInterface(aModelInterface),
-    _commandManager(aModelCommandManager),
+    _commandManager(aCommandManager),
     _meshSignalSender(aSignalSender),
+    _treeStructure(aTreeStructure),
     _progressBar(aProgressBar){};
 
 void MeshActionsHandler::meshSurface(){

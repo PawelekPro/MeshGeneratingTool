@@ -226,8 +226,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
+<<<<<<< HEAD
      <width>1107</width>
      <height>20</height>
+=======
+     <width>1046</width>
+     <height>32</height>
+>>>>>>> 5541a71 ([WIP] working command treeStructure integration)
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">

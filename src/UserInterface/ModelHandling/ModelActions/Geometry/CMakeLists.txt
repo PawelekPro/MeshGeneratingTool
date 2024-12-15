@@ -7,7 +7,7 @@ TARGET_LINK_LIBRARIES(GeometryActionsHandler PUBLIC
     Qt${QT_VERSION_MAJOR}::Widgets
     Utils
     ModelInterface
-    ModelCommands
+    Commands
     RenderSignalSenders
 )
 

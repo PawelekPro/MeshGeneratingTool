@@ -19,7 +19,7 @@
 
 #include "ModelActionsHandler.hpp"
 #include "ModelInterface.hpp"
-#include "ModelCommandManager.hpp"
+#include "CommandManager.hpp"
 
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
@@ -28,24 +28,28 @@
 ModelActionsHandler::ModelActionsHandler(
     std::shared_ptr<ModelInterface> aModelInterface, 
     RenderSignalSender* aSignalSender,
+    TreeStructure* aTreeStructure,
     ProgressBar* aProgressBar, 
     QObject* aParent
     ) :
     QObject(aParent),
     _modelInterface(aModelInterface),
-    _commandManager(new ModelCommandManager(this)),
+    _commandManager(new CommandManager(this)),
     _renderSignalSender(aSignalSender),
+    _treeStructure(aTreeStructure),
     _progressBar(aProgressBar)
     {
         _geometryHandler = new GeometryActionsHandler(aModelInterface,
         _commandManager,
         _renderSignalSender->geometrySignals,
+        _treeStructure,
         aProgressBar,
         aParent);
 
         _meshHandler = new MeshActionsHandler(aModelInterface,
         _commandManager,
         _renderSignalSender->meshSignals,
+        _treeStructure,
         aProgressBar,
         aParent);
     };
