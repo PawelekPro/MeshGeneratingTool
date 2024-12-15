@@ -27,8 +27,6 @@ class QIVtkViewRepresentation;
 #include "QIVtkViewRepresentation.hpp"
 #include "QVTKInteractorStyle.hpp"
 
-#include "Model.hpp"
-
 #include <algorithm>
 #include <array>
 #include <numeric>
@@ -142,9 +140,6 @@ public:
 
 
 	QIVtkViewRepresentation* getViewRepresentation();
-
-public:
-	std::shared_ptr<Model> model;
 
 private:
 	// ! Container widget

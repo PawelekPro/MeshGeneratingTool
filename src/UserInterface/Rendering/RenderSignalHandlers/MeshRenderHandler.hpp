@@ -39,6 +39,8 @@ class MeshRenderHandler : public BaseRenderHandler{
 
     public slots:
 
+    void showMeshActor();
+
     private slots:
 
 };

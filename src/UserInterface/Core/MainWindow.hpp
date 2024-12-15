@@ -60,16 +60,6 @@ public:
 	~MainWindow();
 
 	/**
-	 * @brief  Toggle mesh view on -> add Model mesh actor to renderer
-	 */
-	void showMesh();
-
-	/**
-	 * @brief  When mesh view is disabled -> add Model geometry actor to renderer
-	 */
-	void showGeometry();
-
-	/**
 	 * @brief  Get access to progress bar.
 	 *
 	 * @return {ProgressBar*}  : Progress bar instance.
@@ -98,7 +88,7 @@ private:
 	 * @brief Connect widgets to the methods.
 	 *
 	 */
-	void setConnections();
+	void connectActionsToModel();
 
 	// Push button group of the switch type
 	QButtonGroup buttonGroup;
@@ -107,8 +97,6 @@ private:
 	 * @brief  Set the initial state of the actions, ex. grey out imports unitl
 	 * model is created
 	 */
-	void initializeActions();
-
 	void connectModelToRenderWindow(RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler);
 
 private slots:

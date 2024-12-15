@@ -40,3 +40,13 @@ void ModelInterface::createNewModel(const QString& aNewModelName){
     _modelManager.createNewModel(aNewModelName);
     return;
 }
+
+void ModelInterface::meshSurface(){
+    Model& model = _modelManager.getModel();
+    model.meshSurface();
+};
+
+void ModelInterface::meshVolume(){
+    Model& model = _modelManager.getModel();
+    model.meshVolume();
+};

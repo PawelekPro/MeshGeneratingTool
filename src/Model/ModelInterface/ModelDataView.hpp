@@ -42,6 +42,8 @@ class ModelDataView{
         int getShapeTag(const TopoDS_Shape&) const;
         std::string getShapeName(const TopoDS_Shape&) const;
 
+        vtkSmartPointer<vtkActor> getMeshActor() const; 
+
     private:
         const ModelManager& _modelManager;
 };

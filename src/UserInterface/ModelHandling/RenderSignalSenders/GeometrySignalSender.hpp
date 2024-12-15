@@ -34,7 +34,7 @@ class GeometrySignalSender : public QObject{
     // void removeShape();
     // void modifyShape();
 
-    void addShapes();
+    void geometryImported();
     // void removeShapes();
     // void modifyShapes();
 

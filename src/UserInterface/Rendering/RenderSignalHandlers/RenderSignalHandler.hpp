@@ -36,7 +36,7 @@ class RenderSignalHandler : public QObject{
     ~RenderSignalHandler() = default;
 
 
-    // MeshRenderHandler* mesh(){return _meshRenderHandler;};
+    MeshRenderHandler* mesh(){return _meshRenderHandler;};
     GeometryRenderHandler* geometry(){return _geometryRenderHandler;};
 
     private:

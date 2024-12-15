@@ -24,4 +24,12 @@ namespace Rendering{
     MeshRenderHandler::MeshRenderHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent) : 
         BaseRenderHandler(aRenderWindow, aModelDataView, aParent){};
 
+    void MeshRenderHandler::showMeshActor(){
+        _renderWindow->clearRenderer();
+        vtkSmartPointer<vtkActor> meshActor = _modelDataView.getMeshActor();
+        if(meshActor){
+            _renderWindow->addActor(meshActor);
+            _renderWindow->RenderScene();
+        }
+    }
 }
