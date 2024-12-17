@@ -57,4 +57,5 @@ class GeometryActionsHandler : public QObject{
     void importSTL();
 
 };
+
 #endif

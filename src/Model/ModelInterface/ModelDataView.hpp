@@ -24,10 +24,11 @@
 
 class ModelDataView{
 
-    using ShapesTags = std::vector<int>; 
-    using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
-
     public:
+
+        using ShapesTags = std::vector<int>; 
+        using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
+        
         ModelDataView(const ModelManager& aModelManger);
         ~ModelDataView() = default;
 

@@ -18,6 +18,7 @@
  */
 
 #include "TreeItem.hpp"
+#include "DocumentHandler.hpp"
 
 TreeItem::TreeItem( QTreeWidget* aParent,
                             const QDomElement& aElement,
@@ -42,7 +43,10 @@ TreeItem::TreeItem( QTreeWidgetItem* aParent,
                             _isRoot(false)
                             {} 
 
-TreeItem::~TreeItem(){}
+TreeItem::~TreeItem(){
+    DocumentHandler& docHandler = DocumentHandler::getInstance();
+    docHandler.removeElement(_element);
+}
 
 // void TreeItem::setText(int column, const QString &text){
 //   QTreeWidgetItem::setText(column, text);

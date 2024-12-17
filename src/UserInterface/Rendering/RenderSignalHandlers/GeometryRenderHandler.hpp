@@ -49,7 +49,11 @@ namespace Rendering{
 
         // void shapesRemoved();
         // void shapesModified();
+        void selectedShapesRequested();
 
+        signals:
+        void sendSelectedShapes(const std::vector<int>& selectedShapes);
+ 
     };
 
 }

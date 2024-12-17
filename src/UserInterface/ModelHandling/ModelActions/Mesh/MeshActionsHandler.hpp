@@ -23,7 +23,7 @@
 #include <QObject>
 #include <memory>
 
-#include "MeshSignalSender.hpp"
+#include "RenderSignalSender.hpp"
 
 class ModelInterface;
 class CommandManager;
@@ -37,7 +37,7 @@ public:
 
     MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
                        CommandManager* aCommandManager,
-                       MeshSignalSender* aSignalSender,
+                       RenderSignalSender* aSignalSender,
                        TreeStructure* aTreeStructure,
                        ProgressBar* aProgressBar, 
                        QObject* aParent);
@@ -46,7 +46,7 @@ private:
     std::shared_ptr<ModelInterface> _modelInterface;
     
     CommandManager* _commandManager;
-    MeshSignalSender* _meshSignalSender;
+    RenderSignalSender* _signalSender;
 
     TreeStructure* _treeStructure;
     ProgressBar* _progressBar;
@@ -54,6 +54,9 @@ private:
 public slots:
     void meshSurface();
     void meshVolume();
+
+    void addSizingToSelectedShapes();
+    void addSizingToShapes(const std::vector<int>& aShapesIds);
 
 };
 

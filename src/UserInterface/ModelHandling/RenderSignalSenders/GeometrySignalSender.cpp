@@ -20,3 +20,12 @@
 #include "GeometrySignalSender.hpp"
 
 GeometrySignalSender::GeometrySignalSender(QObject* aParent) : QObject(aParent){};
+
+void GeometrySignalSender::receiveSelectedShapes(const std::vector<int>& aSelectedShapes) {
+    _selectedShapes = aSelectedShapes;
+}
+
+const std::vector<int>& GeometrySignalSender::getSelectedShapes(){
+    emit requestSelectedShapes();
+    return _selectedShapes;
+}

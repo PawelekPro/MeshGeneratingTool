@@ -65,7 +65,7 @@ public:
 
 	TreeItem* addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
 	TreeItem* addImportSTEPItem(const QString& aFilePath);
-
+	TreeItem* addElementSizingItem(const std::vector<int>& aShapesTags);
 
 	void removeSubItem(TreeItem* itemToRemove);
 
