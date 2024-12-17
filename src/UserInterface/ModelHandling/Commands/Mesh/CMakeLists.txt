@@ -1,14 +1,16 @@
-# ADD_LIBRARY(MeshCommands
-#   MeshActionsHandler.cpp
-# )
+add_library(MeshCommands
+  AddSizingCommand.cpp
+)
 
-# TARGET_LINK_LIBRARIES(MeshActionsHandler PUBLIC
-#     Qt${QT_VERSION_MAJOR}::Core
-#     Qt${QT_VERSION_MAJOR}::Widgets
-#     Utils
-#     ModelInterface
-# )
+target_link_libraries(MeshCommands PUBLIC
+    Qt${QT_VERSION_MAJOR}::Core
+    Utils
+    Document
+    TreeStructure
+    Commands
+    RenderSignalSenders
+)
 
-# target_include_directories(MeshActionsHandler PUBLIC
-#   ${CMAKE_CURRENT_SOURCE_DIR}
-# )
+target_include_directories(MeshCommands PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)

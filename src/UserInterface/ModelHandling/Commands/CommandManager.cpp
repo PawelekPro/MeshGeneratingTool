@@ -21,6 +21,14 @@
 
 CommandManager::CommandManager(QObject* aParent) : QObject(aParent){}
 
+CommandManager::~CommandManager() {
+    while (!_undoStack.isEmpty()) {
+        delete _undoStack.pop();
+    }
+    while (!_redoStack.isEmpty()) {
+        delete _redoStack.pop();
+    }
+}
 
 void CommandManager::executeCommand(Command* command) {
     if (!command) return;

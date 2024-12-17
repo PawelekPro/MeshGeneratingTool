@@ -80,6 +80,12 @@ TreeItem* TreeStructure::addImportSTEPItem(const QString& aFilePath){
 	return newItem;
 }
 
+TreeItem* TreeStructure::addElementSizingItem(const std::vector<int>& aShapesTags){
+	TreeItem* newItem = _treeItemFactory->createItemElementSizing(aShapesTags);
+	_subItems[ItemTypes::Mesh::ElementSizing].append(newItem);
+	return newItem;
+}
+
 TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
 	TreeItem* it = _rootItems.at(aRootType);
 	return _rootItems.at(aRootType);

@@ -33,7 +33,6 @@ QDomElement DocumentHandler::createRootElement( const ItemTypes::Root& rootType)
     
     QString rootTagLabel = ItemTypes::label(rootType);
     QDomElement rootElement = this->_domDocument.createElement(rootTagLabel);
-    
     rapidjson::Document rootDocument = JsonParser::initJsonDocument(
         AppInfo::getInstance().getRootItemsSetupPath());
 
@@ -62,8 +61,16 @@ QDomElement DocumentHandler::createSubElement(const ItemTypes::Sub& subType,
     QDomElement element = this->_domDocument.createElement(subTagLabel);
     addPropertiesToElement(element, properties);
     parentElement.appendChild(element);
-    
     return element;
+}
+
+void DocumentHandler::removeElement(QDomElement& aElementToRemove){
+    QDomNode parentNode = aElementToRemove.parentNode();
+    if(parentNode.isElement()){
+        QDomElement parentElement = parentNode.toElement();
+        parentElement.removeChild(aElementToRemove);
+        return;
+    }
 }
 
 void DocumentHandler::addTextNode(QDomElement& aElement, const QString& aValue){
@@ -169,4 +176,18 @@ QDomElement DocumentHandler::findSubElement(const QDomElement& aElement, const Q
     }
     qWarning() << "Could not find element with tag: " << aSearchedTag;
     return QDomElement();
+}
+
+QString DocumentHandler::intsToString(const std::vector<int> aIntsVec){
+    if (aIntsVec.empty()) {
+        return QString();
+    }
+    std::vector<QString> stringVec(aIntsVec.size());
+    std::transform(aIntsVec.begin(), aIntsVec.end(), stringVec.begin(),
+                   [](int value) { return QString::number(value); });
+
+    QString result = std::accumulate(stringVec.begin() + 1, stringVec.end(), stringVec[0],
+                                     [](const QString& a, const QString& b) { return a + ", " + b; });
+
+    return result;
 }

@@ -31,6 +31,7 @@ class CommandManager : public QObject{
 
     public:
     CommandManager(QObject* aParent);
+    ~CommandManager();
 
     void executeCommand(Command* command);
     void undo();

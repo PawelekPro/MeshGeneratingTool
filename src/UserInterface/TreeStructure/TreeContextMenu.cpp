@@ -21,6 +21,7 @@
 #include "TreeStructure.hpp"
 #include "TreeItem.hpp"
 
+#include "MeshActionsHandler.hpp"
 #include "GeometryActionsHandler.hpp"
 
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
@@ -96,8 +97,8 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu){
 		genereateMeshAction = new QAction(_treeStructure);
 		meshActions.append(genereateMeshAction);
 
-		// connect(genereateMeshAction, &QAction::triggered, _treeStructure->meshHandler(),
-		// 		&MeshActionHandler::meshSurface);
+		connect(genereateMeshAction, &QAction::triggered, _treeStructure->meshHandler(),
+				&MeshActionsHandler::meshSurface);
 
 		ItemTypes::Sub sizingType{ItemTypes::Mesh::ElementSizing};
 		QString label = ItemTypes::label(sizingType);
@@ -105,10 +106,8 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu){
 		addSizingAction = new QAction(label, _treeStructure);
 		meshActions.append(addSizingAction);
 
-		connect(addSizingAction, &QAction::triggered, _treeStructure,
-			[this, sizingType]() { 
-				_treeStructure->addSubItem(_selectedItem, sizingType);
-			});
+		connect(addSizingAction, &QAction::triggered, _treeStructure->meshHandler(),
+		&MeshActionsHandler::addSizingToSelectedShapes);
 	}
 	aContextMenu->addActions(meshActions);
 }

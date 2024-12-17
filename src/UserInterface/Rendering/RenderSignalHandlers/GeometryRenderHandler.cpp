@@ -42,4 +42,17 @@ namespace Rendering{
         _renderWindow->addPipelinesToRenderer();
         _renderWindow->RenderScene();
     }
+
+    void GeometryRenderHandler::selectedShapesRequested(){
+        const std::vector<std::reference_wrapper<const TopoDS_Shape>>& selectedShapes =  
+            _renderWindow->getInteractorStyle()->getSelectedShapes();
+        std::vector<int> shapesTags(selectedShapes.size());
+        std::transform(selectedShapes.begin(), selectedShapes.end(), shapesTags.begin(),
+            [this](const std::reference_wrapper<const TopoDS_Shape>& shape) {
+                return _modelDataView.getShapeTag(shape.get());
+        });
+
+        emit sendSelectedShapes(shapesTags);
+    };
+
 }
