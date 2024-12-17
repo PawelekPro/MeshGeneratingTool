@@ -33,6 +33,19 @@ TreeItem* TreeItemFactory::createItemImportSTEP(const QString& aFilePath){
     return importItem;
 }
 
+TreeItem* TreeItemFactory::createItemElementSizing(const std::vector<int>& aShapesTags){
+    TreeItem* meshItem = _treeStructure->getRootItem(ItemTypes::Root::Mesh);
+    TreeItem* sizingItem = createSubItem(meshItem, ItemTypes::Mesh::ElementSizing);
+    QDomElement element = meshItem->getElement();
+    QString shapesTagsString = DocumentHandler::intsToString(aShapesTags);
+
+    DocumentHandler& docHandler = DocumentHandler::getInstance();
+    QDomElement selectedTagsProperty = 
+        docHandler.getProperty(docHandler.getProperties(element),  "selectedTags");
+    selectedTagsProperty.setNodeValue(shapesTagsString);
+    return sizingItem;
+}
+
 TreeItem* TreeItemFactory::createRootItem (const ItemTypes::Root & aRootItemType) {
 
     DocumentHandler& docHandler = DocumentHandler::getInstance();

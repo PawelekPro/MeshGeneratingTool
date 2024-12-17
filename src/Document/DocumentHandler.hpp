@@ -46,6 +46,8 @@ public:
     QDomElement createRootElement(const ItemTypes::Root& rootType);
     QDomElement createSubElement(const ItemTypes::Sub& rootType, QDomElement& parentElement);
 
+    void removeElement(QDomElement& elementToRemove);
+
     QList<QDomElement> getElementsByType(const ItemTypes::Sub& subType) const;
     QDomElement getRootElement(const ItemTypes::Root& rootTag) const;
 
@@ -56,7 +58,10 @@ public:
 
     static QString getPropertyValue(const QDomElement& aPropertyElement, const QString& aPropName);
     static QString getAttribute(const QDomElement& aPropertyElement, const QString& aAttributeName);
-    static void setAttribute(QDomElement& aElement, const QString& aAttributeName, const QString& aNewValue);
+    static void setAttribute(QDomElement& aPropertyElement, const QString& aAttributeName, const QString& aNewValue);
+
+    //TODO: add some docUtils in DocumentUtils and move such methods there
+    static QString intsToString(const std::vector<int> aIntVec);
 
 private:
 

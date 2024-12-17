@@ -301,6 +301,12 @@ void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, R
             geoRender->showExistingShapes();
         }
     });
+
+	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectedShapes,
+					 geoRender, &Rendering::GeometryRenderHandler::selectedShapesRequested);
+
+	QObject::connect( geoRender, &Rendering::GeometryRenderHandler::sendSelectedShapes,
+					  geometrySignals, &GeometrySignalSender::receiveSelectedShapes);
 }
 
 //----------------------------------------------------------------------------

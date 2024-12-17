@@ -1,5 +1,5 @@
 {
-    "MeshSizing": {
+    "ElementSizing": {
         "Properties": [
             {
                 "name": "selectionScope",
@@ -27,7 +27,7 @@
             {
                 "name": "selectedTags",
                 "hidden": "yes",
-                "value": 0
+                "value": ""
             }
         ]
     },

@@ -48,7 +48,7 @@ ModelActionsHandler::ModelActionsHandler(
 
         _meshHandler = new MeshActionsHandler(aModelInterface,
         _commandManager,
-        _renderSignalSender->meshSignals,
+        _renderSignalSender,
         _treeStructure,
         aProgressBar,
         aParent);

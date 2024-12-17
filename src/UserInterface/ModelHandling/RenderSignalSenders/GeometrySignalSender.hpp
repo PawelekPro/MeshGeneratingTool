@@ -27,6 +27,7 @@ class GeometrySignalSender : public QObject{
 
     public:
     GeometrySignalSender(QObject* aParent);
+    const std::vector<int>& getSelectedShapes();
 
     signals:
 
@@ -38,6 +39,14 @@ class GeometrySignalSender : public QObject{
     // void removeShapes();
     // void modifyShapes();
 
+    void requestSelectedShapes();
+
+    public slots:
+
+    void receiveSelectedShapes(const std::vector<int>& aSelectedShapes);
+
+    private:
+    std::vector<int> _selectedShapes;
 };
 
 
