@@ -22,12 +22,24 @@
 
 #include <QObject>
 
+//TODO: maybe replace this with custom enum so that we do not have to link occ everywhere
+#include "IVtk_Types.hxx"
+
 class GeometrySignalSender : public QObject{
     Q_OBJECT
 
     public:
+
+    enum class RenderSelectionType{
+        Vertex,
+        Edge,
+        Face,
+        Volume
+    };
+
     GeometrySignalSender(QObject* aParent);
     const std::vector<int>& getSelectedShapes();
+    const IVtk_SelectionMode& getSelectionType();
 
     signals:
 
@@ -40,13 +52,18 @@ class GeometrySignalSender : public QObject{
     // void modifyShapes();
 
     void requestSelectedShapes();
+    void requestSelectionType();
 
     public slots:
 
     void receiveSelectedShapes(const std::vector<int>& aSelectedShapes);
+    void receiveSelectionType(const IVtk_SelectionMode& aSelectionType);
 
     private:
+
     std::vector<int> _selectedShapes;
+    IVtk_SelectionMode _selectionType;
+
 };
 
 
