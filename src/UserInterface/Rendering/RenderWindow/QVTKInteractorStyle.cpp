@@ -163,6 +163,10 @@ void QVTKInteractorStyle::setSelectionMode(
 	_currentSelection = mode;
 }
 
+IVtk_SelectionMode QVTKInteractorStyle::getSelectionMode(){
+	return _currentSelection;
+}
+
 //----------------------------------------------------------------------------
 void QVTKInteractorStyle::createContextMenu() {
 	if (!_contextMenu) {

@@ -33,16 +33,54 @@ TreeItem* TreeItemFactory::createItemImportSTEP(const QString& aFilePath){
     return importItem;
 }
 
-TreeItem* TreeItemFactory::createItemElementSizing(const std::vector<int>& aShapesTags){
+TreeItem* TreeItemFactory::createItemElementSizing(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType){
     TreeItem* meshItem = _treeStructure->getRootItem(ItemTypes::Root::Mesh);
     TreeItem* sizingItem = createSubItem(meshItem, ItemTypes::Mesh::ElementSizing);
-    QDomElement element = meshItem->getElement();
+    QDomElement element = sizingItem->getElement();
     QString shapesTagsString = DocumentHandler::intsToString(aShapesTags);
 
+    //TODO: add some doc handler setPropertyValue that would set the text node
     DocumentHandler& docHandler = DocumentHandler::getInstance();
     QDomElement selectedTagsProperty = 
         docHandler.getProperty(docHandler.getProperties(element),  "selectedTags");
-    selectedTagsProperty.setNodeValue(shapesTagsString);
+    QDomNode textNode = selectedTagsProperty.firstChild();
+
+    if (!textNode.isNull() && textNode.isText()) {
+        textNode.setNodeValue(shapesTagsString);
+    }
+
+    QString selectionTypeString;
+    switch(aSelectionType){
+        case SM_Shape: {
+            selectionTypeString = "Shape";
+            break;
+        }
+        case SM_Vertex: {
+            selectionTypeString = "Vertex";
+            break;
+        }
+        case SM_Edge: {
+            selectionTypeString = "Edge";
+            break;
+        }
+        case SM_Face: {
+            selectionTypeString = "Face";
+            break;
+        }
+        default: {
+            selectionTypeString = "Unknown";
+            break;
+        }
+    }
+
+    QDomElement selectionTypeProperty = 
+        docHandler.getProperty(docHandler.getProperties(element),  "selectionType");
+    QDomNode typTextNode = selectionTypeProperty.firstChild();
+
+    if (!typTextNode.isNull() && typTextNode.isText()) {
+        typTextNode.setNodeValue(selectionTypeString);
+    }
+
     return sizingItem;
 }
 

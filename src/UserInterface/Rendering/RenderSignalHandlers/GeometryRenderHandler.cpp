@@ -55,4 +55,9 @@ namespace Rendering{
         emit sendSelectedShapes(shapesTags);
     };
 
+    void GeometryRenderHandler::selectionTypeRequested(){
+        IVtk_SelectionMode selectionMode =  
+            _renderWindow->getInteractorStyle()->getSelectionMode();
+        emit sendSelctionType(selectionMode);
+    };
 }

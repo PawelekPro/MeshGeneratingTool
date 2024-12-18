@@ -31,7 +31,9 @@ AddSizingCommand::AddSizingCommand( GeometrySignalSender* aSignalSender,
 
 void AddSizingCommand::execute(){
     std::vector<int> shapesTags = _signalSender->getSelectedShapes();
-    _treeItem = _treeStructure->addElementSizingItem(shapesTags);
+    IVtk_SelectionMode selectionType = _signalSender->getSelectionType();
+
+    _treeItem = _treeStructure->addElementSizingItem(shapesTags, selectionType);
 }
 
 void AddSizingCommand::undo(){

@@ -29,3 +29,12 @@ const std::vector<int>& GeometrySignalSender::getSelectedShapes(){
     emit requestSelectedShapes();
     return _selectedShapes;
 }
+
+void GeometrySignalSender::receiveSelectionType(const IVtk_SelectionMode& aSelectionType) {
+    _selectionType = aSelectionType;
+}
+
+const IVtk_SelectionMode& GeometrySignalSender::getSelectionType(){
+    emit requestSelectionType();
+    return _selectionType;
+}

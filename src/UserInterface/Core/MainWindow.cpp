@@ -307,6 +307,13 @@ void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, R
 
 	QObject::connect( geoRender, &Rendering::GeometryRenderHandler::sendSelectedShapes,
 					  geometrySignals, &GeometrySignalSender::receiveSelectedShapes);
+
+	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectionType,
+					 geoRender, &Rendering::GeometryRenderHandler::selectionTypeRequested);
+
+	QObject::connect( geoRender, &Rendering::GeometryRenderHandler::sendSelctionType,
+					  geometrySignals, &GeometrySignalSender::receiveSelectionType);
+
 }
 
 //----------------------------------------------------------------------------
