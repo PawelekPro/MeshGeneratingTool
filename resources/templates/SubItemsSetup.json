@@ -2,15 +2,15 @@
     "ElementSizing": {
         "Properties": [
             {
-                "name": "selectionScope",
-                "label": "Selection scope",
+                "name": "selectionType",
+                "label": "Selection type",
                 "hidden": "no",
                 "widget": "ComboBoxWidget",
                 "model": "EntitySelection",
-                "value": "0"
+                "value": ""
             },
             {
-                "name": "entitySelected",
+                "name": "selectedTags",
                 "label": "Selected entities",
                 "hidden": "no",
                 "widget": "EntityPickWidget",
@@ -23,11 +23,6 @@
                 "widget": "DoubleLineWidget",
                 "value": 1,
                 "unit": "unit"
-            },
-            {
-                "name": "selectedTags",
-                "hidden": "yes",
-                "value": ""
             }
         ]
     },

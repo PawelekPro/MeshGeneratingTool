@@ -66,7 +66,7 @@ public:
 private:
 
     DocumentHandler();
-    ~DocumentHandler();
+    ~DocumentHandler() = default;
 
     QDomDocument _domDocument;
     QDomElement _appRootElement;

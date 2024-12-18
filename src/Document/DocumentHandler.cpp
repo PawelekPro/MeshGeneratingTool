@@ -9,9 +9,6 @@ DocumentHandler::DocumentHandler(){
 
 	this->_domDocument.appendChild(this->_appRootElement);
 }
-DocumentHandler::~DocumentHandler(){
-    writeDocToXML("testPath.xml");
-}
 
 void DocumentHandler::writeDocToXML(const std::string& savePath) const {
     QFile file(QString::fromStdString(savePath));
@@ -132,7 +129,8 @@ QDomElement DocumentHandler::getProperty(const QDomElement& aPropertiesElement, 
     for (int i = 0; i < propertyNodes.count(); ++i) {
         QDomElement propertyElement = propertyNodes.at(i).toElement();
         if (!propertyElement.isNull() && propertyElement.hasAttribute("name")) {
-            if (propertyElement.attribute("name") == aPropName) {
+            QString propertyName = propertyElement.attribute("name");
+            if (propertyName == aPropName) {
                 return propertyElement;
             }
         }

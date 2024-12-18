@@ -41,6 +41,7 @@
 #include <QtXml/QDomElement>
 
 #include <vtkLogger.h>
+#include "IVtk_Types.hxx"
 
 class TreeContextMenu;
 class TreeItemFactory;
@@ -65,7 +66,7 @@ public:
 
 	TreeItem* addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType);
 	TreeItem* addImportSTEPItem(const QString& aFilePath);
-	TreeItem* addElementSizingItem(const std::vector<int>& aShapesTags);
+	TreeItem* addElementSizingItem(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType);
 
 	void removeSubItem(TreeItem* itemToRemove);
 

@@ -24,7 +24,6 @@
 
 #include "BaseRenderHandler.hpp"
 
-
 namespace Rendering{
     class RenderSignalHandler;
 
@@ -50,8 +49,12 @@ namespace Rendering{
         // void shapesRemoved();
         // void shapesModified();
         void selectedShapesRequested();
+        void selectionTypeRequested();
 
         signals:
+        //TODO: implement class like RenderStateView in ModelHandling so that all signals go only there, to centralized
+        // storage. Now signals are send directly to ui which will result in multiple widgets receiving unnecessary signals
+        void sendSelctionType(const IVtk_SelectionMode& aSelectionType);
         void sendSelectedShapes(const std::vector<int>& selectedShapes);
  
     };

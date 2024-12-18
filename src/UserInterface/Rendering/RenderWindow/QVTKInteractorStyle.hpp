@@ -120,6 +120,11 @@ public:
 	void setSelectionMode(IVtk_SelectionMode);
 
 	/**
+	 * @brief Returns the selection mode for the interactor style.
+	 */
+	IVtk_SelectionMode getSelectionMode();
+
+	/**
 	 * @brief Gets the size of the pipelines map.
 	 * @return The number of pipelines in the map.
 	 */

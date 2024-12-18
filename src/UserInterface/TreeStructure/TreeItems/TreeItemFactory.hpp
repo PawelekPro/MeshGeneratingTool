@@ -26,6 +26,7 @@
 #include "TreeItem.hpp"
 #include "DocItemTypes.hpp"
 #include "DocumentHandler.hpp"
+#include "IVtk_Types.hxx"
 
 #include <QtXml/QDomElement>
 #include <map>  
@@ -46,7 +47,7 @@ class TreeItemFactory
                                  const ItemTypes::Sub  & aSubItemType );
 
         TreeItem* createItemImportSTEP(const QString& aFilePath);
-        TreeItem* createItemElementSizing(const std::vector<int>& aShapesTags);
+        TreeItem* createItemElementSizing(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType);
 
         QString getUniqueItemLabel( const ItemTypes::Sub & aSubType ) const;
 

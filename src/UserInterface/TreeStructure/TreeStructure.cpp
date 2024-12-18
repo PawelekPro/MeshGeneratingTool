@@ -63,6 +63,8 @@ TreeStructure::~TreeStructure() {
 	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
 	
+	DocumentHandler::getInstance().writeDocToXML("testRootCreation.xml");
+
 	delete _contextMenu;
 	delete _treeItemFactory;
 }
@@ -80,8 +82,8 @@ TreeItem* TreeStructure::addImportSTEPItem(const QString& aFilePath){
 	return newItem;
 }
 
-TreeItem* TreeStructure::addElementSizingItem(const std::vector<int>& aShapesTags){
-	TreeItem* newItem = _treeItemFactory->createItemElementSizing(aShapesTags);
+TreeItem* TreeStructure::addElementSizingItem(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType){
+	TreeItem* newItem = _treeItemFactory->createItemElementSizing(aShapesTags, aSelectionType);
 	_subItems[ItemTypes::Mesh::ElementSizing].append(newItem);
 	return newItem;
 }
