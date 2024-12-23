@@ -21,7 +21,6 @@
 #define ENTITYPICKWIDHET_HPP
 
 #include "BaseWidget.hpp"
-#include "PropertiesModel.hpp"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -30,10 +29,13 @@
 #include <QString>
 #include <QWidget>
 
+class GeometrySignalSender;
+class PropertiesModel;
+
 class EntityPickWidget : public BaseWidget {
 	Q_OBJECT
 public:
-	explicit EntityPickWidget(QWidget* parent = nullptr);
+	explicit EntityPickWidget(QWidget* parent);
 	~EntityPickWidget();
 
 	void setIndex(const QModelIndex& index) override;
@@ -42,12 +44,12 @@ public:
 private:
 	void updateAppearance();
 
-
 	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
 	bool _selected;
-
+	PropertiesModel* _propModel;
+	GeometrySignalSender* _signalSender;
 	// button width in pixels
 	static const int buttonWidth = 60;
 
@@ -58,6 +60,9 @@ signals:
 	void confirmed(const QString& selection);
 
 private slots:
+
+
+
 	void confirmSelection();
 	void updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags);
 };

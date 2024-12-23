@@ -4,7 +4,7 @@ GeometryCore::TagMap::TagMap() {
     std::fill(_maxEntityTags.begin(), _maxEntityTags.end(), 0);
 }
 
-int GeometryCore::TagMap::getMaxTag(EntityType type){
+int GeometryCore::TagMap::getMaxTag(EntityType type) const {
     return this->_maxEntityTags.at(static_cast<int>(type));
 }
 void GeometryCore::TagMap::setMaxTag(EntityType type, int tag){
@@ -50,22 +50,63 @@ void GeometryCore::TagMap::tagShape(const TopoDS_Solid& shape){
         this->_solidTagMap.Bind(shape, tag);
     }
 }
-const int& GeometryCore::TagMap::getTag(const TopoDS_Vertex& shape){
-    if (_vertexTagMap.IsBound(shape)){
-        return this->_vertexTagMap.Find(shape);
-    }else{
-        std::cout<<"Vertex not bound!";
+
+int GeometryCore::TagMap::getTag(const TopoDS_Shape& aShape) const {
+    const TopAbs_ShapeEnum shapeType = aShape.ShapeType();
+    switch (shapeType)
+    {
+        case TopAbs_VERTEX:
+            return getTag(static_cast<const TopoDS_Vertex&>(aShape));
+        
+        case TopAbs_EDGE:
+            return getTag(static_cast<const TopoDS_Edge&>(aShape));
+        
+        case TopAbs_FACE:
+            return getTag(static_cast<const TopoDS_Face&>(aShape));
+        
+        case TopAbs_SOLID:
+            return getTag(static_cast<const TopoDS_Solid&>(aShape));
+        
+        default:
+            std::cerr << "Unsupported shape type!" << std::endl;
+            return 0;
+    }
+}
+
+int GeometryCore::TagMap::getTag(const TopoDS_Vertex& shape) const {
+    if (_vertexTagMap.IsBound(shape)) {
+        return _vertexTagMap.Find(shape);
+    } else {
+        std::cerr << "Vertex not bound!" << std::endl;
         return 0;
     }
 }
-const int& GeometryCore::TagMap::getTag(const TopoDS_Edge& shape){
-    return this->_edgeTagMap.Find(shape);
+
+int GeometryCore::TagMap::getTag(const TopoDS_Edge& shape) const {
+    if (_edgeTagMap.IsBound(shape)) {
+        return _edgeTagMap.Find(shape);
+    } else {
+        std::cerr << "Edge not bound!" << std::endl;
+        return 0;
+    }
 }
-const int& GeometryCore::TagMap::getTag(const TopoDS_Face& shape){
-    return this->_faceTagMap.Find(shape);
+
+int GeometryCore::TagMap::getTag(const TopoDS_Face& shape) const {
+    if (_faceTagMap.IsBound(shape)) {
+        return _faceTagMap.Find(shape);
+    } else {
+        std::cerr << "Face not bound!" << std::endl;
+        return 0;
+    }
 }
-const int& GeometryCore::TagMap::getTag(const TopoDS_Solid& shape){
-    return this->_solidTagMap.Find(shape);
+
+int GeometryCore::TagMap::getTag(const TopoDS_Solid& shape) const {
+    if (_solidTagMap.IsBound(shape)) {
+        return _solidTagMap.Find(shape);
+    } else {
+        std::cerr << "Solid not bound!" << std::endl;
+        return 0;
+    }
 }
 
 TopoDS_Shape GeometryCore::TagMap::getShape(EntityType type, int tag) {
@@ -102,6 +143,43 @@ TopoDS_Shape GeometryCore::TagMap::getShape(EntityType type, int tag) {
             throw "Unknown entity type.";
     }
 }
+
+
+const TopoDS_Shape& GeometryCore::TagMap::getShape(EntityType type, int tag) const {
+    switch (type) {
+        case EntityType::Vertex:
+            if (_tagVertexMap.IsBound(tag)) {
+                return _tagVertexMap.Find(tag);
+            } else {
+                throw "No vertex bound to this tag.";
+            }
+            break;
+        case EntityType::Edge:
+            if (_tagEdgeMap.IsBound(tag)) {
+                return _tagEdgeMap.Find(tag);
+            } else {
+                throw "No edge bound to this tag.";
+            }
+            break;
+        case EntityType::Face:
+            if (_tagFaceMap.IsBound(tag)) {
+                return _tagFaceMap.Find(tag);
+            } else {
+                throw "No face bound to this tag.";
+            }
+            break;
+        case EntityType::Solid:
+            if (_tagSolidMap.IsBound(tag)) {
+                return _tagSolidMap.Find(tag);
+            } else {
+                throw "No solid bound to this tag.";
+            }
+            break;
+        default:
+            throw "Unknown entity type.";
+    }
+}
+
 
 void GeometryCore::TagMap::tagEntities(const TopoDS_Shape& shape){
     

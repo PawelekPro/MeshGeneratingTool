@@ -85,7 +85,7 @@ public:
 	 */
 	void setIndex(const QModelIndex& index) override;
 
-private:
+protected:
 	/**
 	 * @brief Creates a QStringListModel based on the specified model name.
 	 *
