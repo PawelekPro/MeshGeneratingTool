@@ -20,6 +20,8 @@ namespace GeometryCore {
         ~Geometry();
         const PartsMap& getShapesMap() const {return this->_shapesMap;};
 
+        const TagMap& getTagMap() const {return this->_tagMap;};
+
         void importSTEP(const std::string& filePath, QWidget* progressBar);
         
         void importSTL(const std::string& filePath, QWidget* progressBar);

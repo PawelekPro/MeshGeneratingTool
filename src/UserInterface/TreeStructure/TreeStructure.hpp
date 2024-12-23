@@ -100,6 +100,7 @@ public:
 	QList<TreeItem*> getSubItems(const ItemTypes::Sub& aRootType);
 
 	void setModelHandler(ModelActionsHandler* aModelHandler);
+	ModelActionsHandler* modelHandler(){return _modelHandler;};
 	MeshActionsHandler* meshHandler(){return _modelHandler->_meshHandler;};
 	GeometryActionsHandler* geoHandler(){return _modelHandler->_geometryHandler;};
 	

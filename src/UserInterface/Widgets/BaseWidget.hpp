@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -20,8 +20,10 @@
 #ifndef BASEWIDGET_HPP
 #define BASEWIDGET_HPP
 
-#include <QWidget>
+class PropertiesModel;
 
+#include <QWidget>
+#include <QModelIndex>
 /**
  * @brief A base class for custom QWidget-based widgets.
  *
@@ -40,6 +42,8 @@ public:
 		: QWidget(parent) {};
 	virtual ~BaseWidget() {};
 	virtual void setIndex(const QModelIndex& index) = 0;
+
+
 };
 
 #endif

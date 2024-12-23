@@ -46,12 +46,12 @@ class ModelActionsHandler : public QObject {
 
     GeometryActionsHandler* _geometryHandler;
     MeshActionsHandler* _meshHandler;
+    RenderSignalSender* _renderSignalSender;
 
     private:
 
     std::shared_ptr<ModelInterface> _modelInterface;
 
-    RenderSignalSender* _renderSignalSender;
     CommandManager* _commandManager;
 
     TreeStructure* _treeStructure;
