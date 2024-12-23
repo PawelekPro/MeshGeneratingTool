@@ -173,8 +173,8 @@ QWidget* PropertiesModel::getWidget( const QModelIndex& aIndex, QWidget* aWidget
 
 	QDomElement propertyElement = _properties[aIndex.row()];
 	QString widgetName = DocumentHandler::getAttribute(propertyElement, "widget");
-
-	BaseWidget* newWidget= WidgetFactory::createWidget(widgetName, aWidgetParent);
+	BaseWidget* newWidget = nullptr;
+	newWidget= WidgetFactory::createWidget(widgetName, aWidgetParent);
 	if(newWidget){
 		newWidget->setIndex(aIndex);
 	} else {

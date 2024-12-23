@@ -40,16 +40,18 @@ namespace GeometryCore {
             void tagShape(const TopoDS_Vertex& shape);
 
             TopoDS_Shape getShape(EntityType type, int tag);
+            const TopoDS_Shape& getShape(EntityType type, int tag) const;
 
-            const int& getTag(const TopoDS_Solid& shape);
-            const int& getTag(const TopoDS_Face& shape);
-            const int& getTag(const TopoDS_Edge& shape);
-            const int& getTag(const TopoDS_Vertex& shape);
+            int getTag(const TopoDS_Shape& shape) const;
+            int getTag(const TopoDS_Solid& shape) const;
+            int getTag(const TopoDS_Face& shape) const;
+            int getTag(const TopoDS_Edge& shape) const;
+            int getTag(const TopoDS_Vertex& shape) const;
 
         private:
             std::array<int, static_cast<size_t>(EntityType::EntityTypeCount)> _maxEntityTags;
 
-            int getMaxTag(EntityType type);
+            int getMaxTag(EntityType type) const;
             void setMaxTag(EntityType type, int tag);
             void incrementMaxTag(EntityType type);
 

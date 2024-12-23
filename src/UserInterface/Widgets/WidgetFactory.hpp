@@ -25,7 +25,11 @@
 #include <string>
 #include <iostream>
 
+class EntityPickWidget;
+class GeometrySignalSender;
+
 namespace WidgetFactory {
+
     BaseWidget* createWidget(const QString& widgetName, QWidget* parent = nullptr);
 }
 #endif
