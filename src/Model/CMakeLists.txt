@@ -5,6 +5,7 @@ add_subdirectory(ModelInterface)
 ADD_LIBRARY(Model 
     Model.cpp
     ModelManager.cpp
+    ModelDocParser.cpp
 )
 
 

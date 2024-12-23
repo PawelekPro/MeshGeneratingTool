@@ -20,7 +20,7 @@
 
 
 #include "Model.hpp"
-
+#include "ModelDocParser.hpp"
 
 Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::model::add(_modelName);
@@ -94,73 +94,8 @@ void Model::initializeGmsh() {
     }
 }
 
-
 void Model::applyMeshSettings(){
-    applyMeshGlobalSize();
-    applyMeshSizings();
-};
-
-
-void Model::applyMeshGlobalSize(){
-    double minSize;
-    double maxSize;
-
-    DocumentHandler& docHandler = DocumentHandler::getInstance();
-    QDomElement meshElement = docHandler.getRootElement(ItemTypes::Root::Mesh);
-
-    try {
-        QString minValue = docHandler.getPropertyValue(meshElement, "minElementSize");
-        minSize = minValue.toDouble();
-    } catch (const std::runtime_error& e) {
-        qWarning() << e.what() << " Setting minElementSize to default 0.1";
-        minSize = 0.1;
-    }
-
-    try {
-        QString maxValue = docHandler.getPropertyValue(meshElement, "maxElementSize");
-        maxSize = maxValue.toDouble();
-    } catch (const std::runtime_error& e) {
-        qWarning() << e.what() << " Setting maxElementSize to default 1";
-        maxSize = 1;
-    }
-
-    std::cout << "settting sizes: " << minSize << " " << maxSize;
-
-    gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
-    gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
-};
-
-
-void Model::applyMeshSizings(){
-    DocumentHandler& docHandler = DocumentHandler::getInstance();
-    QList<QDomElement> sizingElements = docHandler.getElementsByType(ItemTypes::Mesh::ElementSizing);
-    for(auto sizingElem : sizingElements){
-        std::vector<int> currentTags;
-        double size;
-        QString sizeString, tagsString;
-        try{sizeString = docHandler.getPropertyValue(sizingElem, "elementSize");}
-        catch(const std::runtime_error& e){
-            qWarning() << e.what() << "Skipping this meshSizing...";
-            continue;
-        }
-        try{tagsString = docHandler.getPropertyValue(sizingElem, "selectedTags");}
-        catch(const std::runtime_error& e){
-            qWarning() << e.what() << "Skipping this meshSizing...";
-            continue;
-        }
-        if(sizeString.isEmpty()){
-            qWarning() << "Element size is empty in " << sizingElem.attribute("name") << " skipping...";
-            continue;
-        }
-        if(tagsString.isEmpty()){
-            qWarning() << "selectedTags value is empty in " << sizingElem.attribute("name") << " skipping...";
-            continue;
-        }
-        size = sizeString.toDouble();
-        QStringList tagsList = tagsString.split(',', Qt::SkipEmptyParts);
-        for (const QString& tag : tagsList) {
-            currentTags.push_back(tag.toInt());
-        }
-        this->addSizing(currentTags, size);
-    }
+    ModelDocParser modelDoc(*this);
+    modelDoc.applyElementSizings();
+    modelDoc.applyMeshSettings();
 };
