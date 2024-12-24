@@ -21,13 +21,16 @@
 #define MESHRENDERHANDLER_HPP
 
 #include <QObject>
-#include "BaseRenderHandler.hpp"
+#include <IVtk_Types.hxx>
 
+class ModelDataView;
 
 namespace Rendering{
+
+class QVTKRenderWindow;
 class RenderSignalHandler;
 
-class MeshRenderHandler : public BaseRenderHandler{
+class MeshRenderHandler : public QObject{
     Q_OBJECT
     friend class RenderSignalHandler;
 
@@ -42,6 +45,12 @@ class MeshRenderHandler : public BaseRenderHandler{
     void showMeshActor();
 
     private slots:
+
+
+    private:
+
+    QVTKRenderWindow* _renderWindow;
+    const ModelDataView& _modelDataView;
 
 };
 

@@ -47,11 +47,3 @@ TreeItem::~TreeItem(){
     DocumentHandler& docHandler = DocumentHandler::getInstance();
     docHandler.removeElement(_element);
 }
-
-// void TreeItem::setText(int column, const QString &text){
-//   QTreeWidgetItem::setText(column, text);
-//     if (!_element.isNull()) {
-//         DocumentHandler::setNameProperty(_element, text);
-//     }
-// }
-      

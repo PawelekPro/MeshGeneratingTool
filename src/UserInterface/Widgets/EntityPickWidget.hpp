@@ -32,39 +32,64 @@
 class GeometrySignalSender;
 class PropertiesModel;
 
+/**
+ * @brief widget EntityPickWidget is used to pass ids of seleceted geometry shapes to corresponding model
+ *  	  it has access to geometrySignals through propertiesModel->parent(treeStructure)->geometrySignal
+ *        therefore forces its model to have treestructure as its parent. Widget has a line view and a button.
+ * 	      When the button is pressed the ids of currently selected geometry shapes will be passed to model.
+ */
 class EntityPickWidget : public BaseWidget {
 	Q_OBJECT
 public:
 	explicit EntityPickWidget(QWidget* parent);
 	~EntityPickWidget();
 
+	/**
+	 * @brief Assigns index from propertiesModel to itself, so that the widget can call 
+	 *  	  propertiesModel->setData(this->index). Also assigns _signalSender and _propModel.
+	 */
 	void setIndex(const QModelIndex& index) override;
+	
+	/**
+	 * @brief Sets the state and display of button "Selecetd".
+	 */
 	void setSelected(bool selected);
 
 private:
+	
+	/**
+	 * @brief Updates the widget appearance by hiding/showing the button.
+	 */
 	void updateAppearance();
 
 	QLabel* _selectionLabel;
 	QPushButton* _selectionButton;
 	QModelIndex _index;
-	bool _selected;
 	PropertiesModel* _propModel;
 	GeometrySignalSender* _signalSender;
-	// button width in pixels
+
 	static const int buttonWidth = 60;
+	bool _selected;
 
 protected:
+	/**
+	 * @brief Updates the widget appearance when mouse is pressed inside it - shows the "Selected" button.
+	 */
 	void mousePressEvent(QMouseEvent* event) override;
 
 signals:
+	/**
+	 * @brief Signal triggered when the "Selected" button is pressed.
+	 */
 	void confirmed(const QString& selection);
 
 private slots:
 
-
-
+	/**
+	* @brief Triggered when the button is pressed, updates the selected shape tags in the model and calls
+	* 		 updateAppearance.
+	*/
 	void confirmSelection();
-	void updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags);
 };
 
 #endif

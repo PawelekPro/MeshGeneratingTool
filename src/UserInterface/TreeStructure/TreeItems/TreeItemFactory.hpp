@@ -34,28 +34,71 @@
 class TreeItem;
 class TreeStructure;
 
+/**
+ * @brief Factory class for creating various types of TreeItem instances.
+ * 
+ * The TreeItemFactory provides methods to create root and sub-items,
+ * as well as specialized items like ImportSTEP and ElementSizing items.
+ * 
+ * @note This class currently depends on TreeStructure, but it could be refactored into a namespace
+ *       to remove this dependency.
+ */
 class TreeItemFactory 
 {
-    public:
-        TreeItemFactory(TreeStructure* aTreeStructure);
-        ~TreeItemFactory() = default;
-        TreeItemFactory(const TreeItemFactory &) = delete;
+public:
+    /**
+     * @brief Constructs a TreeItemFactory with a reference to the TreeStructure.
+     * 
+     * @param aTreeStructure Pointer to the TreeStructure object used for item creation.
+     */
+    TreeItemFactory(TreeStructure* aTreeStructure);
+    ~TreeItemFactory() = default;
+    TreeItemFactory(const TreeItemFactory &) = delete;
 
-        TreeItem* createRootItem( const ItemTypes::Root & aRootItemType );
+    /**
+     * @brief Creates a root item for the TreeStructure.
+     * 
+     * @param aRootItemType The type of root item to create, defined in ItemTypes::Root.
+     * @return Pointer to the newly created root TreeItem.
+     */
+    TreeItem* createRootItem(const ItemTypes::Root & aRootItemType);
 
-        TreeItem* createSubItem( TreeItem* aParentItem,
-                                 const ItemTypes::Sub  & aSubItemType );
+    /**
+     * @brief Creates a sub-item under a specified parent item. 
+     * 
+     * @param aParentItem Pointer to the parent TreeItem to which the sub-item will be added.
+     * @param aSubItemType The type of sub-item to create, defined in ItemTypes::Sub.
+     * @return Pointer to the newly created sub-item TreeItem.
+     */
+    TreeItem* createSubItem(TreeItem* aParentItem, const ItemTypes::Sub & aSubItemType);
 
-        TreeItem* createItemImportSTEP(const QString& aFilePath);
-        TreeItem* createItemElementSizing(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType);
+    /**
+     * @brief Creates an item representing an imported STEP file.
+     * 
+     * @param aFilePath The file path of the STEP file to be imported.
+     * @return Pointer to the newly created TreeItem for the imported STEP file.
+     */
+    TreeItem* createItemImportSTEP(const QString& aFilePath);
 
-        QString getUniqueItemLabel( const ItemTypes::Sub & aSubType ) const;
+    /**
+     * @brief Creates an item representing element sizing information.
+     * 
+     * @param aShapesTags A vector of integers representing the tags of the shapes to be sized.
+     * @param aSelectionType The selection mode specifying how the shapes are considered.
+     * @return Pointer to the newly created TreeItem for element sizing.
+     */
+    TreeItem* createItemElementSizing(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType);
 
-    private:
-    //TODO: Remove the dependency on _treeStructure and make the factory a namespace instead of class
-        TreeStructure*  _treeStructure;
+    /**
+     * @brief Generates a unique label for a sub-item based on its type.
+     * 
+     * @param aSubType The type of sub-item for which a unique label is to be generated.
+     * @return A QString containing the unique label.
+     */
+    QString getUniqueItemLabel(const ItemTypes::Sub & aSubType) const;
+
+private:
+    TreeStructure* _treeStructure;
 };
-
-
 
 #endif
