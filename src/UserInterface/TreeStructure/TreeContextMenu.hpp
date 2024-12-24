@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -36,20 +36,26 @@ private slots:
 	void showContextMenu(const QPoint& pos);
 
 private:
-	TreeStructure* _treeStructure;
-	TreeItem* _selectedItem;
 
-	// Method to create context menu based on clicked item
-	QMenu* createContextMenu(TreeItem* item);
+
+	/**
+	 * @brief Method that creates appropriate contextMenu based on the ItemType of TreeItem*
+	 * 
+	 * @param aItem Pointer to aTreeItem whose type defines the type of menu to be created
+	 * @return Pointer to created context menu QMenu*.
+	 */
+	QMenu* createContextMenu(TreeItem* aItem);
 
 	void buildGeometryMenu(QMenu*);
 	void buildMeshMenu(QMenu*);
 	void buildResultsMenu(QMenu*);
 	void buildSolutionMenu(QMenu*);
-
 	void buildDefaultSubItemMenu(QMenu*);
 
 	static const int fontSize = 10;
+
+	TreeStructure* _treeStructure;
+	TreeItem* _selectedItem;
 
 	QList<QAction*> geometryActions;
 	QList<QAction*> meshActions;
@@ -71,6 +77,9 @@ private:
 	// Solution actions
 
 	// Results actions
+
+
+
 };
 
 #endif

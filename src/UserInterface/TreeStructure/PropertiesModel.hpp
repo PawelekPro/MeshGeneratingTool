@@ -153,7 +153,14 @@ public:
 	 */
 	void setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value);
 
-
+	/**
+	 * @brief creates and returns QWidget based on the name stored in QDomElement that is stored
+	 * in QMap<int, QDomElement>. The element is accessed via aIndex.
+	 *
+	 * @param aIndex - index of QDomElement in _properties QMap that will be used to get name of
+	 * widget to be created.
+	 * @param aWidgetParent - parent that will be set to the newly created widget
+	 */
 	QWidget* getWidget(const QModelIndex& aIndex, QWidget* aWidgetParent);
 
 private:

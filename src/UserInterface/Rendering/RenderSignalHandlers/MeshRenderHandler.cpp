@@ -18,11 +18,15 @@
  */
 
 #include "MeshRenderHandler.hpp"
+#include "ModelDataView.hpp"
+#include "QVTKRenderWindow.hpp"
 
 namespace Rendering{
 
     MeshRenderHandler::MeshRenderHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent) : 
-        BaseRenderHandler(aRenderWindow, aModelDataView, aParent){};
+        QObject(aParent),
+        _renderWindow(aRenderWindow),
+        _modelDataView(aModelDataView){};
 
     void MeshRenderHandler::showMeshActor(){
         _renderWindow->clearRenderer();

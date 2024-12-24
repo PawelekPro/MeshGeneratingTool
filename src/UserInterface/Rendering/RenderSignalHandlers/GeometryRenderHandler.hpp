@@ -21,43 +21,49 @@
 #define GEOMETRYRENDERHANDLER_HPP
 
 #include <QObject>
-
-#include "BaseRenderHandler.hpp"
+#include <IVtk_Types.hxx>
+class ModelDataView;
 
 namespace Rendering{
-    class RenderSignalHandler;
 
-    class GeometryRenderHandler : public BaseRenderHandler{
-        Q_OBJECT
-        friend class RenderSignalHandler;
+class QVTKRenderWindow;
+class RenderSignalHandler;
 
-        public:
-        virtual ~GeometryRenderHandler() = default;
+class GeometryRenderHandler : public QObject{
+    Q_OBJECT
+    friend class RenderSignalHandler;
 
-        private:
-        GeometryRenderHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent);
+    public:
+    virtual ~GeometryRenderHandler() = default;
 
-        public slots:
+    private:
+    GeometryRenderHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent);
 
-        // void shapeAdded();
-        // void shapeRemoved();
-        // void shapeModified();
+    public slots:
 
-        void addAllShapesToRenderer();
-        void showExistingShapes();
+    // void shapeAdded();
+    // void shapeRemoved();
+    // void shapeModified();
 
-        // void shapesRemoved();
-        // void shapesModified();
-        void selectedShapesRequested();
-        void selectionTypeRequested();
+    void addAllShapesToRenderer();
+    void showExistingShapes();
 
-        signals:
-        //TODO: implement class like RenderStateView in ModelHandling so that all signals go only there, to centralized
-        // storage. Now signals are send directly to ui which will result in multiple widgets receiving unnecessary signals
-        void sendSelctionType(const IVtk_SelectionMode& aSelectionType);
-        void sendSelectedShapes(const std::vector<int>& selectedShapes);
- 
-    };
+    // void shapesRemoved();
+    // void shapesModified();
+    void selectedShapesRequested();
+    void selectionTypeRequested();
+
+    signals:
+    //TODO: implement class like RenderStateView in ModelHandling so that all signals go only there, to centralized
+    // storage. Now signals are send directly to ui which can result in multiple widgets receiving unnecessary signals
+    void sendSelctionType(const IVtk_SelectionMode& aSelectionType);
+    void sendSelectedShapes(const std::vector<int>& selectedShapes);
+
+    private:
+    QVTKRenderWindow* _renderWindow;
+    const ModelDataView& _modelDataView;
+
+};
 
 }
 
