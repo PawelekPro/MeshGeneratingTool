@@ -18,13 +18,18 @@
  */
 
 #include "GeometryRenderHandler.hpp"
+#include <TopoDS_Shape.hxx>
+#include "ModelDataView.hpp"
+#include "QVTKRenderWindow.hpp"
 
 namespace Rendering{
 
     using PartsMap = std::map<std::string, TopoDS_Shape>;
 
     GeometryRenderHandler::GeometryRenderHandler(QVTKRenderWindow* aRenderWindow, const ModelDataView& aModelDataView, QObject* aParent) : 
-        BaseRenderHandler(aRenderWindow, aModelDataView, aParent){};
+        QObject(aParent),
+        _renderWindow(aRenderWindow),
+        _modelDataView(aModelDataView){};
 
 
     void GeometryRenderHandler::addAllShapesToRenderer(){

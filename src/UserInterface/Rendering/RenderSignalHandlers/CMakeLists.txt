@@ -1,6 +1,5 @@
 add_library(RenderSignalHandlers
   RenderSignalHandler.cpp
-  BaseRenderHandler.cpp
   GeometryRenderHandler.cpp
   MeshRenderHandler.cpp
 )

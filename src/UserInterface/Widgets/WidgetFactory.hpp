@@ -28,8 +28,17 @@
 class EntityPickWidget;
 class GeometrySignalSender;
 
+/**
+ * @brief namespace for functions used for creating widgets
+ */
 namespace WidgetFactory {
 
+    /**
+     * @brief Creates widget that derives from BaseWidget based on the passed widgetName.
+     * @param widgetName - name of the widget to create - should match if statement inside implementation
+     * @param parent - parent that will be assigned to created widget
+     */
     BaseWidget* createWidget(const QString& widgetName, QWidget* parent = nullptr);
+
 }
 #endif
