@@ -35,6 +35,28 @@
     <property name="spacing">
      <number>2</number>
     </property>
+    <item row="0" column="0">
+     <widget class="RibbonBarWidget" name="ribbonBar" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>126</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
@@ -197,6 +219,7 @@
       </widget>
      </widget>
     </item>
+<<<<<<< HEAD
     <item row="0" column="0">
      <widget class="RibbonBarWidget" name="ribbonBar" native="true">
       <property name="sizePolicy">
@@ -219,6 +242,8 @@
       </property>
      </widget>
     </item>
+=======
+>>>>>>> 623d9d4 ([WIP] Add undo action)
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -263,6 +288,7 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionUndo"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -324,6 +350,11 @@
   <action name="actionGenerateMesh">
    <property name="text">
     <string>Generate Mesh</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
    </property>
   </action>
  </widget>

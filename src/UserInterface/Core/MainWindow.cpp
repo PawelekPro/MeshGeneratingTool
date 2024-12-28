@@ -113,8 +113,11 @@ void MainWindow::setConnections() {
 void MainWindow::connectActionsToModel() {
 >>>>>>> 131b9f3 ([WIP] working import and showMesh toggle)
 
+	connect(ui->actionUndo, &QAction::triggered, 
+	_modelHandler, &ModelActionsHandler::undo);
+
 	connect(ui->actionImportSTEP, &QAction::triggered,
-	 _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
+	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
 
 	connect(ui->actionImportSTL, &QAction::triggered, 
 	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);

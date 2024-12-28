@@ -32,6 +32,12 @@ class TreeStructure;
 class MeshActionsHandler;
 class GeometryActionsHandler;
 
+
+/**
+ * Class that serves as a centrilzed access point to interaction with Model. Each undo-able action 
+ * should be added as a Command and be exectued with CommandManager execute method. Model handler
+ * has sub-objects for handling mesh and geometry actions separately.
+ */
 class ModelActionsHandler : public QObject {
     Q_OBJECT
     public:
@@ -41,8 +47,15 @@ class ModelActionsHandler : public QObject {
                        TreeStructure* aTreeStructure,
                        ProgressBar* aProgressBar, 
                        QObject* aParent); 
-
+    /**
+     * @brief Action for that deletes old model and creates a new one.
+     */
     void createNewModel();
+
+    /**
+     * @brief Calls CommandManager's undo method.
+     */
+    void undo();
 
     GeometryActionsHandler* _geometryHandler;
     MeshActionsHandler* _meshHandler;
