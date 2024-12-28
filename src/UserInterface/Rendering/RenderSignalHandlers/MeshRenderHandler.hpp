@@ -30,6 +30,12 @@ namespace Rendering{
 class QVTKRenderWindow;
 class RenderSignalHandler;
 
+/**
+* Class for handling all signals sent from UI that require information or action from Renderer
+* regarding mesh. To implement a renderer action create a signal in GeometrySignalSender and    
+* slot here. Connect Them in mainwindow. This class has access to view the model and should not
+* modify it. ModelDataView should be used to fetch data from model like for ex. mesh actor.
+*/
 class MeshRenderHandler : public QObject{
     Q_OBJECT
     friend class RenderSignalHandler;
@@ -42,6 +48,10 @@ class MeshRenderHandler : public QObject{
 
     public slots:
 
+    /**
+    * @brief Slot that upon triggered will clear the renderer, fetch current MeshActor from model view and add it
+    * to the renderer.
+    */
     void showMeshActor();
 
     private slots:

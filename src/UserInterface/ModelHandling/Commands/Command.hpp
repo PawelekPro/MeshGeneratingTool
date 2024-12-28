@@ -22,14 +22,17 @@
 
 #include <memory>
 
-
+/**
+ * Base Command class. All commands that should be undoable must derive from this class and implement
+ * their own execute and undo methodsd.
+ */
 class Command{
 
     friend class CommandManager;
 
     public:
 
-    Command(){};
+    Command() = default;
     virtual ~Command() = default;
 
     protected:

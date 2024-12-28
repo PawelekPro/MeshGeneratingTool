@@ -66,9 +66,6 @@ public:
 	 */
 	ProgressBar* getProgressBar() const { return this->progressBar; }
 
-	// Progress bar widget
-	ProgressBar* progressBar;
-
 public:
 	Rendering::QVTKRenderWindow* getRenderWindow() {
 		return this->QVTKRender;
@@ -84,8 +81,11 @@ private:
 	RenderSignalSender* _renderSignalSender;
 	ModelActionsHandler* _modelHandler;
 
+	// Progress bar widget
+	ProgressBar* progressBar;
+
 	/**
-	 * @brief Connect widgets to the methods.
+	 * @brief Connects actions defined in mainwindow to modelhandler.
 	 *
 	 */
 	void connectActionsToModel();
@@ -94,8 +94,8 @@ private:
 	QButtonGroup buttonGroup;
 
 	/**
-	 * @brief  Set the initial state of the actions, ex. grey out imports unitl
-	 * model is created
+	 * @brief  Connects signals from RenderSignalSender to RenderSignalHandler. This allows to include RenderWindow
+	 * only in mainwindow and pass only the signalSenders down the UI.
 	 */
 	void connectModelToRenderWindow(RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler);
 
@@ -108,15 +108,11 @@ private slots:
 	void handleSelectorButtonClicked(QAbstractButton* button);
 
 	/**
-	 * This function is called when an item selection of tree structure is changed.
-	 *
-	 * @param None
-	 *
-	 * @returns None
+	 *  @brief This function is called when an item selection of tree structure is changed.
 	 */
 	void onItemSelectionChanged();
 
 public slots:
 	void onShowDialogButtonClicked();
 };
-#endif // MAINWINDOW_H
+#endif

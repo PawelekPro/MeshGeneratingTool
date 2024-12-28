@@ -28,6 +28,11 @@
 
 namespace Rendering{
 
+
+/**
+* Class for handling UI interaction with renderer. For specific actions use geometry/mesh render handler.
+* For more global actions like display style, clearing, etc. use this class.
+*/
 class RenderSignalHandler : public QObject{
     Q_OBJECT
 
