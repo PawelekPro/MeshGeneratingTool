@@ -24,6 +24,11 @@
 #include "MeshSignalSender.hpp"
 #include <QObject>
 
+/**
+ * Class that serves as a centrilzed access point to interaction with renderer. To implement new 
+ * render interaction create signal here or in Mesh/Geo signal sender, implement slot in
+ * Render/Mesh/Geo signal handler and connect them in mainwindow. 
+ */
 class RenderSignalSender : public QObject{
     Q_OBJECT
 

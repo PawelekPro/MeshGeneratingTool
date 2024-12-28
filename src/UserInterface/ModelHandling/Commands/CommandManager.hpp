@@ -26,6 +26,12 @@
 
 #include "Command.hpp"
 
+
+/**
+ * Main command handler class. All undoable actions should be executed using executeCommand method.
+ * Upon execution they will be added to undoStack. To implement new undoable action derive from 
+ * Command class. 
+ */
 class CommandManager : public QObject{
     Q_OBJECT
 
@@ -33,8 +39,22 @@ class CommandManager : public QObject{
     CommandManager(QObject* aParent);
     ~CommandManager();
 
+    /**
+    * @brief calls command's execute method and adds it to the undoStack.
+    * @param command command object which execute() will be called.
+    */ 
     void executeCommand(Command* command);
+    
+    /**
+    * @brief Undos first command object in the undoStack by calling its undo(). Removes the executed
+    * command from the undoStack.
+    */
     void undo();
+    
+    /**
+    * @brief Redos first command object in the redoStack by calling its execute(). Removes the executed
+    * command from the redoStack.
+    */
     void redo();
 
     private:

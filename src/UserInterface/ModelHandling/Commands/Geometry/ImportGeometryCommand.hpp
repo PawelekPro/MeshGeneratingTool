@@ -32,7 +32,10 @@ class TreeItem;
 class ModelInterface;
 class GeometrySignalSender;
 
-// TODO: impolement a command factory that executes command in CommandManager
+/**
+ * Command for importing geometry file into the model. Calls import geometry from modelInterface and creates
+ * ImportSTEP item in TreeStrucutre.
+ */
 class ImportGeometryCommand : public Command{
 
     public: 
@@ -42,7 +45,15 @@ class ImportGeometryCommand : public Command{
                           TreeStructure* aTreeStructure,
                           const QString& aFilePath);
 
+    /**
+    * @brief Command's execute method - calls importSTEP from modelInterface creates an ImportSTEP TreeItem
+    * in TreeStrucutre and keeps its pointer.
+    */
     void execute() override;
+    
+    /**
+    * @brief Command's undo method - removes imported shapes from model and removes impotSTEP TreeItem.
+    */
     void undo() override;
 
     private:

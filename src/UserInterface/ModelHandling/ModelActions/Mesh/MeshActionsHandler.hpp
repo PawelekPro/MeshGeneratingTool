@@ -30,6 +30,12 @@ class CommandManager;
 class ProgressBar;
 class TreeStructure;
 
+
+/**
+ * Class that serves as a centrilzed access point to interaction with Model' mesh module
+ * Each undo-able action should be added as a Command and be exectued with CommandManager 
+ * execute method.
+ */
 class MeshActionsHandler : public QObject {
     Q_OBJECT
 
@@ -52,10 +58,30 @@ private:
     ProgressBar* _progressBar;
 
 public slots:
+    /**
+     * @brief Action that calls model's meshSurface. Model will generate a mesh based on settings
+     * stored in apps QDomDocument and create a vtkActor with mesh representation. The action clears
+     * the renderer and adds genereted mesh actor.
+     */
     void meshSurface();
+    
+    /**
+     * @brief Action that calls model's meshSurface. Model will generate a mesh based on settings
+     * stored in apps QDomDocument and create a vtkActor with mesh representation. The action clears
+     * the renderer and adds genereted mesh actor.
+     */
     void meshVolume();
 
+    /**
+     * @brief Undoable action that creates fetches currently selected shapes ids 
+     * and creates an ElementSizing TreeItem adding it to TreeStructure.
+     */
     void addSizingToSelectedShapes();
+    
+    /**
+     * @brief Undoable action that creates creates an ElementSizing tree item adding it to TreeStructure.
+     * @param aShapeIds - initial shapes ids added to created ElementSizing TreeITem.
+     */
     void addSizingToShapes(const std::vector<int>& aShapesIds);
 
 };

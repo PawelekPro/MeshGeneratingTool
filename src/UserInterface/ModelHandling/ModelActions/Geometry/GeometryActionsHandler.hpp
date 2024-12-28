@@ -30,6 +30,11 @@ class CommandManager;
 class ProgressBar;
 class TreeStructure;
 
+/**
+ * Class that serves as a centrilzed access point to interaction with Model's gemetry module
+ * Each undo-able action should be added as a Command and be exectued with CommandManager 
+ * execute method.
+ */
 class GeometryActionsHandler : public QObject{
     Q_OBJECT
 
@@ -53,7 +58,19 @@ class GeometryActionsHandler : public QObject{
     ProgressBar* _progressBar;
 
     public slots:
+
+    /**
+     * @brief Undoable action that opens fileDialog for user to selecd STEP file to be imported.
+     * STEP geometry is split into shapes and added to model.geometry. Execution clears the renderer
+     * and displays newly imported shapes. ImportSTEP TreeItem is created and added to the TreeStructure.
+     */
     void importSTEP();
+
+    /**
+     * @brief Undoable action that opens fileDialog for user to selecd STL file to be imported.
+     * STL geometry is split into shapes and added to model.geometry. Execution clears the renderer
+     * and displays newly imported shapes. ImportSTEP TreeItem is created and added to the TreeStructure.
+     */
     void importSTL();
 
 };

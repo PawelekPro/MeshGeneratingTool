@@ -30,22 +30,30 @@ class TreeStructure;
 class GeometrySignalSender;
 class TreeItem;
 
-// TODO: impolement a command factory that executes command in CommandManager
+/**
+ * Command for adding element sizing mesh setting. Creates an ElementSizing TreeItem upon being executed.
+ */
 class AddSizingCommand : public Command{
 
-    public: 
-    AddSizingCommand( GeometrySignalSender* aSignalSender,
-                      TreeStructure* aTreeStructure
-                    );
+  public: 
+  AddSizingCommand( GeometrySignalSender* aSignalSender,
+                    TreeStructure* aTreeStructure
+                  );
 
-    void execute() override;
-    void undo() override;
+  /**
+  * @brief Command's execute method - creates an ElementSizing TreeItem in TreeStrucutre and keeps its pointer.
+  */
+  void execute() override;
+  /**
+  * @brief Command's undo method - removes object's _treeItem from the TreeStructure and deletes it.
+  */
+  void undo() override;
 
-    private:
+  private:
 
-    GeometrySignalSender* _signalSender;
-    TreeStructure* _treeStructure;
-    TreeItem* _treeItem;
+  GeometrySignalSender* _signalSender;
+  TreeStructure* _treeStructure;
+  TreeItem* _treeItem;
 };
 
 #endif

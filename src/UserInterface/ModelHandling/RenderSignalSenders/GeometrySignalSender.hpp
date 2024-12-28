@@ -25,31 +25,34 @@
 //TODO: maybe replace this with custom enum so that we do not have to link occ everywhere
 #include "IVtk_Types.hxx"
 
+/**
+ * Class that serves as a collection of signals to handle renderer upon geometry modification.
+ * To implement new  render interaction create signal here, implement slot in GeometrySignalHandler and 
+ * connect them in mainwindow. 
+ */
 class GeometrySignalSender : public QObject{
     Q_OBJECT
 
     public:
 
-    enum class RenderSelectionType{
-        Vertex,
-        Edge,
-        Face,
-        Volume
-    };
-
     GeometrySignalSender(QObject* aParent);
+
+    /**
+     * @brief Uses requestSelectedShapes signal to get ids of currently selected shapes and returns them. 
+     */
     const std::vector<int>& getSelectedShapes();
+    
+    /**
+     * @brief Uses requestSelectionType signal to get current selection mode of the renderer. 
+     */
     const IVtk_SelectionMode& getSelectionType();
 
     signals:
 
-    // void addShape();
-    // void removeShape();
-    // void modifyShape();
-
+    /**
+     * @brief Signal to be sent when new gemetry is imported to the model. 
+     */
     void geometryImported();
-    // void removeShapes();
-    // void modifyShapes();
 
     void requestSelectedShapes();
     void requestSelectionType();
@@ -61,6 +64,9 @@ class GeometrySignalSender : public QObject{
 
     private:
 
+    //TODO: I wanted this to be signal/slot only class but i couldnt come up with better
+    //      solution to get selected shapes. Storing those as vars here should be reworked.
+    
     std::vector<int> _selectedShapes;
     IVtk_SelectionMode _selectionType;
 
