@@ -75,6 +75,19 @@ void DocumentHandler::addTextNode(QDomElement& aElement, const QString& aValue){
     aElement.appendChild(valueNode);
 }
 
+void DocumentHandler::appendExistingElement(QDomElement& aParentElement, QDomElement& aChildElement) {
+    if (aParentElement.isNull()) {
+        qWarning("Cannot append to a null parent element!");
+        return;
+    }
+
+    if (aChildElement.isNull()) {
+        qWarning("Cannot append a null child element!");
+        return;
+    }
+    aParentElement.appendChild(aChildElement);
+}
+
 void DocumentHandler::addPropertiesToElement(QDomElement& element, const JsonParser::Properties& properties){
     QDomElement propertiesElement = _domDocument.createElement("Properties");
     for(const auto & property : properties){
