@@ -32,11 +32,17 @@ ImportGeometryCommand::ImportGeometryCommand(std::shared_ptr<ModelInterface> aMo
     _signalSender(aSignalSender),
     _importedFilePath(aFilePath),
     _treeStructure(aTreeStructure),
-    _modelInterface(aModelInterface){}
+    _modelInterface(aModelInterface),
+    _treeItem(nullptr){}
 
 void ImportGeometryCommand::execute(){
     _modelInterface->importSTEP(_importedFilePath, _progressBar);
-    _treeItem = _treeStructure->addImportSTEPItem(_importedFilePath);    
+    if(!_treeItem){
+        _treeItem = _treeStructure->addImportSTEPItem(_importedFilePath);
+    } else {
+        TreeItem* parentItem = _treeStructure->getRootItem(ItemTypes::Root::Geometry);
+        _treeStructure->addExistingItem(_treeItem, parentItem);
+    }
     emit _signalSender->geometryImported();
 }
 

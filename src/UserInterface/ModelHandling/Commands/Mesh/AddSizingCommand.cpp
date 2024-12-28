@@ -27,7 +27,8 @@ AddSizingCommand::AddSizingCommand( GeometrySignalSender* aSignalSender,
     :
     Command(),
     _signalSender(aSignalSender),
-    _treeStructure(aTreeStructure){}
+    _treeStructure(aTreeStructure),
+    _treeItem(nullptr){}
 
 void AddSizingCommand::execute(){
     std::vector<int> shapesTags = _signalSender->getSelectedShapes();

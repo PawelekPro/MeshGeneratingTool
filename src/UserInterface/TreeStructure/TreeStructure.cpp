@@ -117,6 +117,10 @@ void TreeStructure::removeSubItem(TreeItem* item){
 	} else {
 		it->second.removeOne(item);
 		item->parent()->removeChild(item);
+
+		QDomElement itemElement = item->getElement();
+		DocumentHandler& docHandler = DocumentHandler::getInstance();
+		docHandler.removeElement(itemElement);
 		return;
 	}
 }
@@ -129,4 +133,26 @@ void TreeStructure::deleteSubItem(TreeItem* aItemToDelete){
 	delete aItemToDelete;
 }
 
-void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem){};
+void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem) {
+    if (!itemToAdd || !aParentItem) {
+        qWarning("Invalid item or parent item passed to addExistingItem!");
+        return;
+    }
+    aParentItem->addChild(itemToAdd);
+	ItemTypes::Sub itemType = itemToAdd->subType();
+    auto it = _subItems.find(itemType);
+    if (it != _subItems.end()) {
+        it->second.push_back(itemToAdd);
+    } else {
+        _subItems[itemType] = { itemToAdd };
+    }
+    QDomElement itemElement = itemToAdd->getElement();
+    QDomElement parentElement = aParentItem->getElement();
+    if (!parentElement.isNull()) {
+        parentElement.appendChild(itemElement);
+        DocumentHandler& docHandler = DocumentHandler::getInstance();
+        docHandler.appendExistingElement(parentElement, itemElement);
+    } else {
+        qWarning("Parent item does not have a valid DOM element!");
+    }
+}
