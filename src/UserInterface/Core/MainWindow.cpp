@@ -81,8 +81,11 @@ MainWindow::~MainWindow() {
 //----------------------------------------------------------------------------
 void MainWindow::connectActionsToModel() {
 
+	connect(ui->actionUndo, &QAction::triggered, 
+	_modelHandler, &ModelActionsHandler::undo);
+
 	connect(ui->actionImportSTEP, &QAction::triggered,
-	 _modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
+	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
 
 	connect(ui->actionImportSTL, &QAction::triggered, 
 	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
