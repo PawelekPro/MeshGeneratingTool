@@ -48,7 +48,14 @@ public:
      * @param aValue - Value to be written in the added text node.
      */
     void addTextNode(QDomElement& aElement, const QString& aValue);
-    
+
+    /**
+     * @brief Appends an existing child element to a parent element in the DOM.
+     * @param aParentElement The parent element to which the child element will be appended.
+     * @param aChildElement The child element to append to the parent element.
+     */
+    void appendExistingElement(QDomElement& aParentElement, QDomElement& aChildElement);
+
     /**
      * @brief Creates a root element of specified type in apps QDomDocument under the main root element.
      * @param aRootType - Type of root element to create.
