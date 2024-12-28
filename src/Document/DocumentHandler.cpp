@@ -176,7 +176,7 @@ QDomElement DocumentHandler::findSubElement(const QDomElement& aElement, const Q
     return QDomElement();
 }
 
-QString DocumentHandler::intsToString(const std::vector<int> aIntsVec){
+QString DocumentHandler::intsToString(const std::vector<int>& aIntsVec){
     if (aIntsVec.empty()) {
         return QString();
     }

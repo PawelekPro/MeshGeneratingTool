@@ -28,6 +28,8 @@
 
 class JsonParser {
     public:
+        // TODO: Rework this, think of some architecture to parse properties. Maybe we should have them 
+        //       hard-coded with some maps and enums? 
         struct Property {
             Property() : name("Invalid") {};
             Property(const QString &aName) : name(aName) {};
