@@ -58,3 +58,7 @@ void ModelActionsHandler::createNewModel(){
     //TODO: send signals that will clear renderer, treeStructure etc.
     _modelInterface->createNewModel("NewModel");
 }
+
+void ModelActionsHandler::undo(){
+    _commandManager->undo();
+}
