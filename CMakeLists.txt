@@ -209,6 +209,16 @@ if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+# GTEST
+######################################################################
+find_package(GTest CONFIG REQUIRED COMPONENTS GTest GMock)
+
+MESSAGE( STATUS "GTest Library FOUND" )
+MESSAGE( STATUS "GTest VERSION: ${GTest_VERSION}" )
+
+INCLUDE_DIRECTORIES(${GTest_INCLUDE_DIRS} ${GMock_INCLUDE_DIRS})
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+
 # Print info
 ######################################################################
 STRING ( TOUPPER "${CMAKE_BUILD_TYPE}" MY_CMAKE_BUILD_TYPE )
