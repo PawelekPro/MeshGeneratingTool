@@ -9,6 +9,7 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define an option to include/exclude examples
 option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_TESTS "Build tests" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)

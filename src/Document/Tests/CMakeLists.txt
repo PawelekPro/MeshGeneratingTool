@@ -1,0 +1,12 @@
+add_executable(utDocument utDocItemTypes.cpp)
+
+find_package(GTest REQUIRED)
+
+target_link_libraries(utDocument PUBLIC
+    GTest::GTest 
+    GTest::Main
+    Document
+)
+
+include(GoogleTest)
+gtest_discover_tests(utDocument)
