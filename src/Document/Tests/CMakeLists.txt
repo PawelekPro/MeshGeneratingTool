@@ -1,4 +1,8 @@
-add_executable(utDocument utDocItemTypes.cpp)
+add_executable(utDocument
+    utRun.cpp
+    utDocItemTypes.cpp
+    utDocumentHandler.cpp
+)
 
 find_package(GTest REQUIRED)
 
