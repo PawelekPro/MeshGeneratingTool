@@ -454,3 +454,9 @@ void NetgenPlugin_Mesher::SetLocalSize(
 	}
 	return;
 }
+
+//----------------------------------------------------------------------------
+void NetgenPlugin_Mesher::SetParameters(
+	const MGTMeshUtils_ViscousLayers* layersScheme) {
+	_viscousLayers = layersScheme;
+}
