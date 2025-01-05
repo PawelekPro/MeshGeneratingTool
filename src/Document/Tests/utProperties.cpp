@@ -18,14 +18,14 @@
  */
 
 #include <gtest/gtest.h>
-#include "PropertiesParser.hpp"
+#include "DocUtils.hpp"
 #include <gtest/gtest.h>
 #include <QDomDocument>
 #include <QVariant>
 #include <map>
 #include <QString>
 
-class PropertiesParserTest : public ::testing::Test {
+class PropertiesTest : public ::testing::Test {
 protected:
     QDomDocument doc;
     QDomElement root, properties;
@@ -66,7 +66,7 @@ protected:
     }
 };
 
-TEST_F(PropertiesParserTest, GetPropertyValue) {
+TEST_F(PropertiesTest, GetPropertyValue) {
     for (const auto &entry : propertyMap) {
         const QString &name = entry.first;
         const QVariant &expectedValue = entry.second.second;

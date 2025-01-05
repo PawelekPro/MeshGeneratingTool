@@ -1,6 +1,6 @@
 add_library(DocumentUtils
     JsonParser.cpp
-    PropertiesParser.cpp
+    DocUtils.cpp
     DefaultsParser.cpp
     DocItemTypes.cpp
     ComboBoxTypes.cpp
