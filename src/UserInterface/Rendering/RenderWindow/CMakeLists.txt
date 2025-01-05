@@ -3,6 +3,7 @@ ADD_LIBRARY(RenderWindow
   QVTKRenderWindow.cpp
   QIVtkSelectionPipeline.cpp
   QIVtkViewRepresentation.cpp
+  QVTKCameraOrientationWidget.cpp
 )
 
 target_link_libraries(RenderWindow PUBLIC
