@@ -60,7 +60,7 @@ TreeStructure::~TreeStructure() {
 	std::string xmlPath = "test.xml";
 	#endif
 	#ifdef linux
-	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
+	std::string xmlPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 	#endif
 	
 	DocumentHandler::getInstance().writeDocToXML("testRootCreation.xml");
