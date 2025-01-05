@@ -35,6 +35,28 @@
     <property name="spacing">
      <number>2</number>
     </property>
+    <item row="0" column="0">
+     <widget class="RibbonBarWidget" name="ribbonBar" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>126</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
@@ -180,28 +202,6 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="RibbonBarWidget" name="ribbonBar" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>126</height>
-       </size>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -210,7 +210,7 @@
      <x>0</x>
      <y>0</y>
      <width>1046</width>
-     <height>20</height>
+     <height>32</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -241,6 +241,7 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionUndo"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -304,22 +305,27 @@
     <string>Generate Mesh</string>
    </property>
   </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>TreeStructure</class>
    <extends>QTreeWidget</extends>
-   <header>TreeStructure.h</header>
+   <header>TreeStructure.hpp</header>
   </customwidget>
   <customwidget>
    <class>PropertiesWidget</class>
    <extends>QTableView</extends>
-   <header>PropertiesWidget.h</header>
+   <header>PropertiesWidget.hpp</header>
   </customwidget>
   <customwidget>
    <class>RibbonBarWidget</class>
    <extends>QWidget</extends>
-   <header>RibbonBarWidget.h</header>
+   <header>RibbonBarWidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -20,7 +20,7 @@
 #ifndef ABSTRACTLINEEDIT_H
 #define ABSTRACTLINEEDIT_H
 
-#include "BaseWidget.h"
+#include "BaseWidget.hpp"
 
 #include <QFrame>
 #include <QHBoxLayout>

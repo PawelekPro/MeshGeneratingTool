@@ -1,4 +1,4 @@
-﻿#include "SARibbonMainWindow.h"
+﻿#include "SARibbonMainWindow.hpp"
 #include "SARibbonBar.h"
 #include "SARibbonElementManager.h"
 #include "SARibbonTabBar.h"

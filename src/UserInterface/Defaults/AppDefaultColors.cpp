@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AppDefaultColors.h"
+#include "AppDefaultColors.hpp"
 
 //----------------------------------------------------------------------------
 AppDefaultColors::AppDefaultColors() {
@@ -38,5 +38,16 @@ AppDefaultColors::AppDefaultColors() {
 }
 
 const AppDefaultColors::GeomColorsArray AppDefaultColors::getGeometryEntitiesColorArray() {
-	return _geomEntitiesColors;
+	GeomColorsArray colorArray = {
+		QColor(200, 220, 230), //!< Isoline
+		Qt::green, //!< Free vertex
+		Qt::blue, //!< Shared vertex
+		Qt::yellow, //!< Free edge
+		Qt::cyan, //!< Boundary edge (related to a single face)
+		QColor(230, 240, 255), //!< Shared edge (related to several faces)
+		Qt::gray, //!< Wireframe face
+		QColor(85, 120, 170), //!< Shaded face
+		Qt::darkGreen, //!< Seam edge between faces
+	};
+	return colorArray;
 }

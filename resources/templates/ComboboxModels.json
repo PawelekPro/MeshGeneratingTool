@@ -12,11 +12,19 @@
     "EntitySelection": {
         "0": {
             "name": "edgeSelection",
-            "label": "Edge"
+            "label": "Vertex"
         },
         "1": {
             "name": "faceSelection",
+            "label": "Edge"
+        },
+        "2": {
+            "name": "edgeSelection",
             "label": "Face"
+        },
+        "3": {
+            "name": "faceSelection",
+            "label": "Shape"
         }
     },
     "CosJeszczeInnego": {

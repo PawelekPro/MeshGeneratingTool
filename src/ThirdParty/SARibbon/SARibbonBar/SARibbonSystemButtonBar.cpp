@@ -4,7 +4,7 @@
 #include <QStyle>
 #include <QDebug>
 #include <QScopedPointer>
-#include "SARibbonMainWindow.h"
+#include "SARibbonMainWindow.hpp"
 #include "SARibbonBar.h"
 #include "SARibbonElementManager.h"
 #include "SARibbonButtonGroupWidget.h"

@@ -36,7 +36,7 @@ PreferencesDialog::~PreferencesDialog() {
 //--------------------------------------------------------------------------------------
 void PreferencesDialog::intitializeColorProperties() {
 	const AppDefaultColors::GeomColorsArray colorsArray
-		= AppDefaults::getInstance().getGeometryEntitiesColorArray();
+		= AppDefaultColors::getGeometryEntitiesColorArray();
 
 	QGridLayout* layout = qobject_cast<QGridLayout*>(ui->entityColorsWidget->layout());
 	if (!layout) {

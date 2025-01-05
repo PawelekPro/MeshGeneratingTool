@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,13 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "EntityPickWidget.h"
+#include "EntityPickWidget.hpp"
+#include "RenderSignalSender.hpp"
+#include "DocumentHandler.hpp"
+#include "PropertiesModel.hpp"
+#include "TreeStructure.hpp"
 
 //----------------------------------------------------------------------------
 EntityPickWidget::EntityPickWidget(QWidget* parent)
 	: _selectionLabel(new QLabel(this))
 	, _selectionButton(new QPushButton("Select", this))
-	, _selected(false) {
+	, _selected(false)
+	{
 
 	_index = QModelIndex();
 
@@ -38,6 +43,7 @@ EntityPickWidget::EntityPickWidget(QWidget* parent)
 
 	connect(_selectionButton, &QPushButton::clicked, this, &EntityPickWidget::confirmSelection);
 	this->setLayout(layout);
+
 }
 
 //----------------------------------------------------------------------------
@@ -49,12 +55,18 @@ EntityPickWidget::~EntityPickWidget() {
 //----------------------------------------------------------------------------
 void EntityPickWidget::setIndex(const QModelIndex& index) {
 	_index = index;
-
-	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
-	this->_eventHandler = model->eventHandler;
-
-	connect(this->_eventHandler, &TreeWidgetEventHandler::selectedEntitiesNamesFetched,
-		this, &EntityPickWidget::updateSelectedNames);
+	QAbstractItemModel* sourceModel = const_cast<QAbstractItemModel*>(this->_index.model());
+	_propModel = qobject_cast<PropertiesModel*>(sourceModel);
+	if(_propModel){
+		TreeStructure* treeStrucutre = qobject_cast<TreeStructure*>(_propModel->parent());
+		if(treeStrucutre){
+			_signalSender = treeStrucutre->modelHandler()->_renderSignalSender->geometrySignals;
+		} else {
+			qDebug("Parent of widgets PropertiesModel should be TreeStructure");
+		}
+	} else {
+		qDebug("Casting to Properties model failed - widget can only use PropertiesModel class");
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -69,11 +81,13 @@ void EntityPickWidget::updateAppearance() {
 
 //----------------------------------------------------------------------------
 void EntityPickWidget::confirmSelection() {
+	std::vector<int> selectedShapes = _signalSender->getSelectedShapes();
+	QString selectedShapesString = DocumentHandler::intsToString(selectedShapes);
+	_propModel->setData(_index, QVariant::fromValue(selectedShapesString), Qt::EditRole);
 	if (_selected) {
 		this->updateAppearance();
 	}
 	_selectionButton->hide();
-	emit _eventHandler->entitySelectionConfirmed();
 }
 
 //----------------------------------------------------------------------------
@@ -88,38 +102,3 @@ void EntityPickWidget::mousePressEvent(QMouseEvent* event) {
 void EntityPickWidget::setSelected(bool selected) {
 	_selected = selected;
 }
-
-void EntityPickWidget::updateSelectedNames(const std::vector<std::string>& selectedNames, std::vector<int> selectedTags){
-	QString qMergedNames;
-    if (!selectedNames.empty()) {
-        std::string mergedNames = std::accumulate(
-            selectedNames.begin() + 1, 
-            selectedNames.end(), 
-            selectedNames[0], 
-            [](const std::string& a, const std::string& b) {
-                return a + "; " + b;
-            }
-        );
-        qMergedNames = QString::fromStdString(mergedNames);
-    }
-	QVariant namesVariant(qMergedNames);
-	PropertiesModel* model = dynamic_cast<PropertiesModel*>(const_cast<QAbstractItemModel*>(this->_index.model()));
-	model->setData(_index, namesVariant, Qt::DisplayRole);
-
-	if(!selectedTags.empty()){
-		std::vector<std::string> strVec(selectedTags.size());
-		std::transform(selectedTags.begin(), selectedTags.end(), strVec.begin(), [](int num) {
-			return std::to_string(num);
-		});
-		std::string tags = std::accumulate(std::next(strVec.begin()), strVec.end(), strVec[0],
-			[](const std::string& a, const std::string& b) {
-				return a + "," + b;
-			});
-
-		QString qTags = QString::fromStdString(tags);
-		QVariant tagsVariant(qTags);
-		model->setElementProperty(_index, "selectedTags", tagsVariant);
-	}
-}
-
-

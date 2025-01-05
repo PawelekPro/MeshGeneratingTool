@@ -1,0 +1,38 @@
+{
+    "ElementSizing": {
+        "Properties": [
+            {
+                "name": "selectionType",
+                "label": "Selection type",
+                "hidden": "no",
+                "widget": "ComboBoxWidget",
+                "model": "EntitySelection",
+                "value": ""
+            },
+            {
+                "name": "selectedTags",
+                "label": "Selected entities",
+                "hidden": "no",
+                "widget": "EntityPickWidget",
+                "value": ""
+            },
+            {
+                "name": "elementSize",
+                "label": "Element size",
+                "hidden": "no",
+                "widget": "DoubleLineWidget",
+                "value": 1,
+                "unit": "unit"
+            }
+        ]
+    },
+    "ImportSTEP": {
+        "Properties": [
+            {
+                "name": "stepImport",
+                "importFilePath": "",
+                "hidden": "no"
+            }
+        ]
+    }
+}

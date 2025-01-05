@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DoubleLineWidget.h"
+#include "DoubleLineWidget.hpp"
 
 //----------------------------------------------------------------------------
 DoubleLineWidget::DoubleLineWidget(QWidget* parent)

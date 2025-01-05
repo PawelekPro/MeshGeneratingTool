@@ -1,21 +1,16 @@
 ADD_LIBRARY(Widgets 
+  WidgetFactory.cpp
   AbstractLineEdit.cpp
   IntLineWidget.cpp
   DoubleLineWidget.cpp
   ComboBoxWidget.cpp
-  BaseWidget.h
+  BaseWidget.hpp
   EntityPickWidget.cpp
-  TreeContextMenu.cpp
   RibbonBarWidget.cpp
   ColorPickerWidget.cpp
-  TreeWidgetEventHandler.cpp
   ${SARIBBON_PATH}/SARibbon.h
   ${SARIBBON_PATH}/SARibbon.cpp
   ${SARIBBON_PATH}/SARibbonBar/resource.qrc
-)
-
-INCLUDE_DIRECTORIES(
-  ${PRJ_SOURCE_DIR}/src/UserInterface/Widgets
 )
 
 TARGET_LINK_LIBRARIES(Widgets PUBLIC 
@@ -23,13 +18,13 @@ TARGET_LINK_LIBRARIES(Widgets PUBLIC
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Core5Compat
-  GraphicalUtils
-  Rendering
-  Defaults
+  AppConfig
+  DocumentUtils
+  TreeStructure
   Core
 )
 
 TARGET_INCLUDE_DIRECTORIES(Widgets PUBLIC
-    ${PRJ_SOURCE_DIR}/src/UserInterface/
-    ${PRJ_SOURCE_DIR}/src/UserInterface/Widgets)
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 

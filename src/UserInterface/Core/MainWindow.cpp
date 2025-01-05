@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+ * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -17,19 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #include "./ui_MainWindow.h"
 
-//----------------------------------------------------------------------------
-MainWindow::MainWindow(QWidget* parent)
-	: QMainWindow(parent)
-	, ui(new Ui::MainWindow) {
-	ui->setupUi(this);
+#include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
 
+#include "ProgressBarPlugin.hpp"
+
+//----------------------------------------------------------------------------
+MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
+	: QMainWindow(parent)
+	, ui(new Ui::MainWindow)
+	, _modelInterface(aModelInterface)
+{
+	
+	ui->setupUi(this);
 	// Set initial sizes of the splitter sections
 	QList<int> sizes;
 	sizes << 100 << 400;
 	ui->mainSplitter->setSizes(sizes);
+	ui->propertiesSplitter->setSizes(sizes);
 
 	this->QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	this->QVTKRender->enableCameraOrientationWidget();
@@ -37,7 +45,18 @@ MainWindow::MainWindow(QWidget* parent)
 	this->ui->ribbonBar->initialize();
 
 	this->progressBar = new ProgressBar(this);
-	this->ui->statusBar->addWidget(progressBar);
+
+	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
+	_renderSignalSender = new RenderSignalSender(this);
+	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
+
+ 	this->ui->statusBar->addWidget(progressBar);
+
+	this->ui->treeWidget->setModelHandler(_modelHandler);
+
+	this->connectActionsToModel();
+	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
+
 
 	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Main));
@@ -47,164 +66,80 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
 	// 	static_cast<int>(Rendering::Renderers::Edges));
-	this->setConnections();
-	this->initializeActions();
-	Model::initializeGmsh();
-	newModel();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
 	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged);
 
+	delete _modelHandler;
 	delete QVTKRender;
 	delete progressBar;
 	delete ui;
 }
 
 //----------------------------------------------------------------------------
-void MainWindow::setConnections() {
-	connect(ui->actionImportSTEP, &QAction::triggered, [this]() {
-		openFileDialog([this](QString fname) { importSTEP(fname); }, "Import", filters::StepFilter);
-	});
+void MainWindow::connectActionsToModel() {
 
-	connect(ui->actionImportSTL, &QAction::triggered, [this]() {
-		openFileDialog([this](QString fname) { importSTL(fname); }, "Import", filters::StlFilter);
-	});
+	connect(ui->actionUndo, &QAction::triggered, 
+	_modelHandler, &ModelActionsHandler::undo);
+
+	connect(ui->actionImportSTEP, &QAction::triggered,
+	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
+
+	connect(ui->actionImportSTL, &QAction::triggered, 
+	_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
 
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
 		
 	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
-		generateMesh();
-	});
-	connect(ui->actionShowMesh, &QAction::toggled, [this](bool checked) {
-		if (checked) {
-			showMesh();
-		} else {
-			showGeometry();
-		}
-	});
+		_modelHandler->_meshHandler->meshSurface();
+		ui->actionShowMesh->setChecked(true);
+		});
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
-
-
-	connect(this->ui->treeWidget->eventHandler, &TreeWidgetEventHandler::entitySelectionConfirmed,
-			this, [this]() {
-		std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes = 
-			this->QVTKRender->getInteractorStyle()->getSelectedShapes();
-		const std::vector<std::string> names = this->model->geometry.getShapesNames(selectedShapes);
-		std::vector<int> selectedTags;
-		for(auto shape : selectedShapes){
-			std::vector<int> newTags = this->model->geometry.getShapeVerticesTags(shape);
-			selectedTags.insert(selectedTags.end(), newTags.begin(), newTags.end());
-		}
-		std::sort(selectedTags.begin(), selectedTags.end());
-		auto last = std::unique(selectedTags.begin(), selectedTags.end());
-		selectedTags.erase(last, selectedTags.end());
-		emit this->ui->treeWidget->eventHandler->selectedEntitiesNamesFetched(names, selectedTags);
-	});
 }
 
 //----------------------------------------------------------------------------
-int MainWindow::openFileDialog(Callable action, QString actionName, QString filter) {
-	QFileDialog dlg(this);
-	dlg.setWindowTitle("Select file to " + actionName);
-	dlg.setNameFilter(filter);
+void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler){
+	//TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
+	//TODO: Fun task - encapsulate the connections in a helper map/class/namespace 
+	GeometrySignalSender* geometrySignals = aSignalSender->geometrySignals;
+	Rendering::GeometryRenderHandler* geoRender = aSignalHandler->geometry();
 
-	QString fname = dlg.getOpenFileName(this, actionName, "", filter);
+	MeshSignalSender* meshSignals = aSignalSender->meshSignals;
+	Rendering::MeshRenderHandler* meshRender = aSignalHandler->mesh();
 
-	if (!fname.isEmpty()) {
-		action(fname);
-		return QMessageBox::Accepted;
-	}
-	return QMessageBox::Rejected;
+    QObject::connect(geometrySignals, &GeometrySignalSender::geometryImported,
+                     geoRender, &Rendering::GeometryRenderHandler::addAllShapesToRenderer);
+
+	QObject::connect(meshSignals, &MeshSignalSender::meshGenerated,
+					 meshRender, &Rendering::MeshRenderHandler::showMeshActor);
+
+    QObject::connect(ui->actionShowMesh, &QAction::toggled, [geoRender, meshRender](bool checked) {
+        if (checked) {
+            meshRender->showMeshActor();
+        } else {
+            geoRender->showExistingShapes();
+        }
+    });
+
+	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectedShapes,
+					 geoRender, &Rendering::GeometryRenderHandler::selectedShapesRequested);
+
+	QObject::connect( geoRender, &Rendering::GeometryRenderHandler::sendSelectedShapes,
+					  geometrySignals, &GeometrySignalSender::receiveSelectedShapes);
+
+	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectionType,
+					 geoRender, &Rendering::GeometryRenderHandler::selectionTypeRequested);
+
+	QObject::connect( geoRender, &Rendering::GeometryRenderHandler::sendSelctionType,
+					  geometrySignals, &GeometrySignalSender::receiveSelectionType);
+
 }
 
-//----------------------------------------------------------------------------
-void MainWindow::importSTEP(QString fileName) {
-	QPointer<ProgressBar> progressBar = this->getProgressBar();
-	const std::string& filePath = fileName.toStdString();
-	try {
-		this->model->importSTEP(filePath, this->progressBar);
-		const GeometryCore::PartsMap& shapesMap = model->geometry.getShapesMap();
-		for(auto shape : shapesMap){
-			this->QVTKRender->addShapeToRenderer(shape.second);
-		}
-	} catch (std::filesystem::filesystem_error) {
-		this->progressBar->setTerminateIndicator(false);
-		std::cout << "Display some message or dialog box..." << std::endl;
-		return;
-	}
-
-	QFileInfo fileInfo(fileName);
-	this->ui->treeWidget->loadGeometryFile(fileInfo.baseName());
-	QVTKRender->fitView();
-}
-
-//----------------------------------------------------------------------------
-void MainWindow::importSTL(QString fileName) {
-	ProgressBar* progressBar = this->getProgressBar();
-
-	const std::string& filePath = fileName.toStdString();
-	this->model->geometry.importSTL(filePath, this->progressBar);
-	// this->QVTKRender->updateGeometryActors(this->model->geometry);
-
-	QVTKRender->fitView();
-}
-//----------------------------------------------------------------------------
-void MainWindow::newModel() {
-	std::string modelName = "Model_1";
-	this->model = std::make_shared<Model>(modelName);
-	this->QVTKRender->model = this->model;
-	// enable imports
-	ui->actionImportSTEP->setEnabled(true);
-	ui->actionImportSTL->setEnabled(true);
-	ui->actionGenerateMesh->setEnabled(true);
-}
-void MainWindow::generateMesh() {
-	PropertiesList propList = this->ui->treeWidget->getRootProperties(TreeStructure::TreeRoot::Mesh);
-	double minElementSize = 1;
-	double maxElementSize = 5;
-	for(auto& propMap : propList){
-		if (propMap.value("name") == "minElementSize"){
-			minElementSize = propMap.value("value").toDouble();
-		}
-		if (propMap.value("name") == "maxElementSize"){
-			maxElementSize = propMap.value("value").toDouble();
-		}
-	}
-	QMap<QString, PropertiesList> sizingMap = 
-		this->ui->treeWidget->getItemsProperties(TreeStructure::TreeRoot::Mesh, 
-												 TreeStructure::XMLTag::MeshSizing);
-	
-
-
-	for(auto& propList : sizingMap){
-		std::vector<int> verticesTags;
-		double size;
-		for(auto& propMap : propList){
-			if(propMap.value("name") == "selectedTags"){
-				QString tagString = propMap.value("value");
-				QStringList tagList = tagString.split(',');
-				for(QString& s : tagList){
-					if(s == ','){
-						continue;
-					}else{
-						verticesTags.push_back(s.toInt());
-					}
-				}
-			}if(propMap.value("name") == "elementSize"){
-				size = propMap.value("value").toFloat();
-			}
-		}
-		this->model->addSizing(verticesTags, size);
-	}
-
-	this->model->fetchMeshProperties(minElementSize, maxElementSize);
-	this->model->meshSurface();
-}
 //----------------------------------------------------------------------------
 void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	for (QAbstractButton* btn : this->buttonGroup.buttons()) {
@@ -217,48 +152,31 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
 	// 	buttonGroup.id(button)));
 }
-
-void MainWindow::initializeActions() {
-	ui->actionImportSTEP->setEnabled(false);
-	ui->actionImportSTL->setEnabled(false);
-	ui->actionGenerateMesh->setEnabled(false);
-}
-
-void MainWindow::showMesh() {
-	this->QVTKRender->clearRenderer();
-	this->QVTKRender->addActor(this->model->getMeshActor());
-	this->QVTKRender->RenderScene();
-}
-void MainWindow::showGeometry(){
-	this->QVTKRender->clearRenderer();
-	this->QVTKRender->addPipelinesToRenderer();
-	this->QVTKRender->RenderScene();
-}
-
 //----------------------------------------------------------------------------
 void MainWindow::onItemSelectionChanged() {
-	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
+    QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
 
-	QTreeWidgetItem* item;
-	if (!itemsList.isEmpty()) {
-		item = itemsList.takeFirst();
-	}
-
-	QVariant modelVariant = item->data(
-		0, TreeStructure::Role.value("Properties"));
-	QSharedPointer<PropertiesModel> sharedModel
-		= modelVariant.value<QSharedPointer<PropertiesModel>>();
-
-	if (!sharedModel.isNull()) {
-		PropertiesModel* model = sharedModel.data();
-		// ToDo: Detect data changed event and make project unsaved
-
-		this->ui->propertiesTable->setModel(model);
-		QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
-		header->setSectionResizeMode(QHeaderView::ResizeToContents);
-		header->setStretchLastSection(true);
-		header->setSectionResizeMode(QHeaderView::Interactive);
-	}
+    // Proceed only if there is a selected item
+    if (!itemsList.isEmpty()) {
+        // Cast the first selected item to TreeItem
+        TreeItem* item = dynamic_cast<TreeItem*>(itemsList.takeFirst());
+        
+        // Check if the cast was successful and the item is a valid TreeItem
+        if (item && item->_propModel) {
+            PropertiesModel* model = item->_propModel;
+            
+            // Set the properties table model
+            this->ui->propertiesTable->setModel(model);
+            
+            // Configure the header
+            QHeaderView* header = this->ui->propertiesTable->horizontalHeader();
+            header->setSectionResizeMode(QHeaderView::ResizeToContents);
+            header->setStretchLastSection(true);
+            header->setSectionResizeMode(QHeaderView::Interactive);
+        } else {
+            qDebug() << "Selected item is not a TreeItem or has a null PropertiesModel pointer.";
+        }
+    }
 }
 
 void MainWindow::onShowDialogButtonClicked() {

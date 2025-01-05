@@ -19,14 +19,15 @@
 
 
 
-#include "Model.h"
-
+#include "Model.hpp"
+#include "ModelDocParser.hpp"
 
 Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
         this->mesh = MeshCore::Mesh();
-        };
+    };
+
 Model::~Model(){
     gmsh::finalize();
 }
@@ -53,9 +54,11 @@ void Model::addSizing(const std::vector<int>& verticesTags, double size){
 }
 
 void Model::meshSurface() {
+    applyMeshSettings();
     mesh.generateSurfaceMesh();
 }
 void Model::meshVolume(){
+    applyMeshSettings();
     mesh.generateVolumeMesh();
 }
             
@@ -91,7 +94,8 @@ void Model::initializeGmsh() {
     }
 }
 
-void Model::fetchMeshProperties(double minElementSize, double maxElementSize){
-    gmsh::option::setNumber("Mesh.MeshSizeMin", minElementSize);
-    gmsh::option::setNumber("Mesh.MeshSizeMax", maxElementSize);
-}
+void Model::applyMeshSettings(){
+    ModelDocParser modelDoc(*this);
+    modelDoc.applyElementSizings();
+    modelDoc.applyMeshSettings();
+};

@@ -17,12 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MainWindow.h"
+#include "MainWindow.hpp"
+#include "ModelInterface.hpp"
 
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
 #include <QVTKOpenGLNativeWidget.h>
+#include <memory>
+
 
 int main(int argc, char* argv[]) {
 	// Before initializing QApplication, set the default surface format
@@ -42,7 +45,11 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 	}
-	MainWindow window;
+	Model::initializeGmsh();
+	ModelManager modelManager;
+	modelManager.createNewModel("NewModel");
+	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);
+	MainWindow window(modelInterface);
 	window.showMaximized();
 	return application.exec();
 }
