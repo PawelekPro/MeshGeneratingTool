@@ -6,7 +6,6 @@ endif()
 
 add_library(Document
     DocumentHandler.cpp
-    DocItemTypes.cpp
 )
 
 target_link_libraries(Document PUBLIC

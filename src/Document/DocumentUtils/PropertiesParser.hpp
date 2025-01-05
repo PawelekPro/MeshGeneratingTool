@@ -16,50 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DOCITEMTYPES_HPP
-#define DOCITEMTYPES_HPP
+#ifndef PROPERTIESPARSER_HPP
+#define PROPERTIESPARSER_HPP
 
-#include <variant>
+#include "document.h"
+#include <QDomElement>
 #include <QString>
-#include <stdexcept>
 
+namespace Properties{
 
+    QDomElement getProperty(const QDomElement& aParentElement, const QString& aPropertyName);
 
-namespace ItemTypes{
+    QDomElement getPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
+    QDomElement setPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
 
-    enum class Root{
-        Geometry,
-        Mesh,
-        Solution,
-        Results
-    };
+    QDomElement getPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
+    QDomElement setPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
 
-    enum class Geometry{
-        ImportSTEP,
-        ExtrudeFace,
-    };
-
-    enum class Mesh{
-        ElementSizing
-    };
-
-    enum class Solution{
-        BoundaryConditions,
-        SourceTerms,
-        Metrics
-    };
-
-    enum class Results{
-        ContourMap,
-        Residuals
-    };
-
-    using Sub = std::variant<Geometry, Mesh, Solution, Results>;
-
-    QString label(const Sub& aSubItem) noexcept;
-    QString label(const Root& aRootItem) noexcept;
-
-    Root rootType(const Sub& aSubType) noexcept;
 }
 
 #endif
