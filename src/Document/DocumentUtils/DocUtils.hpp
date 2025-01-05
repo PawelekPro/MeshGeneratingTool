@@ -16,22 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PROPERTIESPARSER_HPP
-#define PROPERTIESPARSER_HPP
+#ifndef DOCUTILS_HPP
+#define DOCUTILS_HPP
 
 #include "document.h"
+
 #include <QDomElement>
 #include <QString>
+
+namespace DocUtils{
+
+    QDomElement getSubElement(const QDomElement& aParentElement, const QString& aSearchedElementText);
+    
+}
 
 namespace Properties{
 
     QDomElement getProperty(const QDomElement& aParentElement, const QString& aPropertyName);
 
-    QDomElement getPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
-    QDomElement setPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
+    QString getPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
+    void setPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
 
-    QDomElement getPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
-    QDomElement setPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
+    QString getPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
+    void setPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
 
 }
 
