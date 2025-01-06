@@ -83,11 +83,57 @@ namespace Properties{
         return QDomElement();
     }
 
-    QString getPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName){
-        QDomElement property = getProperty(aParentElement, aPropertyName);
-        return property.text();
+    bool isProperty(const QDomElement& aElement){
+        QDomElement parent = aElement.parentNode().toElement();
+        if(aElement.isNull()){
+            return false;
+        }
+        if(aElement.tagName() != "Property"){
+            return false;
+        }
+        return true;
     }
 
+    QString getPropertyValue(const QDomElement& aProperty){
+        if(isProperty(aProperty)){
+            return aProperty.text();
+        } else {
+            qWarning() << "Element is not a property, returning empty QString";
+            return QString();
+        }
+    }
 
+    void setPropertyValue(QDomElement& aProperty, const QString& newValue) {
+        if (isProperty(aProperty)) {
+            while (!aProperty.firstChild().isNull()) {
+                aProperty.removeChild(aProperty.firstChild());
+            }
+            QDomText textNode = aProperty.ownerDocument().createTextNode(newValue);
+            aProperty.appendChild(textNode);
+        } else {
+            qWarning() << "Property is invalid. Could not set value to: " << newValue;
+        }
+    }
 
-}
+    QString getPropertyAttribute(const QDomElement& aProperty, const QString& aAttribute) {
+        if (isProperty(aProperty)) {
+            if (aProperty.hasAttribute(aAttribute)) {
+                return aProperty.attribute(aAttribute);
+            } else {
+                qWarning() << "Property does not have the requested attribute:" << aAttribute;
+                return QString();
+            }
+        } else {
+            qWarning() << "Invalid property element passed to getPropertyAttribute.";
+            return QString();
+        }
+    }
+
+    void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute, const QString& aNewValue) {
+        if (isProperty(aProperty)) {
+            aProperty.setAttribute(aAttribute, aNewValue);
+        } else {
+            qWarning() << "Could not set attribute:" << aAttribute << "to value:" << aNewValue << "- Invalid property element";
+        }
+    }
+} 

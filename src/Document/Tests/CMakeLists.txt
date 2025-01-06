@@ -3,6 +3,7 @@ add_executable(utDocument
     # utDocItemTypes.cpp
     # utDocumentHandler.cpp
     utProperties.cpp
+    utDefaultsParser.cpp
 )
 
 find_package(GTest REQUIRED)

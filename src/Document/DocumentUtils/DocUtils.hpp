@@ -33,13 +33,13 @@ namespace DocUtils{
 namespace Properties{
 
     QDomElement getProperty(const QDomElement& aParentElement, const QString& aPropertyName);
+    bool isProperty(const QDomElement& aProperty);
 
-    QString getPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
-    void setPropertyValue(const QDomElement& aParentElement, const QString& aPropertyName);
+    QString getPropertyValue(const QDomElement& aProperty);
+    void setPropertyValue(QDomElement& aProperty, const QString& aNewValue);
 
-    QString getPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
-    void setPropertyAttribute(const QDomElement& aParentElement, const QString& aPropertyName);
-
+    QString getPropertyAttribute(const QDomElement& aProperty, const QString& aAttribute);
+    void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute, const QString& aNewValue);
 }
 
 #endif
