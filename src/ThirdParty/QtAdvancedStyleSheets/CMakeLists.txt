@@ -3,6 +3,8 @@ ADD_LIBRARY(QtAdvancedStyleSheets
   src/QtAdvancedStylesheet.cpp
 )
 
+target_compile_definitions(QtAdvancedStyleSheets PUBLIC ACSS_SHARED_EXPORT)
+
 TARGET_LINK_LIBRARIES(QtAdvancedStyleSheets PUBLIC 
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
