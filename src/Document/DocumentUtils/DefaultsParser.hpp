@@ -22,15 +22,21 @@
 
 #include "DocItemTypes.hpp"
 #include "ComboBoxTypes.hpp"
+#include "document.h"
 
 #include <QDomElement>
+#include <QStringList>
 
 namespace DefaultsParser {
 
     QDomElement getItemProperties(const ItemTypes::Root& aItemType);
     QDomElement getItemProperties(const ItemTypes::Sub& aItemType);
-
     QStringList getComboBoxList(const ComboBoxTypes& aComboBoxType);
+
+
+    QStringList getComboBoxListFromJson(const rapidjson::Document& aJsonDoc, const QString& aComboBoxEntry);
+    QDomElement getPropertiesFromJson(const rapidjson::Document& aDoc, const QString& aParentEntry);
+    QDomElement jsonValueToProperty(const rapidjson::Value& aJsonPropValue);
 
 };
 

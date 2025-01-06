@@ -9,6 +9,7 @@ add_library(DocumentUtils
 target_link_libraries(DocumentUtils PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Xml
+    AppConfig
 )
 
 target_include_directories(DocumentUtils PUBLIC

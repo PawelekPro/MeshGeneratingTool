@@ -70,7 +70,54 @@ TEST_F(PropertiesTest, GetPropertyValue) {
     for (const auto &entry : propertyMap) {
         const QString &name = entry.first;
         const QVariant &expectedValue = entry.second.second;
-        QVariant actualValue = Properties::getPropertyValue(root, name);
-        EXPECT_EQ(expectedValue.toString(), actualValue.toString());
+
+        QDomElement property = Properties::getProperty(root, name);
+        QString actualValue = Properties::getPropertyValue(property);
+        EXPECT_EQ(expectedValue.toString(), actualValue);
+
+        property = Properties::getProperty(properties, name);
+        actualValue = Properties::getPropertyValue(property);
+        EXPECT_EQ(expectedValue.toString(), actualValue);
     }
-}
+};
+
+TEST_F(PropertiesTest, SetPropertyValue) {
+    for (const auto& entry : propertyMap) {
+        const QString& name = entry.first;
+        const QVariant& originalValue = entry.second.second;
+        const QString newValue = "Updated " + originalValue.toString();
+
+        QDomElement property = Properties::getProperty(properties, name);
+        Properties::setPropertyValue(property, newValue);
+        QString updatedValue = Properties::getPropertyValue(property);
+        EXPECT_EQ(newValue, updatedValue);
+    }
+};
+
+TEST_F(PropertiesTest, GetPropertyAttribute) {
+    for (const auto& entry : propertyMap) {
+        const QString& name = entry.first;
+        const QString& expectedLabel = entry.second.first;
+
+        QDomElement property = Properties::getProperty(properties, name);
+        ASSERT_FALSE(property.isNull());
+
+        QString label = Properties::getPropertyAttribute(property, "label");
+        EXPECT_EQ(expectedLabel, label);
+    }
+};
+
+TEST_F(PropertiesTest, SetPropertyAttribute) {
+    for (const auto& entry : propertyMap) {
+        const QString& name = entry.first;
+
+        QDomElement property = Properties::getProperty(properties, name);
+        ASSERT_FALSE(property.isNull());
+
+        QString newLabel = "New Label for " + name;
+        Properties::setPropertyAttribute(property, "label", newLabel);
+
+        QString updatedLabel = Properties::getPropertyAttribute(property, "label");
+        EXPECT_EQ(newLabel, updatedLabel);
+    }
+};

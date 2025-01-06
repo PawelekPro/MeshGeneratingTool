@@ -104,6 +104,10 @@ public:
 	 */
 	const QString getComboBoxModelsPath();
 
+	static const QString subItemsSetupPath;
+	static const QString rootItemsSetupPath;
+	static const QString comboBoxModelsPath;
+
 private:
 	AppInfo(AppInfo const&) = delete;
 	AppInfo();
@@ -118,14 +122,8 @@ private:
 	 */
 	QString getValue(const QString& key);
 
-private:
 	// Container for application settings
 	QSettings settings;
-
-	// Templates path
-	static const QString _subItemsSetupPath;
-	static const QString _rootItemsSetupPath;
-	static const QString _comboBoxModelsPath;
 };
 
 #endif

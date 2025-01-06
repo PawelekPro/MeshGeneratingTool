@@ -23,9 +23,9 @@ const QString AppInfo::appName() { return "MeshGeneratingTool"; }
 const QString AppInfo::appVersion() { return "1.0.0"; }
 const QString AppInfo::appProjFileVersion() { return "1.0"; }
 
-const QString AppInfo::_subItemsSetupPath = ":templates/templates/SubItemsSetup.json";
-const QString AppInfo::_rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
-const QString AppInfo::_comboBoxModelsPath = ":templates/templates/ComboboxModels.json";
+const QString AppInfo::subItemsSetupPath = ":templates/templates/SubItemsSetup.json";
+const QString AppInfo::rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
+const QString AppInfo::comboBoxModelsPath = ":templates/templates/ComboboxModels.json";
 
 //--------------------------------------------------------------------------------------
 AppInfo::AppInfo()
@@ -47,30 +47,18 @@ QString AppInfo::getValue(const QString& key) {
 }
 
 //--------------------------------------------------------------------------------------
-QString AppInfo::getAppVersion() {
-	return this->getValue("Version");
-}
+QString AppInfo::getAppVersion() { return this->getValue("Version"); }
 
 //--------------------------------------------------------------------------------------
-QString AppInfo::getAppName() {
-	return this->getValue("Name");
-}
+QString AppInfo::getAppName() { return this->getValue("Name"); }
 
 //--------------------------------------------------------------------------------------
-QString AppInfo::getAppProjFileVersion() {
-	return this->getValue("ProjFileVersion");
-}
+QString AppInfo::getAppProjFileVersion() { return this->getValue("ProjFileVersion"); }
 
 //--------------------------------------------------------------------------------------
-const QString AppInfo::getRootItemsSetupPath() {
-	return this->_rootItemsSetupPath;
-}
+const QString AppInfo::getRootItemsSetupPath() { return this->rootItemsSetupPath; }
 
 //--------------------------------------------------------------------------------------
-const QString AppInfo::getComboBoxModelsPath() {
-	return this->_comboBoxModelsPath;
-}
+const QString AppInfo::getComboBoxModelsPath() { return this->comboBoxModelsPath; }
 
-const QString AppInfo::getSubItemsSetupPath() {
-	return this->_subItemsSetupPath;
-};
+const QString AppInfo::getSubItemsSetupPath() { return this->subItemsSetupPath; };
