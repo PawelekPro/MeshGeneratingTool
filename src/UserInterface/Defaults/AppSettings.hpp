@@ -18,17 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APPINFO_H
-#define APPINFO_H
+#ifndef APPSETTINGS_H
+#define APPSETTINGS_H
 
-#include <iostream>
+#include "AppDefaultColors.hpp"
+#include "AppInfo.hpp"
+#include "AppTheme.hpp"
 
-#include <QString>
+#include <QDir>
+#include <QFile>
+#include <QSettings>
+#include <QStandardPaths>
 
-namespace AppInfo {
-const QString appName = "MeshGeneratingTool";
-const QString appVersion = "1.0.0";
-const QString appProjFileVersion = "1.0";
+namespace SettingsRoots {
+const std::string defaults = "Defaults";
+const std::string rendering = "Rendering";
+const std::string graphics = "Graphics";
+const std::string theme = "Theme";
+};
+
+class AppSettings : public QSettings, public AppDefaultColors {
+	Q_OBJECT
+public:
+	explicit AppSettings();
+	~AppSettings() = default;
+
+public:
+	void updateRendererSettings();
+	const QString getThemeAsString();
+	void setThemeString(QString theme);
+
+private:
+	void createDefaultSettings();
+	void loadDefaultSettings();
 };
 
 #endif

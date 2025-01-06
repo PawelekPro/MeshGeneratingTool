@@ -18,18 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AppSettings.h"
+#include "AppSettings.hpp"
 
 //--------------------------------------------------------------------------------------
 AppSettings::AppSettings()
-	: QSettings(QSettings::IniFormat, QSettings::UserScope, AppInfo::appName, AppInfo::appName) {
+	: QSettings(QSettings::IniFormat, QSettings::UserScope, AppInfo::appName(), AppInfo::appName()) {
 
-	QString settingsPath = QDir::toNativeSeparators(
-		QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + ".ini");
+	QString settingsPath = this->fileName();
 
 	// If settings file does not exist then create file
 	if (!QFile::exists(settingsPath)) {
-		qDebug() << "Creating default settings.";
+		qDebug() << "Creating default settings." << this->fileName();
 		this->createDefaultSettings();
 	}
 
@@ -42,9 +41,9 @@ void AppSettings::createDefaultSettings() {
 	Defaults
 	===================================================================*/
 	this->beginGroup(SettingsRoots::defaults);
-	this->setValue("Name", AppInfo::appName);
-	this->setValue("Version", AppInfo::appVersion);
-	this->setValue("ProjFileVersion", AppInfo::appProjFileVersion);
+	this->setValue("Name", AppInfo::appName());
+	this->setValue("Version", AppInfo::appVersion());
+	this->setValue("ProjFileVersion", AppInfo::appProjFileVersion());
 	this->endGroup();
 
 	/* ================================================================

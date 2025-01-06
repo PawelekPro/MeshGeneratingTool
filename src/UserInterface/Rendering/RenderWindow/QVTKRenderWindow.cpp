@@ -164,7 +164,7 @@ void Rendering::QVTKRenderWindow::clearRenderer() {
 		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 		if (pipeline) {
 			pipeline->RemoveFromRenderer(_renderer);
-        }
+		}
 	}
 
 	vtkActorCollection* actors = this->_renderer->GetActors();

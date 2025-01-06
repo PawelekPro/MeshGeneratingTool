@@ -56,14 +56,8 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->connectActionsToModel();
 	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
 
-	// this->buttonGroup.addButton(this->ui->volumeSelectorButton,
-	// 	static_cast<int>(Rendering::Renderers::Main));
-
-	// this->buttonGroup.addButton(this->ui->facesSelectorButton,
-	// 	static_cast<int>(Rendering::Renderers::Faces));
-
-	// this->buttonGroup.addButton(this->ui->edgesSelectorButton,
-	// 	static_cast<int>(Rendering::Renderers::Edges));
+	AppTheme& appTheme = AppTheme::getInstance();
+	appTheme.initializeAppStylesheet();
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {

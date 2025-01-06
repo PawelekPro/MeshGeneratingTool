@@ -140,6 +140,10 @@ public:
 
 	QIVtkViewRepresentation* getViewRepresentation();
 
+	void setBackground(
+		vtkRenderer::GradientModes mode, const double* col1 = nullptr, const double* col2 = nullptr);
+	void setBackground(const double* col1 = nullptr);
+
 private:
 	// ! Container widget
 	QPointer<QWidget> _widget;

@@ -19,6 +19,10 @@
 
 #include "AppInfo.hpp"
 
+const QString AppInfo::appName() { return "MeshGeneratingTool"; }
+const QString AppInfo::appVersion() { return "1.0.0"; }
+const QString AppInfo::appProjFileVersion() { return "1.0"; }
+
 const QString AppInfo::_subItemsSetupPath = ":templates/templates/SubItemsSetup.json";
 const QString AppInfo::_rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
 const QString AppInfo::_comboBoxModelsPath = ":templates/templates/ComboboxModels.json";

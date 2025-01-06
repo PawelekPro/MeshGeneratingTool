@@ -51,6 +51,10 @@ public:
 		return instance;
 	};
 
+	static const QString appName();
+	static const QString appVersion();
+	static const QString appProjFileVersion();
+
 	/**
 	 * @brief  Get name of application as a QString.
 	 *

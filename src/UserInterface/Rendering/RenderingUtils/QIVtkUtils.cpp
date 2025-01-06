@@ -34,7 +34,7 @@ QIVtkLookupTable::QIVtkLookupTable() {
 
 	// Use default colors stored in settings
 	const AppDefaultColors::GeomColorsArray colorsArray
-		= AppDefaultColors::getGeometryEntitiesColorArray();
+		= AppDefaults::getInstance().getGeometryEntitiesColorArray();
 	this->setColorsTable(colorsArray);
 }
 

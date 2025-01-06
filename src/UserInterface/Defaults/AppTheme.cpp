@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AppTheme.h"
+#include "AppTheme.hpp"
 
 //--------------------------------------------------------------------------------------
 AppTheme::AppTheme(QObject* parent)

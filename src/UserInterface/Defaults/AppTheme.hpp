@@ -25,7 +25,7 @@
 #include <QApplication>
 #include <QObject>
 
-#include "AppSettings.h"
+#include "AppSettings.hpp"
 
 /**
  * @class AppTheme
@@ -62,9 +62,7 @@ public:
 	 */
 	void updateAppStylesheet();
 
-
 	void initializeAppStylesheet();
-	
 
 private:
 	/**

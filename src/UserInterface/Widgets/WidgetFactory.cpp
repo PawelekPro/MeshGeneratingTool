@@ -27,20 +27,20 @@
 
 namespace WidgetFactory {
 
-    BaseWidget* WidgetFactory::createWidget(const QString& widgetType, QWidget* parent) {
-        if (widgetType == "ColorPickerWidget") {
-            return new ColorPickerWidget(parent);
-        } else if (widgetType == "ComboBoxWidget") {
-            return new ComboBoxWidget(parent);
-        } else if (widgetType == "DoubleLineWidget") {
-            return new DoubleLineWidget(parent);
-        } else if (widgetType == "EntityPickWidget") {
-            return new EntityPickWidget(parent);
-        } else if (widgetType == "IntLineWidget") {
-            return new IntLineWidget(parent);
-        }
-        
-        std::cerr << widgetType.toStdString() << " could not be found in WidgetFactory" << std::endl;
-        return nullptr; // Return nullptr if widget type not found
-    }
+BaseWidget* createWidget(const QString& widgetType, QWidget* parent) {
+	if (widgetType == "ColorPickerWidget") {
+		return new ColorPickerWidget(parent);
+	} else if (widgetType == "ComboBoxWidget") {
+		return new ComboBoxWidget(parent);
+	} else if (widgetType == "DoubleLineWidget") {
+		return new DoubleLineWidget(parent);
+	} else if (widgetType == "EntityPickWidget") {
+		return new EntityPickWidget(parent);
+	} else if (widgetType == "IntLineWidget") {
+		return new IntLineWidget(parent);
+	}
+
+	std::cerr << widgetType.toStdString() << " could not be found in WidgetFactory" << std::endl;
+	return nullptr; // Return nullptr if widget type not found
+}
 }

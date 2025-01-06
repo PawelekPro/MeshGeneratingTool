@@ -28,6 +28,7 @@
 #include "ModelInterface.hpp"
 #include "RenderSignalSender.hpp"
 
+#include "AppTheme.hpp"
 #include "DocumentHandler.hpp"
 #include "PreferencesDialog.h"
 #include "ProgressBar.hpp"
