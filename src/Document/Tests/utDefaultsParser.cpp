@@ -19,9 +19,8 @@
 
 #include <gtest/gtest.h>
 #include "DefaultsParser.hpp"
+#include "DocUtils.hpp"
 
-
-// Test Fixture
 class JsonValueToPropertyTest : public ::testing::Test {
 protected:
     QDomDocument doc;
@@ -29,7 +28,7 @@ protected:
     QDomElement runTest(const char* json) {
         rapidjson::Document jsonDoc;
         jsonDoc.Parse(json);
-        return DefaultsParser::jsonValueToProperty(jsonDoc);
+        return DefaultsParser::jsonValueToProperty(doc, jsonDoc);
     }
 };
 
@@ -71,5 +70,131 @@ TEST_F(JsonValueToPropertyTest, JsonWithValueAsBool) {
     QDomElement result = runTest(json);
     ASSERT_FALSE(result.isNull());
     EXPECT_EQ(result.attribute("name"), "isVisible");
-    EXPECT_EQ(result.attribute("value"), "true");
+    EXPECT_EQ(Properties::getPropertyValue(result), "true");
+}
+
+
+class GetPropertiesFromJsonTest : public ::testing::Test {
+protected:
+    QDomDocument doc;
+
+    QDomElement runTest(const char* json, const QString& jsonItemEntry) {
+        rapidjson::Document jsonDoc;
+        jsonDoc.Parse(json);
+        return DefaultsParser::getPropertiesFromJson(doc, jsonDoc, jsonItemEntry);
+    }
+};
+
+TEST_F(GetPropertiesFromJsonTest, MissingJsonEntry) {
+    const char* json = R"({
+        "SomeOtherEntry": {
+            "Properties": []
+        }
+    })";
+
+    QDomElement result = runTest(json, "MissingEntry");
+    EXPECT_FALSE(result.hasChildNodes());
+    EXPECT_EQ(result.tagName(), "Properties");
+}
+
+TEST_F(GetPropertiesFromJsonTest, MissingPropertiesKey) {
+    const char* json = R"({
+        "ValidEntry": {
+            "OtherKey": "SomeValue"
+        }
+    })";
+
+    QDomElement result = runTest(json, "ValidEntry");
+    EXPECT_EQ(result.tagName(), "Properties");
+    EXPECT_FALSE(result.hasChildNodes());
+}
+
+TEST_F(GetPropertiesFromJsonTest, PropertiesKeyNotArray) {
+    const char* json = R"({
+        "ValidEntry": {
+            "Properties": "NotAnArray"
+        }
+    })";
+
+    QDomElement result = runTest(json, "ValidEntry");
+    EXPECT_EQ(result.tagName(), "Properties");
+    EXPECT_FALSE(result.hasChildNodes());
+}
+
+TEST_F(GetPropertiesFromJsonTest, ValidPropertiesArray) {
+    const char* json = R"({
+        "ValidEntry": {
+            "Properties": [
+                { "name": "property1", "value": "value1" },
+                { "name": "property2", "value": 42 },
+                { "name": "property3", "value": true }
+            ]
+        }
+    })";
+
+    QDomElement result = runTest(json, "ValidEntry");
+    EXPECT_EQ(result.tagName(), "Properties");
+    EXPECT_EQ(result.childNodes().count(), 3);
+
+    QDomElement property1 = result.firstChildElement("Property");
+    EXPECT_EQ(property1.attribute("name"), "property1");
+    EXPECT_EQ(Properties::getPropertyValue(property1), "value1");
+
+    QDomElement property2 = property1.nextSiblingElement("Property");
+    EXPECT_EQ(property2.attribute("name"), "property2");
+    EXPECT_EQ(Properties::getPropertyValue(property2), "42");
+
+    QDomElement property3 = property2.nextSiblingElement("Property");
+    EXPECT_EQ(property3.attribute("name"), "property3");
+    EXPECT_EQ(Properties::getPropertyValue(property3), "true");
+}
+
+TEST_F(GetPropertiesFromJsonTest, InvalidPropertyInArray) {
+    const char* json = R"({
+        "ValidEntry": {
+            "Properties": [
+                { "name": "property1", "value": "value1" },
+                { "invalidKey": "invalidValue" }
+            ]
+        }
+    })";
+
+    QDomElement result = runTest(json, "ValidEntry");
+    EXPECT_EQ(result.tagName(), "Properties");
+    EXPECT_EQ(result.childNodes().count(), 1);
+
+    QDomElement property1 = result.firstChildElement("Property");
+    EXPECT_EQ(property1.attribute("name"), "property1");
+    EXPECT_EQ(Properties::getPropertyValue(property1), "value1");
+}
+
+TEST_F(GetPropertiesFromJsonTest, EmptyPropertiesArray) {
+    const char* json = R"({
+        "ValidEntry": {
+            "Properties": []
+        }
+    })";
+
+    QDomElement result = runTest(json, "ValidEntry");
+    EXPECT_EQ(result.tagName(), "Properties");
+    EXPECT_FALSE(result.hasChildNodes());
+}
+
+TEST_F(GetPropertiesFromJsonTest, InvalidJsonStructure) {
+    const char* json = R"({
+        "ValidEntry": {
+            "Properties": [
+                { "name": "property1", "value": "value1" },
+                "NotAnObject"
+            ]
+        }
+    })";
+
+    QDomElement result = runTest(json, "ValidEntry");
+    EXPECT_EQ(result.tagName(), "Properties");
+    EXPECT_EQ(result.childNodes().count(), 1);
+
+    QDomElement property1 = result.firstChildElement("Property");
+    EXPECT_EQ(property1.attribute("name"), "property1");
+    EXPECT_EQ(Properties::getPropertyValue(property1), "value1");
 }
