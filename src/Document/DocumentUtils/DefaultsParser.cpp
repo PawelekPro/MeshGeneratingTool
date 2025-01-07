@@ -51,17 +51,17 @@ namespace DefaultsParser {
             }
     }
 
-    QDomElement getItemProperties(const ItemTypes::Root& aItemType){
+    QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Root& aItemType){
         rapidjson::Document aJsonDoc = initJsonDocument(AppInfo::rootItemsSetupPath);
         QString itemTypeLabel = ItemTypes::label(aItemType);
-        QDomElement properties = getPropertiesFromJson(aJsonDoc, itemTypeLabel);
+        QDomElement properties = getPropertiesFromJson(aDomDoc, aJsonDoc, itemTypeLabel);
         return properties;       
     }
 
-    QDomElement getItemProperties(const ItemTypes::Sub& aItemType){
+    QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Sub& aItemType){
         rapidjson::Document aJsonDoc = initJsonDocument(AppInfo::subItemsSetupPath);
         QString itemTypeLabel = ItemTypes::label(aItemType);
-        QDomElement properties = getPropertiesFromJson(aJsonDoc, itemTypeLabel);        
+        QDomElement properties = getPropertiesFromJson(aDomDoc, aJsonDoc, itemTypeLabel);        
         return properties;
     }
 
@@ -73,7 +73,8 @@ namespace DefaultsParser {
     }
 
     QStringList getComboBoxListFromJson(const rapidjson::Document& aJsonDoc, const QString& aComboBoxEntry){
-        const char* comboBoxLabel = aComboBoxEntry.toStdString().c_str();
+        std::string comboBoxEntryString = aComboBoxEntry.toStdString();
+        const char* comboBoxLabel = comboBoxEntryString.c_str();
         if (!aJsonDoc.HasMember(comboBoxLabel)
             || !(aJsonDoc)[comboBoxLabel].IsObject()) {
                 qWarning() << "Json document does not include entry: " << aComboBoxEntry;
@@ -104,10 +105,10 @@ namespace DefaultsParser {
     }
 
 
-    QDomElement getPropertiesFromJson(const rapidjson::Document& aJsonDoc, const QString& aJsonItemEntry){
-        QDomElement properties;
-        properties.setTagName("Properties");
-        const char *itemType = aJsonItemEntry.toStdString().c_str();
+    QDomElement getPropertiesFromJson(QDomDocument& aDomDoc, const rapidjson::Document& aJsonDoc, const QString& aJsonItemEntry){
+        QDomElement properties = aDomDoc.createElement("Properties");
+        std::string jsonEntryString = aJsonItemEntry.toStdString();
+        const char *itemType = jsonEntryString.c_str();
         if (!aJsonDoc.HasMember(itemType) || !aJsonDoc[itemType].IsObject()) {
             qWarning() << "Json document does not include entry:" << aJsonItemEntry;
             return properties;
@@ -128,7 +129,7 @@ namespace DefaultsParser {
                 continue;
             }
             const rapidjson::Value &jsonPropertyValue = *itr;
-            QDomElement property = jsonValueToProperty(jsonPropertyValue);
+            QDomElement property = jsonValueToProperty(aDomDoc, jsonPropertyValue);
             if(!property.isNull()){
                 properties.appendChild(property);
             }
@@ -137,9 +138,8 @@ namespace DefaultsParser {
     }
 
 
-    QDomElement jsonValueToProperty(const rapidjson::Value& aJsonValue){
-        QDomElement property;
-        property.setTagName("Property");
+    QDomElement jsonValueToProperty(QDomDocument& aDomDoc, const rapidjson::Value& aJsonValue){
+        QDomElement property = aDomDoc.createElement("Property");
         for (auto itr = aJsonValue.MemberBegin(); itr != aJsonValue.MemberEnd(); ++itr) {
             const QString key = QString::fromStdString(itr->name.GetString());
             const rapidjson::Value &value = itr->value;
@@ -150,11 +150,13 @@ namespace DefaultsParser {
                 valueVariant = value.GetDouble();
             } else if (value.IsString()) {
                 valueVariant = QString::fromStdString(value.GetString());
+                std::string valueString = value.GetString();
+                QString string = valueVariant.toString();
             } else if (value.IsBool()) {
                 valueVariant = value.GetBool();
             } else {
                 qWarning() << "Unsupported value type for key:" << key;
-
+                continue;
             }
             if (key == "value"){
                 Properties::setPropertyValue(property, valueVariant.toString());

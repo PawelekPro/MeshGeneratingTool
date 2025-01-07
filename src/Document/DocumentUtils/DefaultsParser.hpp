@@ -29,15 +29,13 @@
 
 namespace DefaultsParser {
 
-    QDomElement getItemProperties(const ItemTypes::Root& aItemType);
-    QDomElement getItemProperties(const ItemTypes::Sub& aItemType);
+    QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Root& aItemType);
+    QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Sub& aItemType);
     QStringList getComboBoxList(const ComboBoxTypes& aComboBoxType);
 
-
+    QDomElement getPropertiesFromJson(QDomDocument& aDomDoc, const rapidjson::Document& aDoc, const QString& aParentEntry);
+    QDomElement jsonValueToProperty(QDomDocument& aDomDoc, const rapidjson::Value& aJsonPropValue);
     QStringList getComboBoxListFromJson(const rapidjson::Document& aJsonDoc, const QString& aComboBoxEntry);
-    QDomElement getPropertiesFromJson(const rapidjson::Document& aDoc, const QString& aParentEntry);
-    QDomElement jsonValueToProperty(const rapidjson::Value& aJsonPropValue);
-
 };
 
 #endif

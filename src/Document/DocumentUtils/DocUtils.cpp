@@ -83,17 +83,22 @@ namespace Properties{
         return QDomElement();
     }
 
-    bool isProperty(const QDomElement& aElement){
-        QDomElement parent = aElement.parentNode().toElement();
+    bool isProperty(const QDomElement& aElement) {
         if(aElement.isNull()){
+            qWarning() << "element is null.";
             return false;
         }
-        if(aElement.tagName() != "Property"){
+        if (aElement.tagName() != "Property") {
+            qWarning() << "Property should have tagName 'Property'.";
+            return false;
+        }
+        if (!aElement.hasAttribute("name")) {
+            qWarning() << "Property is missing required 'name' attribute";
             return false;
         }
         return true;
     }
-
+    
     QString getPropertyValue(const QDomElement& aProperty){
         if(isProperty(aProperty)){
             return aProperty.text();
@@ -104,15 +109,11 @@ namespace Properties{
     }
 
     void setPropertyValue(QDomElement& aProperty, const QString& newValue) {
-        if (isProperty(aProperty)) {
-            while (!aProperty.firstChild().isNull()) {
-                aProperty.removeChild(aProperty.firstChild());
-            }
-            QDomText textNode = aProperty.ownerDocument().createTextNode(newValue);
-            aProperty.appendChild(textNode);
-        } else {
-            qWarning() << "Property is invalid. Could not set value to: " << newValue;
+        while (!aProperty.firstChild().isNull()) {
+            aProperty.removeChild(aProperty.firstChild());
         }
+        QDomText textNode = aProperty.ownerDocument().createTextNode(newValue);
+        aProperty.appendChild(textNode);
     }
 
     QString getPropertyAttribute(const QDomElement& aProperty, const QString& aAttribute) {
@@ -124,16 +125,12 @@ namespace Properties{
                 return QString();
             }
         } else {
-            qWarning() << "Invalid property element passed to getPropertyAttribute.";
+            qWarning() << "Element is not a property, returning empty QString";
             return QString();
         }
     }
 
     void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute, const QString& aNewValue) {
-        if (isProperty(aProperty)) {
-            aProperty.setAttribute(aAttribute, aNewValue);
-        } else {
-            qWarning() << "Could not set attribute:" << aAttribute << "to value:" << aNewValue << "- Invalid property element";
-        }
+        aProperty.setAttribute(aAttribute, aNewValue);
     }
 } 
