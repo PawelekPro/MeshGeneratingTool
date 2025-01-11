@@ -24,9 +24,13 @@
 #include <QDomElement>
 #include <QString>
 
+#include <vector>
+
 namespace DocUtils{
 
     QDomElement getSubElement(const QDomElement& aParentElement, const QString& aSearchedElementText);
+
+    QString intsToString(const std::vector<int>& aIntVec);
     
 }
 

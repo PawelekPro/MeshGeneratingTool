@@ -198,3 +198,84 @@ TEST_F(GetPropertiesFromJsonTest, InvalidJsonStructure) {
     EXPECT_EQ(property1.attribute("name"), "property1");
     EXPECT_EQ(Properties::getPropertyValue(property1), "value1");
 }
+
+
+class GetComboBoxListFromJsonTest : public ::testing::Test {
+protected:
+    QStringList runTest(const char* json, const QString& jsonItemEntry) {
+        rapidjson::Document jsonDoc;
+        jsonDoc.Parse(json);
+        return DefaultsParser::getComboBoxListFromJson(jsonDoc, jsonItemEntry);
+    }
+};
+
+TEST_F(GetComboBoxListFromJsonTest, ValidComboBoxJsonEntry){
+    const char* json = R"({
+        "EntitySelection": {
+            "0": {
+                "label": "Vertex"
+            },
+            "1": {
+                "label": "Edge"
+            },
+            "2": {
+                "label": "Face"
+            },
+            "3": {
+                "label": "Shape"
+            }
+        }
+    })";
+    QStringList resultList = runTest(json, "EntitySelection");
+    EXPECT_EQ(resultList.at(0), "Vertex");
+    EXPECT_EQ(resultList.at(1), "Edge");
+    EXPECT_EQ(resultList.at(2), "Face");
+    EXPECT_EQ(resultList.at(3), "Shape");
+}
+
+TEST_F(GetComboBoxListFromJsonTest, DontSortComboBoxEntries){
+ const char* json = R"({
+        "EntitySelection": {
+            "1": {
+                "label": "Vertex"
+            },
+            "0": {
+                "label": "Edge"
+            },
+            "3": {
+                "label": "Face"
+            },
+            "2": {
+                "label": "Shape"
+            }
+        }
+    })";
+    QStringList resultList = runTest(json, "EntitySelection");
+    EXPECT_EQ(resultList.at(0), "Edge");
+    EXPECT_EQ(resultList.at(1), "Vertex");
+    EXPECT_EQ(resultList.at(2), "Shape");
+    EXPECT_EQ(resultList.at(3), "Face");
+}
+
+TEST_F(GetComboBoxListFromJsonTest, InvalidComboBoxJsonEntry){
+    const char* json = R"({
+        "WrongLabel": {
+            "0": {
+                "label": "Vertex"
+            }
+        }
+    })";
+
+    QStringList resultList = runTest(json, "EntitySelection");
+    EXPECT_TRUE(resultList.isEmpty());
+
+    json = R"({
+        "EntitySelection": {
+            "0": {
+                "wrongLabel": "Vertex"
+            }
+        }
+    })";
+    resultList = runTest(json, "EntitySelection");
+    EXPECT_TRUE(resultList.isEmpty());
+}
