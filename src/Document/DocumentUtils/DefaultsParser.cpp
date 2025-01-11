@@ -95,7 +95,7 @@ namespace DefaultsParser {
             m_list.push_back(label);
         }
 
-        std::sort(ids.begin(), ids.end());
+        // std::sort(ids.begin(), ids.end());
 
         QStringList qStringList;
         for (int id : ids) {

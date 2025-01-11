@@ -1,5 +1,4 @@
 add_library(DocumentUtils
-    JsonParser.cpp
     DocUtils.cpp
     DefaultsParser.cpp
     DocItemTypes.cpp

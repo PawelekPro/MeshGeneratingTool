@@ -19,15 +19,48 @@
 
 #include <gtest/gtest.h>
 #include "DocumentHandler.hpp"
+#include "DocUtils.hpp"
 
-TEST(DocumentHandlerSetup, CreateRootElement){
+TEST(DocumentHandlerTest, CreateRootItems) {
+    DocumentHandler& doc = DocumentHandler::getInstance();
+
+    QDomElement geometryElement = doc.createRootElement(ItemTypes::Root::Geometry);
+    QDomElement meshElement = doc.createRootElement(ItemTypes::Root::Mesh);
+    QDomElement solutionElement = doc.createRootElement(ItemTypes::Root::Solution);
+    QDomElement resultsElement = doc.createRootElement(ItemTypes::Root::Results);
+
+    ASSERT_FALSE(geometryElement.isNull());
+    ASSERT_FALSE(meshElement.isNull());
+    ASSERT_FALSE(solutionElement.isNull());
+    ASSERT_FALSE(resultsElement.isNull());
+
+    EXPECT_EQ(geometryElement.tagName(), "Geometry");
+    EXPECT_EQ(meshElement.tagName(), "Mesh");
+    EXPECT_EQ(solutionElement.tagName(), "Solution");
+    EXPECT_EQ(resultsElement.tagName(), "Results");
+
+    EXPECT_FALSE(geometryElement.firstChildElement("Properties").isNull());
+    EXPECT_FALSE(meshElement.firstChildElement("Properties").isNull());
+    EXPECT_FALSE(solutionElement.firstChildElement("Properties").isNull());
+    EXPECT_FALSE(resultsElement.firstChildElement("Properties").isNull());
+}
+
+
+
+TEST(DocumentHandlerTest, CreateGeometrySubItems){
 
     DocumentHandler& doc = DocumentHandler::getInstance();
-    QDomElement geometryRoot = doc.createRootElement(ItemTypes::Root::Geometry);
+    QDomElement geometryElement = doc.createRootElement(ItemTypes::Root::Geometry);
+    QDomElement importElement = doc.createSubElement(ItemTypes::Geometry::ImportSTEP, geometryElement);
+    EXPECT_FALSE(importElement.isNull());
+    EXPECT_FALSE(importElement.firstChildElement("Properties").isNull());
+}
 
-    EXPECT_FALSE(geometryRoot.isNull());
+TEST(DocumentHandlerTest, CreateMeshSubItems){
 
-    QDomElement properties = DocumentHandler::getProperties(geometryRoot);
-
-    EXPECT_FALSE(properties.isNull());
+    DocumentHandler& doc = DocumentHandler::getInstance();
+    QDomElement meshElement = doc.createRootElement(ItemTypes::Root::Mesh);
+    QDomElement sizingElement = doc.createSubElement(ItemTypes::Mesh::ElementSizing, meshElement);
+    EXPECT_FALSE(sizingElement.isNull());
+    EXPECT_FALSE(sizingElement.firstChildElement("Properties").isNull());
 }

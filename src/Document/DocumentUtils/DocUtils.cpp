@@ -27,22 +27,7 @@ namespace DocUtils{
             qWarning("Invalid element passed to getSubElement. Returning empty QDomElement.");
             return QDomElement();
         }
-
-        QDomNodeList childElements = aParentElement.elementsByTagName(aSearchedElementText);
-
-        if (childElements.count() == 0) {
-            qWarning() << "No elements with tag name" << aSearchedElementText 
-                    << "found under parent element" << aParentElement.tagName() << ".";
-        } else if (childElements.count() > 1) {
-            qWarning() << "Multiple elements with tag name" << aSearchedElementText 
-                    << "found under parent element" << aParentElement.tagName() 
-                    << ". Returning the first matching element.";
-            return childElements.at(0).toElement();
-        } else {
-            return childElements.at(0).toElement();
-        }
-        
-        return QDomElement();
+        return aParentElement.firstChildElement(aSearchedElementText);
     }
 }
 

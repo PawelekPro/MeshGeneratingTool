@@ -1,7 +1,7 @@
 add_executable(utDocument
     utRun.cpp
-    # utDocItemTypes.cpp
-    # utDocumentHandler.cpp
+    utDocItemTypes.cpp
+    utDocumentHandler.cpp
     utProperties.cpp
     utDefaultsParser.cpp
 )
