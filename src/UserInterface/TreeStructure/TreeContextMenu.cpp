@@ -23,14 +23,14 @@
 
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
+#include "ModelActionsHandler.hpp"
 
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
 	: QObject(parent)
 	, _treeStructure(treeWidget) {
 
-	connect(
-		this->_treeStructure, &TreeStructure::customContextMenuRequested,
-		this, &TreeContextMenu::showContextMenu);
+	connect(this->_treeStructure, &TreeStructure::customContextMenuRequested, this,
+		&TreeContextMenu::showContextMenu);
 }
 
 void TreeContextMenu::showContextMenu(const QPoint& pos) {
@@ -87,7 +87,10 @@ void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu) {
 
 		addImporSTEPItemAction = new QAction(label, _treeStructure);
 
-		connect(addImporSTEPItemAction, &QAction::triggered, _treeStructure->geoHandler(), &GeometryActionsHandler::importSTEP);
+		ModelActionsHandler* modelHandler = _treeStructure->modelHandler();
+		GeometryActionsHandler* goeHandler = modelHandler->_geometryHandler;
+		connect(addImporSTEPItemAction, &QAction::triggered, goeHandler,
+			&GeometryActionsHandler::importSTEP);
 	}
 	aContextMenu->addActions(geometryActions);
 }
@@ -98,23 +101,27 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu) {
 		genereateMeshAction = new QAction(label, _treeStructure);
 		meshActions.append(genereateMeshAction);
 
+		ModelActionsHandler* modelHandler = _treeStructure->modelHandler();
+		MeshActionsHandler* meshHandler = modelHandler->_meshHandler;
+
+		connect(genereateMeshAction, &QAction::triggered, meshHandler,
+			&MeshActionsHandler::meshSurface);
+
 		ItemTypes::Sub sizingType { ItemTypes::Mesh::ElementSizing };
 		label = ItemTypes::label(sizingType);
 
 		addSizingAction = new QAction(label, _treeStructure);
 		meshActions.append(addSizingAction);
 
-		connect(addSizingAction, &QAction::triggered, _treeStructure->meshHandler(),
+		connect(addSizingAction, &QAction::triggered, meshHandler,
 			&MeshActionsHandler::addSizingToSelectedShapes);
 	}
 	aContextMenu->addActions(meshActions);
 }
 
-void TreeContextMenu::buildSolutionMenu(QMenu* aContextMenu) {
-}
+void TreeContextMenu::buildSolutionMenu(QMenu* aContextMenu) { }
 
-void TreeContextMenu::buildResultsMenu(QMenu* aContextMenu) {
-}
+void TreeContextMenu::buildResultsMenu(QMenu* aContextMenu) { }
 
 void TreeContextMenu::buildDefaultSubItemMenu(QMenu* aContextMenu) {
 	if (defaultSubItemActions.empty()) {

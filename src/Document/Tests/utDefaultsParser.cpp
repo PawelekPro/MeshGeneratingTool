@@ -50,7 +50,9 @@ TEST_F(JsonValueToPropertyTest, UnsupportedValueType) {
 
     QDomElement result = runTest(json);
     ASSERT_FALSE(result.isNull());
-    EXPECT_EQ(result.attribute("name"), "testProperty");
+    ASSERT_TRUE(result.hasAttribute("name"));
+    QString name = result.attribute("name");
+    EXPECT_EQ(result.attribute("name"), QString("testProperty"));
     EXPECT_FALSE(result.hasAttribute("unsupportedType"));
 }
 

@@ -22,33 +22,33 @@
 #include "AppInfo.hpp"
 #include "DocUtils.hpp"
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include <QFile>
 #include <stdexcept>
 
 namespace DefaultsParser {
 
-    rapidjson::Document initJsonDocument(const QString& aJsonFilePath){
+
+    rapidjson::Document initJsonDocument(const QString& aJsonFilePath) {
         try {
-            std::ifstream file(aJsonFilePath.toStdString(), std::ios::in);
-            if (!file.is_open()) {
+            QFile file(aJsonFilePath);
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 throw std::runtime_error("Failed to open JSON file: " + aJsonFilePath.toStdString());
             }
 
-            std::ostringstream buffer;
-            buffer << file.rdbuf();
+            QTextStream in(&file);
+            QString fileContent = in.readAll();
             file.close();
 
             rapidjson::Document doc;
-            if (doc.Parse(buffer.str().c_str()).HasParseError()) {
+            if (doc.Parse(fileContent.toStdString().c_str()).HasParseError()) {
                 throw std::runtime_error("Failed to parse JSON content from file: " + aJsonFilePath.toStdString());
             }
+
             return doc;
-            } catch (const std::exception& ex) {
-                std::cerr << "Error: " << ex.what() << std::endl;
-                return rapidjson::Document();
-            }
+        } catch (const std::exception& ex) {
+            std::cerr << "Error: " << ex.what() << std::endl;
+            return rapidjson::Document();
+        }
     }
 
     QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Root& aItemType){
@@ -63,6 +63,12 @@ namespace DefaultsParser {
         QString itemTypeLabel = ItemTypes::label(aItemType);
         QDomElement properties = getPropertiesFromJson(aDomDoc, aJsonDoc, itemTypeLabel);        
         return properties;
+    }
+
+    QStringList getComboBoxList(const QString& aModelType){
+        rapidjson::Document jsonDoc = initJsonDocument(AppInfo::comboBoxModelsPath);
+        QStringList comboBoxList = getComboBoxListFromJson(jsonDoc, aModelType);
+        return comboBoxList;
     }
 
     QStringList getComboBoxList(const ComboBoxTypes& aComboBoxType){
@@ -137,38 +143,40 @@ namespace DefaultsParser {
         return properties;
     }
 
+    QDomElement jsonValueToProperty(QDomDocument& aDomDoc, const rapidjson::Value& aJsonValue) {    
+    QDomElement property = aDomDoc.createElement("Property");
 
-    QDomElement jsonValueToProperty(QDomDocument& aDomDoc, const rapidjson::Value& aJsonValue){
-        QDomElement property = aDomDoc.createElement("Property");
-        for (auto itr = aJsonValue.MemberBegin(); itr != aJsonValue.MemberEnd(); ++itr) {
-            const QString key = QString::fromStdString(itr->name.GetString());
-            const rapidjson::Value &value = itr->value;
-            QVariant valueVariant;
-            if (value.IsInt()) {
-                valueVariant = value.GetInt();
-            } else if (value.IsDouble()) {
-                valueVariant = value.GetDouble();
-            } else if (value.IsString()) {
-                valueVariant = QString::fromStdString(value.GetString());
-                std::string valueString = value.GetString();
-                QString string = valueVariant.toString();
-            } else if (value.IsBool()) {
-                valueVariant = value.GetBool();
-            } else {
-                qWarning() << "Unsupported value type for key:" << key;
-                continue;
-            }
-            if (key == "value"){
-                Properties::setPropertyValue(property, valueVariant.toString());
-            } else {
-                Properties::setPropertyAttribute(property, key, valueVariant.toString());
-            }
-        }
-        if(Properties::isProperty(property)){
-            return property;
+    for (auto itr = aJsonValue.MemberBegin(); itr != aJsonValue.MemberEnd(); ++itr) {
+        const QString key = QString::fromStdString(itr->name.GetString());
+        const rapidjson::Value& value = itr->value;
+        QVariant valueVariant;
+
+        if (value.IsInt()) {
+            valueVariant = value.GetInt();
+        } else if (value.IsDouble()) {
+            valueVariant = value.GetDouble();
+        } else if (value.IsString()) {
+            QString qValueString = QString::fromStdString(value.GetString());
+            valueVariant = QVariant(qValueString);
+        } else if (value.IsBool()) {
+            valueVariant = value.GetBool();
         } else {
-            qWarning() << "Could not translate json property to QDomElement";
-            return QDomElement();
+            qWarning() << "Unsupported value type for key:" << key;
+            continue;
+        }
+
+        if (key == "value") {
+            Properties::setPropertyValue(property, valueVariant.toString());
+        } else {
+            Properties::setPropertyAttribute(property, key, valueVariant.toString());
         }
     }
+
+    if (Properties::isProperty(property)) {
+        return property;
+    } else {
+        qWarning() << "Could not translate json property to QDomElement";
+        return QDomElement();
+    }
+}
 }

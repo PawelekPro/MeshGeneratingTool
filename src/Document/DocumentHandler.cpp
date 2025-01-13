@@ -44,9 +44,9 @@ QDomElement DocumentHandler::createSubElement(const ItemTypes::Sub& subType,
     }
     const QString& subTagLabel = ItemTypes::label(subType);
     QDomElement element = this->_domDocument.createElement(subTagLabel);
-
     QDomElement properties = DefaultsParser::getItemProperties(_domDocument, subType);
-
+    element.appendChild(properties);
+    
     parentElement.appendChild(element);
     return element;
 }

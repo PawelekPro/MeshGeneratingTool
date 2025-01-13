@@ -22,6 +22,12 @@
 #include "DocUtils.hpp"
 
 TEST(DocumentHandlerTest, CreateRootItems) {
+    
+    if (QFile(":templates/templates/RootItemsSetup.json").exists()) {
+    qDebug() << "Resource file found!";
+} else {
+    qDebug() << "Resource file NOT found!";
+}
     DocumentHandler& doc = DocumentHandler::getInstance();
 
     QDomElement geometryElement = doc.createRootElement(ItemTypes::Root::Geometry);
@@ -52,6 +58,7 @@ TEST(DocumentHandlerTest, CreateGeometrySubItems){
     DocumentHandler& doc = DocumentHandler::getInstance();
     QDomElement geometryElement = doc.createRootElement(ItemTypes::Root::Geometry);
     QDomElement importElement = doc.createSubElement(ItemTypes::Geometry::ImportSTEP, geometryElement);
+    doc.writeDocToXML("utPath.xml");
     EXPECT_FALSE(importElement.isNull());
     EXPECT_FALSE(importElement.firstChildElement("Properties").isNull());
 }

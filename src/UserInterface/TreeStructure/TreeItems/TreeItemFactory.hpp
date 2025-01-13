@@ -25,6 +25,7 @@
 #include "PropertiesWidget.hpp"
 #include "TreeItem.hpp"
 #include "DocItemTypes.hpp"
+#include "DocUtils.hpp"
 #include "DocumentHandler.hpp"
 #include "IVtk_Types.hxx"
 

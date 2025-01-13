@@ -29,6 +29,20 @@ namespace DocUtils{
         }
         return aParentElement.firstChildElement(aSearchedElementText);
     }
+
+    QString intsToString(const std::vector<int>& aIntsVec){
+        if (aIntsVec.empty()) {
+            return QString();
+        }
+        std::vector<QString> stringVec(aIntsVec.size());
+        std::transform(aIntsVec.begin(), aIntsVec.end(), stringVec.begin(),
+                    [](int value) { return QString::number(value); });
+
+        QString result = std::accumulate(stringVec.begin() + 1, stringVec.end(), stringVec[0],
+                        [](const QString& a, const QString& b) { return a + ", " + b; });
+
+        return result;
+    }
 }
 
 namespace Properties{

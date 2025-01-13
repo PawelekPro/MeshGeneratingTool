@@ -18,7 +18,7 @@
  */
 
 #include "ModelDocParser.hpp"
-
+#include "DocUtils.hpp"
 #include "MGTMesh_Algorithm.hpp"
 
 ModelDocParser::ModelDocParser(Model& aModel)
@@ -26,7 +26,7 @@ ModelDocParser::ModelDocParser(Model& aModel)
 	, _doc(DocumentHandler::getInstance()) { }
 
 void ModelDocParser::applyElementSizings() {
-	QList<QDomElement> sizingElements = _doc.getElementsByType(ItemTypes::Mesh::ElementSizing);
+	QList<QDomElement> sizingElements = _doc.getSubElements(ItemTypes::Mesh::ElementSizing);
 	for (auto sizingElem : sizingElements) {
 		std::pair<std::vector<int>, double> sizing = parseElementSizing(sizingElem);
 		// _model.addSizing(sizing.first, sizing.second);
@@ -38,21 +38,15 @@ std::pair<std::vector<int>, double> ModelDocParser::parseElementSizing(
 	// TODO: All those error checks should be in propertyValue - here they are redundant and clutter
 	// the code
 	QString sizeString, tagsString, shapeTypeString;
-	try {
-		sizeString = _doc.getPropertyValue(aSizingElement, "elementSize");
-	} catch (const std::runtime_error& e) {
-		qWarning() << e.what() << "Skipping this meshSizing...";
-	}
-	try {
-		tagsString = _doc.getPropertyValue(aSizingElement, "selectedTags");
-	} catch (const std::runtime_error& e) {
-		qWarning() << e.what() << "Skipping this meshSizing...";
-	}
-	try {
-		shapeTypeString = _doc.getPropertyValue(aSizingElement, "selectionType");
-	} catch (const std::runtime_error& e) {
-		qWarning() << e.what() << "Skipping this meshSizing...";
-	}
+
+	QDomElement elementSizeProp = Properties::getProperty(aSizingElement, "elementSize");
+	QDomElement selectedTagsProp = Properties::getProperty(aSizingElement, "selectedTags");
+	QDomElement selectionTypeProp = Properties::getProperty(aSizingElement, "selectionType");
+
+	sizeString = Properties::getPropertyValue(elementSizeProp);
+	tagsString = Properties::getPropertyValue(selectedTagsProp);
+	shapeTypeString = Properties::getPropertyValue(selectionTypeProp);
+
 	if (sizeString.isEmpty()) {
 		qWarning() << "Element size is empty in " << aSizingElement.attribute("name")
 				   << " skipping...";
@@ -93,20 +87,23 @@ void ModelDocParser::applyMeshSettings() {
 	double minSize;
 	double maxSize;
 	QDomElement meshElement = _doc.getRootElement(ItemTypes::Root::Mesh);
-	try {
-		QString minValue = _doc.getPropertyValue(meshElement, "minElementSize");
-		minSize = minValue.toDouble();
-	} catch (const std::runtime_error& e) {
-		qWarning() << e.what() << " Setting minElementSize to default 0.1";
+	QDomElement property = Properties::getProperty(meshElement, "minElementSize");
+	QString minValue = Properties::getPropertyValue(property);
+	minSize = minValue.toDouble();
+	if (minValue.isEmpty()) {
+		qWarning() << "Could not parse minElementSize property - setting to default 1";
 		minSize = 0.1;
+	} else {
+		minSize = minValue.toDouble();
 	}
 
-	try {
-		QString maxValue = _doc.getPropertyValue(meshElement, "maxElementSize");
+	property = Properties::getProperty(meshElement, "maxElementSize");
+	QString maxValue = Properties::getPropertyValue(property);
+	if (maxValue.isEmpty()) {
+		qWarning() << "Could not parse maxElementSize property - setting to default 1";
+		maxSize = 1.0;
+	} else {
 		maxSize = maxValue.toDouble();
-	} catch (const std::runtime_error& e) {
-		qWarning() << e.what() << " Setting maxElementSize to default 1";
-		maxSize = 1;
 	}
 
 	std::cout << "settting sizes: " << minSize << " " << maxSize;

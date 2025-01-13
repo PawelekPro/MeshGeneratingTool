@@ -29,7 +29,9 @@ TreeItem* TreeItemFactory::createItemImportSTEP(const QString& aFilePath){
     TreeItem* geometryItem = _treeStructure->getRootItem(ItemTypes::Root::Geometry);
     TreeItem* importItem = createSubItem(geometryItem, ItemTypes::Geometry::ImportSTEP);
     QDomElement element = importItem->getElement();
-    DocumentHandler::setAttribute(element, "importFilePath", aFilePath);
+    QDomElement properties = DocUtils::getSubElement(element, "Properties");
+    QDomElement importProperty = Properties::getProperty(properties, "stepImport");
+    Properties::setPropertyValue(importProperty,  aFilePath);
     return importItem;
 }
 
@@ -37,17 +39,12 @@ TreeItem* TreeItemFactory::createItemElementSizing(const std::vector<int>& aShap
     TreeItem* meshItem = _treeStructure->getRootItem(ItemTypes::Root::Mesh);
     TreeItem* sizingItem = createSubItem(meshItem, ItemTypes::Mesh::ElementSizing);
     QDomElement element = sizingItem->getElement();
-    QString shapesTagsString = DocumentHandler::intsToString(aShapesTags);
+    QString shapesTagsString = DocUtils::intsToString(aShapesTags);
 
+    QDomElement properties = DocUtils::getSubElement(element, "Properties");
     //TODO: add some doc handler setPropertyValue that would set the text node
-    DocumentHandler& docHandler = DocumentHandler::getInstance();
-    QDomElement selectedTagsProperty = 
-        docHandler.getProperty(docHandler.getProperties(element),  "selectedTags");
-    QDomNode textNode = selectedTagsProperty.firstChild();
-
-    if (!textNode.isNull() && textNode.isText()) {
-        textNode.setNodeValue(shapesTagsString);
-    }
+    QDomElement selectedTagsProperty = Properties::getProperty(properties,  "selectedTags");
+    Properties::setPropertyValue(selectedTagsProperty, shapesTagsString);
 
     QString selectionTypeString;
     switch(aSelectionType){
@@ -73,13 +70,8 @@ TreeItem* TreeItemFactory::createItemElementSizing(const std::vector<int>& aShap
         }
     }
 
-    QDomElement selectionTypeProperty = 
-        docHandler.getProperty(docHandler.getProperties(element),  "selectionType");
-    QDomNode typTextNode = selectionTypeProperty.firstChild();
-
-    if (!typTextNode.isNull() && typTextNode.isText()) {
-        typTextNode.setNodeValue(selectionTypeString);
-    }
+    QDomElement selectionTypeProperty = Properties::getProperty(element,  "selectionType");
+    Properties::setPropertyValue(selectionTypeProperty, selectionTypeString);
 
     return sizingItem;
 }
@@ -88,15 +80,14 @@ TreeItem* TreeItemFactory::createRootItem (const ItemTypes::Root & aRootItemType
 
     DocumentHandler& docHandler = DocumentHandler::getInstance();
     QDomElement element =  docHandler.createRootElement(aRootItemType);
-    QDomElement propertiesElement = DocumentHandler::getProperties(element);
 
-    PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
+    QDomElement properties = DocUtils::getSubElement(element, "Properties");
+
+    PropertiesModel* propertiesModel = new PropertiesModel(properties, _treeStructure);
     TreeItem* newRootItem = new TreeItem(_treeStructure, element, propertiesModel, aRootItemType);
     newRootItem->setData(0, static_cast<int>(TreeItem::DataRole::PropertiesModel), QVariant::fromValue(propertiesModel));
 
     QVariant testVariant = newRootItem->data(0, Qt::UserRole + 1);
-    PropertiesModel* testModel = testVariant.value<PropertiesModel*>();
-
     newRootItem->setText(static_cast<int>(TreeStructure::Column::Label), ItemTypes::label(aRootItemType));
    
     return newRootItem;
@@ -107,9 +98,9 @@ TreeItem* TreeItemFactory::createSubItem (TreeItem* aParentItem, const ItemTypes
     DocumentHandler& docHandler = DocumentHandler::getInstance();
     QDomElement rootElement = docHandler.getRootElement(ItemTypes::rootType(aSubItemType));
     QDomElement element = docHandler.createSubElement(aSubItemType, rootElement);
-    QDomElement propertiesElement = DocumentHandler::getProperties(element);
+    QDomElement properties = DocUtils::getSubElement(element, "Properties");
 
-    PropertiesModel* propertiesModel = new PropertiesModel(propertiesElement, _treeStructure);
+    PropertiesModel* propertiesModel = new PropertiesModel(properties, _treeStructure);
     TreeItem* newSubItem = new TreeItem(aParentItem, element, propertiesModel, aSubItemType);
 
     QString uniqueLabel = getUniqueItemLabel(aSubItemType);

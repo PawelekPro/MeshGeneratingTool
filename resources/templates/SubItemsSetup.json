@@ -30,7 +30,9 @@
         "Properties": [
             {
                 "name": "stepImport",
-                "importFilePath": "",
+                "label": "Imported file path",
+                "value": "",
+                "widget": "LabelWidget",
                 "hidden": "no"
             }
         ]

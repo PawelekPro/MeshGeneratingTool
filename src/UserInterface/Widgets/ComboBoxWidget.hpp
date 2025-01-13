@@ -21,8 +21,8 @@
 #define COMBOBOXWIDGET_HPP
 
 #include "AppInfo.hpp"
-#include "JsonParser.hpp"
 #include "BaseWidget.hpp"
+#include "DefaultsParser.hpp"
 
 #include "document.h"
 #include "filereadstream.h"
