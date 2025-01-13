@@ -31,7 +31,9 @@ namespace DefaultsParser {
 
     QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Root& aItemType);
     QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Sub& aItemType);
-    QStringList getComboBoxList(const ComboBoxTypes& aComboBoxType);
+
+    QStringList getComboBoxList(const QString& aComboBoxName); 
+    QStringList getComboBoxList(const ComboBoxTypes& aComboBoxType); //TODO: delete this and comboBoxTypes?
 
     QDomElement getPropertiesFromJson(QDomDocument& aDomDoc, const rapidjson::Document& aDoc, const QString& aParentEntry);
     QDomElement jsonValueToProperty(QDomDocument& aDomDoc, const rapidjson::Value& aJsonPropValue);

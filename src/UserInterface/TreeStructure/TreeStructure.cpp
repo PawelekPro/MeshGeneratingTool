@@ -19,7 +19,8 @@
 
 #include "TreeStructure.hpp"
 #include "TreeItemFactory.hpp"
-#include "TreeItem.hpp"
+#include "TreeContextMenu.hpp"
+#include "DocumentHandler.hpp"
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
@@ -150,8 +151,6 @@ void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem) 
     QDomElement parentElement = aParentItem->getElement();
     if (!parentElement.isNull()) {
         parentElement.appendChild(itemElement);
-        DocumentHandler& docHandler = DocumentHandler::getInstance();
-        docHandler.appendExistingElement(parentElement, itemElement);
     } else {
         qWarning("Parent item does not have a valid DOM element!");
     }

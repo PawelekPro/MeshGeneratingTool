@@ -24,6 +24,7 @@
 #include "EntityPickWidget.hpp"
 #include "IntLineWidget.hpp"
 #include "RibbonBarWidget.hpp"
+#include "LabelWidget.hpp"
 
 namespace WidgetFactory {
 
@@ -38,6 +39,8 @@ namespace WidgetFactory {
             return new EntityPickWidget(parent);
         } else if (widgetType == "IntLineWidget") {
             return new IntLineWidget(parent);
+        } else if (widgetType == "LabelWidget"){
+            return new LabelWidget(parent);
         }
         
         std::cerr << widgetType.toStdString() << " could not be found in WidgetFactory" << std::endl;
