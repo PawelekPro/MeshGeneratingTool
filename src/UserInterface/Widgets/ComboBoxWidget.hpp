@@ -107,6 +107,12 @@ protected:
 	 */
 	QStringListModel* createQStringListModel(const QString&);
 
+
+	/**
+	 * @brief Slot to be triggered when new selection is done to call setData on model
+	 */
+	void onComboBoxIndexChanged(int aIndex);
+
 	QComboBox* _comboBox; /**< Pointer to the ComboBox widget. */
 	QModelIndex _index; /**< The QModelIndex associated with the ComboBoxWidget. */
 
