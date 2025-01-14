@@ -34,6 +34,7 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	layout->addWidget(_comboBox);
 
 	this->setLayout(layout);
+	connect(_comboBox, &QComboBox::currentIndexChanged, this, &ComboBoxWidget::onComboBoxIndexChanged);
 }
 
 //----------------------------------------------------------------------------
@@ -56,8 +57,25 @@ void ComboBoxWidget::setIndex(const QModelIndex& index) {
 
 	QDomElement element = propsModel->getProperty(index.row());
 	QString modelLabel = Properties::getPropertyAttribute(element, "model");
-	QStringListModel* listModel = this->createQStringListModel(modelLabel);
+QStringListModel* listModel = this->createQStringListModel(modelLabel);
 	_comboBox->setModel(listModel);
+}
+
+void ComboBoxWidget::onComboBoxIndexChanged(int index) {
+    if (!_index.isValid())
+        return;
+
+    QString selectedValue = _comboBox->currentText();
+
+    QAbstractItemModel* model = const_cast<QAbstractItemModel*>(_index.model());
+    if (!model) {
+        qWarning() << "Model is null!";
+        return;
+    }
+
+    if (!model->setData(_index, selectedValue, Qt::EditRole)) {
+        qWarning() << "Failed to set data on the model!";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -65,5 +83,4 @@ QStringListModel* ComboBoxWidget::createQStringListModel(const QString& name) {
 	QStringList comboBoxList = DefaultsParser::getComboBoxList(name);
 	QStringListModel* listModel = new QStringListModel(comboBoxList);
 	return listModel;
-
 }
