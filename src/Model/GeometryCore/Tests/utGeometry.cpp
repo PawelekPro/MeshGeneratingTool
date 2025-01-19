@@ -20,13 +20,14 @@
 #include <gtest/gtest.h>
 #include "Geometry.hpp"
 #include "OcafDoc.hpp"
-#include <QFile>
 
-TEST(GeometryOcafDoc, DocumetIsProperlyInitialized){
 
-    ASSERT_TRUE(QFile(":tests/tests/cube.stp").exists());
 
-    
-
+TEST(GeometryOcafDoc, StepImportIncreasesNumOfShapes){
+    std::string filePath = TESTS_RESOURCES_PATH;
+    filePath += "/tests/cube.stp";
+    OcafDoc doc;
+    doc.importSTEP(filePath);
+    std::vector<TopoDS_Shape> shapes = doc.getAllShapes();
+    EXPECT_EQ(shapes.size(), 1);
 }
-

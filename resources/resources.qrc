@@ -57,9 +57,6 @@
     <file>templates/RootItemsSetup.json</file>
     <file>templates/SubItemsSetup.json</file>
   </qresource>
-  <qresource prefix="tests">
-    <file>tests/cube.stp</file>
-  </qresource>
   <qresource prefix="uiSetup">
     <file>icons/watermark.png</file>
   </qresource>

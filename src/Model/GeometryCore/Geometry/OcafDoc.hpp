@@ -19,17 +19,37 @@
 #ifndef OCAFDOC_HPP
 #define OCAFDOC_HPP
 
-#include <string_view>
+#include <string>
+
+#include <TDocStd_Document.hxx>
+#include <TDF_Label.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Shape.hxx>
+#include <gp_Trsf.hxx>
+
+
 
 class OcafDoc{
 
     public: 
         OcafDoc();
 
-        bool importSTEP(const std::string_view& aFilePath);
+        void importSTEP(const std::string& aFilePath);
+
+
+        void undo();
+
+
+        std::vector<TopoDS_Shape> getAllShapes() const;
+        std::string getShapeName(const TopoDS_Shape& aShape) const;
+
 
     private:
-
+        Handle(TDocStd_Document) _document;
+        Handle(XCAFDoc_ShapeTool) _shapeTool;
+        Handle(XCAFDoc_ColorTool) _colorTool;
 };
 
 #endif

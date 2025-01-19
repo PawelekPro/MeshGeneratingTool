@@ -18,13 +18,57 @@
  */
 
 #include "OcafDoc.hpp"
+#include "XCAFApp_Application.hxx"
+#include "XCAFDoc_DocumentTool.hxx"
+#include "STEPCAFControl_Reader.hxx"
+
 
 OcafDoc::OcafDoc(){
-
+    auto app = XCAFApp_Application::GetApplication();
+    app->NewDocument("MDTV-XCAF", this->_document);
+    this->_shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_document->Main());
+    this->_colorTool = XCAFDoc_DocumentTool::ColorTool(this->_document->Main());
 }
 
-bool OcafDoc::importSTEP(const std::string_view& aFilePath){
+std::vector<TopoDS_Shape> OcafDoc::getAllShapes() const {
+    std::vector<TopoDS_Shape> shapes;
 
-    return true;
+    if (!_shapeTool) {
+        return shapes;
+    }
 
+    TDF_LabelSequence freeShapes;
+    _shapeTool->GetFreeShapes(freeShapes); // Retrieve free shapes
+
+    for (Standard_Integer i = 1; i <= freeShapes.Length(); ++i) {
+        TDF_Label shapeLabel = freeShapes.Value(i);
+
+        if (_shapeTool->IsShape(shapeLabel)) {
+            TopoDS_Shape shape = _shapeTool->GetShape(shapeLabel);
+            shapes.push_back(shape);
+        }
+    }
+    return shapes;
+}
+
+void OcafDoc::importSTEP(const std::string& aFilePath){
+
+    STEPCAFControl_Reader cafReader;
+
+    cafReader.SetColorMode(true);
+    cafReader.SetLayerMode(true);
+    cafReader.SetNameMode(true);
+    IFSelect_ReturnStatus result = cafReader.ReadFile(aFilePath.c_str());
+
+    if (result != IFSelect_RetDone) {
+        throw std::runtime_error("Failed to read STEP file.");
+    }
+
+    if (!cafReader.Transfer(this->_document)) {
+        throw std::runtime_error("Failed to transfer STEP data to OCAF document.");
+    }
+}
+
+void OcafDoc::undo(){
+    _document->Undo();
 }
