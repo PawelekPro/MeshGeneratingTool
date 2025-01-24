@@ -21,6 +21,7 @@
 #define QIVTKUTILS_HPP
 
 #include "AppDefaultColors.hpp"
+#include "AppDefaults.hpp"
 
 #include <QColor>
 

@@ -34,13 +34,29 @@ Rendering::QVTKRenderWindow::QVTKRenderWindow(QWidget* widget)
 	_vtkWidget->setRenderWindow(_rendererWindow);
 	_interactor = _vtkWidget->interactor();
 
-	vtkNew<vtkNamedColors> colors;
 	_renderer->GetActiveCamera()->ParallelProjectionOff();
 	_renderer->LightFollowCameraOn();
 	_rendererWindow->AddRenderer(_renderer);
-	_renderer->SetBackground(colors->GetColor3d("LightSlateGray").GetData());
 
-	// _vtkWidget->setFocusPolicy(Qt::StrongFocus);
+	const bool isGradModeEnabled
+		= AppDefaults::getInstance().isGradientBackgroundEnabled();
+	AppDefaultColors::RendererColorsArray colorsArr
+		= AppDefaults::getInstance().getRendererColorsArray();
+
+	// Convert QColor to RGB
+	double rgbCol1[3], rgbCol2[3];
+	AppDefaultColors::QColorToRgbArray(colorsArr.at(0), rgbCol1);
+	AppDefaultColors::QColorToRgbArray(colorsArr.at(1), rgbCol2);
+
+	if (isGradModeEnabled) {
+		vtkRenderer::GradientModes mode
+			= AppDefaults::getInstance().getRendererGradientMode();
+
+		this->setBackground(mode, rgbCol1, rgbCol2);
+
+	} else {
+		this->setBackground(rgbCol1);
+	}
 
 	this->generateCoordinateSystemAxes();
 	this->setWaterMark();
@@ -148,7 +164,7 @@ void Rendering::QVTKRenderWindow::clearRenderer() {
 		const Handle(QIVtkSelectionPipeline)& pipeline = pIt.Value();
 		if (pipeline) {
 			pipeline->RemoveFromRenderer(_renderer);
-        }
+		}
 	}
 
 	vtkActorCollection* actors = this->_renderer->GetActors();
@@ -219,4 +235,19 @@ void Rendering::QVTKRenderWindow::setSelectionMode(IVtk_SelectionMode mode) {
 //----------------------------------------------------------------------------
 QIVtkViewRepresentation* Rendering::QVTKRenderWindow::getViewRepresentation() {
 	return _qIVtkViewRepresentation;
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setBackground(
+	vtkRenderer::GradientModes mode, const double* col1, const double* col2) {
+	_renderer->GradientBackgroundOn();
+	_renderer->SetGradientMode(mode);
+	_renderer->SetBackground(col1);
+	_renderer->SetBackground2(col2);
+}
+
+//----------------------------------------------------------------------------
+void Rendering::QVTKRenderWindow::setBackground(const double* col1) {
+	_renderer->GradientBackgroundOff();
+	_renderer->SetBackground(col1);
 }

@@ -23,6 +23,8 @@ vtkStandardNewMacro(QIVtkLookupTable);
 
 //----------------------------------------------------------------------------
 QIVtkLookupTable::QIVtkLookupTable() {
+	AppDefaultColors appColors;
+
 	double aRange[2];
 	aRange[0] = QIVtkEntityType::ET_IsoLine;
 	aRange[1] = QIVtkEntityType::ET_SeamEdge;
@@ -33,8 +35,7 @@ QIVtkLookupTable::QIVtkLookupTable() {
 	this->SetValueRange(0, 1);
 
 	// Use default colors stored in settings
-	const AppDefaultColors::GeomColorsArray colorsArray
-		= AppDefaultColors::getGeometryEntitiesColorArray();
+	const AppDefaultColors::GeomColorsArray colorsArray = appColors.getGeometryEntitiesColorArray();
 	this->setColorsTable(colorsArray);
 }
 

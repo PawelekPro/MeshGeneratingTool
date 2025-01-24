@@ -19,7 +19,7 @@
 
 #include "RenderSignalSender.hpp"
 
-RenderSignalSender::RenderSignalSender(QObject* aParent) : QObject(aParent),
-                                        geometrySignals(new GeometrySignalSender(aParent)),
-                                        meshSignals(new MeshSignalSender(aParent))
-                                        {};
+RenderSignalSender::RenderSignalSender(QObject* aParent)
+	: QObject(aParent)
+	, geometrySignals(new GeometrySignalSender(aParent))
+	, meshSignals(new MeshSignalSender(aParent)) {};

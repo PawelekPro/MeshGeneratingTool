@@ -9,7 +9,6 @@
 #include <QScreen>
 #include <QWindowStateChangeEvent>
 
-
 #include "SARibbonSystemButtonBar.h"
 #if SARIBBON_USE_3RDPARTY_FRAMELESSHELPER
 #include "SARibbonButtonGroupWidget.h"
@@ -350,11 +349,11 @@ void sa_set_ribbon_theme(QWidget* w, SARibbonTheme theme) {
 	case SARibbonTheme::RibbonThemeDark:
 		file.setFileName(":/theme/themes/theme-dark.qss");
 		break;
-	case SARibbonTheme::RibbonThemeDark2:
-		file.setFileName(":/theme/themes/theme-dark2.qss");
+	case SARibbonTheme::Default:
+		file.setFileName(":/theme/themes/default-theme.qss");
 		break;
 	default:
-		file.setFileName(":/theme/themes/theme-office2013.qss");
+		file.setFileName(":/theme/themes/default-theme.qss");
 		break;
 	}
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {

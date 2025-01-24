@@ -15,26 +15,55 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : AppDefaultColors.hpp
+* Author    : Paweł Gilewicz
+* Date      : 06/01/2025
+*/
 
 #ifndef APPDEFAULTCOLORS_HPP
 #define APPDEFAULTCOLORS_HPP
 
-#include <array>
 #include <QColor>
+#include <array>
+
+#include <vtkRenderer.h>
 
 class AppDefaultColors {
 public:
 	typedef std::array<QColor, 9> GeomColorsArray;
+	typedef std::array<QColor, 2> RendererColorsArray;
+	typedef std::array<QColor, 7> ThemeColorsArray;
+
+	struct ColorSettings {
+		GeomColorsArray geomColors;
+		RendererColorsArray rendererColors;
+		vtkRenderer::GradientModes renBackgroundMode;
+		bool isGradientBackgroundOn;
+	};
 
 public:
 	AppDefaultColors();
 	~AppDefaultColors() = default;
 
-	static const GeomColorsArray getGeometryEntitiesColorArray();
+	const GeomColorsArray getGeometryEntitiesColorArray(bool defaultColors = false);
+	const RendererColorsArray getRendererColorsArray(bool defaultColors = false);
+	vtkRenderer::GradientModes getRendererGradientMode(bool defaultVal = false);
+	bool isGradientBackgroundEnabled(bool defaultVal = false);
+
+	void setGeometryEntitiesColorArray(GeomColorsArray colorsArray);
+	void setRendererColorsArray(RendererColorsArray colorsArray);
+	void setRendererGradientMode(vtkRenderer::GradientModes mode);
+	void setGradientBackgroundEnabled(bool enabled);
+
+	static void QColorToRgbArray(const QColor& color, double rgb[3]);
+	static RendererColorsArray doubleColorsToColorsArray(
+		const double* color1, const double* color2);
 
 private:
-	GeomColorsArray _geomEntitiesColors;
+	ColorSettings _defaultColors;
+	ColorSettings _currentColors;
 };
 
 #endif

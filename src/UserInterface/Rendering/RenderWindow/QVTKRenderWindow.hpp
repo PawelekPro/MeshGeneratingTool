@@ -25,8 +25,8 @@ class QVTKInteractorStyle;
 class QIVtkViewRepresentation;
 
 #include "QIVtkViewRepresentation.hpp"
+#include "QVTKCameraOrientationWidget.hpp"
 #include "QVTKInteractorStyle.hpp"
-#include "QVTKCameraOrientationWidget.h"
 
 #include <algorithm>
 #include <array>
@@ -132,14 +132,17 @@ public:
 	 */
 	void clearRenderer();
 
-/**
+	/**
 	 * @brief  Get interactor style (in order to interact with selected shapes outside renderWindow)
 	 *
 	 */
-	vtkSmartPointer<QVTKInteractorStyle> getInteractorStyle(){return _interactorStyle;};
-
+	vtkSmartPointer<QVTKInteractorStyle> getInteractorStyle() { return _interactorStyle; };
 
 	QIVtkViewRepresentation* getViewRepresentation();
+
+	void setBackground(
+		vtkRenderer::GradientModes mode, const double* col1 = nullptr, const double* col2 = nullptr);
+	void setBackground(const double* col1 = nullptr);
 
 private:
 	// ! Container widget
@@ -162,7 +165,7 @@ private:
 
 	// ! IVtk_ShapePicker from OCC VIS
 	vtkSmartPointer<IVtkTools_ShapePicker> _shapePicker;
-  
+
 	// ! Widget for displaying global coordinate system
 	vtkSmartPointer<vtkOrientationMarkerWidget> _vtkAxesWidget;
 

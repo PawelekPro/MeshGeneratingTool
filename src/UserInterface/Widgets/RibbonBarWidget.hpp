@@ -51,7 +51,6 @@ private:
 	QAction* createAction(const QString& text, const QString& iconurl);
 
 private slots:
-	void onRibbonThemeComboBoxCurrentIndexChanged(int index);
 	void onEntitySelectionChanged(QAction* action);
 	void onViewRepresentationChanged(QAction* action);
 	void onPressedSizeField(QAction* action);
