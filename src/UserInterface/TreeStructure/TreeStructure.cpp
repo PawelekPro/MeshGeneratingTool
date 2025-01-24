@@ -18,21 +18,18 @@
  */
 
 #include "TreeStructure.hpp"
-#include "TreeItemFactory.hpp"
 #include "TreeItem.hpp"
+#include "TreeItemFactory.hpp"
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
-	: QTreeWidget(parent),
-	  _treeItemFactory(new TreeItemFactory(this)),
-	  _modelHandler(nullptr),
-	  _rootItems({
-          {ItemTypes::Root::Geometry, _treeItemFactory->createRootItem(ItemTypes::Root::Geometry)},
-          {ItemTypes::Root::Mesh, 	  _treeItemFactory->createRootItem(ItemTypes::Root::Mesh)},
-          {ItemTypes::Root::Solution, _treeItemFactory->createRootItem(ItemTypes::Root::Solution)},
-          {ItemTypes::Root::Results,  _treeItemFactory->createRootItem(ItemTypes::Root::Results)}
-      })
-{
+	: QTreeWidget(parent)
+	, _treeItemFactory(new TreeItemFactory(this))
+	, _modelHandler(nullptr)
+	, _rootItems({ { ItemTypes::Root::Geometry, _treeItemFactory->createRootItem(ItemTypes::Root::Geometry) },
+		  { ItemTypes::Root::Mesh, _treeItemFactory->createRootItem(ItemTypes::Root::Mesh) },
+		  { ItemTypes::Root::Solution, _treeItemFactory->createRootItem(ItemTypes::Root::Solution) },
+		  { ItemTypes::Root::Results, _treeItemFactory->createRootItem(ItemTypes::Root::Results) } }) {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
@@ -42,27 +39,27 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->setColumnWidth(static_cast<int>(Column::Label), 10);
 	this->setColumnWidth(static_cast<int>(Column::Visible), 10);
 	this->setColumnWidth(static_cast<int>(Column::Actor), 10);
-	this->header()->setVisible(true);  // Ensure headers are visible
+	this->header()->setVisible(true); // Ensure headers are visible
 	this->header()->setSectionResizeMode(QHeaderView::Stretch);
 
-	std::for_each(_rootItems.begin(), _rootItems.end(), [this](auto item){this->addTopLevelItem(item.second);});
+	std::for_each(_rootItems.begin(), _rootItems.end(), [this](auto item) { this->addTopLevelItem(item.second); });
 }
 
-void TreeStructure::setModelHandler(ModelActionsHandler* aModelHandler){
-	if(aModelHandler){
+void TreeStructure::setModelHandler(ModelActionsHandler* aModelHandler) {
+	if (aModelHandler) {
 		_modelHandler = aModelHandler;
 	}
 }
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-	#ifdef _WIN32
+#ifdef _WIN32
 	std::string xmlPath = "test.xml";
-	#endif
-	#ifdef linux
+#endif
+#ifdef linux
 	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
-	#endif
-	
+#endif
+
 	DocumentHandler::getInstance().writeDocToXML("testRootCreation.xml");
 
 	delete _contextMenu;
@@ -70,49 +67,49 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-TreeItem* TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType){
+TreeItem* TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType) {
 	TreeItem* newItem = _treeItemFactory->createSubItem(aParentItem, aSubType);
 	_subItems[aSubType].append(newItem);
 	return newItem;
 }
 
-TreeItem* TreeStructure::addImportSTEPItem(const QString& aFilePath){
+TreeItem* TreeStructure::addImportSTEPItem(const QString& aFilePath) {
 	TreeItem* newItem = _treeItemFactory->createItemImportSTEP(aFilePath);
 	_subItems[ItemTypes::Geometry::ImportSTEP].append(newItem);
 	return newItem;
 }
 
-TreeItem* TreeStructure::addElementSizingItem(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType){
+TreeItem* TreeStructure::addElementSizingItem(const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType) {
 	TreeItem* newItem = _treeItemFactory->createItemElementSizing(aShapesTags, aSelectionType);
 	_subItems[ItemTypes::Mesh::ElementSizing].append(newItem);
 	return newItem;
 }
 
-TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType){
+TreeItem* TreeStructure::getRootItem(const ItemTypes::Root& aRootType) {
 	TreeItem* it = _rootItems.at(aRootType);
 	return _rootItems.at(aRootType);
 }
 
-QList<TreeItem*> TreeStructure::getSubItems(const ItemTypes::Sub& aSubType){
-    auto it = _subItems.find(aSubType);
-    if (it != _subItems.end()) {
-        return it->second;
-    } 
-    return {};
+QList<TreeItem*> TreeStructure::getSubItems(const ItemTypes::Sub& aSubType) {
+	auto it = _subItems.find(aSubType);
+	if (it != _subItems.end()) {
+		return it->second;
+	}
+	return {};
 }
 
-void TreeStructure::renameItem(QTreeWidgetItem* item){
+void TreeStructure::renameItem(QTreeWidgetItem* item) {
 	this->editItem(item, 0);
 }
 
-void TreeStructure::removeSubItem(TreeItem* item){
-	if ( item->isRoot() ){
+void TreeStructure::removeSubItem(TreeItem* item) {
+	if (item->isRoot()) {
 		qWarning("Cannot remove root item!");
 		return;
 	}
 	ItemTypes::Sub itemType = item->subType();
 	auto it = _subItems.find(itemType);
-	if(it == _subItems.end()){
+	if (it == _subItems.end()) {
 		return;
 	} else {
 		it->second.removeOne(item);
@@ -125,8 +122,8 @@ void TreeStructure::removeSubItem(TreeItem* item){
 	}
 }
 
-void TreeStructure::deleteSubItem(TreeItem* aItemToDelete){
-	if(!aItemToDelete){
+void TreeStructure::deleteSubItem(TreeItem* aItemToDelete) {
+	if (!aItemToDelete) {
 		return;
 	}
 	removeSubItem(aItemToDelete);
@@ -134,25 +131,25 @@ void TreeStructure::deleteSubItem(TreeItem* aItemToDelete){
 }
 
 void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem) {
-    if (!itemToAdd || !aParentItem) {
-        qWarning("Invalid item or parent item passed to addExistingItem!");
-        return;
-    }
-    aParentItem->addChild(itemToAdd);
+	if (!itemToAdd || !aParentItem) {
+		qWarning("Invalid item or parent item passed to addExistingItem!");
+		return;
+	}
+	aParentItem->addChild(itemToAdd);
 	ItemTypes::Sub itemType = itemToAdd->subType();
-    auto it = _subItems.find(itemType);
-    if (it != _subItems.end()) {
-        it->second.push_back(itemToAdd);
-    } else {
-        _subItems[itemType] = { itemToAdd };
-    }
-    QDomElement itemElement = itemToAdd->getElement();
-    QDomElement parentElement = aParentItem->getElement();
-    if (!parentElement.isNull()) {
-        parentElement.appendChild(itemElement);
-        DocumentHandler& docHandler = DocumentHandler::getInstance();
-        docHandler.appendExistingElement(parentElement, itemElement);
-    } else {
-        qWarning("Parent item does not have a valid DOM element!");
-    }
+	auto it = _subItems.find(itemType);
+	if (it != _subItems.end()) {
+		it->second.push_back(itemToAdd);
+	} else {
+		_subItems[itemType] = { itemToAdd };
+	}
+	QDomElement itemElement = itemToAdd->getElement();
+	QDomElement parentElement = aParentItem->getElement();
+	if (!parentElement.isNull()) {
+		parentElement.appendChild(itemElement);
+		DocumentHandler& docHandler = DocumentHandler::getInstance();
+		docHandler.appendExistingElement(parentElement, itemElement);
+	} else {
+		qWarning("Parent item does not have a valid DOM element!");
+	}
 }
