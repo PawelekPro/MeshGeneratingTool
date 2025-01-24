@@ -1,4 +1,4 @@
-ADD_LIBRARY(MGTMeshUtils
+ADD_LIBRARY(MGTMeshUtils SHARED
     MGTMeshUtils_ControlPoint.cpp
     MGTMeshUtils_ViscousLayers.cpp
 )
@@ -16,5 +16,5 @@ else()
 endif()
 
 include_directories(
-    ${PRJ_SOURCE_DIR}/src/MeshCore/MGTMesh
+    ${PRJ_SOURCE_DIR}/src/Model/MeshCore/MGTMesh
 )

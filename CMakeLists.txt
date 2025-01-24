@@ -9,6 +9,7 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define an option to include/exclude examples
 option(BUILD_EXAMPLES "Build examples" ON)
+option(ENABLE_NETGEN "Enable Netgen" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
@@ -159,6 +160,23 @@ endif()
 
 INCLUDE_DIRECTORIES(${GMSH_INC})
 
+
+# Netgen
+######################################################################
+if(ENABLE_NETGEN)
+    find_package(Netgen REQUIRED)
+
+    if (NETGEN_VERSION)
+        set(NETGEN_LIBRARIES nglib ngcore)
+        MESSAGE(STATUS "NETGEN FOUND")
+        MESSAGE(STATUS "NETGEN VERSION: ${NETGEN_VERSION_MAJOR}.${NETGEN_VERSION_MINOR}.${NETGEN_VERSION_PATCH}")
+        MESSAGE(STATUS "NETGEN include directory: ${NETGEN_INCLUDE_DIRS}")
+        MESSAGE(STATUS "NETGEN lib directory: ${NETGEN_LIBRARY_DIR}")
+        MESSAGE(STATUS "-------------------------------------------------------------------------------")
+    else()
+        message(WARNING "NETGEN not found!")
+    endif()
+endif()
 
 # rapidjson library for parsing json files
 ######################################################################

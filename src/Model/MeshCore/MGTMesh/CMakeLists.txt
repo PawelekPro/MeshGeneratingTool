@@ -1,4 +1,4 @@
-ADD_LIBRARY(MGTMesh 
+ADD_LIBRARY(MGTMesh SHARED
     MGTMesh_Algorithm.cpp
     MGTMesh_Scheme.cpp
     MGTMesh.cpp
