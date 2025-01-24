@@ -1,3 +1,7 @@
+add_subdirectory(NetgenPlugin)
+add_subdirectory(MGTMesh)
+add_subdirectory(MGTMeshUtils)
+
 ADD_LIBRARY(MeshCore 
     Mesh.cpp
     MeshContainers.hpp
@@ -16,5 +20,7 @@ else()
 endif()
 
 TARGET_INCLUDE_DIRECTORIES(MeshCore PUBLIC
-    ${PRJ_SOURCE_DIR}/src/Model/MeshCore
+    ${PRJ_SOURCE_DIR}/src/MeshCore
 )
+
+

@@ -1,0 +1,18 @@
+ADD_LIBRARY(MGTMesh 
+    MGTMesh_Algorithm.cpp
+    MGTMesh_Scheme.cpp
+    MGTMesh.cpp
+)
+
+if(WIN32)
+    TARGET_LINK_LIBRARIES(MGTMesh PUBLIC
+        ${OpenCASCADE_LIBRARIES}
+        ${VTK_LIBRARIES})
+else()
+    TARGET_LINK_LIBRARIES(MGTMesh PUBLIC
+        ${OCC_LIBRARIES}
+        ${VTK_LIBRARIES})
+endif()
+
+TARGET_INCLUDE_DIRECTORIES(MGTMesh PUBLIC
+)

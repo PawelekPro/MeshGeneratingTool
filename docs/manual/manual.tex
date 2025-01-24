@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Created by Paweł Gilewicz    			%%
+%%											%%
+%% Version 1.0  							%%
+%% 27-11-2024								%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+\usepackage{fullpage}
+
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[scaled=1]{helvet}
+\usepackage[helvet]{sfmath}
+\everymath={\sf}
+
+\usepackage{parskip}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{tabularx}
+
+\title{Mesh Generating Tool - User Manual}
+\author{Paweł Gilewicz, Krystian Fudali}
+\setcounter{tocdepth}{2}
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Netgen Mesh Parameters} 
+\subsection{Mesh algorithm parameters}
+Mesh algorithm parameters defines basic mesh parameters.
+\renewcommand{\arraystretch}{1.5} 
+\setlength{\tabcolsep}{6pt} 
+
+\begin{tabularx}{\textwidth}{|l|X|}
+    \hline
+    \textbf{Parameter} & \textbf{Description} \\
+    \hline
+    Name & Allows defining the name for the algorithm (default: NETGEN 2D or 3D Parameters). \\
+    \hline
+    Max Size & Maximum linear dimensions for mesh cells. \\
+    \hline
+    Min Size & Minimum linear dimensions for mesh cells. Ignored if it is greater than \textit{Max Size}. \\
+    \hline
+    Fineness & Ranging from Very Coarse to Very Fine, sets the level of mesh detail using the parameters below. Select \textit{Custom} to define them manually. \\
+    \hline
+    Growth Rate & Defines the maximum difference in size between adjacent cells (0.3 means 30\%). \\
+    \hline
+    Nb. Segs per Edge & Defines the minimum number of segments edges will be split into. The element size is trimmed between \textit{Min Size} and \textit{Max Size}. Used only if \textit{Limit Size by Surface Curvature} is checked. \\
+    \hline 
+    Nb Segs per Radius & Defines segment size for curved edges and surfaces. The local curvature radius divided by this value gives the element size. Trimmed between Min Size and Max Size. Used only if \textit{Limit Size by Surface Curvature} is checked. \\
+    \hline
+    Limit Size by Surface Curvature & If checked, size on curved edges/surfaces is defined using \textit{Nb Segs per Radius}, and for straight edges using \textit{Nb Segs per Edge}. Otherwise, size is defined using \textit{Max Size}, \textit{Min Size}, and \textit{Growth Rate}. \\
+    \hline
+    Quad-dominated & If checked, the mesher attempts to generate quadrilateral elements. Triangles are created where quads are not possible. \\
+    \hline
+    Second Order & If checked, creates a second-order mesh. \\
+    \hline
+    Optimize & If checked, improves element quality after the initial mesh generation (time-intensive). \\
+    \hline
+\end{tabularx}
+
+\subsection{Local sizes}
+\textit{Local sizes} allows to define size of elements on and around specified geometrical objects. To define the local size it is necessary to select a geometrical objects in the object browser or in the viewer, and to click a button corresponding to the type of the geometrical objects: \textit{On Vertex}, \textit{On Edge} etc. Name of the geometrical object and a default \textit{Value} will be added in the tree view where the \textit{Value} can be changed. Available local size types:
+\begin{itemize}
+    \item On Vertex
+    \item On Edge
+    \item On Face
+    \item On Solid
+\end{itemize}
+\newpage
+
+
+\end{document}
