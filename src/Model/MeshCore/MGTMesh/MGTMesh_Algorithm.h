@@ -19,20 +19,26 @@
 *=============================================================================
 * File      : MGTMesh_Algorithm.h
 * Author    : Paweł Gilewicz
-* Date      : 24/11/2024
+* Date      : 25/01/2025
 */
-
 #ifndef MGTMESH_ALGORITHM_H
 #define MGTMESH_ALGORITHM_H
+
+#include "MGTMeshUtils_ComputeError.hpp"
+#include "MGTMesh_Scheme.hpp"
 
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 
-class MGTMesh_Algorithm {
+class MGTMesh_Algorithm : public MGTMesh_Scheme {
 public:
+	MGTMesh_Algorithm(int schemeId);
+	~MGTMesh_Algorithm();
+
 	static double EdgeLength(const TopoDS_Edge& E);
 
 private:
+	int _error; //!< MGTMeshUtils_ComputeErrorName
 };
 
 #endif

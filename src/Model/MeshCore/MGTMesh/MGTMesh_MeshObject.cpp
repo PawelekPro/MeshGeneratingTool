@@ -17,41 +17,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh.cpp
+* File      : MGTMesh_MeshObject.cpp
 * Author    : Paweł Gilewicz
-* Date      : 23/11/2024
+* Date      : 25/01/2025
 */
-#include "MGTMesh.h"
+#include "MGTMesh_MeshObject.hpp"
 
-vtkStandardNewMacro(MGTMesh);
+vtkStandardNewMacro(MGTMesh_MeshObject);
 
 //----------------------------------------------------------------------------
-MGTMesh::MGTMesh()
+MGTMesh_MeshObject::MGTMesh_MeshObject()
 	: _internalMesh(nullptr)
 	, _boundaryMesh(nullptr) {
 }
 
 //----------------------------------------------------------------------------
-MGTMesh::~MGTMesh() = default;
+MGTMesh_MeshObject::~MGTMesh_MeshObject() = default;
 
 //----------------------------------------------------------------------------
-void MGTMesh::SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) {
+void MGTMesh_MeshObject::SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) {
 	this->_internalMesh = mesh;
 	this->SetBlock(0, this->_internalMesh);
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkUnstructuredGrid> MGTMesh::GetInternalMesh() const {
+vtkSmartPointer<vtkUnstructuredGrid> MGTMesh_MeshObject::GetInternalMesh() const {
 	return this->_internalMesh;
 }
 
 //----------------------------------------------------------------------------
-void MGTMesh::SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh) {
+void MGTMesh_MeshObject::SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh) {
 	this->_boundaryMesh = mesh;
 	this->SetBlock(1, this->_boundaryMesh);
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MGTMesh::GetBoundaryMesh() const {
+vtkSmartPointer<vtkPolyData> MGTMesh_MeshObject::GetBoundaryMesh() const {
 	return this->_boundaryMesh;
 }

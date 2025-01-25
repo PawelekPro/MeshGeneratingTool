@@ -24,37 +24,37 @@
 #ifndef MGTMESHUTILS_VISCOUSLAYERS_H
 #define MGTMESHUTILS_VISCOUSLAYERS_H
 
-#include "MGTMesh_Scheme.h"
+// #include "MGTMesh_Scheme.h"
 
-#include <vector>
+// #include <vector>
 
-class MGTMeshUtils_ViscousLayers : public MGTMesh_Scheme {
-public:
-	enum ExtrusionMethod {
-		// node is translated along normal to a surface with possible further smoothing
-		SURF_OFFSET_SMOOTH,
-		// node is translated along the average normal of surrounding faces till
-		// intersection with a neighbor face translated along its own normal
-		// by the layers thickness
-		FACE_OFFSET,
-		// node is translated along the average normal of surrounding faces
-		// by the layers thickness
-		NODE_OFFSET
-	};
+// class MGTMeshUtils_ViscousLayers : public MGTMesh_Scheme {
+// public:
+// 	enum ExtrusionMethod {
+// 		// node is translated along normal to a surface with possible further smoothing
+// 		SURF_OFFSET_SMOOTH,
+// 		// node is translated along the average normal of surrounding faces till
+// 		// intersection with a neighbor face translated along its own normal
+// 		// by the layers thickness
+// 		FACE_OFFSET,
+// 		// node is translated along the average normal of surrounding faces
+// 		// by the layers thickness
+// 		NODE_OFFSET
+// 	};
 
-public:
-	MGTMeshUtils_ViscousLayers(int schemeId);
+// public:
+// 	MGTMeshUtils_ViscousLayers(int schemeId);
 
-	static const char* GetSchemeType() { return "ViscousLayers"; }
+// 	static const char* GetSchemeType() { return "ViscousLayers"; }
 
-private:
-	std::vector<int> _shapeIds;
-	bool _isToIgnoreShapes;
-	int _nbLayers;
-	double _thickness;
-	double _stretchFactor;
-	ExtrusionMethod _method;
-	std::string _groupName;
-};
+// private:
+// 	std::vector<int> _shapeIds;
+// 	bool _isToIgnoreShapes;
+// 	int _nbLayers;
+// 	double _thickness;
+// 	double _stretchFactor;
+// 	ExtrusionMethod _method;
+// 	std::string _groupName;
+// };
 
 #endif

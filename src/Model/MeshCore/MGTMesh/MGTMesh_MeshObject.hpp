@@ -17,34 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_Algorithm.cpp
+* File      : MGTMesh_MeshObject.hpp
 * Author    : Paweł Gilewicz
-* Date      : 24/11/2024
+* Date      : 25/01/2025
 */
 
-#include "MGTMesh_Algorithm.h"
+#ifndef MGTMesh_MeshObject_H
+#define MGTMesh_MeshObject_H
 
-#include <BRep_Tool.hxx>
-#include <GCPnts_AbscissaPoint.hxx>
-#include <GeomAdaptor_Curve.hxx>
-#include <Geom_Curve.hxx>
-#include <TopLoc_Location.hxx>
-#include <TopoDS_Edge.hxx>
+#include <vtkMultiBlockDataSet.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
 
-//----------------------------------------------------------------------------
-MGTMesh_Algorithm::MGTMesh_Algorithm(int schemeId)
-	: MGTMesh_Scheme(schemeId) {
-}
+class MGTMesh_MeshObject : public vtkMultiBlockDataSet {
+public:
+	static MGTMesh_MeshObject* New();
+	vtkTypeMacro(MGTMesh_MeshObject, vtkMultiBlockDataSet);
 
-//----------------------------------------------------------------------------
-double MGTMesh_Algorithm::EdgeLength(const TopoDS_Edge& E) {
-	double UMin = 0, UMax = 0;
-	TopLoc_Location L;
-	Handle(Geom_Curve) curve = BRep_Tool::Curve(E, L, UMin, UMax);
-	if (curve.IsNull())
-		return 0.;
+	MGTMesh_MeshObject();
 
-	GeomAdaptor_Curve AdaptCurve(curve, UMin, UMax); // range is important for periodic curves
-	double length = GCPnts_AbscissaPoint::Length(AdaptCurve, UMin, UMax);
-	return length;
-}
+	void SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh);
+	void SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh);
+
+	vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
+	vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;
+
+protected:
+	~MGTMesh_MeshObject() override;
+
+private:
+	vtkSmartPointer<vtkUnstructuredGrid> _internalMesh;
+	vtkSmartPointer<vtkPolyData> _boundaryMesh;
+};
+
+#endif

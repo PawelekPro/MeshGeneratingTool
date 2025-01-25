@@ -17,34 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_Algorithm.cpp
+* File      : MGTMesh_Generator.hpp
 * Author    : Paweł Gilewicz
-* Date      : 24/11/2024
+* Date      : 25/01/2025
 */
+#ifndef MGTMESH_GENERATOR_HPP
+#define MGTMESH_GENERATOR_HPP
 
-#include "MGTMesh_Algorithm.h"
+#include "MGTMesh_MeshObject.hpp"
+#include "MGTMesh_Scheme.hpp"
 
-#include <BRep_Tool.hxx>
-#include <GCPnts_AbscissaPoint.hxx>
-#include <GeomAdaptor_Curve.hxx>
-#include <Geom_Curve.hxx>
-#include <TopLoc_Location.hxx>
-#include <TopoDS_Edge.hxx>
+#include <TopoDS_Shape.hxx>
 
-//----------------------------------------------------------------------------
-MGTMesh_Algorithm::MGTMesh_Algorithm(int schemeId)
-	: MGTMesh_Scheme(schemeId) {
-}
+class MGTMesh_Generator {
+public:
+	MGTMesh_Generator() {};
+	~MGTMesh_Generator() {};
 
-//----------------------------------------------------------------------------
-double MGTMesh_Algorithm::EdgeLength(const TopoDS_Edge& E) {
-	double UMin = 0, UMax = 0;
-	TopLoc_Location L;
-	Handle(Geom_Curve) curve = BRep_Tool::Curve(E, L, UMin, UMax);
-	if (curve.IsNull())
-		return 0.;
+	MGTMesh_MeshObject* CreateMesh(const TopoDS_Shape&, const MGTMesh_Scheme&);
 
-	GeomAdaptor_Curve AdaptCurve(curve, UMin, UMax); // range is important for periodic curves
-	double length = GCPnts_AbscissaPoint::Length(AdaptCurve, UMin, UMax);
-	return length;
-}
+private:
+};
+
+#endif

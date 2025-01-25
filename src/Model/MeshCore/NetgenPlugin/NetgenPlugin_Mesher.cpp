@@ -23,9 +23,9 @@
 */
 
 #include "NetgenPlugin_Mesher.h"
-#include "MGTMesh.h"
 #include "MGTMeshUtils_ControlPoint.h"
 #include "MGTMesh_Algorithm.h"
+#include "MGTMesh_MeshObject.hpp"
 #include "NetgenPlugin_MeshInfo.h"
 #include "NetgenPlugin_Netgen2VTK.h"
 #include "NetgenPlugin_NetgenLibWrapper.h"
@@ -152,7 +152,7 @@ void setLocalSize(
 
 //----------------------------------------------------------------------------
 NetgenPlugin_Mesher::NetgenPlugin_Mesher(
-	MGTMesh* mesh, const TopoDS_Shape& shape, const bool isVolume)
+	MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const bool isVolume)
 	: _mesh(mesh)
 	, _shape(shape)
 	, _isVolume(isVolume)

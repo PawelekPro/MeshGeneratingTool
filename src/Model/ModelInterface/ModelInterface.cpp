@@ -19,34 +19,33 @@
 
 #include "ModelInterface.hpp"
 
-ModelInterface::ModelInterface(ModelManager& aManager) :
-                              _modelManager(aManager),
-                              _modelDataView(aManager){};
+ModelInterface::ModelInterface(ModelManager& aManager)
+	: _modelManager(aManager)
+	, _modelDataView(aManager) {};
 
-
-int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget){
-    Model& model = _modelManager.getModel();
-    model.importSTEP(aFilePath.toStdString(), aWidget);
-    return 0; //TODO return tags of imported shapes
+int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget) {
+	Model& model = _modelManager.getModel();
+	model.importSTEP(aFilePath.toStdString(), aWidget);
+	return 0; // TODO return tags of imported shapes
 }
 
-int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget){
-    Model& model = _modelManager.getModel();
-    model.importSTL(aFilePath.toStdString(), aWidget);
-    return 0; //TODO return tags of imported shapes
+int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget) {
+	Model& model = _modelManager.getModel();
+	model.importSTL(aFilePath.toStdString(), aWidget);
+	return 0; // TODO return tags of imported shapes
 }
 
-void ModelInterface::createNewModel(const QString& aNewModelName){
-    _modelManager.createNewModel(aNewModelName);
-    return;
+void ModelInterface::createNewModel(const QString& aNewModelName) {
+	_modelManager.createNewModel(aNewModelName);
+	return;
 }
 
-void ModelInterface::meshSurface(){
-    Model& model = _modelManager.getModel();
-    model.meshSurface();
+void ModelInterface::meshSurface() {
+	Model& model = _modelManager.getModel();
+	// model.meshSurface();
 };
 
-void ModelInterface::meshVolume(){
-    Model& model = _modelManager.getModel();
-    model.meshVolume();
+void ModelInterface::meshVolume() {
+	Model& model = _modelManager.getModel();
+	// model.meshVolume();
 };

@@ -19,87 +19,91 @@
 
 #include "ModelDocParser.hpp"
 
-ModelDocParser::ModelDocParser(Model& aModel) : _model(aModel),
-                                                _doc(DocumentHandler::getInstance()){}
+ModelDocParser::ModelDocParser(Model& aModel)
+	: _model(aModel)
+	, _doc(DocumentHandler::getInstance()) { }
 
-void ModelDocParser::applyElementSizings(){
-    QList<QDomElement> sizingElements = _doc.getElementsByType(ItemTypes::Mesh::ElementSizing);
-    for(auto sizingElem : sizingElements){
-        std::pair<std::vector<int>, double> sizing = parseElementSizing(sizingElem);
-        _model.addSizing(sizing.first, sizing.second);
-    }
+void ModelDocParser::applyElementSizings() {
+	QList<QDomElement> sizingElements = _doc.getElementsByType(ItemTypes::Mesh::ElementSizing);
+	for (auto sizingElem : sizingElements) {
+		std::pair<std::vector<int>, double> sizing = parseElementSizing(sizingElem);
+		// _model.addSizing(sizing.first, sizing.second);
+	}
 }
 
-std::pair<std::vector<int>, double> ModelDocParser::parseElementSizing(const QDomElement& aSizingElement){
-    //TODO: All those error checks should be in propertyValue - here they are redundant and clutter the code
-    QString sizeString, tagsString, shapeTypeString;
-    try{sizeString = _doc.getPropertyValue(aSizingElement, "elementSize");}
-    catch(const std::runtime_error& e){
-        qWarning() << e.what() << "Skipping this meshSizing...";
-    }
-    try{tagsString = _doc.getPropertyValue(aSizingElement, "selectedTags");}
-    catch(const std::runtime_error& e){
-        qWarning() << e.what() << "Skipping this meshSizing...";
-    }
-    try{shapeTypeString = _doc.getPropertyValue(aSizingElement, "selectionType");}
-    catch(const std::runtime_error& e){
-        qWarning() << e.what() << "Skipping this meshSizing...";
-    }
-    if(sizeString.isEmpty()){
-        qWarning() << "Element size is empty in " << aSizingElement.attribute("name") << " skipping...";
-    }
-    if(tagsString.isEmpty()){
-        qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name") << " skipping...";
-    }
-    if(shapeTypeString.isEmpty()){
-        qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name") << " skipping...";
-    }
-    double size = sizeString.toDouble();
-    std::vector<int> verticesTags;
-    GeometryCore::EntityType selectionType = GeometryCore::EntityType::Vertex;
-    if(shapeTypeString == "Vertex"){
-        selectionType = GeometryCore::EntityType::Vertex;
-    } else if(shapeTypeString == "Edge"){
-        selectionType = GeometryCore::EntityType::Edge;
-    } else if(shapeTypeString == "Face"){
-        selectionType = GeometryCore::EntityType::Face;
-    } else if(shapeTypeString == "Solid"){
-        selectionType = GeometryCore::EntityType::Solid;
-    } else {
-        qWarning() << "Selection type: " << shapeTypeString << " does not exist, assuming Vertex";
-    }
-    QStringList tagsList = tagsString.split(',', Qt::SkipEmptyParts);
-    for (const QString& tagString : tagsList) {
-        int shapeTag = tagString.toInt();
-        const TopoDS_Shape& shape = _model.geometry.getTagMap().getShape(selectionType, shapeTag);
-        std::vector<int> shapeVerticesTags = _model.geometry.getShapeVerticesTags(shape);
-        verticesTags.insert(verticesTags.end(), shapeVerticesTags.begin(), shapeVerticesTags.end());
-    }   
-    return std::pair<std::vector<int>, double>(verticesTags, size);
+std::pair<std::vector<int>, double> ModelDocParser::parseElementSizing(const QDomElement& aSizingElement) {
+	// TODO: All those error checks should be in propertyValue - here they are redundant and clutter the code
+	QString sizeString, tagsString, shapeTypeString;
+	try {
+		sizeString = _doc.getPropertyValue(aSizingElement, "elementSize");
+	} catch (const std::runtime_error& e) {
+		qWarning() << e.what() << "Skipping this meshSizing...";
+	}
+	try {
+		tagsString = _doc.getPropertyValue(aSizingElement, "selectedTags");
+	} catch (const std::runtime_error& e) {
+		qWarning() << e.what() << "Skipping this meshSizing...";
+	}
+	try {
+		shapeTypeString = _doc.getPropertyValue(aSizingElement, "selectionType");
+	} catch (const std::runtime_error& e) {
+		qWarning() << e.what() << "Skipping this meshSizing...";
+	}
+	if (sizeString.isEmpty()) {
+		qWarning() << "Element size is empty in " << aSizingElement.attribute("name") << " skipping...";
+	}
+	if (tagsString.isEmpty()) {
+		qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name") << " skipping...";
+	}
+	if (shapeTypeString.isEmpty()) {
+		qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name") << " skipping...";
+	}
+	double size = sizeString.toDouble();
+	std::vector<int> verticesTags;
+	GeometryCore::EntityType selectionType = GeometryCore::EntityType::Vertex;
+	if (shapeTypeString == "Vertex") {
+		selectionType = GeometryCore::EntityType::Vertex;
+	} else if (shapeTypeString == "Edge") {
+		selectionType = GeometryCore::EntityType::Edge;
+	} else if (shapeTypeString == "Face") {
+		selectionType = GeometryCore::EntityType::Face;
+	} else if (shapeTypeString == "Solid") {
+		selectionType = GeometryCore::EntityType::Solid;
+	} else {
+		qWarning() << "Selection type: " << shapeTypeString << " does not exist, assuming Vertex";
+	}
+	QStringList tagsList = tagsString.split(',', Qt::SkipEmptyParts);
+	for (const QString& tagString : tagsList) {
+		int shapeTag = tagString.toInt();
+		const TopoDS_Shape& shape = _model.geometry.getTagMap().getShape(selectionType, shapeTag);
+		std::vector<int> shapeVerticesTags = _model.geometry.getShapeVerticesTags(shape);
+		verticesTags.insert(verticesTags.end(), shapeVerticesTags.begin(), shapeVerticesTags.end());
+	}
+	return std::pair<std::vector<int>, double>(verticesTags, size);
 }
 
-void ModelDocParser::applyMeshSettings(){
-    double minSize;
-    double maxSize;
-    QDomElement meshElement = _doc.getRootElement(ItemTypes::Root::Mesh);
-    try {
-        QString minValue = _doc.getPropertyValue(meshElement, "minElementSize");
-        minSize = minValue.toDouble();
-    } catch (const std::runtime_error& e) {
-        qWarning() << e.what() << " Setting minElementSize to default 0.1";
-        minSize = 0.1;
-    }
+void ModelDocParser::applyMeshSettings() {
+	double minSize;
+	double maxSize;
+	QDomElement meshElement = _doc.getRootElement(ItemTypes::Root::Mesh);
+	try {
+		QString minValue = _doc.getPropertyValue(meshElement, "minElementSize");
+		minSize = minValue.toDouble();
+	} catch (const std::runtime_error& e) {
+		qWarning() << e.what() << " Setting minElementSize to default 0.1";
+		minSize = 0.1;
+	}
 
-    try {
-        QString maxValue = _doc.getPropertyValue(meshElement, "maxElementSize");
-        maxSize = maxValue.toDouble();
-    } catch (const std::runtime_error& e) {
-        qWarning() << e.what() << " Setting maxElementSize to default 1";
-        maxSize = 1;
-    }
+	try {
+		QString maxValue = _doc.getPropertyValue(meshElement, "maxElementSize");
+		maxSize = maxValue.toDouble();
+	} catch (const std::runtime_error& e) {
+		qWarning() << e.what() << " Setting maxElementSize to default 1";
+		maxSize = 1;
+	}
 
-    std::cout << "settting sizes: " << minSize << " " << maxSize;
+	std::cout << "settting sizes: " << minSize << " " << maxSize;
 
-    gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
-    gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
+	gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
+	gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
 }

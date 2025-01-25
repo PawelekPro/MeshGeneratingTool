@@ -22,7 +22,7 @@
 * Date      : 27/11/2024
 */
 
-#include "MGTMesh_Scheme.h"
+#include "MGTMesh_Scheme.hpp"
 
 //----------------------------------------------------------------------------
 MGTMesh_Scheme::MGTMesh_Scheme(int schemeId) {

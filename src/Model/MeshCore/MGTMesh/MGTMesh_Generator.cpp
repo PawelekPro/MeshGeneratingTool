@@ -17,38 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh.h
+* File      : MGTMesh_Generator.cpp
 * Author    : Paweł Gilewicz
-* Date      : 23/11/2024
+* Date      : 25/01/2025
 */
 
-#ifndef MGTMESH_H
-#define MGTMESH_H
+#include "MGTMesh_Generator.hpp"
 
-#include <vtkMultiBlockDataSet.h>
-#include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
-#include <vtkUnstructuredGrid.h>
-
-class MGTMesh : public vtkMultiBlockDataSet {
-public:
-	static MGTMesh* New();
-	vtkTypeMacro(MGTMesh, vtkMultiBlockDataSet);
-
-	MGTMesh();
-
-	void SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh);
-	void SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh);
-
-	vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
-	vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;
-
-protected:
-	~MGTMesh() override;
-
-private:
-	vtkSmartPointer<vtkUnstructuredGrid> _internalMesh;
-	vtkSmartPointer<vtkPolyData> _boundaryMesh;
-};
-
-#endif
+//----------------------------------------------------------------------------
+MGTMesh_MeshObject* MGTMesh_Generator::CreateMesh(
+	const TopoDS_Shape&, const MGTMesh_Scheme&) {
+}

@@ -17,85 +17,54 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
 
-Model::Model(std::string modelName) : _modelName(modelName) {
-        gmsh::model::add(_modelName);
-        this->geometry = GeometryCore::Geometry();
-        this->mesh = MeshCore::Mesh();
-    };
+Model::Model(std::string modelName)
+	: _modelName(modelName) {
+	gmsh::model::add(_modelName);
+	this->geometry = GeometryCore::Geometry();
+	// this->mesh = MeshCore::Mesh();
+};
 
-Model::~Model(){
-    gmsh::finalize();
-}
-
-void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) { 
-    for (const auto& it : shapesMap) {
-        const auto& shape = it.second;
-        const void *shape_ptr = &shape;
-        std::vector< std::pair<int, int>> outDimTags;
-        gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
-    }
-    gmsh::model::occ::synchronize();
+Model::~Model() {
+	gmsh::finalize();
 }
 
-void Model::addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes){
-    for(const auto& shape : selectedShapes){
-        const TopoDS_Shape& shapeRef =  shape.get();
-        std::vector<int> vertexTags = geometry.getShapeVerticesTags(shape);
-        mesh.addSizing(vertexTags, 0.1);
-    }
-}
-void Model::addSizing(const std::vector<int>& verticesTags, double size){
-    mesh.addSizing(verticesTags, size);
-}
-
-void Model::meshSurface() {
-    applyMeshSettings();
-    mesh.generateSurfaceMesh();
-}
-void Model::meshVolume(){
-    applyMeshSettings();
-    mesh.generateVolumeMesh();
-}
-            
-vtkSmartPointer<vtkActor> Model::getMeshActor(){
-    return mesh.getMeshActor();
+void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
+	for (const auto& it : shapesMap) {
+		const auto& shape = it.second;
+		const void* shape_ptr = &shape;
+		std::vector<std::pair<int, int>> outDimTags;
+		gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
+	}
+	gmsh::model::occ::synchronize();
 }
 
-void Model::importSTL(const std::string& filePath, QWidget* progressBar){
-    geometry.importSTL(filePath, progressBar);
-    GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
-    addShapesToModel(shapesMap);
+void Model::importSTL(const std::string& filePath, QWidget* progressBar) {
+	geometry.importSTL(filePath, progressBar);
+	GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
+	addShapesToModel(shapesMap);
 }
 
-void Model::importSTEP(const std::string& filePath, QWidget* progressBar){
-    geometry.importSTEP(filePath, progressBar);
-    GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
-    addShapesToModel(shapesMap);
+void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
+	geometry.importSTEP(filePath, progressBar);
+	GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
+	addShapesToModel(shapesMap);
 }
 
 void Model::initializeGmsh() {
-    static bool gmshInitialized = false;
-    if (!gmshInitialized) {
-        try {
-            gmsh::initialize();
-            gmshInitialized = true;
-        } catch (const std::exception &e) {
-            std::cerr << "Error initializing Gmsh: " << e.what() << std::endl;
-            throw;
-        } catch (...) {
-            std::cerr << "Unknown error initializing Gmsh" << std::endl;
-            throw;
-        }
-    }
+	static bool gmshInitialized = false;
+	if (!gmshInitialized) {
+		try {
+			gmsh::initialize();
+			gmshInitialized = true;
+		} catch (const std::exception& e) {
+			std::cerr << "Error initializing Gmsh: " << e.what() << std::endl;
+			throw;
+		} catch (...) {
+			std::cerr << "Unknown error initializing Gmsh" << std::endl;
+			throw;
+		}
+	}
 }
-
-void Model::applyMeshSettings(){
-    ModelDocParser modelDoc(*this);
-    modelDoc.applyElementSizings();
-    modelDoc.applyMeshSettings();
-};

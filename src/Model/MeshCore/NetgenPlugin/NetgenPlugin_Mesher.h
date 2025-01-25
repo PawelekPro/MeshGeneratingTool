@@ -33,12 +33,12 @@ class Mesh;
 
 class gp_XYZ;
 class TopoDS_Shape;
-class MGTMesh;
+class MGTMesh_MeshObject;
 class MGTMeshUtils_ViscousLayers;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(MGTMesh* mesh, const TopoDS_Shape& shape, const bool isVolume);
+	NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const bool isVolume);
 	~NetgenPlugin_Mesher();
 	bool ComputeMesh();
 
@@ -54,7 +54,7 @@ public:
 	void SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme);
 
 private:
-	MGTMesh* _mesh;
+	MGTMesh_MeshObject* _mesh;
 	const TopoDS_Shape& _shape;
 	bool _isVolume;
 	bool _optimize;

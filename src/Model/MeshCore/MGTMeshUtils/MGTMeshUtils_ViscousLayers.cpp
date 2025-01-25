@@ -24,14 +24,14 @@
 
 #include "MGTMeshUtils_ViscousLayers.h"
 
-MGTMeshUtils_ViscousLayers::MGTMeshUtils_ViscousLayers(int schemeId)
-	: MGTMesh_Scheme(schemeId)
-	, _isToIgnoreShapes(1)
-	, _nbLayers(1)
-	, _thickness(1)
-	, _stretchFactor(1)
-	, _method(SURF_OFFSET_SMOOTH)
-	, _groupName("") {
-	_name = MGTMeshUtils_ViscousLayers::GetSchemeType();
-	_alg_dim = -3;
-}
+// MGTMeshUtils_ViscousLayers::MGTMeshUtils_ViscousLayers(int schemeId)
+// 	: MGTMesh_Scheme(schemeId)
+// 	, _isToIgnoreShapes(1)
+// 	, _nbLayers(1)
+// 	, _thickness(1)
+// 	, _stretchFactor(1)
+// 	, _method(SURF_OFFSET_SMOOTH)
+// 	, _groupName("") {
+// 	_name = MGTMeshUtils_ViscousLayers::GetSchemeType();
+// 	_alg_dim = -3;
+// }

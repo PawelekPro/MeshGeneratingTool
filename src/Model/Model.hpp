@@ -20,9 +20,8 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#include "Geometry.hpp"
-#include "Mesh.h"
 #include "DocumentHandler.hpp"
+#include "Geometry.hpp"
 
 #ifdef _WIN32
 #include <gmsh.h_cwrap>
@@ -32,15 +31,13 @@
 #include <gmsh.h>
 #endif
 
-
-
 class Model {
-	public:
+public:
 	static void initializeGmsh();
 
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
-	MeshCore::Mesh mesh;
+	// MeshCore::Mesh mesh;
 
 	Model(std::string modelName);
 	~Model();
@@ -48,27 +45,16 @@ class Model {
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
 
-	//--------Geometry interface-----// 
-    void importSTEP(const std::string& filePath, QWidget* progressBar);
-    void importSTL(const std::string& filePath, QWidget* progressBar);
+	//--------Geometry interface-----//
+	void importSTEP(const std::string& filePath, QWidget* progressBar);
+	void importSTL(const std::string& filePath, QWidget* progressBar);
 
-	//--------Meshing interface-----// 
-	void meshSurface();
-	void meshVolume();
-	vtkSmartPointer<vtkActor> getMeshActor();
+	//--------Meshing interface-----//
+	void generateMesh();
 
-	void applyMeshSettings();
-
-	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
-	void addSizing(const std::vector<int>& verticesTags, double size);
-
-	private:
-		static bool gmshInitialized;
-
-		void applyMeshGlobalSize();
-		void applyMeshSizings();
-
-		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
+private:
+	static bool gmshInitialized;
+	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 
 #endif
