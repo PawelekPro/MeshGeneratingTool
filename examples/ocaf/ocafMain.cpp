@@ -38,14 +38,12 @@ app = Handle(TDocStd_Application)::DownCast(doc->Application());
 XmlXCAFDrivers::DefineFormat(app);
 if(!app->IsDriverLoaded()){
     std::cout << "Could not load driver";
+    return 0;
+} else {
+    std::cout << "Storage format: " << doc->StorageFormat() << std::endl;
 }
 
 doc->SetUndoLimit(10);
-if (doc.IsNull())
-{
-    std::cerr << "Failed to create document." << std::endl;
-    return 1;
-}
 TDF_Label rootLabel = doc->Main();
 doc->NewCommand();
 TDF_Label childLabel = rootLabel.NewChild();
@@ -54,8 +52,11 @@ doc->CommitCommand();
 
 const TCollection_ExtendedString fileName("document.xml");
 app->SaveAs(doc, fileName);
-// Standard_ExtString str = fileName.ToExtString();.
-// std::string(str);
+
+std::cout<< "Undo count before undo: " << doc->GetAvailableUndos() << std::endl;
+doc->Undo();
+std::cout<< "Undo count after undo: " << doc->GetAvailableUndos() << std::endl;
+
 Handle(TDocStd_Document) loadedDoc;
 app->Open(fileName, loadedDoc);
 
@@ -66,23 +67,12 @@ if (loadedDoc.IsNull()) {
     std::cout << "Document loaded successfully!" << std::endl;
 }
 
-// Step 6: Access data from the loaded document
 TDF_Label loadedRootLabel = loadedDoc->Main();
 TDF_Label loadedChildLabel = loadedRootLabel.FindChild(1);
 
 Handle(TDataStd_Name) loadedNameAttribute;
-if (loadedChildLabel.FindAttribute(TDataStd_Name::GetID(), loadedNameAttribute)) {
-    // std::cout << "Loaded Label Name: " << std::string(loadedNameAttribute->Get().ToExtString()) << std::endl;
-} else {
+if (!loadedChildLabel.FindAttribute(TDataStd_Name::GetID(), loadedNameAttribute)) {
     std::cerr << "Failed to retrieve name attribute from loaded document." << std::endl;
 }
-
-
-// std::cout<< "Undo count:" << doc->GetAvailableUndos() << std::endl;
-// std::cout << "Storage format: " << doc->StorageFormat() << std::endl;
-// doc->Undo();
-// std::cout<< "Undo count:" << doc->GetAvailableUndos() << std::endl;
-// const TCollection_ExtendedString undofileName("undoDocument.xml");
-// app->SaveAs(doc, undofileName);
 return 0;
 }
