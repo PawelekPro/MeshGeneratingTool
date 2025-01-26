@@ -44,7 +44,7 @@ class OcafDoc{
 
         std::vector<TopoDS_Shape> getAllShapes() const;
         std::string getShapeName(const TopoDS_Shape& aShape) const;
-
+        bool saveAsXml(const std::string& filePath) const;
 
     private:
         Handle(TDocStd_Document) _document;

@@ -21,13 +21,15 @@
 #include "Geometry.hpp"
 #include "OcafDoc.hpp"
 
-
-
 TEST(GeometryOcafDoc, StepImportIncreasesNumOfShapes){
     std::string filePath = TESTS_RESOURCES_PATH;
     filePath += "/tests/cube.stp";
     OcafDoc doc;
     doc.importSTEP(filePath);
+    doc.saveAsXml("abc.xml");
     std::vector<TopoDS_Shape> shapes = doc.getAllShapes();
     EXPECT_EQ(shapes.size(), 1);
+    doc.undo();
+    shapes = doc.getAllShapes();
+    EXPECT_EQ(shapes.size(), 0);
 }

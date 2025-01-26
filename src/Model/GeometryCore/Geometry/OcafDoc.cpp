@@ -21,13 +21,51 @@
 #include "XCAFApp_Application.hxx"
 #include "XCAFDoc_DocumentTool.hxx"
 #include "STEPCAFControl_Reader.hxx"
-
-
+#include <XmlXCAFDrivers.hxx>
+#include <TDocStd_Application.hxx>
+#include <Standard_Failure.hxx>
+#include <Storage_Error.hxx>
+#include "XmlXCAFDrivers.hxx"
+#include <locale>
+#include <codecvt>
 OcafDoc::OcafDoc(){
     auto app = XCAFApp_Application::GetApplication();
-    app->NewDocument("MDTV-XCAF", this->_document);
+    app->NewDocument("XmlXCAF", this->_document);
+    _document->SetUndoLimit(3);
     this->_shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_document->Main());
     this->_colorTool = XCAFDoc_DocumentTool::ColorTool(this->_document->Main());
+    XmlXCAFDrivers::DefineFormat(app);
+}
+
+bool OcafDoc::saveAsXml(const std::string& filePath) const {
+    try {
+        if (_document.IsNull()) {
+            throw std::runtime_error("Document is null and cannot be saved.");
+        }
+
+        std::string fullPath = filePath;
+        if (fullPath.find(".xml") == std::string::npos) {
+            fullPath += ".xml";
+        }
+
+        Handle(TDocStd_Application) app = XCAFApp_Application::GetApplication();
+        if (app.IsNull()) {
+            throw std::runtime_error("XCAF application is not initialized.");
+        }
+        std::u16string utf16Path;
+        for (char c : fullPath) {
+            utf16Path.push_back(static_cast<char16_t>(c));
+        }
+        Standard_ExtString occFilePath = utf16Path.c_str();
+        
+        app->SaveAs(_document, occFilePath);
+        return true;
+    } catch (const Standard_Failure& e) {
+        std::cerr << "OpenCASCADE Error: " << e.GetMessageString() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    return false;
 }
 
 std::vector<TopoDS_Shape> OcafDoc::getAllShapes() const {
@@ -51,8 +89,7 @@ std::vector<TopoDS_Shape> OcafDoc::getAllShapes() const {
     return shapes;
 }
 
-void OcafDoc::importSTEP(const std::string& aFilePath){
-
+void OcafDoc::importSTEP(const std::string& aFilePath) {
     STEPCAFControl_Reader cafReader;
 
     cafReader.SetColorMode(true);
@@ -64,9 +101,11 @@ void OcafDoc::importSTEP(const std::string& aFilePath){
         throw std::runtime_error("Failed to read STEP file.");
     }
 
+    _document->NewCommand();
     if (!cafReader.Transfer(this->_document)) {
         throw std::runtime_error("Failed to transfer STEP data to OCAF document.");
     }
+    _document->CommitCommand();
 }
 
 void OcafDoc::undo(){
