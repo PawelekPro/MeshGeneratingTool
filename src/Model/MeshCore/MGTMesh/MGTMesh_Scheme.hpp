@@ -29,6 +29,11 @@
 
 class MGTMesh_Scheme {
 public:
+	enum Engine {
+		NETGEN,
+		GMSH
+	};
+
 	enum SchemeType {
 		PARAM_ALG,
 		ALG_0D,
@@ -64,11 +69,17 @@ public:
 
 public:
 	const char* GetName() const;
+
+	bool Is3DAlgortihm() const;
+	bool Is2DAlgortihm() const;
+	bool Is1DAlgortihm() const;
+
 	int GetID() const;
 	int GetType() const;
-	virtual int GetDim() const;
-	virtual int GetShapeType() const;
-	virtual const char* GetLibName() const;
+	int GetDim() const;
+	int GetShapeType() const;
+	Engine GetEngineLib() const;
+	void SetEngineLib(MGTMesh_Scheme::Engine libType);
 
 protected:
 	std::string _name; //! identifier of scheme type
@@ -78,7 +89,7 @@ protected:
 	int _alg_dim;
 
 private:
-	std::string _libName; //! name of library of plug-in engine
+	Engine _engineLib; //! type of library of plug-in engine
 };
 
 #endif

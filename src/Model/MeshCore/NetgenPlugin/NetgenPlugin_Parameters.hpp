@@ -17,21 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : NetgenPlugin_Parameters.h
+* File      : NetgenPlugin_Parameters.hpp
 * Author    : Paweł Gilewicz
-* Date      : 23/11/2024
+* Date      : 26/01/2025
 */
 
-#ifndef NETGENPLUGIN_PARAMETERS_H
-#define NETGENPLUGIN_PARAMETERS_H
+#ifndef NETGENPLUGIN_PARAMETERS_HPP
+#define NETGENPLUGIN_PARAMETERS_HPP
 
+#include "MGTMesh_Algorithm.hpp"
 #include "NetgenPlugin_Defs.hpp"
 
 #include <string>
 
-class NETGENPLUGIN_EXPORT NetgenPlugin_Parameters {
+class NETGENPLUGIN_EXPORT NetgenPlugin_Parameters : public MGTMesh_Algorithm {
 public:
-	NetgenPlugin_Parameters(int hypId);
+	NetgenPlugin_Parameters(int schemeId);
 
 	enum Fineness {
 		VeryCoarse,

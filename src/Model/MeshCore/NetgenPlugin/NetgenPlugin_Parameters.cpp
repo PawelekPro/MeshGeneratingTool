@@ -22,12 +22,12 @@
 * Date      : 23/11/2024
 */
 
-#include "NetgenPlugin_Parameters.h"
+#include "NetgenPlugin_Parameters.hpp"
 
 //----------------------------------------------------------------------------
-NetgenPlugin_Parameters::NetgenPlugin_Parameters(int hypId)
-
-	: _fineness(GetDefaultFineness())
+NetgenPlugin_Parameters::NetgenPlugin_Parameters(int schemeId)
+	: MGTMesh_Algorithm(schemeId)
+	, _fineness(GetDefaultFineness())
 	, _secondOrder(GetDefaultSecondOrder())
 	, _quadAllowed(GetDefaultQuadAllowed())
 	, _maxSize(GetDefaultMaxSize())
@@ -43,4 +43,5 @@ NetgenPlugin_Parameters::NetgenPlugin_Parameters(int hypId)
 	, _surfaceCurvature(GetDefaultSurfaceCurvature())
 	, _useDelauney(GetDefaultUseDelauney())
 	, _checkOverlapping(GetDefaultCheckOverlapping())
-	, _checkChartBoundary(GetDefaultCheckChartBoundary()) { }
+	, _checkChartBoundary(GetDefaultCheckChartBoundary()) {
+}

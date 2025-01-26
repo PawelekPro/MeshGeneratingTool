@@ -22,14 +22,14 @@
 * Date      : 24/11/2024
 */
 
-#include "NetgenPlugin_Mesher.h"
+#include "NetgenPlugin_Mesher.hpp"
 #include "MGTMeshUtils_ControlPoint.h"
-#include "MGTMesh_Algorithm.h"
+#include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_MeshObject.hpp"
 #include "NetgenPlugin_MeshInfo.h"
 #include "NetgenPlugin_Netgen2VTK.h"
 #include "NetgenPlugin_NetgenLibWrapper.h"
-#include "NetgenPlugin_Parameters.h"
+#include "NetgenPlugin_Parameters.hpp"
 
 #include <BRepBndLib.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -152,10 +152,10 @@ void setLocalSize(
 
 //----------------------------------------------------------------------------
 NetgenPlugin_Mesher::NetgenPlugin_Mesher(
-	MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const bool isVolume)
+	MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm)
 	: _mesh(mesh)
 	, _shape(shape)
-	, _isVolume(isVolume)
+	, _algorithm(algorithm)
 	, _optimize(true)
 	, _fineness(NetgenPlugin_Parameters::GetDefaultFineness())
 	, _isViscousLayers2D(false)
@@ -200,12 +200,8 @@ void NetgenPlugin_Mesher::SetDefaultParameters() {
 	//! create elements of second order
 	mparams.secondorder = NetgenPlugin_Parameters::GetDefaultSecondOrder();
 
-	if (_isVolume) {
-		mparams.quad = false;
-	} else {
-		// FIXME: add parameters for surface meshing
-		mparams.quad = false;
-	}
+	// FIXME: add parameters for surface meshing
+	mparams.quad = false;
 
 	_fineness = NetgenPlugin_Parameters::GetDefaultFineness();
 	mparams.uselocalh = NetgenPlugin_Parameters::GetDefaultSurfaceCurvature();
@@ -301,7 +297,7 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 		std::cout << "Netgen Exception: " << ex.What() << std::endl;
 	}
 
-	if (err || !_isVolume)
+	if (err || !_algorithm->Is3DAlgortihm())
 		return false;
 
 	// Compute volume mesh

@@ -24,19 +24,25 @@
 #ifndef MGTMESH_GENERATOR_HPP
 #define MGTMESH_GENERATOR_HPP
 
+#include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_MeshObject.hpp"
-#include "MGTMesh_Scheme.hpp"
+
+#include <memory>
 
 #include <TopoDS_Shape.hxx>
 
 class MGTMesh_Generator {
 public:
-	MGTMesh_Generator() {};
-	~MGTMesh_Generator() {};
+	MGTMesh_Generator(const TopoDS_Shape&, const MGTMesh_Algorithm&);
+	~MGTMesh_Generator();
 
-	MGTMesh_MeshObject* CreateMesh(const TopoDS_Shape&, const MGTMesh_Scheme&);
+	bool Compute();
+	std::shared_ptr<MGTMesh_MeshObject> GetOutputMesh();
 
 private:
+	std::shared_ptr<MGTMesh_MeshObject> _meshObject;
+	const TopoDS_Shape* _shape;
+	const MGTMesh_Algorithm* _algorithm;
 };
 
 #endif

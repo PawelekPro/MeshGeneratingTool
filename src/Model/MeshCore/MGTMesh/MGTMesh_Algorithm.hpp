@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_Algorithm.h
+* File      : MGTMesh_Algorithm.hpp
 * Author    : Paweł Gilewicz
 * Date      : 25/01/2025
 */
@@ -39,6 +39,7 @@ public:
 
 private:
 	int _error; //!< MGTMeshUtils_ComputeErrorName
+	double _progress; //! progress of Compute() [0.,1.]
 };
 
 #endif

@@ -19,16 +19,17 @@
 *=============================================================================
 * File      : MGTMesh_Scheme.cpp
 * Author    : Paweł Gilewicz
-* Date      : 27/11/2024
+* Date      : 25/01/2025
 */
 
 #include "MGTMesh_Scheme.hpp"
 
 //----------------------------------------------------------------------------
-MGTMesh_Scheme::MGTMesh_Scheme(int schemeId) {
-	_schemeId = schemeId;
+MGTMesh_Scheme::MGTMesh_Scheme(int schemeId)
+	: _schemeId(schemeId) {
 	_name = "generic";
-	_type = PARAM_ALG;
+	_type = ALG_2D;
+	_engineLib = NETGEN;
 	_shapeType = 0;
 	_alg_dim = -1;
 }
@@ -46,6 +47,21 @@ int MGTMesh_Scheme::GetID() const {
 //----------------------------------------------------------------------------
 int MGTMesh_Scheme::GetType() const {
 	return _type;
+}
+
+//----------------------------------------------------------------------------
+bool MGTMesh_Scheme::Is3DAlgortihm() const {
+	return _type == ALG_3D;
+}
+
+//----------------------------------------------------------------------------
+bool MGTMesh_Scheme::Is2DAlgortihm() const {
+	return _type == ALG_2D;
+}
+
+//----------------------------------------------------------------------------
+bool MGTMesh_Scheme::Is1DAlgortihm() const {
+	return _type == ALG_1D;
 }
 
 //----------------------------------------------------------------------------
@@ -78,6 +94,11 @@ int MGTMesh_Scheme::GetShapeType() const {
 }
 
 //----------------------------------------------------------------------------
-const char* MGTMesh_Scheme::GetLibName() const {
-	return _libName.c_str();
+MGTMesh_Scheme::Engine MGTMesh_Scheme::GetEngineLib() const {
+	return _engineLib;
+}
+
+//----------------------------------------------------------------------------
+void MGTMesh_Scheme::SetEngineLib(MGTMesh_Scheme::Engine libType) {
+	_engineLib = libType;
 }

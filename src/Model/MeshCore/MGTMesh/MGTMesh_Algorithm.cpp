@@ -22,7 +22,7 @@
 * Date      : 24/11/2024
 */
 
-#include "MGTMesh_Algorithm.h"
+#include "MGTMesh_Algorithm.hpp"
 
 #include <BRep_Tool.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
@@ -34,7 +34,11 @@
 //----------------------------------------------------------------------------
 MGTMesh_Algorithm::MGTMesh_Algorithm(int schemeId)
 	: MGTMesh_Scheme(schemeId) {
+	_error = COMPERR_OK;
 }
+
+//----------------------------------------------------------------------------
+MGTMesh_Algorithm::~MGTMesh_Algorithm() { }
 
 //----------------------------------------------------------------------------
 double MGTMesh_Algorithm::EdgeLength(const TopoDS_Edge& E) {

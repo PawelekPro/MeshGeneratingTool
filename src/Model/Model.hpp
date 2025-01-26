@@ -33,8 +33,6 @@
 
 class Model {
 public:
-	static void initializeGmsh();
-
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
 	// MeshCore::Mesh mesh;
@@ -53,7 +51,6 @@ public:
 	void generateMesh();
 
 private:
-	static bool gmshInitialized;
 	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 

@@ -20,28 +20,26 @@
 #ifndef MODELINTERFACE_HPP
 #define MODELINTERFACE_HPP
 
-#include "ModelManager.hpp"
 #include "ModelDataView.hpp"
+#include "ModelManager.hpp"
 
-class ModelInterface{
+class ModelInterface {
 
-    public:
-        ModelInterface(ModelManager& aModelManager);
+public:
+	ModelInterface(ModelManager& aModelManager);
 
-        void createNewModel(const QString& aNewModelName);
+	void createNewModel(const QString& aNewModelName);
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
+	int importSTEP(const QString& aFilePath, QWidget* progressBar);
+	int importSTL(const QString& aFilePath, QWidget* progressBar);
 
-        void meshSurface();
-        void meshVolume();
+	void generateMesh();
 
-        const ModelDataView& modelDataView(){return _modelDataView;};
+	const ModelDataView& modelDataView() { return _modelDataView; };
 
-    private:
-
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
+private:
+	ModelManager& _modelManager;
+	const ModelDataView _modelDataView;
+};
 
 #endif

@@ -1,4 +1,4 @@
-ADD_LIBRARY(MGTMeshUtils SHARED
+ADD_LIBRARY(MGTMeshUtils
     MGTMeshUtils_ControlPoint.cpp
     MGTMeshUtils_ViscousLayers.cpp
     MGTMeshUtils_ComputeError.hpp

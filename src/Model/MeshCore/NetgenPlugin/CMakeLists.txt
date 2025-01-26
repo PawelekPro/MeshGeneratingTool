@@ -1,4 +1,4 @@
-ADD_LIBRARY(NetgenPlugin SHARED
+ADD_LIBRARY(NetgenPlugin
     NetgenPlugin_NetgenLibWrapper.cpp
     NetgenPlugin_Netgen2VTK.cpp
     NetgenPlugin_Parameters.cpp

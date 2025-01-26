@@ -29,7 +29,7 @@ enum MGTMeshUtils_ComputeErrorName {
 	COMPERR_BAD_INPUT_MESH = -2, //!< wrong mesh on lower submesh
 	COMPERR_STD_EXCEPTION = -3, //!< some std exception raised
 	COMPERR_OCC_EXCEPTION = -4, //!< OCC exception raised
-	COMPERR_SLM_EXCEPTION = -5, //!< SALOME exception raised
+	COMPERR_MGT_EXCEPTION = -5, //!< MGT exception raised
 	COMPERR_EXCEPTION = -6, //!< other exception raised
 	COMPERR_MEMORY_PB = -7, //!< std::bad_alloc exception
 	COMPERR_ALGO_FAILED = -8, //!< algo failed for some reason

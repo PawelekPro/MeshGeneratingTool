@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : NetgenPlugin_Mesher.h
+* File      : NetgenPlugin_Mesher.hpp
 * Author    : Paweł Gilewicz
 * Date      : 21/11/2024
 */
@@ -35,10 +35,14 @@ class gp_XYZ;
 class TopoDS_Shape;
 class MGTMesh_MeshObject;
 class MGTMeshUtils_ViscousLayers;
+class NetgenPlugin_Parameters;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const bool isVolume);
+	NetgenPlugin_Mesher(
+		MGTMesh_MeshObject* mesh,
+		const TopoDS_Shape& shape,
+		const NetgenPlugin_Parameters* algorithm);
 	~NetgenPlugin_Mesher();
 	bool ComputeMesh();
 
@@ -56,7 +60,7 @@ public:
 private:
 	MGTMesh_MeshObject* _mesh;
 	const TopoDS_Shape& _shape;
-	bool _isVolume;
+	const NetgenPlugin_Parameters* _algorithm;
 	bool _optimize;
 	int _fineness;
 	bool _isViscousLayers2D;

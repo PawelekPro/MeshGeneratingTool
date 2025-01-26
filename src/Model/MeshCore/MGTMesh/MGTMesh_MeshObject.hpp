@@ -36,15 +36,13 @@ public:
 	vtkTypeMacro(MGTMesh_MeshObject, vtkMultiBlockDataSet);
 
 	MGTMesh_MeshObject();
+	~MGTMesh_MeshObject() override;
 
 	void SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh);
 	void SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh);
 
 	vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
 	vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;
-
-protected:
-	~MGTMesh_MeshObject() override;
 
 private:
 	vtkSmartPointer<vtkUnstructuredGrid> _internalMesh;

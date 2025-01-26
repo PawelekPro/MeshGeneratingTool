@@ -1,4 +1,4 @@
-add_library(ModelInterface 
+add_library(ModelInterface SHARED
     ModelInterface.cpp
     ModelDataView.cpp
 )
