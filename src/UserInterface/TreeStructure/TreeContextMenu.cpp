@@ -18,11 +18,11 @@
  */
 
 #include "TreeContextMenu.hpp"
-#include "TreeStructure.hpp"
 #include "TreeItem.hpp"
+#include "TreeStructure.hpp"
 
-#include "MeshActionsHandler.hpp"
 #include "GeometryActionsHandler.hpp"
+#include "MeshActionsHandler.hpp"
 
 TreeContextMenu::TreeContextMenu(TreeStructure* treeWidget, QObject* parent)
 	: QObject(parent)
@@ -57,20 +57,20 @@ QMenu* TreeContextMenu::createContextMenu(TreeItem* item) {
 	contextMenu->setFont(font);
 	int column = static_cast<int>(TreeStructure::Column::Label);
 
-	if(item->isRoot()){
-		switch(item->rootType()){
-			case ItemTypes::Root::Geometry:
-				buildGeometryMenu(contextMenu);
-				break;
-			case ItemTypes::Root::Mesh:
-				buildMeshMenu(contextMenu);
-				break;
-			case ItemTypes::Root::Solution:
-				buildSolutionMenu(contextMenu);
-				break;
-			case ItemTypes::Root::Results:
-				buildResultsMenu(contextMenu);
-				break;
+	if (item->isRoot()) {
+		switch (item->rootType()) {
+		case ItemTypes::Root::Geometry:
+			buildGeometryMenu(contextMenu);
+			break;
+		case ItemTypes::Root::Mesh:
+			buildMeshMenu(contextMenu);
+			break;
+		case ItemTypes::Root::Solution:
+			buildSolutionMenu(contextMenu);
+			break;
+		case ItemTypes::Root::Results:
+			buildResultsMenu(contextMenu);
+			break;
 		}
 	} else {
 		buildDefaultSubItemMenu(contextMenu);
@@ -78,11 +78,11 @@ QMenu* TreeContextMenu::createContextMenu(TreeItem* item) {
 	return contextMenu;
 }
 
-void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu){
-	if(geometryActions.empty()){
-		//TODO: think of moving the actions to another file
-		
-		ItemTypes::Sub importType{ItemTypes::Geometry::ImportSTEP};
+void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu) {
+	if (geometryActions.empty()) {
+		// TODO: think of moving the actions to another file
+
+		ItemTypes::Sub importType { ItemTypes::Geometry::ImportSTEP };
 		QString label = ItemTypes::label(importType);
 
 		addImporSTEPItemAction = new QAction(label, _treeStructure);
@@ -92,40 +92,35 @@ void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu){
 	aContextMenu->addActions(geometryActions);
 }
 
-void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu){
-	if(meshActions.empty()){
+void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu) {
+	if (meshActions.empty()) {
 		QString label = "Mesh Surface";
 		genereateMeshAction = new QAction(label, _treeStructure);
 		meshActions.append(genereateMeshAction);
 
-		connect(genereateMeshAction, &QAction::triggered, _treeStructure->meshHandler(),
-				&MeshActionsHandler::meshSurface);
-
-		ItemTypes::Sub sizingType{ItemTypes::Mesh::ElementSizing};
+		ItemTypes::Sub sizingType { ItemTypes::Mesh::ElementSizing };
 		label = ItemTypes::label(sizingType);
 
 		addSizingAction = new QAction(label, _treeStructure);
 		meshActions.append(addSizingAction);
 
 		connect(addSizingAction, &QAction::triggered, _treeStructure->meshHandler(),
-		&MeshActionsHandler::addSizingToSelectedShapes);
+			&MeshActionsHandler::addSizingToSelectedShapes);
 	}
 	aContextMenu->addActions(meshActions);
 }
 
-void TreeContextMenu::buildSolutionMenu(QMenu* aContextMenu){
-	
+void TreeContextMenu::buildSolutionMenu(QMenu* aContextMenu) {
 }
 
-void TreeContextMenu::buildResultsMenu(QMenu* aContextMenu){
-	
+void TreeContextMenu::buildResultsMenu(QMenu* aContextMenu) {
 }
 
-void TreeContextMenu::buildDefaultSubItemMenu(QMenu* aContextMenu){
-	if(defaultSubItemActions.empty()){
+void TreeContextMenu::buildDefaultSubItemMenu(QMenu* aContextMenu) {
+	if (defaultSubItemActions.empty()) {
 		renameItemAction = new QAction(_treeStructure);
 		defaultSubItemActions.append(renameItemAction);
-		
+
 		deleteItemAction = new QAction(_treeStructure);
 		defaultSubItemActions.append(deleteItemAction);
 	}

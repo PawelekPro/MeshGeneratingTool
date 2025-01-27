@@ -53,7 +53,6 @@ private:
 private slots:
 	void onEntitySelectionChanged(QAction* action);
 	void onViewRepresentationChanged(QAction* action);
-	void onPressedSizeField(QAction* action);
 
 private:
 	MainWindow* _mainWindow;

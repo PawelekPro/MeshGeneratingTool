@@ -67,23 +67,24 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
 
+	/* ================================================================
+	  Mesh page
+	  ===================================================================*/
 	SARibbonCategory* page2 = new SARibbonCategory(this);
 	page2->setCategoryName("Mesh");
 	bar->addCategoryPage(page2);
 
-	SARibbonPannel* sizeFieldPanel
-		= new SARibbonPannel("Size fields", page2);
-	page2->addPannel(sizeFieldPanel);
+	SARibbonPannel* meshGenerationPanel = new SARibbonPannel("Generate mesh", page2);
+	page2->addPannel(meshGenerationPanel);
+	QAction* generate3DMeshAction = createAction(
+		"generate3DMesh", ":/icons/icons/Volume_mesh.svg");
+	generate3DMeshAction->setIconText("Volume mesh");
+	meshGenerationPanel->addAction(generate3DMeshAction);
 
-	QActionGroup* sizeFieldGroup = new QActionGroup(this);
-	sizeFieldGroup->setExclusive(true);
-
-	QAction* elementSizeAct = createAction("elementSize", ":/icons/icons/Selection_face.svg");
-	elementSizeAct->setIconText("Element Size");
-	sizeFieldGroup->addAction(elementSizeAct);
-	sizeFieldPanel->addLargeAction(elementSizeAct);
-	connect(sizeFieldGroup, &QActionGroup::triggered, this,
-		&RibbonBarWidget::onPressedSizeField);
+	QAction* generate2DMeshAction = createAction(
+		"generate2DMesh", ":/icons/icons/Surface_mesh.svg");
+	generate2DMeshAction->setIconText("Surface mesh");
+	meshGenerationPanel->addAction(generate2DMeshAction);
 
 	/* ================================================================
 	  Display page
@@ -224,12 +225,4 @@ void RibbonBarWidget::onViewRepresentationChanged(QAction* action) {
 	}
 
 	_QVTKRender->RenderScene();
-}
-//----------------------------------------------------------------------------
-void RibbonBarWidget::onPressedSizeField(QAction* action) {
-	const QString& actionText = action->text();
-
-	if (actionText == "elementSize") {
-		// this->_QVTKRender->model->addEdgeSizing()
-	}
 }

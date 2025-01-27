@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,11 +15,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : Model.cpp
+* Author    : Paweł Gilewicz, Krystian Fudali
+* Date      : 26/01/2025
+*/
 
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
 
+#include "MGTMesh_Generator.hpp"
+
+//----------------------------------------------------------------------------
 Model::Model(std::string modelName)
 	: _modelName(modelName) {
 	gmsh::model::add(_modelName);
@@ -27,10 +35,12 @@ Model::Model(std::string modelName)
 	// this->mesh = MeshCore::Mesh();
 };
 
+//----------------------------------------------------------------------------
 Model::~Model() {
 	gmsh::finalize();
 }
 
+//----------------------------------------------------------------------------
 void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 	for (const auto& it : shapesMap) {
 		const auto& shape = it.second;
@@ -41,6 +51,7 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 	gmsh::model::occ::synchronize();
 }
 
+//----------------------------------------------------------------------------
 void Model::importSTL(const std::string& filePath, QWidget* progressBar) {
 	geometry.importSTL(filePath, progressBar);
 	GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
@@ -51,20 +62,4 @@ void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
 	geometry.importSTEP(filePath, progressBar);
 	GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
 	addShapesToModel(shapesMap);
-}
-
-void Model::initializeGmsh() {
-	static bool gmshInitialized = false;
-	if (!gmshInitialized) {
-		try {
-			gmsh::initialize();
-			gmshInitialized = true;
-		} catch (const std::exception& e) {
-			std::cerr << "Error initializing Gmsh: " << e.what() << std::endl;
-			throw;
-		} catch (...) {
-			std::cerr << "Unknown error initializing Gmsh" << std::endl;
-			throw;
-		}
-	}
 }

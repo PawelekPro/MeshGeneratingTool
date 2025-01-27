@@ -85,11 +85,6 @@ void MainWindow::connectActionsToModel() {
 	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
 		this, &MainWindow::handleSelectorButtonClicked);
 
-	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
-		_modelHandler->_meshHandler->meshSurface();
-		ui->actionShowMesh->setChecked(true);
-	});
-
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
 		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 }
