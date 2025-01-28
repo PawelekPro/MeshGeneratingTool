@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,7 +15,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : ModelInterface.hpp
+* Author    : Krystian Fudali, Paweł Gilewicz
+* Date      : 28/01/2025
+*/
 
 #ifndef MODELINTERFACE_HPP
 #define MODELINTERFACE_HPP

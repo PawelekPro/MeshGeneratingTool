@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,20 +15,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : ModelActionsHandler.cpp
+* Author    : Krystian Fudali, Paweł Gilewicz
+* Date      : 28/01/2025
+*/
 
 #include "MeshActionsHandler.hpp"
 #include "AddSizingCommand.hpp"
 #include "CommandManager.hpp"
 #include "ModelInterface.hpp"
 
-MeshActionsHandler::MeshActionsHandler(
-	std::shared_ptr<ModelInterface> aModelInterface,
-	CommandManager* aCommandManager,
-	RenderSignalSender* aSignalSender,
-	TreeStructure* aTreeStructure,
-	ProgressBar* aProgressBar,
-	QObject* aParent)
+// logging
+#include <spdlog/spdlog.h>
+
+//----------------------------------------------------------------------------
+MeshActionsHandler::MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
+	CommandManager* aCommandManager, RenderSignalSender* aSignalSender,
+	TreeStructure* aTreeStructure, ProgressBar* aProgressBar, QObject* aParent)
 	: QObject(aParent)
 	, _modelInterface(aModelInterface)
 	, _commandManager(aCommandManager)
@@ -36,18 +41,31 @@ MeshActionsHandler::MeshActionsHandler(
 	, _treeStructure(aTreeStructure)
 	, _progressBar(aProgressBar) {};
 
-void MeshActionsHandler::meshVolume() {
+//----------------------------------------------------------------------------
+void MeshActionsHandler::generate3DMesh() {
 	// _modelInterface->meshVolume();
 	// TODO: send signal to update the renderer
+	SPDLOG_INFO("Generating volume mesh triggered.");
 	return;
 }
 
+//----------------------------------------------------------------------------
+void MeshActionsHandler::generate2DMesh() {
+	// _modelInterface->meshVolume();
+	// TODO: send signal to update the renderer
+	SPDLOG_INFO("Generating surface mesh triggered.");
+	return;
+}
+
+//----------------------------------------------------------------------------
 void MeshActionsHandler::addSizingToShapes(const std::vector<int>& aShapesVec) {
-	AddSizingCommand* sizingCommand = new AddSizingCommand(_signalSender->geometrySignals, _treeStructure);
+	AddSizingCommand* sizingCommand
+		= new AddSizingCommand(_signalSender->geometrySignals, _treeStructure);
 	_commandManager->executeCommand(sizingCommand);
 	return;
 }
 
+//----------------------------------------------------------------------------
 void MeshActionsHandler::addSizingToSelectedShapes() {
 	const std::vector<int> shapesIds = _signalSender->geometrySignals->getSelectedShapes();
 	addSizingToShapes(shapesIds);

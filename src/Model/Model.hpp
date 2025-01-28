@@ -28,13 +28,13 @@
 #include "DocumentHandler.hpp"
 #include "Geometry.hpp"
 
-#ifdef _WIN32
-#include <gmsh.h_cwrap>
-#endif
+// #ifdef _WIN32
+// #include <gmsh.h_cwrap>
+// #endif
 
-#ifdef linux
-#include <gmsh.h>
-#endif
+// #ifdef linux
+// #include <gmsh.h>
+// #endif
 
 class Model {
 public:

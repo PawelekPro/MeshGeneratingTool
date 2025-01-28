@@ -3,6 +3,7 @@ ADD_LIBRARY(MeshActionsHandler
 )
 
 TARGET_LINK_LIBRARIES(MeshActionsHandler PUBLIC
+    spdlog::spdlog_header_only
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     MeshCommands

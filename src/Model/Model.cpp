@@ -30,14 +30,14 @@
 //----------------------------------------------------------------------------
 Model::Model(std::string modelName)
 	: _modelName(modelName) {
-	gmsh::model::add(_modelName);
+	// gmsh::model::add(_modelName);
 	this->geometry = GeometryCore::Geometry();
 	// this->mesh = MeshCore::Mesh();
 };
 
 //----------------------------------------------------------------------------
 Model::~Model() {
-	gmsh::finalize();
+	// gmsh::finalize();
 }
 
 //----------------------------------------------------------------------------
@@ -46,9 +46,9 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 		const auto& shape = it.second;
 		const void* shape_ptr = &shape;
 		std::vector<std::pair<int, int>> outDimTags;
-		gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
+		// gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
 	}
-	gmsh::model::occ::synchronize();
+	// gmsh::model::occ::synchronize();
 }
 
 //----------------------------------------------------------------------------
