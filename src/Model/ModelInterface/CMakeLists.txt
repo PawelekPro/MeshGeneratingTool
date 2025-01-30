@@ -4,7 +4,9 @@ add_library(ModelInterface SHARED
 )
 
 target_link_libraries(ModelInterface PUBLIC
+    spdlog::spdlog_header_only
     Model
+    MeshCore
 )
 
 target_include_directories(ModelInterface PUBLIC

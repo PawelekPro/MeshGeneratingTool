@@ -20,23 +20,25 @@
 #ifndef MODELDOCPARSER_HPP
 #define MODELDOCPARSER_HPP
 
-#include "Model.hpp"
 #include "DocumentHandler.hpp"
+#include "Model.hpp"
 
-class ModelDocParser{
+class MGTMesh_Algorithm;
 
-    public:
-    ModelDocParser(Model& aModel);
+class ModelDocParser {
 
-    void applyMeshSettings();
-    void applyElementSizings();
-    
-    std::pair<std::vector<int>, double> parseElementSizing(const QDomElement& aSizingElement);
+public:
+	ModelDocParser(Model& aModel);
 
-    private:
-    
-    Model& _model;
-    const DocumentHandler& _doc;
+	void applyMeshSettings();
+	void applyElementSizings();
+
+	std::pair<std::vector<int>, double> parseElementSizing(const QDomElement& aSizingElement);
+	std::unique_ptr<MGTMesh_Algorithm> generateMeshAlgorithm(bool surfaceMesh = false) const;
+
+private:
+	Model& _model;
+	const DocumentHandler& _doc;
 };
 
 #endif

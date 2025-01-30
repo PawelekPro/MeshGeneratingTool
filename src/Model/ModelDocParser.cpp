@@ -19,6 +19,8 @@
 
 #include "ModelDocParser.hpp"
 
+#include "MGTMesh_Algorithm.hpp"
+
 ModelDocParser::ModelDocParser(Model& aModel)
 	: _model(aModel)
 	, _doc(DocumentHandler::getInstance()) { }
@@ -31,8 +33,10 @@ void ModelDocParser::applyElementSizings() {
 	}
 }
 
-std::pair<std::vector<int>, double> ModelDocParser::parseElementSizing(const QDomElement& aSizingElement) {
-	// TODO: All those error checks should be in propertyValue - here they are redundant and clutter the code
+std::pair<std::vector<int>, double> ModelDocParser::parseElementSizing(
+	const QDomElement& aSizingElement) {
+	// TODO: All those error checks should be in propertyValue - here they are redundant and clutter
+	// the code
 	QString sizeString, tagsString, shapeTypeString;
 	try {
 		sizeString = _doc.getPropertyValue(aSizingElement, "elementSize");
@@ -50,13 +54,16 @@ std::pair<std::vector<int>, double> ModelDocParser::parseElementSizing(const QDo
 		qWarning() << e.what() << "Skipping this meshSizing...";
 	}
 	if (sizeString.isEmpty()) {
-		qWarning() << "Element size is empty in " << aSizingElement.attribute("name") << " skipping...";
+		qWarning() << "Element size is empty in " << aSizingElement.attribute("name")
+				   << " skipping...";
 	}
 	if (tagsString.isEmpty()) {
-		qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name") << " skipping...";
+		qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name")
+				   << " skipping...";
 	}
 	if (shapeTypeString.isEmpty()) {
-		qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name") << " skipping...";
+		qWarning() << "selectedTags value is empty in " << aSizingElement.attribute("name")
+				   << " skipping...";
 	}
 	double size = sizeString.toDouble();
 	std::vector<int> verticesTags;
@@ -106,4 +113,16 @@ void ModelDocParser::applyMeshSettings() {
 
 	// gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
 	// gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
+}
+
+//----------------------------------------------------------------------------
+std::unique_ptr<MGTMesh_Algorithm> ModelDocParser::generateMeshAlgorithm(bool surfaceMesh) const {
+	// ToDo: setting up mesh algorithm from document handler (project properties)
+	int schemeId = 0;
+	auto algorithm = std::make_unique<MGTMesh_Algorithm>(schemeId);
+
+	if (!surfaceMesh)
+		algorithm->SetType(MGTMesh_Scheme::ALG_3D);
+
+	return algorithm;
 }

@@ -36,6 +36,8 @@
 // #include <gmsh.h>
 // #endif
 
+class MGTMesh_Algorithm;
+
 class Model {
 public:
 	std::string _modelName;
@@ -53,10 +55,13 @@ public:
 	void importSTL(const std::string& filePath, QWidget* progressBar);
 
 	//--------Meshing interface-----//
-	void generateMesh();
+	bool generateMesh(const MGTMesh_Algorithm* algorithm);
 
 private:
 	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
+
+private:
+	GeometryCore::PartsMap _shapesMap;
 };
 
 #endif

@@ -39,7 +39,6 @@ public:
 
 private:
 	int _error; //!< MGTMeshUtils_ComputeErrorName
-	double _progress; //! progress of Compute() [0.,1.]
 };
 
 #endif

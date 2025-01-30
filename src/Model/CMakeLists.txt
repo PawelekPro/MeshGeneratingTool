@@ -10,6 +10,7 @@ ADD_LIBRARY(Model
 
 
 TARGET_LINK_LIBRARIES(Model PUBLIC 
+    spdlog::spdlog_header_only
     ${GMSH_LIB}
     GeometryCore
     MeshCore

@@ -23,10 +23,15 @@
 */
 
 #include "ModelInterface.hpp"
+#include "ModelDocParser.hpp"
+
+#include "MGTMesh_Algorithm.hpp"
+
+#include <spdlog/spdlog.h>
 
 ModelInterface::ModelInterface(ModelManager& aManager)
 	: _modelManager(aManager)
-	, _modelDataView(aManager) {};
+	, _modelDataView(aManager) { };
 
 int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget) {
 	Model& model = _modelManager.getModel();
@@ -45,6 +50,13 @@ void ModelInterface::createNewModel(const QString& aNewModelName) {
 	return;
 }
 
-void ModelInterface::generateMesh() {
+//----------------------------------------------------------------------------
+void ModelInterface::generateMesh(bool surfaceMesh) {
+	spdlog::debug(
+		std::format("Mesh generation process started with surfaceMesh arg: {}", surfaceMesh));
+
 	Model& model = _modelManager.getModel();
-};
+	ModelDocParser modelDocument(model);
+	std::unique_ptr<MGTMesh_Algorithm> algorithm = modelDocument.generateMeshAlgorithm(surfaceMesh);
+	model.generateMesh(algorithm.get());
+}

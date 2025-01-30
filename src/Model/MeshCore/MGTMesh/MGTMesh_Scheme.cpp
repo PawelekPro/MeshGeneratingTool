@@ -26,43 +26,40 @@
 
 //----------------------------------------------------------------------------
 MGTMesh_Scheme::MGTMesh_Scheme(int schemeId)
-	: _schemeId(schemeId) {
+	: _schemeId(schemeId)
+	, _engineLib(NETGEN)
+	, _type(ALG_2D) {
 	_name = "generic";
-	_type = ALG_2D;
-	_engineLib = NETGEN;
 	_shapeType = 0;
 	_alg_dim = -1;
 }
 
 //----------------------------------------------------------------------------
-const char* MGTMesh_Scheme::GetName() const {
-	return _name.c_str();
-}
+const char* MGTMesh_Scheme::GetName() const { return _name.c_str(); }
 
 //----------------------------------------------------------------------------
-int MGTMesh_Scheme::GetID() const {
-	return _schemeId;
-}
+int MGTMesh_Scheme::GetID() const { return _schemeId; }
 
 //----------------------------------------------------------------------------
-int MGTMesh_Scheme::GetType() const {
-	return _type;
-}
+int MGTMesh_Scheme::GetType() const { return _type; }
 
 //----------------------------------------------------------------------------
-bool MGTMesh_Scheme::Is3DAlgortihm() const {
-	return _type == ALG_3D;
-}
+bool MGTMesh_Scheme::Is3DAlgortihm() const { return _type == ALG_3D; }
 
 //----------------------------------------------------------------------------
-bool MGTMesh_Scheme::Is2DAlgortihm() const {
-	return _type == ALG_2D;
-}
+bool MGTMesh_Scheme::Is2DAlgortihm() const { return _type == ALG_2D; }
 
 //----------------------------------------------------------------------------
-bool MGTMesh_Scheme::Is1DAlgortihm() const {
-	return _type == ALG_1D;
-}
+bool MGTMesh_Scheme::Is1DAlgortihm() const { return _type == ALG_1D; }
+
+//----------------------------------------------------------------------------
+void MGTMesh_Scheme::SetType(MGTMesh_Scheme::SchemeType type) { _type = type; }
+
+//----------------------------------------------------------------------------
+void MGTMesh_Scheme::SetDim(int algDim) { _alg_dim = algDim; }
+
+//----------------------------------------------------------------------------
+void MGTMesh_Scheme::SetShapeType(int shapeType) { _shapeType = shapeType; }
 
 //----------------------------------------------------------------------------
 int MGTMesh_Scheme::GetDim() const {
@@ -89,16 +86,10 @@ int MGTMesh_Scheme::GetDim() const {
 }
 
 //----------------------------------------------------------------------------
-int MGTMesh_Scheme::GetShapeType() const {
-	return _shapeType;
-}
+int MGTMesh_Scheme::GetShapeType() const { return _shapeType; }
 
 //----------------------------------------------------------------------------
-MGTMesh_Scheme::Engine MGTMesh_Scheme::GetEngineLib() const {
-	return _engineLib;
-}
+int MGTMesh_Scheme::GetEngineLib() const { return _engineLib; }
 
 //----------------------------------------------------------------------------
-void MGTMesh_Scheme::SetEngineLib(MGTMesh_Scheme::Engine libType) {
-	_engineLib = libType;
-}
+void MGTMesh_Scheme::SetEngineLib(MGTMesh_Scheme::Engine libType) { _engineLib = libType; }

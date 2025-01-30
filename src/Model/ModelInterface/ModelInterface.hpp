@@ -38,7 +38,7 @@ public:
 	int importSTEP(const QString& aFilePath, QWidget* progressBar);
 	int importSTL(const QString& aFilePath, QWidget* progressBar);
 
-	void generateMesh();
+	void generateMesh(bool surfaceMesh = false);
 
 	const ModelDataView& modelDataView() { return _modelDataView; };
 

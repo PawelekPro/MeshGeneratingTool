@@ -29,18 +29,9 @@
 
 class MGTMesh_Scheme {
 public:
-	enum Engine {
-		NETGEN,
-		GMSH
-	};
+	enum Engine { NETGEN, GMSH };
 
-	enum SchemeType {
-		PARAM_ALG,
-		ALG_0D,
-		ALG_1D,
-		ALG_2D,
-		ALG_3D
-	};
+	enum SchemeType { PARAM_ALG, ALG_0D, ALG_1D, ALG_2D, ALG_3D };
 
 	enum SchemeStatus //! in the order of severity
 	{
@@ -59,13 +50,11 @@ public:
 		INCOMPAT_SCHEMES //! schemes are incompatible
 	};
 
-	static bool IsStatusFatal(SchemeStatus status) {
-		return status >= UNKNOWN_FATAL;
-	}
+	static bool IsStatusFatal(SchemeStatus status) { return status >= UNKNOWN_FATAL; }
 
 public:
 	MGTMesh_Scheme(int schemeId);
-	virtual ~MGTMesh_Scheme();
+	virtual ~MGTMesh_Scheme() = default;
 
 public:
 	const char* GetName() const;
@@ -78,7 +67,11 @@ public:
 	int GetType() const;
 	int GetDim() const;
 	int GetShapeType() const;
-	Engine GetEngineLib() const;
+	int GetEngineLib() const;
+
+	void SetType(SchemeType type);
+	void SetDim(int algDim);
+	void SetShapeType(int shapeType);
 	void SetEngineLib(MGTMesh_Scheme::Engine libType);
 
 protected:

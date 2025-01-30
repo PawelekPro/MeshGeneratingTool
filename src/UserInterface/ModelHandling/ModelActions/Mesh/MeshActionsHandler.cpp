@@ -39,22 +39,20 @@ MeshActionsHandler::MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInt
 	, _commandManager(aCommandManager)
 	, _signalSender(aSignalSender)
 	, _treeStructure(aTreeStructure)
-	, _progressBar(aProgressBar) {};
+	, _progressBar(aProgressBar) { };
 
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate3DMesh() {
-	// _modelInterface->meshVolume();
-	// TODO: send signal to update the renderer
 	SPDLOG_INFO("Generating volume mesh triggered.");
-	return;
+	_modelInterface->generateMesh();
+	// TODO: send signal to update the renderer
 }
 
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate2DMesh() {
-	// _modelInterface->meshVolume();
-	// TODO: send signal to update the renderer
 	SPDLOG_INFO("Generating surface mesh triggered.");
-	return;
+	_modelInterface->generateMesh(true);
+	// TODO: send signal to update the renderer
 }
 
 //----------------------------------------------------------------------------

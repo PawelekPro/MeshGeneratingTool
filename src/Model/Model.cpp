@@ -19,17 +19,21 @@
 *=============================================================================
 * File      : Model.cpp
 * Author    : Paweł Gilewicz, Krystian Fudali
-* Date      : 26/01/2025
+* Date      : 30/01/2025
 */
 
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
 
+#include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_Generator.hpp"
+
+#include <spdlog/spdlog.h>
 
 //----------------------------------------------------------------------------
 Model::Model(std::string modelName)
-	: _modelName(modelName) {
+	: _modelName(modelName)
+	, _shapesMap(GeometryCore::PartsMap()) {
 	// gmsh::model::add(_modelName);
 	this->geometry = GeometryCore::Geometry();
 	// this->mesh = MeshCore::Mesh();
@@ -43,9 +47,14 @@ Model::~Model() {
 //----------------------------------------------------------------------------
 void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 	for (const auto& it : shapesMap) {
-		const auto& shape = it.second;
-		const void* shape_ptr = &shape;
-		std::vector<std::pair<int, int>> outDimTags;
+		const std::string& key = it.first;
+		const TopoDS_Shape& shape = it.second;
+
+		if (_shapesMap.find(key) == _shapesMap.end()) {
+			_shapesMap[key] = shape;
+			spdlog::debug("Shape added to model: {}", key);
+		}
+		// std::vector<std::pair<int, int>> outDimTags;
 		// gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
 	}
 	// gmsh::model::occ::synchronize();
@@ -54,12 +63,33 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 //----------------------------------------------------------------------------
 void Model::importSTL(const std::string& filePath, QWidget* progressBar) {
 	geometry.importSTL(filePath, progressBar);
-	GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
+	const GeometryCore::PartsMap& shapesMap = geometry.getShapesMap();
 	addShapesToModel(shapesMap);
 }
 
 void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
 	geometry.importSTEP(filePath, progressBar);
-	GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
+	const GeometryCore::PartsMap& shapesMap = geometry.getShapesMap();
 	addShapesToModel(shapesMap);
+}
+
+//----------------------------------------------------------------------------
+bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
+	if (!algorithm)
+		return false;
+
+	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
+		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
+
+	for (const auto& it : _shapesMap) {
+		spdlog::debug("Creating mesh generator for shape: {}", it.first);
+		MGTMesh_Generator meshGenerator(it.second, *algorithm);
+		bool result = meshGenerator.Compute();
+		if (!result) {
+			SPDLOG_ERROR("Error while generating mesh for shape: {}", it.first);
+			return result;
+		}
+	}
+
+	return false;
 }
