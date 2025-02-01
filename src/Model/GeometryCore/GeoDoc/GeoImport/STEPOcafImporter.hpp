@@ -16,40 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OCAFDOC_HPP
-#define OCAFDOC_HPP
 
-#include <string>
+#ifndef STEPOCAFIMPORTER_HPP
+#define STEPOCAFIMPORTER_HPP
 
-#include <TDocStd_Document.hxx>
-#include <TDF_Label.hxx>
-#include <XCAFDoc_ShapeTool.hxx>
-#include <XCAFDoc_ColorTool.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS_Shape.hxx>
-#include <gp_Trsf.hxx>
+#include "OcafImporter.hpp" 
+#include <Standard_Handle.hxx>
 
+class STEPOcafImporter : public OcafImporter {
 
-
-class OcafDoc{
-
-    public: 
-        OcafDoc();
-
-        void importSTEP(const std::string& aFilePath);
-
-
-        void undo();
-
-
-        std::vector<TopoDS_Shape> getAllShapes() const;
-        std::string getShapeName(const TopoDS_Shape& aShape) const;
-        bool saveAsXml(const std::string& filePath) const;
-
-    private:
-        Handle(TDocStd_Document) _document;
-        Handle(XCAFDoc_ShapeTool) _shapeTool;
-        Handle(XCAFDoc_ColorTool) _colorTool;
+    public:
+        bool importToDocument(const std::string& aFilePath, Handle(TDocStd_Document) aDestDoc) override;
+        ~STEPOcafImporter() = default;
+    
 };
 
 #endif

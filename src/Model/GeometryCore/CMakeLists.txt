@@ -2,33 +2,24 @@ if(BUILD_TESTS)
     add_subdirectory(Tests)
 endif()
 
-ADD_LIBRARY(GeometryCore 
-    GeometryImporter/GeometryImporter.cpp
-    GeometryImporter/STEPImporter.cpp
-    GeometryImporter/STLImporter.cpp
-    Geometry/OcafDoc.cpp
-    Geometry/Geometry.cpp
-    Geometry/TagMap.cpp
+add_subdirectory(GeoDoc)
+add_subdirectory(GeoShapeEditor)
+add_subdirectory(GeoShapes)
+add_subdirectory(GeoUtils)
+
+add_library(GeometryCore
+    Geometry.cpp
+    GeometryActions.cpp
+    GeometryView.cpp
 )
 
-if(WIN32)
-    TARGET_LINK_LIBRARIES(GeometryCore PUBLIC
-        ${OpenCASCADE_LIBRARIES}
-        ${VTK_LIBRARIES}
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Utils
-        )
-else()
-    TARGET_LINK_LIBRARIES(GeometryCore PUBLIC
-        ${OCC_LIBRARIES}
-        ${VTK_LIBRARIES}
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Utils
-        )
-endif()
+target_link_libraries(GeometryCore PUBLIC
+    ${OCC_LIBRARIES}
+    GeoDoc
+    GeoShapeEditor
+    GeoShapes
+)
 
-TARGET_INCLUDE_DIRECTORIES(GeometryCore PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/Geometry
-    ${CMAKE_CURRENT_SOURCE_DIR}/QVTKProgressBar
-    ${CMAKE_CURRENT_SOURCE_DIR}/GeometryImporter
+target_include_directories(GeometryCore PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )

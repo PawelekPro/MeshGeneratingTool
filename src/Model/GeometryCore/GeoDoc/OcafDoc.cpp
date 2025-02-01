@@ -18,6 +18,7 @@
  */
 
 #include "OcafDoc.hpp"
+#include "STEPOcafImporter.hpp"
 #include "XCAFApp_Application.hxx"
 #include "XCAFDoc_DocumentTool.hxx"
 #include "STEPCAFControl_Reader.hxx"
@@ -89,24 +90,28 @@ std::vector<TopoDS_Shape> OcafDoc::getAllShapes() const {
     return shapes;
 }
 
-void OcafDoc::importSTEP(const std::string& aFilePath) {
-    STEPCAFControl_Reader cafReader;
-
-    cafReader.SetColorMode(true);
-    cafReader.SetLayerMode(true);
-    cafReader.SetNameMode(true);
-    IFSelect_ReturnStatus result = cafReader.ReadFile(aFilePath.c_str());
-
-    if (result != IFSelect_RetDone) {
-        throw std::runtime_error("Failed to read STEP file.");
+bool OcafDoc::importSTEP(const std::string& aFilePath) {
+    bool result = false;
+    try {
+        STEPOcafImporter STEPImporter;
+        _document->NewCommand();
+        result = STEPImporter.importToDocument(aFilePath,  _document);
+        _document->CommitCommand();
     }
-
-    _document->NewCommand();
-    if (!cafReader.Transfer(this->_document)) {
-        throw std::runtime_error("Failed to transfer STEP data to OCAF document.");
+    catch (const std::runtime_error& e) {  // Specific exception type
+        std::cerr << "Could not import file, error: " << e.what() << std::endl;
+    } 
+    catch (const std::exception& e) {  // Generic standard exception
+        std::cerr << "Could not import file, error: " << e.what() << std::endl;
+    } 
+    catch (...) {  // Catch-all handler for unknown exceptions
+        std::cerr << "Could not import file, unknown exception" << std::endl;
     }
-    _document->CommitCommand();
+    return result;
 }
+
+
+
 
 void OcafDoc::undo(){
     _document->Undo();

@@ -35,6 +35,7 @@ namespace GeometryCore {
         std::vector<std::string> getShapesNames(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec);
 
     private:
+
         PartsMap _shapesMap;
         TagMap _tagMap;
     };
