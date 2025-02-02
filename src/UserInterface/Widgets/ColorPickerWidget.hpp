@@ -49,10 +49,13 @@ public:
 
 	void setIndex(const QModelIndex& index) override;
 	void setValue(const std::tuple<int, int, int>& color);
+	double* getColorAsDoubleArray();
 
 private:
 	QPushButton* _selectionButton;
 	QModelIndex _index;
+	double _rgb[3];
+	QColor _color;
 
 private slots:
 	void onSelectColorClicked();

@@ -23,9 +23,29 @@
 //--------------------------------------------------------------------------------------
 PreferencesDialog::PreferencesDialog(QWidget* parent)
 	: QDialog(parent)
-	, ui(new Ui::PreferencesDialog) {
+	, ui(new Ui::PreferencesDialog)
+	, _appDefaults(AppDefaults::getInstance()) {
 	ui->setupUi(this);
+
+	// Getting acces to main window instance
+	_mainWindow = qobject_cast<MainWindow*>(parent->window());
+
+	QComboBox* comboBox = this->ui->appThemeComboBox;
+	for (const auto& Theme : AppTheme::getInstance().themes()) {
+		comboBox->addItem(Theme);
+	}
+
+	QString theme = _appDefaults.getThemeAsString();
+	for (int index = 0; index < this->ui->appThemeComboBox->count(); ++index) {
+		if (this->ui->appThemeComboBox->itemText(index) == theme) {
+			this->ui->appThemeComboBox->setCurrentIndex(index);
+			break;
+		}
+	}
+
 	this->intitializeColorProperties();
+	this->updateThemeColorButtons();
+	this->setConnections();
 }
 
 //--------------------------------------------------------------------------------------
@@ -34,11 +54,24 @@ PreferencesDialog::~PreferencesDialog() {
 }
 
 //--------------------------------------------------------------------------------------
+void PreferencesDialog::setConnections() {
+	connect(this->ui->appThemeComboBox, &QComboBox::currentTextChanged,
+		this, &PreferencesDialog::updateStyleSheet);
+
+	connect(this->ui->renBackgroundComboBox, &QComboBox::currentTextChanged,
+		this, &PreferencesDialog::onRenBackgroundComboBoxChanged);
+
+	connect(this->ui->applyButton, &QPushButton::clicked,
+		this, &PreferencesDialog::onApplyButtonClicked);
+}
+
+//--------------------------------------------------------------------------------------
 void PreferencesDialog::intitializeColorProperties() {
 	const AppDefaultColors::GeomColorsArray colorsArray
-		= AppDefaultColors::getGeometryEntitiesColorArray();
+		= _appDefaults.getGeometryEntitiesColorArray();
 
-	QGridLayout* layout = qobject_cast<QGridLayout*>(ui->entityColorsWidget->layout());
+	QGridLayout* layout = qobject_cast<QGridLayout*>(
+		ui->entityColorsWidget->layout());
 	if (!layout) {
 		qWarning() << "No QGridLayout found in QGroupBox!";
 	} else {
@@ -52,5 +85,129 @@ void PreferencesDialog::intitializeColorProperties() {
 				colorPicker->setValue(colorTuple);
 			}
 		}
+	}
+
+	const AppDefaultColors::RendererColorsArray renColorsArr = _appDefaults.getRendererColorsArray();
+	QColor color1 = renColorsArr.at(0);
+	QColor color2 = renColorsArr.at(1);
+
+	std::tuple<int, int, int> colorTuple1(color1.red(), color1.green(), color1.blue());
+	std::tuple<int, int, int> colorTuple2(color2.red(), color2.green(), color2.blue());
+
+	ui->firstRenColor->setValue(colorTuple1);
+	ui->secRenColor->setValue(colorTuple2);
+
+	const bool isGradModeEnabled = _appDefaults.isGradientBackgroundEnabled();
+	int index = 0;
+	if (isGradModeEnabled) {
+		vtkRenderer::GradientModes mode = _appDefaults.getRendererGradientMode();
+		index = static_cast<int>(mode) + 1;
+		ui->secRenColor->setEnabled(true);
+		ui->secRenColorLabel->setEnabled(true);
+	}
+	ui->renBackgroundComboBox->setCurrentIndex(index);
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::updateThemeColorButtons() {
+	QGridLayout* appColorsLayout = qobject_cast<QGridLayout*>(ui->appColorsWidget->layout());
+	if (!appColorsLayout) {
+		qWarning() << "No QGridLayout found in QGroupBox!";
+		return;
+	}
+
+	const auto& ThemeColors = AppTheme::getInstance().themeColorVariables();
+	auto itc = ThemeColors.constBegin();
+	for (int i = 0; i < appColorsLayout->count(); ++i, ++itc) {
+		QWidget* widget = appColorsLayout->itemAt(i)->widget();
+		ColorPickerWidget* colorPicker = qobject_cast<ColorPickerWidget*>(widget);
+
+		if (colorPicker) {
+			QColor color = itc.value();
+			std::tuple<int, int, int> colorTuple(color.red(), color.green(), color.blue());
+			colorPicker->setValue(colorTuple);
+		}
+	}
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::updateStyleSheet(QString theme) {
+	AppTheme& appTheme = AppTheme::getInstance();
+	appTheme.setCurrentTheme(theme);
+	appTheme.updateStylesheet();
+	appTheme.updateAppStylesheet();
+
+	this->updateThemeColorButtons();
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::onApplyButtonClicked() {
+	this->processRendererSettings();
+
+	_appDefaults.setThemeString(
+		this->ui->appThemeComboBox->currentText());
+	this->close();
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::processRendererSettings() {
+	Rendering::QVTKRenderWindow* aRenWin = _mainWindow->getRenderWindow();
+
+	int index = this->ui->renBackgroundComboBox->currentIndex();
+	const double* col1 = ui->firstRenColor->getColorAsDoubleArray();
+	const double* col2 = ui->secRenColor->getColorAsDoubleArray();
+
+	if (index == 0) {
+		aRenWin->setBackground(ui->firstRenColor->getColorAsDoubleArray());
+
+		_appDefaults.setGradientBackgroundEnabled(false);
+		_appDefaults.setRendererColorsArray(
+			AppDefaultColors::doubleColorsToColorsArray(col1, col2));
+
+	} else {
+		vtkRenderer::GradientModes mode;
+
+		switch (index) {
+		case 1:
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_VERTICAL;
+			break;
+		case 2:
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_HORIZONTAL;
+			break;
+		case 3:
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_SIDE;
+			break;
+		case 4:
+			mode = vtkRenderer::GradientModes::
+				VTK_GRADIENT_RADIAL_VIEWPORT_FARTHEST_CORNER;
+			break;
+		default:
+			qWarning() << "Wrong index!";
+			return;
+		}
+
+		aRenWin->setBackground(mode, col1, col2);
+
+		_appDefaults.setRendererGradientMode(mode);
+		_appDefaults.setGradientBackgroundEnabled(true);
+		_appDefaults.setRendererColorsArray(
+			AppDefaultColors::doubleColorsToColorsArray(col1, col2));
+	}
+
+	_appDefaults.updateRendererSettings();
+}
+
+//--------------------------------------------------------------------------------------
+void PreferencesDialog::onRenBackgroundComboBoxChanged(QString text) {
+	if (text == "Single Color") {
+		this->ui->secRenColor->setEnabled(false);
+		this->ui->secRenColorLabel->setEnabled(false);
+
+	} else {
+		this->ui->secRenColor->setEnabled(true);
+		this->ui->secRenColorLabel->setEnabled(true);
 	}
 }

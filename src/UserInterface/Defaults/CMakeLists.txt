@@ -5,14 +5,23 @@
 # a small colors map i changed the AppDefaultColors to have a single static method
 
 ADD_LIBRARY(Defaults
+  AppSettings.cpp
   AppDefaultColors.cpp
+  AppTheme.cpp
 )
 
 TARGET_LINK_LIBRARIES(Defaults PUBLIC
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Gui
+  QtAdvancedStyleSheets
+  ${VTK_LIBRARIES}
+  AppConfig
 )
 
 TARGET_INCLUDE_DIRECTORIES(Defaults PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_compile_definitions(Defaults PUBLIC 
+    STYLES_DIR="${STYLES_DIR}"
 )

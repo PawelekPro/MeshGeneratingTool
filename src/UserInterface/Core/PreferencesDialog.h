@@ -20,8 +20,11 @@
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
+class MainWindow;
 #include "AppDefaultColors.hpp"
+#include "AppDefaults.hpp"
 #include "ColorPickerWidget.hpp"
+#include "MainWindow.hpp"
 
 #include <QColor>
 #include <QDialog>
@@ -40,8 +43,20 @@ public:
 	~PreferencesDialog();
 
 private:
-	Ui::PreferencesDialog* ui;
 	void intitializeColorProperties();
+	void updateThemeColorButtons();
+	void updateStyleSheet(QString theme);
+	void processRendererSettings();
+	void setConnections();
+
+private:
+	Ui::PreferencesDialog* ui;
+	MainWindow* _mainWindow;
+	AppDefaults& _appDefaults;
+
+private slots:
+	void onApplyButtonClicked();
+	void onRenBackgroundComboBoxChanged(QString text);
 };
 
 #endif

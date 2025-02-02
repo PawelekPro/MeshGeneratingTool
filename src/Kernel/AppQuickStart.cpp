@@ -26,7 +26,6 @@
 #include <QVTKOpenGLNativeWidget.h>
 #include <memory>
 
-
 int main(int argc, char* argv[]) {
 	// Before initializing QApplication, set the default surface format
 	// (https://vtk.org/doc/nightly/html/classQVTKOpenGLNativeWidget.html#details)

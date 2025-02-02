@@ -24,18 +24,19 @@
 
 #include "Configuration.hpp"
 
-#include "ModelInterface.hpp"
 #include "ModelActionsHandler.hpp"
+#include "ModelInterface.hpp"
 #include "RenderSignalSender.hpp"
 
+#include "AppTheme.hpp"
+#include "DocumentHandler.hpp"
 #include "PreferencesDialog.h"
 #include "ProgressBar.hpp"
 #include "QVTKRenderWindow.hpp"
 #include "RenderSignalHandler.hpp"
-#include "DocumentHandler.hpp"
 #include "SARibbon.h"
 #include "TreeStructure.hpp"
- 
+
 #include "FileDialogUtils.hpp"
 
 #include <QButtonGroup>

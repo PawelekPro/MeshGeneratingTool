@@ -17,20 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ColorPickerWIdget.hpp"
+#include "ColorPickerWidget.hpp"
 
 //----------------------------------------------------------------------------
 ColorPickerWidget::ColorPickerWidget(QWidget* parent)
 	: BaseWidget(parent)
 	, _selectionButton(new QPushButton(this))
-	, _index(QModelIndex()) {
+	, _index(QModelIndex())
+	, _color(QColor()) {
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_selectionButton);
 
-	connect(_selectionButton, &QPushButton::clicked, this, &ColorPickerWidget::onSelectColorClicked);
+	connect(_selectionButton, &QPushButton::clicked,
+		this, &ColorPickerWidget::onSelectColorClicked);
+
+	QString aButtonStylesheet = QString("border: none;");
+	_selectionButton->setStyleSheet(aButtonStylesheet);
+
 	this->setValue(std::make_tuple(100, 100, 100));
 	this->setLayout(layout);
 }
@@ -60,6 +66,7 @@ void ColorPickerWidget::setValue(const std::tuple<int, int, int>& color) {
 	int r = std::get<0>(color);
 	int g = std::get<1>(color);
 	int b = std::get<2>(color);
+	_color.setRgb(r, g, b);
 
 	QColor aColor = QColor(r, g, b);
 	QString aStyleSheet = QString("background-color: %1").arg(aColor.name());
@@ -92,4 +99,13 @@ void ColorPickerWidget::onSelectColorClicked() {
 		QColor newColor = dlg.currentColor();
 		setValue(std::make_tuple(newColor.red(), newColor.green(), newColor.blue()));
 	}
+}
+
+//----------------------------------------------------------------------------
+double* ColorPickerWidget::getColorAsDoubleArray() {
+	_rgb[0] = _color.redF();
+	_rgb[1] = _color.greenF();
+	_rgb[2] = _color.blueF();
+
+	return _rgb;
 }
