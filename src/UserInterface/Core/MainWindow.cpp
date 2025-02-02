@@ -49,8 +49,8 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	modelObserver->setObserverCallbacks(
 		[this](const std::string& startLabel, int maxProgress) {
 			progressBar->initialize();
-			progressBar->setProgressMessage(startLabel);
 			progressBar->setMaximum(maxProgress);
+			progressBar->setProgressMessage(startLabel);
 		},
 		
 		[this](const std::string& stepLabel, int progress) {
@@ -63,7 +63,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 			progressBar->finish();
 		}
 	);
-
+	_modelInterface->addProgressObserver(modelObserver);
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_renderSignalSender = new RenderSignalSender(this);
 	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);

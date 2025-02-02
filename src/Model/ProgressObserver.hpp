@@ -53,7 +53,7 @@ class ProgressObserver {
             int progress
         );
 
-        StartCallback _startCallback = [](const std::string&) {};
+        StartCallback _startCallback = [](const std::string&, int) {};
         ProgressCallback _progressCallback = [](const std::string&, int) {};
         FinishCallback _finishCallback = [](const std::string&) {};
 };  

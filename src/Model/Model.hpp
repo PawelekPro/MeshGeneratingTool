@@ -24,7 +24,6 @@
 #include "Geometry.hpp"
 #include "Mesh.h"
 #include "DocumentHandler.hpp"
-#include "ProgressObserver.hpp"
 #include <memory>
 #include <vector>
 
@@ -36,8 +35,7 @@
 #include <gmsh.h>
 #endif
 
-
-
+class ProgressObserver;
 class Model {
 	public:
 	static void initializeGmsh();

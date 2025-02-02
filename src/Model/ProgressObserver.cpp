@@ -47,7 +47,7 @@ void ProgressObserver::progressOperation(
     int progress
     ){
   _currentLabel = genProgressLabel(aStepLabel, progress);
-  _currentProgress = std::max(progress, _maxProgress);
+  _currentProgress = std::min(progress, _maxProgress);
   _progressCallback(_currentLabel, _currentProgress);
 }
 
