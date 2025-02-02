@@ -62,7 +62,7 @@ TreeStructure::~TreeStructure() {
 	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
 #endif
 
-	DocumentHandler::getInstance().writeDocToXML("testRootCreation.xml");
+	DocumentHandler::getInstance().writeDocToXML(xmlPath);
 
 	delete _contextMenu;
 	delete _treeItemFactory;
