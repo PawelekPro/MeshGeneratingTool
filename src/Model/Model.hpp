@@ -20,9 +20,13 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+
 #include "Geometry.hpp"
 #include "Mesh.h"
 #include "DocumentHandler.hpp"
+#include "ProgressObserver.hpp"
+#include <memory>
+#include <vector>
 
 #ifdef _WIN32
 #include <gmsh.h_cwrap>
@@ -48,6 +52,8 @@ class Model {
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
 
+	void addProgressObserver(std::shared_ptr<ProgressObserver> aObserver);
+
 	//--------Geometry interface-----// 
     void importSTEP(const std::string& filePath, QWidget* progressBar);
     void importSTL(const std::string& filePath, QWidget* progressBar);
@@ -63,12 +69,15 @@ class Model {
 	void addSizing(const std::vector<int>& verticesTags, double size);
 
 	private:
-		static bool gmshInitialized;
 
-		void applyMeshGlobalSize();
-		void applyMeshSizings();
+	std::vector<std::shared_ptr<ProgressObserver>> _modelObservers;
 
-		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
+	static bool gmshInitialized;
+
+	void applyMeshGlobalSize();
+	void applyMeshSizings();
+
+	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 
 #endif

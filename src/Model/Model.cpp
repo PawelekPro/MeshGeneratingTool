@@ -99,3 +99,7 @@ void Model::applyMeshSettings(){
     modelDoc.applyElementSizings();
     modelDoc.applyMeshSettings();
 };
+
+void Model::addProgressObserver(std::shared_ptr<ProgressObserver> aObserver){
+    _modelObservers.push_back(aObserver);
+}
