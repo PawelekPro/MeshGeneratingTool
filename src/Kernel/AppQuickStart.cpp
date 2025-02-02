@@ -32,7 +32,6 @@
 
 int main(int argc, char* argv[]) {
 	spdlog::set_level(spdlog::level::trace);
-
 	spdlog::debug("Starting application");
 	// Before initializing QApplication, set the default surface format
 	// (https://vtk.org/doc/nightly/html/classQVTKOpenGLNativeWidget.html#details)
