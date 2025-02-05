@@ -86,10 +86,17 @@ private:
 	ProgressBar* progressBar;
 
 	/**
-	 * @brief Connects actions defined in mainwindow to modelhandler.
+	 * @brief connects actions defined in mainwindow to modelhandler.
 	 *
 	 */
 	void connectActionsToModel();
+
+	/**
+	 * @brief connects actions defined in mainwindow to modelhandler.
+	 *
+	 */
+	void setupModelObservers();
+
 
 	// Push button group of the switch type
 	QButtonGroup buttonGroup;

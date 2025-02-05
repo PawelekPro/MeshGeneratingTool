@@ -17,32 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#ifndef PROGRESSOBSERVER_HPP
+#define PROGRESSOBSERVER_HPP
 
-#include "ModelManager.hpp"
-#include "ModelDataView.hpp"
+#include <functional>
+#include <string>
+#include "EventObserver.hpp"
 
-class ModelInterface{
+class ProgressObserver : public EventObserver {
 
+    using ProgressCallback = std::function<void(const std::string&, int)>;
+    
     public:
-        ModelInterface(ModelManager& aModelManager);
 
-        void createNewModel(const QString& aNewModelName);
-        void addObserver(std::shared_ptr<EventObserver> aObserver);
-
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
-
-        void meshSurface();
-        void meshVolume();
-
-        const ModelDataView& modelDataView(){return _modelDataView;};
+    void setProgressCallback(ProgressCallback aProgressCallback);
 
     private:
 
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
+    void visit(const ProgressEvent&) override;
+    ProgressCallback _progressCallback = [](const std::string&, int) {};
+};
 
 #endif

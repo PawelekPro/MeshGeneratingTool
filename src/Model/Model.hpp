@@ -24,6 +24,7 @@
 #include "Geometry.hpp"
 #include "Mesh.h"
 #include "DocumentHandler.hpp"
+#include "ModelSubject.hpp"
 #include <memory>
 #include <vector>
 
@@ -34,8 +35,7 @@
 #ifdef linux
 #include <gmsh.h>
 #endif
-
-class ProgressObserver;
+class EventObserver;
 class Model {
 	public:
 	static void initializeGmsh();
@@ -43,6 +43,7 @@ class Model {
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
+	ModelSubject subject;
 
 	Model(std::string modelName);
 	~Model();
@@ -50,7 +51,7 @@ class Model {
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
 
-	void addProgressObserver(std::shared_ptr<ProgressObserver> aObserver);
+	void addObserver(std::shared_ptr<EventObserver> aObserver);
 
 	//--------Geometry interface-----// 
     void importSTEP(const std::string& filePath, QWidget* progressBar);
@@ -67,8 +68,6 @@ class Model {
 	void addSizing(const std::vector<int>& verticesTags, double size);
 
 	private:
-
-	std::vector<std::shared_ptr<ProgressObserver>> _modelObservers;
 
 	static bool gmshInitialized;
 

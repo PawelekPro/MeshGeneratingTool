@@ -17,32 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#include "ModelSubject.hpp"
+#include "EventObserver.hpp"
+#include "Event.hpp"
+#include <algorithm>
 
-#include "ModelManager.hpp"
-#include "ModelDataView.hpp"
+void ModelSubject::publishEvent(const Event& aModelEvent){
+    notifyObservers(aModelEvent);
+}
 
-class ModelInterface{
+void ModelSubject::attachObserver(std::shared_ptr<EventObserver> aObserver){
+    _observers.push_back(aObserver);
+}
 
-    public:
-        ModelInterface(ModelManager& aModelManager);
+void ModelSubject::detachObserver(std::shared_ptr<EventObserver> aObserver){
+    _observers.erase(
+        std::remove(_observers.begin(), _observers.end(), aObserver),
+        _observers.end());
+}
 
-        void createNewModel(const QString& aNewModelName);
-        void addObserver(std::shared_ptr<EventObserver> aObserver);
-
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
-
-        void meshSurface();
-        void meshVolume();
-
-        const ModelDataView& modelDataView(){return _modelDataView;};
-
-    private:
-
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
-
-#endif
+void ModelSubject::notifyObservers(const Event& aEvent){
+    std::for_each(
+        _observers.begin(), 
+        _observers.end(), 
+        [&aEvent](const auto observer){observer->notify(aEvent);}
+    );
+}

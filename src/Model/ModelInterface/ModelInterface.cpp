@@ -51,7 +51,7 @@ void ModelInterface::meshVolume(){
     model.meshVolume();
 };
 
-void ModelInterface::addProgressObserver(std::shared_ptr<ProgressObserver> aObserver){
+void ModelInterface::addObserver(std::shared_ptr<EventObserver> aObserver){
     Model& model = _modelManager.getModel();
-    model.addProgressObserver(aObserver);
+    model.addObserver(aObserver);
 }

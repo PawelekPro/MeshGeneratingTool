@@ -17,32 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#ifndef EVENT_HPP
+#define EVENT_HPP
 
-#include "ModelManager.hpp"
-#include "ModelDataView.hpp"
+class EventObserver;
 
-class ModelInterface{
-
+class Event {
     public:
-        ModelInterface(ModelManager& aModelManager);
+    virtual void accept(EventObserver&) const = 0;
+    virtual ~Event() = default;
+};
 
-        void createNewModel(const QString& aNewModelName);
-        void addObserver(std::shared_ptr<EventObserver> aObserver);
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
-
-        void meshSurface();
-        void meshVolume();
-
-        const ModelDataView& modelDataView(){return _modelDataView;};
-
-    private:
-
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
 
 #endif

@@ -21,7 +21,8 @@
 
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
-#include "ProgressObserver.hpp"
+#include "ProgressEvent.hpp"
+
 Model::Model(std::string modelName) : _modelName(modelName) {
         gmsh::model::add(_modelName);
         this->geometry = GeometryCore::Geometry();
@@ -55,10 +56,10 @@ void Model::addSizing(const std::vector<int>& verticesTags, double size){
 
 void Model::meshSurface() {
     applyMeshSettings();
-    _modelObservers.at(0)->startNewOperation("Meshing surface...", 100);
-    _modelObservers.at(0)->progressOperation("Still meshing...", 50);
+    subject.publishEvent(ProgressEvent("start", 0));
+    subject.publishEvent(ProgressEvent("progres...", 50));
     mesh.generateSurfaceMesh();
-    _modelObservers.at(0)->finishOperation("Meshing succesfull!");
+    subject.publishEvent(ProgressEvent("finished", 100));
 }
 void Model::meshVolume(){
     applyMeshSettings();
@@ -103,6 +104,6 @@ void Model::applyMeshSettings(){
     modelDoc.applyMeshSettings();
 };
 
-void Model::addProgressObserver(std::shared_ptr<ProgressObserver> aObserver){
-    _modelObservers.push_back(aObserver);
+void Model::addObserver(std::shared_ptr<EventObserver> aObserver){
+    subject.attachObserver(aObserver);
 }

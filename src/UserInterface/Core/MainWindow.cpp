@@ -45,25 +45,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->ui->ribbonBar->initialize();
 
 	this->progressBar = new ProgressBar(this);
-	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>();
-	modelObserver->setObserverCallbacks(
-		[this](const std::string& startLabel, int maxProgress) {
-			progressBar->initialize();
-			progressBar->setMaximum(maxProgress);
-			progressBar->setProgressMessage(startLabel);
-		},
-		
-		[this](const std::string& stepLabel, int progress) {
-			progressBar->setValue(progress);
-			progressBar->setProgressMessage(stepLabel);
-		},
-		
-		[this](const std::string& finishLabel) {
-			progressBar->setProgressMessage(finishLabel);
-			progressBar->finish();
-		}
-	);
-	_modelInterface->addProgressObserver(modelObserver);
+	
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_renderSignalSender = new RenderSignalSender(this);
 	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
@@ -75,6 +57,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->connectActionsToModel();
 	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
 
+	this->setupModelObservers();
 	AppTheme& appTheme = AppTheme::getInstance();
 	appTheme.initializeAppStylesheet();
 }
@@ -88,6 +71,22 @@ MainWindow::~MainWindow() {
 	delete progressBar;
 	delete ui;
 }
+
+void MainWindow::setupModelObservers(){
+	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>();
+	modelObserver->setProgressCallback([this](const std::string& aLabel, int progress){
+		if(progress == 0){
+			this->progressBar->initialize();
+		}
+		this->progressBar->setValue(progress);
+		this->progressBar->setProgressMessage(aLabel);
+		if (progress == 100){
+			this->progressBar->finish();
+		}
+	});
+	_modelInterface->addObserver(modelObserver);
+}
+
 
 //----------------------------------------------------------------------------
 void MainWindow::connectActionsToModel() {

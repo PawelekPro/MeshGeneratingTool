@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
@@ -17,32 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
+#ifndef PROGRESSEVENT_HPP
+#define PROGRESSEVENT_HPP
 
-#include "ModelManager.hpp"
-#include "ModelDataView.hpp"
+#include "Event.hpp"
+#include "EventObserver.hpp"
 
-class ModelInterface{
+#include <string>
 
+class ProgressEvent : public Event {
+    
     public:
-        ModelInterface(ModelManager& aModelManager);
+    ProgressEvent(const std::string& aLabel,
+                  int aValue) : 
+                  label(aLabel),
+                  value(aValue){};
 
-        void createNewModel(const QString& aNewModelName);
-        void addObserver(std::shared_ptr<EventObserver> aObserver);
+    std::string label = "";
+    int value = 0;
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
+    void accept(EventObserver& aEventObserver) const override {
+        aEventObserver.visit(*this);
+    }
 
-        void meshSurface();
-        void meshVolume();
-
-        const ModelDataView& modelDataView(){return _modelDataView;};
-
-    private:
-
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
+};
 
 #endif

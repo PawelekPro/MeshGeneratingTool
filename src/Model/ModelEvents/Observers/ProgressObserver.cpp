@@ -17,32 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELINTERFACE_HPP
-#define MODELINTERFACE_HPP
 
-#include "ModelManager.hpp"
-#include "ModelDataView.hpp"
+#include "ProgressObserver.hpp"
+#include "ProgressEvent.hpp"
+void ProgressObserver::visit(const ProgressEvent& aProgressEvent){
+    _progressCallback(aProgressEvent.label, aProgressEvent.value);
+}
 
-class ModelInterface{
-
-    public:
-        ModelInterface(ModelManager& aModelManager);
-
-        void createNewModel(const QString& aNewModelName);
-        void addObserver(std::shared_ptr<EventObserver> aObserver);
-
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
-
-        void meshSurface();
-        void meshVolume();
-
-        const ModelDataView& modelDataView(){return _modelDataView;};
-
-    private:
-
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
-
-#endif
+void ProgressObserver::setProgressCallback(ProgressCallback aProgressCalback){
+    _progressCallback = std::move(aProgressCalback);
+}
