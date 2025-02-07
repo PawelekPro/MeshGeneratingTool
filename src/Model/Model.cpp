@@ -23,10 +23,11 @@
 #include "ModelDocParser.hpp"
 #include "ProgressEvent.hpp"
 
-Model::Model(std::string modelName) : _modelName(modelName) {
+Model::Model(std::string modelName) :
+    _modelName(modelName),
+    geometry(subject)
+    {
         gmsh::model::add(_modelName);
-        this->geometry = GeometryCore::Geometry();
-        this->mesh = MeshCore::Mesh();
     };
 
 Model::~Model(){

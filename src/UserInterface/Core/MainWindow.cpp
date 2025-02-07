@@ -24,7 +24,7 @@
 #include "MeshActionsHandler.hpp"
 
 #include "ProgressObserver.hpp"
-#include "ProgressBarPlugin.hpp"
+// #include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)

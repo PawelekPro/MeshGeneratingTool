@@ -1,11 +1,13 @@
 #include "STEPImporter.hpp"
+#include "OccProgressWrapper.hpp"
+#include "ModelSubject.hpp"
 
-DEFINE_STANDARD_HANDLE(Progress, Message_ProgressIndicator);
-IMPLEMENT_STANDARD_RTTIEXT(Progress, Message_ProgressIndicator)
+DEFINE_STANDARD_HANDLE(OccProgressWrapper, Message_ProgressIndicator);
+// IMPLEMENT_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
 
-void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* parent){
+void GeometryCore::STEPImporter::import(const std::string& fileName, const ModelSubject& aModelSubject){
 
-	Handle(Progress) theProgress = new Progress(parent, fileName);
+	Handle(OccProgressWrapper) progressWrapper = new OccProgressWrapper(aModelSubject, fileName);
 
 	if (!std::filesystem::exists(fileName)) {
 		auto message = "File " + fileName + " can not be found.";
@@ -35,7 +37,7 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
-	if (!cafReader.Transfer(this->_dataFrame, theProgress->Start())) {
+	if (!cafReader.Transfer(this->_dataFrame, progressWrapper->Start())) {
 		auto message = "Error while reading file:" + fileName;
 		vtkLogF(ERROR, message.c_str());
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);

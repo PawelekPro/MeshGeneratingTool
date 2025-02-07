@@ -41,9 +41,9 @@ class Model {
 	static void initializeGmsh();
 
 	std::string _modelName;
+	ModelSubject subject;
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
-	ModelSubject subject;
 
 	Model(std::string modelName);
 	~Model();

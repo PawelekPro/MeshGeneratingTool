@@ -22,7 +22,7 @@
 #include <IVtkTools_ShapeDataSource.hxx>
 #include <Message_ProgressIndicator.hxx>
 #include <TDocStd_Document.hxx>
-
+class ModelSubject;
 namespace GeometryCore {
 
     using namespace std::string_literals;
@@ -34,7 +34,7 @@ namespace GeometryCore {
             const PartsMap getPartsMap(){return this->_shapesMap;};
 
         protected:
-            virtual void import(const std::string& filename, QWidget* parent) = 0;
+            virtual void import(const std::string& filename, const ModelSubject& aModelSubject) = 0;
             std::string getUniqueObjectName(const std::string& prefix, const PartsMap& objectMap);
             vtkSmartPointer<vtkActor> createVTKActor(const TopoDS_Shape& shape);
 

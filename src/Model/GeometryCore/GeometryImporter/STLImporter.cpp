@@ -1,9 +1,9 @@
 #include "STLImporter.hpp"
 
-void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* parent){
-	ProgressBar* progressBar = qobject_cast<ProgressBar*>(parent);
-	progressBar->initialize();
-	progressBar->setProgressMessage("Converting to faces...");
+void GeometryCore::STLImporter::import(const std::string& fileName, const ModelSubject& aModelSubject){
+	// ProgressBar* progressBar = qobject_cast<ProgressBar*>(parent);
+	// progressBar->initialize();
+	// progressBar->setProgressMessage("Converting to faces...");
 
 	TCollection_AsciiString aName((Standard_CString)fileName.data());
 	OSD_Path aFile(aName);
@@ -21,7 +21,7 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 
 	for (Standard_Integer i = 1; i <= numberOfTriangles; i++) {
 		int progress = static_cast<int>(100.0 * i / numberOfTriangles);
-		progressBar->setValue(progress);
+		// progressBar->setValue(progress);
 
 		Poly_Triangle triangle = aSTLMesh->Triangle(i);
 
@@ -83,5 +83,5 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 
 	std::cout << " -> done." << std::endl;
 
-	progressBar->finish();
+	// progressBar->finish();
 }

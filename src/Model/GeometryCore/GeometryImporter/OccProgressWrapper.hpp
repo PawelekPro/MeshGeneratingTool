@@ -17,30 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELSUBJECT_HPP
-#define MODELSUBJECT_HPP
+#ifndef OCCPROGRESSWRAPPER_HPP
+#define OCCPROGRESSWRAPPER_HPP
 
-#include <vector>
-#include <memory>
+#include <Message_ProgressIndicator.hxx>
+#include "ModelSubject.hpp"
+#include "ProgressEvent.hpp"
+#include <sstream>
 
-class Event;
-class EventObserver;
 
-class ModelSubject {
 
-    public:
-        ModelSubject() = default;
-        ~ModelSubject() = default;
+class OccProgressWrapper : public Message_ProgressIndicator{
+        
+DEFINE_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
+	public:
+	Standard_EXPORT OccProgressWrapper(
+		const ModelSubject& aSubject,
+		const std::string& aInitLabel);
 
-        void publishEvent(const Event& aEvent) const;
+	Standard_EXPORT void Show(
+		const Message_ProgressScope& aScope, 
+		const Standard_Boolean force = Standard_True) Standard_OVERRIDE;
 
-        void attachObserver(std::shared_ptr<EventObserver>);
-        void detachObserver(std::shared_ptr<EventObserver>);
+	private:
+	
+	std::stringstream getProgressMessage(
+		const Message_ProgressScope& aScope);
 
-    private:
-        void notifyObservers(const Event& aEvent) const;
-        std::vector<std::shared_ptr<EventObserver>> _observers;
-
+	ProgressEvent _progressEvent;
+	const ModelSubject& _subject;
 };
 
 

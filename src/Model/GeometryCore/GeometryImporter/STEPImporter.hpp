@@ -21,12 +21,12 @@
 #include <XCAFDoc_DocumentTool.hxx>
 
 #include "GeometryImporter.hpp"
-#include "ProgressBarPlugin.hpp"
+// #include "ProgressBarPlugin.hpp"
 
 namespace GeometryCore {
     class STEPImporter : public GeometryImporter{
         public:
-            void import(const std::string& filename, QWidget* parent) override;
+            void import(const std::string& filename, const ModelSubject& aModelSubject) override;
         private:
     };
 }
