@@ -23,6 +23,7 @@
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
 
+#include "ProgressObserver.hpp"
 #include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
@@ -44,7 +45,25 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->ui->ribbonBar->initialize();
 
 	this->progressBar = new ProgressBar(this);
-
+	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>();
+	modelObserver->setObserverCallbacks(
+		[this](const std::string& startLabel, int maxProgress) {
+			progressBar->initialize();
+			progressBar->setMaximum(maxProgress);
+			progressBar->setProgressMessage(startLabel);
+		},
+		
+		[this](const std::string& stepLabel, int progress) {
+			progressBar->setValue(progress);
+			progressBar->setProgressMessage(stepLabel);
+		},
+		
+		[this](const std::string& finishLabel) {
+			progressBar->setProgressMessage(finishLabel);
+			progressBar->finish();
+		}
+	);
+	_modelInterface->addProgressObserver(modelObserver);
 	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_renderSignalSender = new RenderSignalSender(this);
 	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);

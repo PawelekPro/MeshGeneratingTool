@@ -29,6 +29,7 @@ class ModelInterface{
         ModelInterface(ModelManager& aModelManager);
 
         void createNewModel(const QString& aNewModelName);
+        void addProgressObserver(std::shared_ptr<ProgressObserver> aObserver);
 
         int importSTEP(const QString& aFilePath,  QWidget* progressBar);
         int importSTL(const QString& aFilePath,  QWidget* progressBar);
