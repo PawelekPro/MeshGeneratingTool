@@ -43,16 +43,18 @@ MeshActionsHandler::MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInt
 
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate3DMesh() {
-	SPDLOG_INFO("Generating volume mesh triggered.");
+	SPDLOG_INFO("Generating volume mesh triggered");
 	_modelInterface->generateMesh();
 	// TODO: send signal to update the renderer
 }
 
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate2DMesh() {
-	SPDLOG_INFO("Generating surface mesh triggered.");
-	_modelInterface->generateMesh(true);
-	// TODO: send signal to update the renderer
+	SPDLOG_INFO("Generating surface mesh triggered");
+	if (_modelInterface->generateMesh(true)) {
+		SPDLOG_INFO("Adding proxy mesh object to render view");
+		emit _signalSender->meshSignals->meshGenerated();
+	}
 }
 
 //----------------------------------------------------------------------------

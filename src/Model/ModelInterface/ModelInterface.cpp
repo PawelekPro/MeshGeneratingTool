@@ -26,8 +26,12 @@
 #include "ModelDocParser.hpp"
 
 #include "MGTMesh_Algorithm.hpp"
+#include "MGTMesh_ProxyMesh.hpp"
 
 #include <spdlog/spdlog.h>
+
+#include <vtkActor.h>
+#include <vtkSmartPointer.h>
 
 ModelInterface::ModelInterface(ModelManager& aManager)
 	: _modelManager(aManager)
@@ -51,12 +55,13 @@ void ModelInterface::createNewModel(const QString& aNewModelName) {
 }
 
 //----------------------------------------------------------------------------
-void ModelInterface::generateMesh(bool surfaceMesh) {
+bool ModelInterface::generateMesh(bool surfaceMesh) {
 	spdlog::debug(
 		std::format("Mesh generation process started with surfaceMesh arg: {}", surfaceMesh));
 
 	Model& model = _modelManager.getModel();
 	ModelDocParser modelDocument(model);
 	std::unique_ptr<MGTMesh_Algorithm> algorithm = modelDocument.generateMeshAlgorithm(surfaceMesh);
-	model.generateMesh(algorithm.get());
+
+	return model.generateMesh(algorithm.get());
 }

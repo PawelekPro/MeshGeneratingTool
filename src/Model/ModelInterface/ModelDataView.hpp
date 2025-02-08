@@ -22,31 +22,34 @@
 
 #include "ModelManager.hpp"
 
-class ModelDataView{
+class ModelDataView {
 
-    public:
-        using EntityType = GeometryCore::EntityType;
-        using ShapesTags = std::vector<int>; 
-        using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
-        
-        ModelDataView(const ModelManager& aModelManger);
-        ~ModelDataView() = default;
+public:
+	using EntityType = GeometryCore::EntityType;
+	using ShapesTags = std::vector<int>;
+	using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
 
-        const GeometryCore::PartsMap& getPartsMap() const;
+	ModelDataView(const ModelManager& aModelManger);
+	~ModelDataView() = default;
 
-        const TopoDS_Shape& getShape(const EntityType& aEntityType, int aShapeTag) const;
-        const TopoDS_Shape& getShape(const EntityType& aEntityType, const std::string& aShapeName) const;
+	const GeometryCore::PartsMap& getPartsMap() const;
 
-        const std::vector<ShapeRef> getShapes(const EntityType& aEntityType, const std::vector<int>& aShapesTags) const;
-        const std::vector<ShapeRef> getShapes(const EntityType& aEntityType, const std::vector<std::string>& aShapesNames) const;
+	const TopoDS_Shape& getShape(const EntityType& aEntityType, int aShapeTag) const;
+	const TopoDS_Shape& getShape(
+		const EntityType& aEntityType, const std::string& aShapeName) const;
 
-        int getShapeTag(const TopoDS_Shape&) const;
-        std::string getShapeName(const TopoDS_Shape&) const;
+	const std::vector<ShapeRef> getShapes(
+		const EntityType& aEntityType, const std::vector<int>& aShapesTags) const;
+	const std::vector<ShapeRef> getShapes(
+		const EntityType& aEntityType, const std::vector<std::string>& aShapesNames) const;
 
-        vtkSmartPointer<vtkActor> getMeshActor() const; 
+	int getShapeTag(const TopoDS_Shape&) const;
+	std::string getShapeName(const TopoDS_Shape&) const;
 
-    private:
-        const ModelManager& _modelManager;
+	vtkSmartPointer<vtkActor> getMeshActor() const;
+
+private:
+	const ModelManager& _modelManager;
 };
 
 #endif

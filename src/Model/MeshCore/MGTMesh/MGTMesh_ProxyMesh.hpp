@@ -17,16 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_ProxyMesh.h
+* File      : MGTMesh_ProxyMesh.hpp
 * Author    : Paweł Gilewicz
-* Date      : 01/12/2024
+* Date      : 08/02/2025
 */
-#ifndef MGTMESH_PROXYMESH_H
-#define MGTMESH_PROXYMESH_H
+#ifndef MGTMESH_PROXYMESH_HPP
+#define MGTMESH_PROXYMESH_HPP
+
+#include <vtkSmartPointer.h>
+
+#include <memory>
+#include <unordered_map>
+
+class vtkActor;
+class MGTMesh_MeshObject;
 
 class MGTMesh_ProxyMesh {
 public:
-	typedef std::shared_ptr<MGTMesh_ProxyMesh> Ptr;
-}
+	MGTMesh_ProxyMesh(MGTMesh_MeshObject* mgtMesh);
+	MGTMesh_ProxyMesh(std::unordered_map<int, std::shared_ptr<MGTMesh_MeshObject>> meshObjectsMap);
+	~MGTMesh_ProxyMesh() = default;
+
+	vtkSmartPointer<vtkActor> GetProxyMeshActor() const;
+
+private:
+	MGTMesh_MeshObject* _mgtMesh;
+};
 
 #endif

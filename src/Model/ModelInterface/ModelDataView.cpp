@@ -19,10 +19,12 @@
 
 #include "ModelDataView.hpp"
 
+#include "MGTMesh_ProxyMesh.hpp"
+
 using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
 
 ModelDataView::ModelDataView(const ModelManager& aModelManager)
-	: _modelManager(aModelManager) {};
+	: _modelManager(aModelManager) { };
 
 const GeometryCore::PartsMap& ModelDataView::getPartsMap() const {
 	const Model& model = _modelManager.getModel();
@@ -54,30 +56,27 @@ const TopoDS_Shape& ModelDataView::getShape(const EntityType& aEntityType, int a
 	return TopoDS_Shape();
 };
 
-const TopoDS_Shape& ModelDataView::getShape(const EntityType& aEntityType, const std::string& aShapeName) const {
+const TopoDS_Shape& ModelDataView::getShape(
+	const EntityType& aEntityType, const std::string& aShapeName) const {
 	return TopoDS_Shape();
 };
 
 const std::vector<ShapeRef> ModelDataView::getShapes(
-	const EntityType& aEntityType,
-	const std::vector<int>& aShapesTags) const {
+	const EntityType& aEntityType, const std::vector<int>& aShapesTags) const {
 	const Model& model = _modelManager.getModel();
 	const GeometryCore::TagMap& tagMap = model.geometry.getTagMap();
 
 	std::vector<ShapeRef> vec;
 	vec.reserve(aShapesTags.size());
 
-	std::transform(
-		aShapesTags.begin(),
-		aShapesTags.end(),
-		std::back_inserter(vec),
-		[&tagMap, aEntityType](int tag) -> ShapeRef {
-			return std::cref(tagMap.getShape(aEntityType, tag));
-		});
+	std::transform(aShapesTags.begin(), aShapesTags.end(), std::back_inserter(vec),
+		[&tagMap, aEntityType](
+			int tag) -> ShapeRef { return std::cref(tagMap.getShape(aEntityType, tag)); });
 	return vec;
 }
 
-const std::vector<ShapeRef> ModelDataView::getShapes(const EntityType& aEntityType, const std::vector<std::string>& aShapesNames) const {
+const std::vector<ShapeRef> ModelDataView::getShapes(
+	const EntityType& aEntityType, const std::vector<std::string>& aShapesNames) const {
 	std::vector<ShapeRef> vec;
 	return vec;
 };
@@ -89,12 +88,9 @@ int ModelDataView::getShapeTag(const TopoDS_Shape& aShape) const {
 	return tag;
 };
 
-std::string ModelDataView::getShapeName(const TopoDS_Shape&) const {
-	return "notImplementedYet";
-};
+std::string ModelDataView::getShapeName(const TopoDS_Shape&) const { return "notImplementedYet"; };
 
 vtkSmartPointer<vtkActor> ModelDataView::getMeshActor() const {
 	const Model& model = _modelManager.getModel();
-	// vtkSmartPointer<vtkActor> meshActor = model.mesh.getMeshActor();
-	// return meshActor;
+	return model.getProxyMesh()->GetProxyMeshActor();
 }

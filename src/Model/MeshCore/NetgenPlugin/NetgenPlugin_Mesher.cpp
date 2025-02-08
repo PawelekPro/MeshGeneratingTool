@@ -151,8 +151,8 @@ void setLocalSize(
 }
 
 //----------------------------------------------------------------------------
-NetgenPlugin_Mesher::NetgenPlugin_Mesher(
-	MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm)
+NetgenPlugin_Mesher::NetgenPlugin_Mesher(std::shared_ptr<MGTMesh_MeshObject> mesh,
+	const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm)
 	: _mesh(mesh)
 	, _shape(shape)
 	, _algorithm(algorithm)
@@ -299,7 +299,12 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 
 	if (err)
 		return err;
-	else if (!_algorithm->Is3DAlgortihm())
+
+	NetgenPlugin_Netgen2VTK netgen2vtk = NetgenPlugin_Netgen2VTK(*_ngMesh);
+	_mesh->SetInternalMesh(netgen2vtk.GetInternalMesh());
+	_mesh->SetBoundaryMesh(netgen2vtk.GetBoundaryMesh());
+
+	if (!_algorithm->Is3DAlgortihm())
 		return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 
 	// Compute volume mesh
@@ -317,10 +322,6 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 
 	if (err)
 		return err;
-
-	NetgenPlugin_Netgen2VTK netgen2vtk = NetgenPlugin_Netgen2VTK(*_ngMesh);
-	_mesh->SetInternalMesh(netgen2vtk.GetInternalMesh());
-	_mesh->SetBoundaryMesh(netgen2vtk.GetBoundaryMesh());
 
 	return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 }

@@ -33,7 +33,8 @@
 
 class MGTMesh_Generator {
 public:
-	MGTMesh_Generator(const TopoDS_Shape&, const MGTMesh_Algorithm&);
+	MGTMesh_Generator(const TopoDS_Shape&, const MGTMesh_Algorithm&,
+		std::shared_ptr<MGTMesh_MeshObject> meshObject);
 	~MGTMesh_Generator();
 
 	int Compute();

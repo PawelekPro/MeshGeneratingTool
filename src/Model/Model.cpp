@@ -28,16 +28,19 @@
 #include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_Generator.hpp"
+#include "MGTMesh_MeshObject.hpp"
+#include "MGTMesh_ProxyMesh.hpp"
 
 #include <spdlog/spdlog.h>
 
 //----------------------------------------------------------------------------
 Model::Model(std::string modelName)
 	: _modelName(modelName)
-	, _shapesMap(GeometryCore::PartsMap()) {
-	// gmsh::model::add(_modelName);
+	, _shapesMap(GeometryCore::PartsMap())
+	, _meshObjectsMap {}
+	, _proxyMesh(nullptr) {
+
 	this->geometry = GeometryCore::Geometry();
-	// this->mesh = MeshCore::Mesh();
 };
 
 //----------------------------------------------------------------------------
@@ -75,19 +78,31 @@ void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
 }
 
 //----------------------------------------------------------------------------
-void Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
+bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	if (!algorithm)
-		return;
+		return false;
+
+	_meshObjectsMap.clear();
 
 	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
 		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
 
 	for (const auto& it : _shapesMap) {
 		spdlog::debug("Creating mesh generator for shape: {}", it.first);
-		MGTMesh_Generator meshGenerator(it.second, *algorithm);
+
+		std::shared_ptr<MGTMesh_MeshObject> meshObject = std::make_shared<MGTMesh_MeshObject>();
+		MGTMesh_Generator meshGenerator(it.second, *algorithm, meshObject);
 		int result = meshGenerator.Compute();
 		if (result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
 			SPDLOG_ERROR("Error while generating mesh for shape: {}", it.first);
+			return false;
 		}
+		_meshObjectsMap[algorithm->GetID()] = meshGenerator.GetOutputMesh();
+		SPDLOG_INFO("ADDING OUTPUT MESH TO MAP");
 	}
+	_proxyMesh = std::make_shared<MGTMesh_ProxyMesh>(_meshObjectsMap);
+	return true;
 }
+
+//----------------------------------------------------------------------------
+MGTMesh_ProxyMesh* Model::getProxyMesh() const { return _proxyMesh.get(); }

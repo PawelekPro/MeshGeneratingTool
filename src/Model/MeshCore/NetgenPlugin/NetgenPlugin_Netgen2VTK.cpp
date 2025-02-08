@@ -34,9 +34,10 @@
 
 #include <meshing.hpp>
 
+#include "spdlog/spdlog.h"
+
 //----------------------------------------------------------------------------
-NetgenPlugin_Netgen2VTK::NetgenPlugin_Netgen2VTK(
-	const netgen::Mesh& netgenMesh)
+NetgenPlugin_Netgen2VTK::NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh)
 	: _netgenMesh(netgenMesh)
 	, _internalMesh(vtkSmartPointer<vtkUnstructuredGrid>::New())
 	, _boundaryMesh(vtkSmartPointer<vtkPolyData>::New()) {
@@ -103,7 +104,7 @@ void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh() {
 	// Populate internal mesh data
 	_internalMesh->SetPoints(points);
 	_internalMesh->SetCells(cellTypes, cells);
-	vtkLogF(INFO, "Internal mesh conversion completed: %lld points, %lld cells created.",
+	SPDLOG_INFO("Internal mesh conversion completed: {} points, {} cells created.",
 		points->GetNumberOfPoints(), cells->GetNumberOfCells());
 }
 
@@ -151,7 +152,7 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh() {
 	// Populate poly data
 	_boundaryMesh->SetPoints(points);
 	_boundaryMesh->SetPolys(polygons);
-	vtkLogF(INFO, "Boundary mesh conversion completed: %lld points, %lld polygons created.",
+	SPDLOG_INFO("Boundary mesh conversion completed: {} points, {} polygons created.",
 		points->GetNumberOfPoints(), polygons->GetNumberOfCells());
 }
 
@@ -161,6 +162,4 @@ vtkSmartPointer<vtkUnstructuredGrid> NetgenPlugin_Netgen2VTK::GetInternalMesh() 
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> NetgenPlugin_Netgen2VTK::GetBoundaryMesh() {
-	return _boundaryMesh;
-}
+vtkSmartPointer<vtkPolyData> NetgenPlugin_Netgen2VTK::GetBoundaryMesh() { return _boundaryMesh; }

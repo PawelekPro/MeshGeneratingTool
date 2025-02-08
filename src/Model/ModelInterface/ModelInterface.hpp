@@ -28,6 +28,9 @@
 #include "ModelDataView.hpp"
 #include "ModelManager.hpp"
 
+class MGTMesh_ProxyMesh;
+class vtkActor;
+
 class ModelInterface {
 
 public:
@@ -38,7 +41,7 @@ public:
 	int importSTEP(const QString& aFilePath, QWidget* progressBar);
 	int importSTL(const QString& aFilePath, QWidget* progressBar);
 
-	void generateMesh(bool surfaceMesh = false);
+	bool generateMesh(bool surfaceMesh = false);
 
 	const ModelDataView& modelDataView() { return _modelDataView; };
 

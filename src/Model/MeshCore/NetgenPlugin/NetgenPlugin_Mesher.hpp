@@ -26,6 +26,8 @@
 
 #include "NetgenPlugin_Defs.hpp"
 
+#include <memory>
+
 namespace netgen {
 class OCCGeometry;
 class Mesh;
@@ -39,7 +41,7 @@ class NetgenPlugin_Parameters;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape,
+	NetgenPlugin_Mesher(std::shared_ptr<MGTMesh_MeshObject> mesh, const TopoDS_Shape& shape,
 		const NetgenPlugin_Parameters* algorithm);
 	~NetgenPlugin_Mesher();
 	int ComputeMesh();
@@ -55,7 +57,7 @@ public:
 	void SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme);
 
 private:
-	MGTMesh_MeshObject* _mesh;
+	std::shared_ptr<MGTMesh_MeshObject> _mesh;
 	const TopoDS_Shape& _shape;
 	const NetgenPlugin_Parameters* _algorithm;
 	bool _optimize;

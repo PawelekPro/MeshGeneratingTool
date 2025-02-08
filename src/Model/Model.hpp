@@ -28,15 +28,11 @@
 #include "DocumentHandler.hpp"
 #include "Geometry.hpp"
 
-// #ifdef _WIN32
-// #include <gmsh.h_cwrap>
-// #endif
-
-// #ifdef linux
-// #include <gmsh.h>
-// #endif
+#include <unordered_map>
 
 class MGTMesh_Algorithm;
+class MGTMesh_MeshObject;
+class MGTMesh_ProxyMesh;
 
 class Model {
 public:
@@ -55,13 +51,18 @@ public:
 	void importSTL(const std::string& filePath, QWidget* progressBar);
 
 	//--------Meshing interface-----//
-	void generateMesh(const MGTMesh_Algorithm* algorithm);
+	bool generateMesh(const MGTMesh_Algorithm* algorithm);
+	MGTMesh_ProxyMesh* getProxyMesh() const;
 
 private:
 	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 
 private:
 	GeometryCore::PartsMap _shapesMap;
+
+	std::unordered_map<int, std::shared_ptr<MGTMesh_MeshObject>> _meshObjectsMap;
+
+	std::shared_ptr<MGTMesh_ProxyMesh> _proxyMesh;
 };
 
 #endif
