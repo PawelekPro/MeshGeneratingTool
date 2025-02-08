@@ -59,13 +59,8 @@ void TreeStructure::setModelHandler(ModelActionsHandler* aModelHandler) {
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-#ifdef _WIN32
-	std::string xmlPath = "test.xml";
-#endif
-#ifdef linux
-	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
-#endif
 
+	std::string xmlPath = "test.xml";
 	DocumentHandler::getInstance().writeDocToXML(xmlPath);
 
 	delete _contextMenu;
