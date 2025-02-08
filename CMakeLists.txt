@@ -182,6 +182,11 @@ MESSAGE( STATUS "---------------------------------------------------------------
 INCLUDE_DIRECTORIES(${RAPIDJSON_PATH})
 
 
+# spdlog library for logging
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ThirdParty/spdlog)
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+
+
 # SARibbonBar library (ribbon bar widget)
 # https://github.com/czyt1988/SARibbon?tab=readme-ov-file
 ######################################################################

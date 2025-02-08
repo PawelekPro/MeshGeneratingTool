@@ -18,10 +18,10 @@
  */
 
 #include "TreeStructure.hpp"
+#include "DocumentHandler.hpp"
+#include "TreeContextMenu.hpp"
 #include "TreeItem.hpp"
 #include "TreeItemFactory.hpp"
-#include "TreeContextMenu.hpp"
-#include "DocumentHandler.hpp"
 
 //--------------------------------------------------------------------------------------
 TreeStructure::TreeStructure(QWidget* parent)
@@ -55,13 +55,8 @@ void TreeStructure::setModelHandler(ModelActionsHandler* aModelHandler) {
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-#ifdef _WIN32
-	std::string xmlPath = "test.xml";
-#endif
-#ifdef linux
-	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
-#endif
 
+	std::string xmlPath = "test.xml";
 	DocumentHandler::getInstance().writeDocToXML(xmlPath);
 
 	delete _contextMenu;
@@ -139,17 +134,17 @@ void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem) 
 	}
 	aParentItem->addChild(itemToAdd);
 	ItemTypes::Sub itemType = itemToAdd->subType();
-    auto it = _subItems.find(itemType);
-    if (it != _subItems.end()) {
-        it->second.push_back(itemToAdd);
-    } else {
-        _subItems[itemType] = { itemToAdd };
-    }
-    QDomElement itemElement = itemToAdd->getElement();
-    QDomElement parentElement = aParentItem->getElement();
-    if (!parentElement.isNull()) {
-        parentElement.appendChild(itemElement);
-    } else {
-        qWarning("Parent item does not have a valid DOM element!");
-    }
+	auto it = _subItems.find(itemType);
+	if (it != _subItems.end()) {
+		it->second.push_back(itemToAdd);
+	} else {
+		_subItems[itemType] = { itemToAdd };
+	}
+	QDomElement itemElement = itemToAdd->getElement();
+	QDomElement parentElement = aParentItem->getElement();
+	if (!parentElement.isNull()) {
+		parentElement.appendChild(itemElement);
+	} else {
+		qWarning("Parent item does not have a valid DOM element!");
+	}
 }
