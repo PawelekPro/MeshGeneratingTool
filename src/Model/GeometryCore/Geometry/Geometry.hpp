@@ -22,9 +22,9 @@ namespace GeometryCore {
 
         const TagMap& getTagMap() const {return this->_tagMap;};
 
-        void importSTEP(const std::string& filePath, QWidget* progressBar);
+        void importSTEP(const std::string& filePath);
         
-        void importSTL(const std::string& filePath, QWidget* progressBar);
+        void importSTL(const std::string& filePath);
 
         std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
 

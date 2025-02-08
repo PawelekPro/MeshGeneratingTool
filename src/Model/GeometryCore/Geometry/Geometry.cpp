@@ -2,7 +2,7 @@
 
 GeometryCore::Geometry::~Geometry(){};
 
-void GeometryCore::Geometry::importSTEP(const std::string& filePath, QWidget* progressBar){
+void GeometryCore::Geometry::importSTEP(const std::string& filePath){
 
     GeometryCore::STEPImporter importer;
     importer.import(filePath, _subject);
@@ -11,7 +11,7 @@ void GeometryCore::Geometry::importSTEP(const std::string& filePath, QWidget* pr
         this->_tagMap.tagEntities(shape.second);
     }
 };
-void GeometryCore::Geometry::importSTL(const std::string& filePath, QWidget* progressBar){
+void GeometryCore::Geometry::importSTL(const std::string& filePath){
     GeometryCore::STLImporter importer;
     importer.import(filePath, _subject);
     this->_shapesMap = std::move(importer.getPartsMap());

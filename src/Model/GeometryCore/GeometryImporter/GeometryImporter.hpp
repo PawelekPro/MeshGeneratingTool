@@ -6,8 +6,6 @@
 #include <string>
 #include <filesystem>
 
-#include <QWidget>
-
 #include <vtkActor.h>
 #include <vtkProperty.h>
 #include <vtkSmartPointer.h>

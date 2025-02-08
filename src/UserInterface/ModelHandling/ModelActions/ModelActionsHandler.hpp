@@ -45,7 +45,6 @@ class ModelActionsHandler : public QObject {
     ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
                        RenderSignalSender* aSignalSender,
                        TreeStructure* aTreeStructure,
-                       ProgressBar* aProgressBar, 
                        QObject* aParent); 
     /**
      * @brief Action for that deletes old model and creates a new one.
@@ -68,7 +67,6 @@ class ModelActionsHandler : public QObject {
     CommandManager* _commandManager;
 
     TreeStructure* _treeStructure;
-    ProgressBar* _progressBar;
 };
 
 

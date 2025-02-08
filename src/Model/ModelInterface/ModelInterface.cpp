@@ -24,15 +24,15 @@ ModelInterface::ModelInterface(ModelManager& aManager) :
                               _modelDataView(aManager){};
 
 
-int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget){
+int ModelInterface::importSTEP(const QString& aFilePath){
     Model& model = _modelManager.getModel();
-    model.importSTEP(aFilePath.toStdString(), aWidget);
+    model.importSTEP(aFilePath.toStdString());
     return 0; //TODO return tags of imported shapes
 }
 
-int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget){
+int ModelInterface::importSTL(const QString& aFilePath){
     Model& model = _modelManager.getModel();
-    model.importSTL(aFilePath.toStdString(), aWidget);
+    model.importSTL(aFilePath.toStdString());
     return 0; //TODO return tags of imported shapes
 }
 

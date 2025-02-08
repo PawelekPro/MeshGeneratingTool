@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
 #include "ProgressEvent.hpp"
@@ -71,14 +69,14 @@ vtkSmartPointer<vtkActor> Model::getMeshActor(){
     return mesh.getMeshActor();
 }
 
-void Model::importSTL(const std::string& filePath, QWidget* progressBar){
-    geometry.importSTL(filePath, progressBar);
+void Model::importSTL(const std::string& filePath){
+    geometry.importSTL(filePath);
     GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
     addShapesToModel(shapesMap);
 }
 
-void Model::importSTEP(const std::string& filePath, QWidget* progressBar){
-    geometry.importSTEP(filePath, progressBar);
+void Model::importSTEP(const std::string& filePath){
+    geometry.importSTEP(filePath);
     GeometryCore::PartsMap shapesMap = geometry.getShapesMap();
     addShapesToModel(shapesMap);
 }

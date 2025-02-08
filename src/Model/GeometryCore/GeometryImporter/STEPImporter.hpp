@@ -3,8 +3,6 @@
 
 #include <filesystem>
 
-#include <QWidget>
-
 #include <vtkLogger.h>
 #include <vtkProperty.h>
 
