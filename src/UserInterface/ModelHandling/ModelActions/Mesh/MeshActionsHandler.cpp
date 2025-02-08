@@ -27,15 +27,13 @@ MeshActionsHandler::MeshActionsHandler(
     CommandManager* aCommandManager,
     RenderSignalSender* aSignalSender,
     TreeStructure* aTreeStructure,
-    ProgressBar* aProgressBar, 
     QObject* aParent
     ) :
     QObject(aParent),
     _modelInterface(aModelInterface),
     _commandManager(aCommandManager),
     _signalSender(aSignalSender),
-    _treeStructure(aTreeStructure),
-    _progressBar(aProgressBar){};
+    _treeStructure(aTreeStructure){};
 
 void MeshActionsHandler::meshSurface(){
     _modelInterface->meshSurface();

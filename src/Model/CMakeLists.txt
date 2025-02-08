@@ -1,6 +1,7 @@
 add_subdirectory(GeometryCore)
 add_subdirectory(MeshCore)
 add_subdirectory(ModelInterface)
+add_subdirectory(ModelEvents)
 
 ADD_LIBRARY(Model 
     Model.cpp
@@ -8,15 +9,15 @@ ADD_LIBRARY(Model
     ModelDocParser.cpp
 )
 
-
 TARGET_LINK_LIBRARIES(Model PUBLIC 
     ${GMSH_LIB}
     GeometryCore
     MeshCore
     Document
+    ModelEvents
 )
 
 
 TARGET_INCLUDE_DIRECTORIES(Model PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+)

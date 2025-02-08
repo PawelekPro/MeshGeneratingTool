@@ -21,6 +21,7 @@
 #ifndef GEOMETRYVIEW_HPP
 #define GEOMETRYVIEW_HPP
 
+#include "OcafDoc.hpp"
 #include "Geometry.hpp"
 #include "GeoShape.hpp"
 #include <vector>
@@ -28,15 +29,15 @@
 class GeometryView {
 
     public:
-        GeometryView(const Geometry& aGeometry) = default;
+        GeometryView(const GeometryCore::Geometry& aGeometry);
         ~GeometryView() = default;
 
         std::vector<GeoShape> allShapes() const;
         int shapeTag(const GeoShape& aGeoShape) const;
 
     private:
-        const Geometry& _geometry;
-        const GeoDoc& _geoDoc;
+        const GeometryCore::Geometry& _geometry;
+        const OcafDoc& _geoDoc;
 };
 
 #endif

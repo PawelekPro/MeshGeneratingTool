@@ -45,7 +45,6 @@ public:
                        CommandManager* aCommandManager,
                        RenderSignalSender* aSignalSender,
                        TreeStructure* aTreeStructure,
-                       ProgressBar* aProgressBar, 
                        QObject* aParent);
 
 private:
@@ -55,7 +54,6 @@ private:
     RenderSignalSender* _signalSender;
 
     TreeStructure* _treeStructure;
-    ProgressBar* _progressBar;
 
 public slots:
     /**

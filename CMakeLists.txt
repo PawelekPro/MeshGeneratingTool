@@ -33,10 +33,13 @@ find_package(QT NAMES Qt6 REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS 
     Widgets 
     OpenGLWidgets 
+    QuickWidgets
     Core
     Gui
     Xml
     Core5Compat
+    Qml
+    Svg
 )
 
 MESSAGE( STATUS )
@@ -202,6 +205,11 @@ MESSAGE( STATUS "SARibbonBar Library FOUND" )
 MESSAGE( STATUS "SARibbonBar VERSION: ${SA_RIBBON_BAR_VERSION_MAJ}.${SA_RIBBON_BAR_VERSION_MIN}.${SA_RIBBON_BAR_VERSION_PAT}")
 MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 INCLUDE_DIRECTORIES(${SARIBBON_PATH})
+
+# Advanced stylesheets (thirdparty)
+# https://github.com/githubuser0xFFFF/Qt-Advanced-Stylesheets?tab=readme-ov-file
+set(STYLES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/ThirdParty/QtAdvancedStyleSheets/styles")
+add_subdirectory(src/ThirdParty/QtAdvancedStyleSheets)
 
 # Include the src directory
 add_subdirectory(src)

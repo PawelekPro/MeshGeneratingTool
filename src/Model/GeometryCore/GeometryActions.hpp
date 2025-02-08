@@ -22,23 +22,21 @@
 
 #include "Geometry.hpp"
 #include <istream>
-
-
 class GeometryActions{
 
     public:
-        GeometryActions(const Geometry& aGeometry);
+        GeometryActions( GeometryCore::Geometry& aGeometry);
         ~GeometryActions() = default;
 
         bool importSTEP(const std::istream& aFileStream);
         bool importSTL(const std::istream& aFileStream);
- 
+
         bool clearGeometry();    
         bool loadGeometryDoc();
         bool saveGeometryDoc();
     
     private:
-        Geometry& _geometry;
+        GeometryCore::Geometry& _geometry;
 };
 
 #endif

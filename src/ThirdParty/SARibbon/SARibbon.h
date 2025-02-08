@@ -1,17 +1,16 @@
 #ifndef SA_RIBBON_H
 #define SA_RIBBON_H
-//定义此宏，将SA_RIBBON_EXPORT定义为空
+// 定义此宏，将SA_RIBBON_EXPORT定义为空
 #ifndef SA_RIBBON_BAR_NO_EXPORT
 #define SA_RIBBON_BAR_NO_EXPORT
 #endif
-//定义此宏，将SA_COLOR_WIDGETS_API定义为空
+// 定义此宏，将SA_COLOR_WIDGETS_API定义为空
 #ifndef SA_COLOR_WIDGETS_NO_DLL
 #define SA_COLOR_WIDGETS_NO_DLL
 #endif
 
-
 /*** Start of inlined file: SARibbonAmalgamTemplatePublicHeaders.h ***/
-//Global
+// Global
 
 /*** Start of inlined file: SAColorWidgetsGlobal.h ***/
 #ifndef SACOLORWIDGETSGLOBAL_H
@@ -41,22 +40,22 @@
  * @def   模仿Q_DECLARE_PRIVATE，但不用前置声明而是作为一个内部类
  */
 #ifndef SA_COLOR_WIDGETS_DECLARE_PRIVATE
-#define SA_COLOR_WIDGETS_DECLARE_PRIVATE(classname)                                                                    \
-	class PrivateData;                                                                                                 \
-	friend class classname::PrivateData;                                                                               \
-	QScopedPointer< PrivateData > d_ptr;
+#define SA_COLOR_WIDGETS_DECLARE_PRIVATE(classname) \
+	class PrivateData;                              \
+	friend class classname::PrivateData;            \
+	QScopedPointer<PrivateData> d_ptr;
 #endif
 /**
  * @def   模仿Q_DECLARE_PUBLIC
  */
 #ifndef SA_COLOR_WIDGETS_DECLARE_PUBLIC
-#define SA_COLOR_WIDGETS_DECLARE_PUBLIC(classname)                                                                     \
-	friend class classname;                                                                                            \
+#define SA_COLOR_WIDGETS_DECLARE_PUBLIC(classname) \
+	friend class classname;                        \
 	classname* q_ptr { nullptr };
 #endif
 
 #ifndef SA_COLOR_WIDGETS_NO_DLL
-#if defined(SA_COLOR_WIDGETS_MAKE_LIB)  // 定义此宏将构建library
+#if defined(SA_COLOR_WIDGETS_MAKE_LIB) // 定义此宏将构建library
 #ifndef SA_COLOR_WIDGETS_API
 #define SA_COLOR_WIDGETS_API Q_DECL_EXPORT
 #endif
@@ -71,18 +70,16 @@
 #endif
 #endif
 
-#endif  // SACOLORWIDGETSGLOBAL_H
+#endif // SACOLORWIDGETSGLOBAL_H
 
 /*** End of inlined file: SAColorWidgetsGlobal.h ***/
-
-
 
 /*** Start of inlined file: SARibbonGlobal.h ***/
 #ifndef SARIBBONGLOBAL_H
 #define SARIBBONGLOBAL_H
-#include <memory>
-#include <QtGlobal>
 #include <QObject>
+#include <QtGlobal>
+#include <memory>
 
 /**
   @file  SARibbonGlobal.h
@@ -108,7 +105,7 @@
 #endif
 
 #ifndef SA_RIBBON_BAR_NO_EXPORT
-#if defined(SA_RIBBON_BAR_MAKE_LIB)  // 定义此宏将构建library
+#if defined(SA_RIBBON_BAR_MAKE_LIB) // 定义此宏将构建library
 #define SA_RIBBON_EXPORT Q_DECL_EXPORT
 #else
 #define SA_RIBBON_EXPORT Q_DECL_IMPORT
@@ -123,29 +120,28 @@
  * @def   模仿Q_DECLARE_PRIVATE，但不用前置声明而是作为一个内部类
  */
 #ifndef SA_RIBBON_DECLARE_PRIVATE
-#define SA_RIBBON_DECLARE_PRIVATE(classname)                                                                           \
-	class PrivateData;                                                                                                 \
-	friend class classname::PrivateData;                                                                               \
-	std::unique_ptr< PrivateData > d_ptr;
+#define SA_RIBBON_DECLARE_PRIVATE(classname) \
+	class PrivateData;                       \
+	friend class classname::PrivateData;     \
+	std::unique_ptr<PrivateData> d_ptr;
 #endif
 /**
  * @def   模仿Q_DECLARE_PUBLIC
  */
 #ifndef SA_RIBBON_DECLARE_PUBLIC
-#define SA_RIBBON_DECLARE_PUBLIC(classname)                                                                            \
-	friend class classname;                                                                                            \
-	classname* q_ptr { nullptr };                                                                                      \
-	PrivateData(const PrivateData&)            = delete;                                                               \
+#define SA_RIBBON_DECLARE_PUBLIC(classname)   \
+	friend class classname;                   \
+	classname* q_ptr { nullptr };             \
+	PrivateData(const PrivateData&) = delete; \
 	PrivateData& operator=(const PrivateData&) = delete;
 #endif
 
 /**
  * @brief 定义Ribbon的对其方式，目前支持左对齐和居中对其
  */
-enum class SARibbonAlignment
-{
-	AlignLeft,   ///< 左对齐，tab栏左对齐，同时category也是左对齐
-	AlignCenter  ///< 居中对其，tab栏居中对齐，同时category也是居中对齐
+enum class SARibbonAlignment {
+	AlignLeft, ///< 左对齐，tab栏左对齐，同时category也是左对齐
+	AlignCenter ///< 居中对其，tab栏居中对齐，同时category也是居中对齐
 };
 
 /**
@@ -156,14 +152,14 @@ enum class SARibbonAlignment
  * 例如ribbon tab的margin信息，在QTabBar是无法获取到，而这个影响了SARibbonContextCategory的绘制，
  * 因此，在设置qss后需要针对margin信息重新设置进SARibbonTabBar中
  */
-enum class SARibbonTheme
-{
-	RibbonThemeOffice2013,      ///< office2013主题
-	RibbonThemeOffice2016Blue,  ///< office2016-蓝色主题
-	RibbonThemeOffice2021Blue,  ///< office2021-蓝色主题
-	RibbonThemeWindows7,        ///< win7主题
-	RibbonThemeDark,            ///< 暗色主题
-	RibbonThemeDark2
+enum class SARibbonTheme {
+	RibbonThemeOffice2013,
+	RibbonThemeOffice2016Blue,
+	RibbonThemeOffice2021Blue,
+	RibbonThemeWindows7,
+	RibbonThemeDark,
+	RibbonThemeDark2,
+	Default
 };
 
 /**
@@ -232,11 +228,11 @@ enum class SARibbonTheme
 #define SA_DEBUG_PRINT_SARIBBONBAR 1
 #endif
 
-#endif  // SARIBBONGLOBAL_H
+#endif // SARIBBONGLOBAL_H
 
 /*** End of inlined file: SARibbonGlobal.h ***/
 
-//color widget
+// color widget
 
 /*** Start of inlined file: SAColorMenu.h ***/
 #ifndef SACOLORMENU_H
@@ -250,8 +246,7 @@ class SAColorToolButton;
 /**
  * @brief 标准颜色菜单
  */
-class SA_COLOR_WIDGETS_API SAColorMenu : public QMenu
-{
+class SA_COLOR_WIDGETS_API SAColorMenu : public QMenu {
 	Q_OBJECT
 	SA_COLOR_WIDGETS_DECLARE_PRIVATE(SAColorMenu)
 public:
@@ -288,14 +283,12 @@ private slots:
 	void onNoneColorActionTriggered(bool on);
 
 private:
-	void init(const QList< QColor >& themeCls);
+	void init(const QList<QColor>& themeCls);
 };
 
-#endif  // SACOLORMENU_H
+#endif // SACOLORMENU_H
 
 /*** End of inlined file: SAColorMenu.h ***/
-
-
 
 /*** Start of inlined file: SAColorGridWidget.h ***/
 #ifndef SACOLORGRIDWIDGET_H
@@ -316,13 +309,12 @@ class SAColorToolButton;
  *
  * □□□□□□□□□
  */
-class SA_COLOR_WIDGETS_API SAColorGridWidget : public QWidget
-{
+class SA_COLOR_WIDGETS_API SAColorGridWidget : public QWidget {
 	Q_OBJECT
 	SA_COLOR_WIDGETS_DECLARE_PRIVATE(SAColorGridWidget)
 	Q_PROPERTY(int spacing READ spacing WRITE setSpacing)
 public:
-	using FunColorBtn = std::function< void(SAColorToolButton*) >;
+	using FunColorBtn = std::function<void(SAColorToolButton*)>;
 
 public:
 	SAColorGridWidget(QWidget* par = nullptr);
@@ -331,8 +323,8 @@ public:
 	void setColumnCount(int c);
 	int columnCount() const;
 	// 设置当前的颜色列表
-	void setColorList(const QList< QColor >& cls);
-	QList< QColor > getColorList() const;
+	void setColorList(const QList<QColor>& cls);
+	QList<QColor> getColorList() const;
 	// 间隔
 	int spacing() const;
 	void setSpacing(int v);
@@ -382,18 +374,16 @@ signals:
 public:
 	virtual QSize sizeHint() const Q_DECL_OVERRIDE;
 };
-namespace SA
-{
+namespace SA {
 /**
  * @brief 获取标准色列表（一共10种颜色）
  * @return
  */
-SA_COLOR_WIDGETS_API QList< QColor > getStandardColorList();
+SA_COLOR_WIDGETS_API QList<QColor> getStandardColorList();
 }
-#endif  // SACOLORGRIDWIDGET_H
+#endif // SACOLORGRIDWIDGET_H
 
 /*** End of inlined file: SAColorGridWidget.h ***/
-
 
 /*** Start of inlined file: SAColorPaletteGridWidget.h ***/
 #ifndef SACOLORPALETTEGRIDWIDGET_H
@@ -405,20 +395,19 @@ class SAColorToolButton;
 /**
  * @brief 类似office的颜色选择窗口，有一排标准色，下面有一个颜色板，有3行浅色，有2行深色
  */
-class SA_COLOR_WIDGETS_API SAColorPaletteGridWidget : public QWidget
-{
+class SA_COLOR_WIDGETS_API SAColorPaletteGridWidget : public QWidget {
 	Q_OBJECT
 	SA_COLOR_WIDGETS_DECLARE_PRIVATE(SAColorPaletteGridWidget)
 public:
 	SAColorPaletteGridWidget(QWidget* par = nullptr);
-	SAColorPaletteGridWidget(const QList< QColor >& cls, QWidget* par = nullptr);
+	SAColorPaletteGridWidget(const QList<QColor>& cls, QWidget* par = nullptr);
 	~SAColorPaletteGridWidget();
 	// 设置窗口维护的colorList
-	void setColorList(const QList< QColor >& cls);
-	QList< QColor > colorList() const;
+	void setColorList(const QList<QColor>& cls);
+	QList<QColor> colorList() const;
 	// 设置颜色深浅比例factor，默认为{ 180, 160, 140, 75, 50 }
-	void setFactor(const QList< int >& factor);
-	QList< int > factor() const;
+	void setFactor(const QList<int>& factor);
+	QList<int> factor() const;
 	// 设置iconsize
 	void setColorIconSize(const QSize& s);
 	QSize colorIconSize() const;
@@ -440,10 +429,9 @@ signals:
 	void colorClicked(const QColor& c);
 };
 
-#endif  // SACOLORPALETTEGRIDWIDGET_H
+#endif // SACOLORPALETTEGRIDWIDGET_H
 
 /*** End of inlined file: SAColorPaletteGridWidget.h ***/
-
 
 /*** Start of inlined file: SAColorToolButton.h ***/
 #ifndef SACOLORTOOLBUTTON_H
@@ -485,8 +473,7 @@ class SAColorMenu;
  * 如果有图标，颜色条会在图标下方，为图标高度的1/4 为图标宽度一致，如若超过控件的大小，会自动缩小体积
  *
  */
-class SA_COLOR_WIDGETS_API SAColorToolButton : public QToolButton
-{
+class SA_COLOR_WIDGETS_API SAColorToolButton : public QToolButton {
 	Q_OBJECT
 	SA_COLOR_WIDGETS_DECLARE_PRIVATE(SAColorToolButton)
 public:
@@ -495,10 +482,9 @@ public:
 	 * @param parent
 	 * @return
 	 */
-	enum ColorToolButtonStyle
-	{
-		WithColorMenu,  ///< 默认会构建一个SAColorMenu
-		NoColorMenu     ///< 没有ColorMenu
+	enum ColorToolButtonStyle {
+		WithColorMenu, ///< 默认会构建一个SAColorMenu
+		NoColorMenu ///< 没有ColorMenu
 	};
 
 public:
@@ -550,11 +536,11 @@ signals:
 	void colorChanged(const QColor& color);
 };
 
-#endif  // SACOLORTOOLBUTTON_H
+#endif // SACOLORTOOLBUTTON_H
 
 /*** End of inlined file: SAColorToolButton.h ***/
 
-//sa ribbon
+// sa ribbon
 
 /*** Start of inlined file: SAFramelessHelper.h ***/
 #ifndef SAFRAMELESSHELPER_H
@@ -564,8 +550,7 @@ signals:
 
 class QWidget;
 
-class SA_RIBBON_EXPORT SAFramelessHelper : public QObject
-{
+class SA_RIBBON_EXPORT SAFramelessHelper : public QObject {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SAFramelessHelper)
 	friend class SAPrivateFramelessWidgetData;
@@ -608,11 +593,9 @@ protected:
 	virtual bool eventFilter(QObject* obj, QEvent* event);
 };
 
-#endif  // FRAMELESSHELPER_H
+#endif // FRAMELESSHELPER_H
 
 /*** End of inlined file: SAFramelessHelper.h ***/
-
-
 
 /*** Start of inlined file: SARibbonApplicationButton.h ***/
 #ifndef SARIBBONAPPLICATIONBUTTON_H
@@ -624,8 +607,7 @@ protected:
  *
  * 默认的plicationButton,可以通过样式指定不一样的ApplicationButton
  */
-class SA_RIBBON_EXPORT SARibbonApplicationButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonApplicationButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonApplicationButton(QWidget* parent = nullptr);
@@ -633,10 +615,9 @@ public:
 	SARibbonApplicationButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
 };
 
-#endif  // SARIBBONAPPLICATIONBUTTON_H
+#endif // SARIBBONAPPLICATIONBUTTON_H
 
 /*** End of inlined file: SARibbonApplicationButton.h ***/
-
 
 /*** Start of inlined file: SARibbonSystemButtonBar.h ***/
 #ifndef SARIBBONSYSTEMBUTTONBAR_H
@@ -655,8 +636,7 @@ public:
  * @endcode
  *
  */
-class SA_RIBBON_EXPORT SARibbonSystemButtonBar : public QFrame
-{
+class SA_RIBBON_EXPORT SARibbonSystemButtonBar : public QFrame {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonSystemButtonBar)
 public:
@@ -691,15 +671,15 @@ public:
 	QSize iconSize() const;
 	// 生成并添加一个action
 	QAction* addAction(QAction* a,
-					   Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-					   QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
 	QAction* addAction(const QString& text,
-					   const QIcon& icon,
-					   Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-					   QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
+		const QIcon& icon,
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
 	QAction* addMenu(QMenu* menu,
-					 Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-					 QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
 	QAction* addSeparator();
 	QAction* addWidget(QWidget* w);
 
@@ -717,24 +697,22 @@ protected slots:
 /**
  * @brief The SARibbonSystemToolButton class
  */
-class SARibbonSystemToolButton : public QToolButton
-{
+class SARibbonSystemToolButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonSystemToolButton(QWidget* p = nullptr);
 };
 
-#endif  // SARIBBONSYSTEMBUTTONBAR_H
+#endif // SARIBBONSYSTEMBUTTONBAR_H
 
 /*** End of inlined file: SARibbonSystemButtonBar.h ***/
-
 
 /*** Start of inlined file: SARibbonToolButton.h ***/
 #ifndef SARIBBONTOOLBUTTON_H
 #define SARIBBONTOOLBUTTON_H
 
-#include <QToolButton>
 #include <QDebug>
+#include <QToolButton>
 /**
  * @brief Ribbon界面适用的toolButton
  *
@@ -742,16 +720,14 @@ public:
  *
  * @note @sa setIconSize 函数不在起作用，iconsize是根据当前尺寸动态调整的
  */
-class SA_RIBBON_EXPORT SARibbonToolButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonToolButton : public QToolButton {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonToolButton)
 public:
 	/**
 	 * @brief 按钮样式
 	 */
-	enum RibbonButtonType
-	{
+	enum RibbonButtonType {
 		LargeButton,
 		SmallButton
 	};
@@ -761,25 +737,25 @@ public:
 	SARibbonToolButton(QWidget* parent = Q_NULLPTR);
 	SARibbonToolButton(QAction* defaultAction, QWidget* parent = Q_NULLPTR);
 	~SARibbonToolButton();
-	//标记按钮的样式，按钮的样式有不同的渲染方式
+	// 标记按钮的样式，按钮的样式有不同的渲染方式
 	RibbonButtonType buttonType() const;
 	void setButtonType(const RibbonButtonType& buttonType);
-	//是否是小按钮
+	// 是否是小按钮
 	bool isSmallRibbonButton() const;
-	//是否是大按钮
+	// 是否是大按钮
 	bool isLargeRibbonButton() const;
-	//最小尺寸提示
+	// 最小尺寸提示
 	virtual QSize minimumSizeHint() const Q_DECL_OVERRIDE;
 
-	//获取间距
+	// 获取间距
 	int spacing() const;
-	//更新尺寸
+	// 更新尺寸
 	void updateRect();
 
 	virtual QSize sizeHint() const Q_DECL_OVERRIDE;
 
 public:
-	//在lite模式下是否允许文字换行
+	// 在lite模式下是否允许文字换行
 	static void setEnableWordWrap(bool on);
 	static bool isEnableWordWrap();
 
@@ -793,38 +769,36 @@ protected:
 	virtual void leaveEvent(QEvent* e) Q_DECL_OVERRIDE;
 	virtual bool hitButton(const QPoint& pos) const Q_DECL_OVERRIDE;
 	virtual bool event(QEvent* e) Q_DECL_OVERRIDE;
-	//事件改变 - 主要为了捕获字体的改变
+	// 事件改变 - 主要为了捕获字体的改变
 	virtual void changeEvent(QEvent* e) Q_DECL_OVERRIDE;
 	virtual void actionEvent(QActionEvent* e) Q_DECL_OVERRIDE;
 
 protected:
-	//绘制按钮
+	// 绘制按钮
 	virtual void paintButton(QPainter& p, const QStyleOptionToolButton& opt);
-	//绘制图标
+	// 绘制图标
 	virtual void paintIcon(QPainter& p, const QStyleOptionToolButton& opt, const QRect& iconDrawRect);
-	//绘制文本
+	// 绘制文本
 	virtual void paintText(QPainter& p, const QStyleOptionToolButton& opt, const QRect& textDrawRect);
-	//绘制Indicator
+	// 绘制Indicator
 	virtual void paintIndicator(QPainter& p, const QStyleOptionToolButton& opt, const QRect& indicatorDrawRect);
 
 private:
 	static void drawArrow(const QStyle* style,
-						  const QStyleOptionToolButton* toolbutton,
-						  const QRect& rect,
-						  QPainter* painter,
-						  const QWidget* widget = 0);
+		const QStyleOptionToolButton* toolbutton,
+		const QRect& rect,
+		QPainter* painter,
+		const QWidget* widget = 0);
 
 protected:
 };
 
-namespace SA
-{
+namespace SA {
 QDebug operator<<(QDebug debug, const QStyleOptionToolButton& opt);
 }
-#endif  // SARIBBONTOOLBUTTON_H
+#endif // SARIBBONTOOLBUTTON_H
 
 /*** End of inlined file: SARibbonToolButton.h ***/
-
 
 /*** Start of inlined file: SARibbonColorToolButton.h ***/
 #ifndef SARIBBONCOLORTOOLBUTTON_H
@@ -834,18 +808,16 @@ class SAColorMenu;
 /**
  * @brief Refer to the color setting button in the office, which can display the color below the icon(参考office的颜色设置按钮，可以显示颜色在图标下方)
  */
-class SA_RIBBON_EXPORT SARibbonColorToolButton : public SARibbonToolButton
-{
+class SA_RIBBON_EXPORT SARibbonColorToolButton : public SARibbonToolButton {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonColorToolButton)
 public:
 	/**
 	 * @brief 颜色样式
 	 */
-	enum ColorStyle
-	{
-		ColorUnderIcon,  ///< 颜色在icon下方，这个要求必须设置icon
-		ColorFillToIcon  ///< 颜色作为icon，这个模式下在setColor会自动生成一个颜色icon替换掉原来的icon，因此setIcon函数没有作用
+	enum ColorStyle {
+		ColorUnderIcon, ///< 颜色在icon下方，这个要求必须设置icon
+		ColorFillToIcon ///< 颜色作为icon，这个模式下在setColor会自动生成一个颜色icon替换掉原来的icon，因此setIcon函数没有作用
 	};
 
 public:
@@ -880,18 +852,17 @@ protected:
 	void paintIcon(QPainter& p, const QStyleOptionToolButton& opt, const QRect& iconDrawRect);
 };
 
-#endif  // SARIBBONCOLORTOOLBUTTON_H
+#endif // SARIBBONCOLORTOOLBUTTON_H
 
 /*** End of inlined file: SARibbonColorToolButton.h ***/
-
 
 /*** Start of inlined file: SARibbonLineWidgetContainer.h ***/
 #ifndef SARIBBONLINEWIDGETCONTAINER_H
 #define SARIBBONLINEWIDGETCONTAINER_H
 
-#include <QtCore/qglobal.h>
-#include <QWidget>
 #include <QLabel>
+#include <QWidget>
+#include <QtCore/qglobal.h>
 
 /**
  * @brief 一个窗口容器，把窗口放置中间，前面后面都可以设置文本，主要用于放置在pannel上的小窗口
@@ -901,48 +872,46 @@ protected:
  * PrefixLabel|_Widget_|SuffixLabel
  *
  */
-class SA_RIBBON_EXPORT SARibbonLineWidgetContainer : public QWidget
-{
+class SA_RIBBON_EXPORT SARibbonLineWidgetContainer : public QWidget {
 public:
 	SARibbonLineWidgetContainer(QWidget* par = nullptr);
 
-	//设置widget,不允许设置一个nullptr
+	// 设置widget,不允许设置一个nullptr
 	void setWidget(QWidget* innerWidget);
 
-	//设置前缀
+	// 设置前缀
 	void setPrefix(const QString& str);
 
-	//设置后缀
+	// 设置后缀
 	void setSuffix(const QString& str);
 
-	//前缀文本框
+	// 前缀文本框
 	QLabel* labelPrefix() const;
 
-	//后缀文本框
+	// 后缀文本框
 	QLabel* labelSuffix() const;
 
 private:
-	//两个文本
+	// 两个文本
 	QLabel* m_labelPrefix;
 	QLabel* m_labelSuffix;
 	QWidget* m_innerWidget;
 };
 
-#endif  // SARIBBONWIDGETCONTAINER_H
+#endif // SARIBBONWIDGETCONTAINER_H
 
 /*** End of inlined file: SARibbonLineWidgetContainer.h ***/
-
 
 /*** Start of inlined file: SARibbonActionsManager.h ***/
 #ifndef SARIBBONACTIONSMANAGER_H
 #define SARIBBONACTIONSMANAGER_H
 
-#include <QObject>
 #include <QAbstractListModel>
 #include <QAction>
 #include <QMap>
-#include <QString>
+#include <QObject>
 #include <QSet>
+#include <QString>
 class SARibbonBar;
 class SARibbonCategory;
 
@@ -968,8 +937,7 @@ class SARibbonCategory;
  *
  *
  */
-class SA_RIBBON_EXPORT SARibbonActionsManager : public QObject
-{
+class SA_RIBBON_EXPORT SARibbonActionsManager : public QObject {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonActionsManager)
 	friend class SARibbonActionsManagerModel;
@@ -978,65 +946,64 @@ public:
 	/**
 	 * @brief 定义action的标签
 	 */
-	enum ActionTag
-	{
-		UnknowActionTag              = 0,     ///< 未知的tag
-		CommonlyUsedActionTag        = 0x01,  ///< 预设tag-常用命令
-		NotInFunctionalAreaActionTag = 0x02,  ///< 预设tag-不在功能区命令
-		AutoCategoryDistinguishBeginTag = 0x1000,  ///< 自动按Category划分的标签起始，在@ref autoRegisteActions 函数会用到
-		AutoCategoryDistinguishEndTag = 0x2000,  ///< 自动按Category划分的标签结束，在@ref autoRegisteActions 函数会用到
-		NotInRibbonCategoryTag = 0x2001,  ///< 不在功能区的标签@ref autoRegisteActions 函数会遍历所有category的action
-		UserDefineActionTag = 0x8000  ///< 自定义标签，所有用户自定义tag要大于此tag
+	enum ActionTag {
+		UnknowActionTag = 0, ///< 未知的tag
+		CommonlyUsedActionTag = 0x01, ///< 预设tag-常用命令
+		NotInFunctionalAreaActionTag = 0x02, ///< 预设tag-不在功能区命令
+		AutoCategoryDistinguishBeginTag = 0x1000, ///< 自动按Category划分的标签起始，在@ref autoRegisteActions 函数会用到
+		AutoCategoryDistinguishEndTag = 0x2000, ///< 自动按Category划分的标签结束，在@ref autoRegisteActions 函数会用到
+		NotInRibbonCategoryTag = 0x2001, ///< 不在功能区的标签@ref autoRegisteActions 函数会遍历所有category的action
+		UserDefineActionTag = 0x8000 ///< 自定义标签，所有用户自定义tag要大于此tag
 	};
 	SARibbonActionsManager(SARibbonBar* bar);
 	~SARibbonActionsManager();
-	//设置tag对应的名字
+	// 设置tag对应的名字
 	void setTagName(int tag, const QString& name);
 
-	//获取tag对应的名字
+	// 获取tag对应的名字
 	QString tagName(int tag) const;
 
-	//移除tag，注意，这个函数非常耗时
+	// 移除tag，注意，这个函数非常耗时
 	void removeTag(int tag);
 
-	//注册action
+	// 注册action
 	bool registeAction(QAction* act, int tag, const QString& key = QString(), bool enableEmit = true);
 
-	//取消action的注册
+	// 取消action的注册
 	void unregisteAction(QAction* act, bool enableEmit = true);
 
-	//过滤得到actions对应的引用，实际是一个迭代器
-	QList< QAction* >& filter(int tag);
+	// 过滤得到actions对应的引用，实际是一个迭代器
+	QList<QAction*>& filter(int tag);
 
-	//通过tag筛选出系列action
-	QList< QAction* >& actions(int tag);
-	const QList< QAction* > actions(int tag) const;
+	// 通过tag筛选出系列action
+	QList<QAction*>& actions(int tag);
+	const QList<QAction*> actions(int tag) const;
 
-	//获取所有的标签
-	QList< int > actionTags() const;
+	// 获取所有的标签
+	QList<int> actionTags() const;
 
-	//通过key获取action
+	// 通过key获取action
 	QAction* action(const QString& key) const;
 
-	//通过action找到key
+	// 通过action找到key
 	QString key(QAction* act) const;
 
-	//返回所有管理的action数
+	// 返回所有管理的action数
 	int count() const;
 
-	//返回所有管理的actions
-	QList< QAction* > allActions() const;
+	// 返回所有管理的actions
+	QList<QAction*> allActions() const;
 
-	//自动加载action,返回tag对应的Category指针
-	QMap< int, SARibbonCategory* > autoRegisteActions(SARibbonBar* bar);
+	// 自动加载action,返回tag对应的Category指针
+	QMap<int, SARibbonCategory*> autoRegisteActions(SARibbonBar* bar);
 
-	//自动加载widget下的actions函数返回的action,返回加载的数量，这些
-	QSet< QAction* > autoRegisteWidgetActions(QWidget* w, int tag, bool enableEmit = false);
+	// 自动加载widget下的actions函数返回的action,返回加载的数量，这些
+	QSet<QAction*> autoRegisteWidgetActions(QWidget* w, int tag, bool enableEmit = false);
 
-	//根据标题查找action
-	QList< QAction* > search(const QString& text);
+	// 根据标题查找action
+	QList<QAction*> search(const QString& text);
 
-	//清除
+	// 清除
 	void clear();
 
 signals:
@@ -1057,8 +1024,7 @@ private:
 /**
  * @brief SARibbonActionsManager 对应的model
  */
-class SA_RIBBON_EXPORT SARibbonActionsManagerModel : public QAbstractListModel
-{
+class SA_RIBBON_EXPORT SARibbonActionsManagerModel : public QAbstractListModel {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonActionsManagerModel)
 public:
@@ -1080,10 +1046,9 @@ private slots:
 	void onActionTagChanged(int tag, bool isdelete);
 };
 
-#endif  // SARIBBONACTIONSMANAGER_H
+#endif // SARIBBONACTIONSMANAGER_H
 
 /*** End of inlined file: SARibbonActionsManager.h ***/
-
 
 /*** Start of inlined file: SARibbonLineEdit.h ***/
 #ifndef SARIBBONLINEEDIT_H
@@ -1094,18 +1059,16 @@ private slots:
 /**
  * @brief The SARibbonLineEdit class
  */
-class SA_RIBBON_EXPORT SARibbonLineEdit : public QLineEdit
-{
+class SA_RIBBON_EXPORT SARibbonLineEdit : public QLineEdit {
 	Q_OBJECT
 public:
-	SARibbonLineEdit(QWidget *parent = Q_NULLPTR);
-	SARibbonLineEdit(const QString &text, QWidget *parent = Q_NULLPTR);
+	SARibbonLineEdit(QWidget* parent = Q_NULLPTR);
+	SARibbonLineEdit(const QString& text, QWidget* parent = Q_NULLPTR);
 };
 
 #endif // SARIBBONLINEEDIT_H
 
 /*** End of inlined file: SARibbonLineEdit.h ***/
-
 
 /*** Start of inlined file: SARibbonCheckBox.h ***/
 #ifndef SARIBBONCHECKBOX_H
@@ -1116,18 +1079,16 @@ public:
 /**
  * @brief The SARibbonCheckBox class
  */
-class SA_RIBBON_EXPORT SARibbonCheckBox : public QCheckBox
-{
+class SA_RIBBON_EXPORT SARibbonCheckBox : public QCheckBox {
 	Q_OBJECT
 public:
-	SARibbonCheckBox(QWidget *parent = Q_NULLPTR);
-	SARibbonCheckBox(const QString &text, QWidget *parent = Q_NULLPTR);
+	SARibbonCheckBox(QWidget* parent = Q_NULLPTR);
+	SARibbonCheckBox(const QString& text, QWidget* parent = Q_NULLPTR);
 };
 
 #endif // SARIBBONCHECKBOX_H
 
 /*** End of inlined file: SARibbonCheckBox.h ***/
-
 
 /*** Start of inlined file: SARibbonComboBox.h ***/
 #ifndef SARIBBONCOMBOBOX_H
@@ -1138,35 +1099,32 @@ public:
 /**
  * @brief QComboBox的Ribbon显示，可以显示QIcon和windowTitle在左侧
  */
-class SA_RIBBON_EXPORT SARibbonComboBox : public QComboBox
-{
+class SA_RIBBON_EXPORT SARibbonComboBox : public QComboBox {
 	Q_OBJECT
 public:
-	SARibbonComboBox(QWidget *parent = Q_NULLPTR);
+	SARibbonComboBox(QWidget* parent = Q_NULLPTR);
 };
 
 #endif // SARIBBONCOMBOBOX_H
 
 /*** End of inlined file: SARibbonComboBox.h ***/
 
-
 /*** Start of inlined file: SARibbonButtonGroupWidget.h ***/
 #ifndef SARIBBONBUTTONGROUPWIDGET_H
 #define SARIBBONBUTTONGROUPWIDGET_H
 
-#include <QToolButton>
-#include <QMenu>
 #include <QFrame>
+#include <QMenu>
+#include <QToolButton>
 class SARibbonControlButton;
 /**
  * @brief 用于管理一组Action,类似于QToolBar
  */
-class SA_RIBBON_EXPORT SARibbonButtonGroupWidget : public QFrame
-{
+class SA_RIBBON_EXPORT SARibbonButtonGroupWidget : public QFrame {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonButtonGroupWidget)
 public:
-	using FpButtonIterate = std::function< bool(SARibbonControlButton*) >;
+	using FpButtonIterate = std::function<bool(SARibbonControlButton*)>;
 
 public:
 	SARibbonButtonGroupWidget(QWidget* parent = Q_NULLPTR);
@@ -1177,15 +1135,15 @@ public:
 	QSize iconSize() const;
 	// 生成并添加一个action
 	QAction* addAction(QAction* a,
-					   Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-					   QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
 	QAction* addAction(const QString& text,
-					   const QIcon& icon,
-					   Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-					   QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
+		const QIcon& icon,
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
 	QAction* addMenu(QMenu* menu,
-					 Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-					 QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
 	QAction* addSeparator();
 	QAction* addWidget(QWidget* w);
 	// 从ButtonGroupWidget中把action对应的button提取出来，如果action没有对应的button，就返回nullptr
@@ -1208,10 +1166,9 @@ protected:
 	virtual void actionEvent(QActionEvent* e) Q_DECL_OVERRIDE;
 };
 
-#endif  // SARIBBONBUTTONGROUPWIDGET_H
+#endif // SARIBBONBUTTONGROUPWIDGET_H
 
 /*** End of inlined file: SARibbonButtonGroupWidget.h ***/
-
 
 /*** Start of inlined file: SARibbonStackedWidget.h ***/
 #ifndef SARIBBONSTACKEDWIDGET_H
@@ -1224,8 +1181,7 @@ class QResizeEvent;
 /**
  * @brief 有qdialog功能的stackwidget，用于在最小化时stack能像dialog那样弹出来
  */
-class SA_RIBBON_EXPORT SARibbonStackedWidget : public QStackedWidget
-{
+class SA_RIBBON_EXPORT SARibbonStackedWidget : public QStackedWidget {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonStackedWidget)
 public:
@@ -1255,10 +1211,9 @@ signals:
 	void hidWindow();
 };
 
-#endif  // SARIBBONSTACKEDWIDGET_H
+#endif // SARIBBONSTACKEDWIDGET_H
 
 /*** End of inlined file: SARibbonStackedWidget.h ***/
-
 
 /*** Start of inlined file: SARibbonSeparatorWidget.h ***/
 #ifndef SARIBBONSEPARATORWIDGET_H
@@ -1270,25 +1225,23 @@ signals:
 ///
 /// \brief 用于显示分割线
 ///
-class SA_RIBBON_EXPORT SARibbonSeparatorWidget : public QFrame
-{
+class SA_RIBBON_EXPORT SARibbonSeparatorWidget : public QFrame {
 	Q_OBJECT
 public:
 	SARibbonSeparatorWidget(QWidget* parent = nullptr);
 	virtual QSize sizeHint() const override;
 };
 
-#endif  // SARIBBONSEPARATORWIDGET_H
+#endif // SARIBBONSEPARATORWIDGET_H
 
 /*** End of inlined file: SARibbonSeparatorWidget.h ***/
-
 
 /*** Start of inlined file: SARibbonCtrlContainer.h ***/
 #ifndef SARIBBONCTROLCONTAINER_H
 #define SARIBBONCTROLCONTAINER_H
 
-#include <QWidget>
 #include <QScopedPointer>
+#include <QWidget>
 class QStyleOption;
 
 /**
@@ -1298,8 +1251,7 @@ class QStyleOption;
  * |icon|text|  widget  |
  * ----------------------
  */
-class SA_RIBBON_EXPORT SARibbonCtrlContainer : public QWidget
-{
+class SA_RIBBON_EXPORT SARibbonCtrlContainer : public QWidget {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonCtrlContainer)
 public:
@@ -1325,10 +1277,9 @@ public:
 	QWidget* iconWidget() const;
 };
 
-#endif  // SARIBBONCTROLCONTAINER_H
+#endif // SARIBBONCTROLCONTAINER_H
 
 /*** End of inlined file: SARibbonCtrlContainer.h ***/
-
 
 /*** Start of inlined file: SARibbonQuickAccessBar.h ***/
 #ifndef SARIBBONQUICKACCESSBAR_H
@@ -1341,8 +1292,7 @@ class SARibbonButtonGroupWidget;
 ///
 /// \brief ribbon左上顶部的快速响应栏
 ///
-class SA_RIBBON_EXPORT SARibbonQuickAccessBar : public SARibbonCtrlContainer
-{
+class SA_RIBBON_EXPORT SARibbonQuickAccessBar : public SARibbonCtrlContainer {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonQuickAccessBar)
 public:
@@ -1350,12 +1300,12 @@ public:
 	~SARibbonQuickAccessBar();
 	void addSeparator();
 	void addAction(QAction* act,
-				   Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-				   QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::DelayedPopup);
 	void addWidget(QWidget* w);
 	void addMenu(QMenu* m,
-				 Qt::ToolButtonStyle buttonStyle          = Qt::ToolButtonIconOnly,
-				 QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
+		Qt::ToolButtonStyle buttonStyle = Qt::ToolButtonIconOnly,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
 	// 获取内部管理的ButtonGroupWidget
 	SARibbonButtonGroupWidget* buttonGroupWidget();
 	const SARibbonButtonGroupWidget* buttonGroupWidget() const;
@@ -1364,23 +1314,21 @@ public:
 	QSize iconSize() const;
 };
 
-#endif  // SARIBBONQUICKACCESSBAR_H
+#endif // SARIBBONQUICKACCESSBAR_H
 
 /*** End of inlined file: SARibbonQuickAccessBar.h ***/
-
 
 /*** Start of inlined file: SARibbonTabBar.h ***/
 #ifndef SARIBBONTABBAR_H
 #define SARIBBONTABBAR_H
 
-#include <QTabBar>
 #include <QMargins>
+#include <QTabBar>
 
 /**
  * @brief The SARibbonTabBar class
  */
-class SA_RIBBON_EXPORT SARibbonTabBar : public QTabBar
-{
+class SA_RIBBON_EXPORT SARibbonTabBar : public QTabBar {
 	Q_OBJECT
 public:
 	SARibbonTabBar(QWidget* parent = Q_NULLPTR);
@@ -1391,10 +1339,9 @@ private:
 	QMargins m_tabMargin;
 };
 
-#endif  // SARIBBONTABBAR_H
+#endif // SARIBBONTABBAR_H
 
 /*** End of inlined file: SARibbonTabBar.h ***/
-
 
 /*** Start of inlined file: SARibbonControlButton.h ***/
 #ifndef SARIBBONCONTROLBUTTON_H
@@ -1406,8 +1353,7 @@ private:
  *
  * 为了防止外部qss的影响，单独继承一个类
  */
-class SA_RIBBON_EXPORT SARibbonControlButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonControlButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonControlButton(QWidget* parent = 0);
@@ -1418,17 +1364,15 @@ public:
  *
  * 为了防止SARibbonToolButton qss的影响，单独继承一个类
  */
-class SA_RIBBON_EXPORT SARibbonControlToolButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonControlToolButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonControlToolButton(QWidget* parent = 0);
 };
 
-#endif  // SARIBBONPANNELTOOLBUTTON_H
+#endif // SARIBBONPANNELTOOLBUTTON_H
 
 /*** End of inlined file: SARibbonControlButton.h ***/
-
 
 /*** Start of inlined file: SARibbonMenu.h ***/
 #ifndef SARIBBONMENU_H
@@ -1440,8 +1384,7 @@ public:
 /// \brief 用在ribbon的menu
 /// 可以通过StyleSheet设置样式而不影响QMenu
 ///
-class SA_RIBBON_EXPORT SARibbonMenu : public QMenu
-{
+class SA_RIBBON_EXPORT SARibbonMenu : public QMenu {
 	Q_OBJECT
 public:
 	explicit SARibbonMenu(QWidget* parent = Q_NULLPTR);
@@ -1452,10 +1395,9 @@ public:
 	QAction* addWidget(QWidget* w);
 };
 
-#endif  // SARIBBONMENU_H
+#endif // SARIBBONMENU_H
 
 /*** End of inlined file: SARibbonMenu.h ***/
-
 
 /*** Start of inlined file: SARibbonPannelOptionButton.h ***/
 #ifndef SARIBBONPANNELOPTIONBUTTON_H
@@ -1473,24 +1415,22 @@ class QAction;
  * 的 @ref SARibbonElementFactory::createRibbonPannelOptionButton来实现新的OptionButton
  *
  */
-class SA_RIBBON_EXPORT SARibbonPannelOptionButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonPannelOptionButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonPannelOptionButton(QWidget* parent = Q_NULLPTR);
 };
 
-#endif  // SAROBBONPANNELOPTIONBUTTON_H
+#endif // SAROBBONPANNELOPTIONBUTTON_H
 
 /*** End of inlined file: SARibbonPannelOptionButton.h ***/
-
 
 /*** Start of inlined file: SARibbonPannelItem.h ***/
 #ifndef SARIBBONPANNELITEM_H
 #define SARIBBONPANNELITEM_H
 
-#include <QWidgetItem>
 #include <QAction>
+#include <QWidgetItem>
 class SARibbonToolButton;
 /**
  * @brief 是对pannel所有子窗口的抽象，参考qt的toolbar
@@ -1501,28 +1441,26 @@ class SARibbonToolButton;
  *
  * 无窗口的action会在内部生成一个SARibbonToolButton，
  */
-class SA_RIBBON_EXPORT SARibbonPannelItem : public QWidgetItem
-{
+class SA_RIBBON_EXPORT SARibbonPannelItem : public QWidgetItem {
 public:
 	/**
 	 * @brief 定义了行的占比，ribbon中有large，media和small三种占比
 	 */
-	enum RowProportion
-	{
-		None,  ///< 为定义占比，这时候将会依据expandingDirections来判断，如果能有Qt::Vertical，就等同于Large，否则就是Small
-		Large,   ///< 大占比，一个widget的高度会充满整个pannel
-		Medium,  ///< 中占比，在@ref SARibbonPannel::pannelLayoutMode 为 @ref SARibbonPannel::ThreeRowMode 时才会起作用，且要同一列里两个都是Medium时，会在三行中占据两行
-		Small  ///< 小占比，占SARibbonPannel的一行，Medium在不满足条件时也会变为Small，但不会变为Large
+	enum RowProportion {
+		None, ///< 为定义占比，这时候将会依据expandingDirections来判断，如果能有Qt::Vertical，就等同于Large，否则就是Small
+		Large, ///< 大占比，一个widget的高度会充满整个pannel
+		Medium, ///< 中占比，在@ref SARibbonPannel::pannelLayoutMode 为 @ref SARibbonPannel::ThreeRowMode 时才会起作用，且要同一列里两个都是Medium时，会在三行中占据两行
+		Small ///< 小占比，占SARibbonPannel的一行，Medium在不满足条件时也会变为Small，但不会变为Large
 	};
 	SARibbonPannelItem(QWidget* widget);
 	bool isEmpty() const Q_DECL_OVERRIDE;
 
-	short rowIndex;             ///< 记录当前item属于第几行，hide模式下为-1
-	int columnIndex;            ///< 记录当前item属于第几列，hide模式下为-1
-	QRect itemWillSetGeometry;  ///< 在调用SARibbonPannelLayout::updateGeomArray会更新这个此处，实际设置的时候会QWidgetItem::setGeometry设置Geometry
-	QAction* action;            /// < 记录action，参考QToolBarLayoutItem
-	bool customWidget;  ///< 对于没有窗口的action，实际也会有一个SARibbonToolButton，在销毁时要delete掉
-	SARibbonPannelItem::RowProportion rowProportion;  ///< 行的占比，ribbon中有large，media和small三种占比,见@ref RowProportion
+	short rowIndex; ///< 记录当前item属于第几行，hide模式下为-1
+	int columnIndex; ///< 记录当前item属于第几列，hide模式下为-1
+	QRect itemWillSetGeometry; ///< 在调用SARibbonPannelLayout::updateGeomArray会更新这个此处，实际设置的时候会QWidgetItem::setGeometry设置Geometry
+	QAction* action; /// < 记录action，参考QToolBarLayoutItem
+	bool customWidget; ///< 对于没有窗口的action，实际也会有一个SARibbonToolButton，在销毁时要delete掉
+	SARibbonPannelItem::RowProportion rowProportion; ///< 行的占比，ribbon中有large，media和small三种占比,见@ref RowProportion
 };
 #ifndef SA_ActionPropertyName_RowProportion
 #define SA_ActionPropertyName_RowProportion "_sa_RowProportion"
@@ -1533,10 +1471,9 @@ public:
 #ifndef SA_ActionPropertyName_ToolButtonStyle
 #define SA_ActionPropertyName_ToolButtonStyle "_sa_ToolButtonStyle"
 #endif
-#endif  // SARIBBONPANNELITEM_H
+#endif // SARIBBONPANNELITEM_H
 
 /*** End of inlined file: SARibbonPannelItem.h ***/
-
 
 /*** Start of inlined file: SARibbonPannelLayout.h ***/
 #ifndef SARIBBONPANNELLAYOUT_H
@@ -1556,8 +1493,7 @@ class SARibbonPannelLabel;
  *
  * @note QLayout::contentsMargins 函数不会启作用,如果要设置contentsMargins，使用@sa setPannelContentsMargins
  */
-class SA_RIBBON_EXPORT SARibbonPannelLayout : public QLayout
-{
+class SA_RIBBON_EXPORT SARibbonPannelLayout : public QLayout {
 	Q_OBJECT
 	friend class SARibbonPannel;
 
@@ -1632,33 +1568,32 @@ private:
 	void setPannelTitleLabel(SARibbonPannelLabel* newTitleLabel);
 
 private:
-	QList< SARibbonPannelItem* > m_items;
-	int m_columnCount { 0 };          ///< 记录有多少列
-	bool m_expandFlag { false };      ///< 标记是否是会扩展的
-	QSize m_sizeHint;                 ///< sizeHint返回的尺寸
-	bool m_dirty { true };            ///< 用于标记是否需要刷新元素，参考QToolBarLayout源码
-	int m_largeHeight { 0 };          ///< 记录大图标的高度
-	int m_titleHeight { 15 };         ///< 标题区域高度
-	int m_titleSpace { 2 };           ///< 标题区域和按钮的间隔
-	bool m_enableShowTitle { true };  ///< 是否运行显示pannel标题
-	SARibbonPannelLabel* m_titleLabel { nullptr };  ///< titlelabel指针
-	QRect m_titleLabelGeometry;                     ///< titlelabel的位置
-	QToolButton* m_optionActionBtn { nullptr };     ///< optionAction对应的button
-	QRect m_optionActionBtnGeometry;                ///< optionAction的位置
+	QList<SARibbonPannelItem*> m_items;
+	int m_columnCount { 0 }; ///< 记录有多少列
+	bool m_expandFlag { false }; ///< 标记是否是会扩展的
+	QSize m_sizeHint; ///< sizeHint返回的尺寸
+	bool m_dirty { true }; ///< 用于标记是否需要刷新元素，参考QToolBarLayout源码
+	int m_largeHeight { 0 }; ///< 记录大图标的高度
+	int m_titleHeight { 15 }; ///< 标题区域高度
+	int m_titleSpace { 2 }; ///< 标题区域和按钮的间隔
+	bool m_enableShowTitle { true }; ///< 是否运行显示pannel标题
+	SARibbonPannelLabel* m_titleLabel { nullptr }; ///< titlelabel指针
+	QRect m_titleLabelGeometry; ///< titlelabel的位置
+	QToolButton* m_optionActionBtn { nullptr }; ///< optionAction对应的button
+	QRect m_optionActionBtnGeometry; ///< optionAction的位置
 };
 
-#endif  // SARIBBONPANNELLAYOUT_H
+#endif // SARIBBONPANNELLAYOUT_H
 
 /*** End of inlined file: SARibbonPannelLayout.h ***/
-
 
 /*** Start of inlined file: SARibbonPannel.h ***/
 #ifndef SARIBBONPANNEL_H
 #define SARIBBONPANNEL_H
 
+#include <QLabel>
 #include <QLayout>
 #include <QWidget>
-#include <QLabel>
 class SARibbonMenu;
 class SARibbonGallery;
 class QGridLayout;
@@ -1670,8 +1605,7 @@ class SARibbonBar;
 /**
  * @brief SARibbonPannel的标题label，此类用于qss
  */
-class SA_RIBBON_EXPORT SARibbonPannelLabel : public QLabel
-{
+class SA_RIBBON_EXPORT SARibbonPannelLabel : public QLabel {
 	Q_OBJECT
 public:
 	SARibbonPannelLabel(QWidget* parent = nullptr);
@@ -1689,8 +1623,7 @@ public:
  * pannel的布局通过@ref SARibbonPannelLayout 来实现，如果有其他布局，可以通过继承@ref
  * SARibbonElementCreateDelegate::createRibbonPannel 函数返回带有自己布局的pannel，但你必须继承对应的虚函数
  */
-class SA_RIBBON_EXPORT SARibbonPannel : public QFrame
-{
+class SA_RIBBON_EXPORT SARibbonPannel : public QFrame {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonPannel)
 	friend class SARibbonCategory;
@@ -1701,10 +1634,9 @@ class SA_RIBBON_EXPORT SARibbonPannel : public QFrame
 	Q_PROPERTY(bool isExpanding READ isExpanding WRITE setExpanding)
 	Q_PROPERTY(QString pannelName READ pannelName WRITE setPannelName)
 public:
-	enum PannelLayoutMode
-	{
-		ThreeRowMode,  ///< 三行布局模式，office就是三行布局模式，pannel能布置3行小toolbutton，默认模式
-		TwoRowMode  ///< 两行布局模式，wps的后续布局模式就是两行布局模式，pannel能布置2行小toolbutton
+	enum PannelLayoutMode {
+		ThreeRowMode, ///< 三行布局模式，office就是三行布局模式，pannel能布置3行小toolbutton，默认模式
+		TwoRowMode ///< 两行布局模式，wps的后续布局模式就是两行布局模式，pannel能布置2行小toolbutton
 	};
 	Q_ENUM(PannelLayoutMode)
 public:
@@ -1717,8 +1649,8 @@ public:
 	void addAction(QAction* action, SARibbonPannelItem::RowProportion rp);
 	// 生成并添加一个action
 	void addAction(QAction* act,
-				   QToolButton::ToolButtonPopupMode popMode,
-				   SARibbonPannelItem::RowProportion rp = SARibbonPannelItem::Large);
+		QToolButton::ToolButtonPopupMode popMode,
+		SARibbonPannelItem::RowProportion rp = SARibbonPannelItem::Large);
 	// 把action加入到pannel，并以大图标显示
 	void addLargeAction(QAction* action);
 	// 把action加入到pannel，在三行模式下会以中图标显示
@@ -1734,14 +1666,14 @@ public:
 	void addMediumAction(QAction* action, QToolButton::ToolButtonPopupMode popMode);
 
 	QAction* addAction(const QString& text,
-					   const QIcon& icon,
-					   QToolButton::ToolButtonPopupMode popMode,
-					   SARibbonPannelItem::RowProportion rp = SARibbonPannelItem::Large);
+		const QIcon& icon,
+		QToolButton::ToolButtonPopupMode popMode,
+		SARibbonPannelItem::RowProportion rp = SARibbonPannelItem::Large);
 
 	// 添加menu
 	void addMenu(QMenu* menu,
-				 SARibbonPannelItem::RowProportion rp,
-				 QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
+		SARibbonPannelItem::RowProportion rp,
+		QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
 
 	// 添加普通大菜单
 	void addLargeMenu(QMenu* menu, QToolButton::ToolButtonPopupMode popMode = QToolButton::InstantPopup);
@@ -1778,7 +1710,7 @@ public:
 	bool isHaveOptionAction() const;
 
 	// 获取所有的buttons
-	QList< SARibbonToolButton* > ribbonToolButtons() const;
+	QList<SARibbonToolButton*> ribbonToolButtons() const;
 
 	// 获取PannelLayoutMode
 	PannelLayoutMode pannelLayoutMode() const;
@@ -1787,8 +1719,7 @@ public:
 	void resetToolButtonSize();
 
 	// 判断是否为2行模式
-	bool isTwoRow() const
-	{
+	bool isTwoRow() const {
 		return (TwoRowMode == pannelLayoutMode());
 	}
 
@@ -1823,7 +1754,7 @@ public:
 	// 大图标的高度
 	int largeButtonHeight() const;
 	// 获取布局对应的item,此函数目前仅仅在自定义过程中用到
-	const QList< SARibbonPannelItem* >& ribbonPannelItem() const;
+	const QList<SARibbonPannelItem*>& ribbonPannelItem() const;
 	// 获取pannel layout
 	SARibbonPannelLayout* pannelLayout() const;
 	// 更新布局
@@ -1871,10 +1802,9 @@ protected:
 	virtual void changeEvent(QEvent* e) Q_DECL_OVERRIDE;
 };
 
-#endif  // SARIBBONPANNEL_H
+#endif // SARIBBONPANNEL_H
 
 /*** End of inlined file: SARibbonPannel.h ***/
-
 
 /*** Start of inlined file: SARibbonCategory.h ***/
 #ifndef SARIBBONCATEGORY_H
@@ -1882,8 +1812,8 @@ protected:
 
 #include <QFrame>
 
-#include <QScopedPointer>
 #include <QPushButton>
+#include <QScopedPointer>
 #include <QWheelEvent>
 
 class QHBoxLayout;
@@ -1895,8 +1825,7 @@ class SARibbonCategoryLayout;
  * @note SARibbonCategory的windowTitle影响了其在SARibbonBar的标签显示，
  * 如果要改标签名字，直接调用SARibbonCategory的setWindowTitle函数
  */
-class SA_RIBBON_EXPORT SARibbonCategory : public QFrame
-{
+class SA_RIBBON_EXPORT SARibbonCategory : public QFrame {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonCategory)
 	friend class SARibbonBar;
@@ -1904,7 +1833,7 @@ class SA_RIBBON_EXPORT SARibbonCategory : public QFrame
 	Q_PROPERTY(bool isCanCustomize READ isCanCustomize WRITE setCanCustomize)
 	Q_PROPERTY(QString categoryName READ categoryName WRITE setCategoryName)
 public:
-	using FpPannelIterate = std::function< bool(SARibbonPannel*) >;
+	using FpPannelIterate = std::function<bool(SARibbonPannel*)>;
 
 public:
 	SARibbonCategory(QWidget* p = nullptr);
@@ -1956,7 +1885,7 @@ public:
 	bool removePannel(int index);
 
 	// 返回所有的Pannel
-	QList< SARibbonPannel* > pannelList() const;
+	QList<SARibbonPannel*> pannelList() const;
 
 	//
 	QSize sizeHint() const Q_DECL_OVERRIDE;
@@ -2017,17 +1946,15 @@ protected:
  *
  * 重新定义是为了防止被外部的样式影响,同时可以使用SARibbonCategoryScrollButton的样式定义
  */
-class SA_RIBBON_EXPORT SARibbonCategoryScrollButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonCategoryScrollButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonCategoryScrollButton(Qt::ArrowType arr, QWidget* p = nullptr);
 };
 
-#endif  // SARIBBONCATEGORY_H
+#endif // SARIBBONCATEGORY_H
 
 /*** End of inlined file: SARibbonCategory.h ***/
-
 
 /*** Start of inlined file: SARibbonCategoryLayout.h ***/
 #ifndef SARIBBONCATEGORYLAYOUT_H
@@ -2044,8 +1971,7 @@ class SARibbonSeparatorWidget;
 /**
  * @brief The SARibbonCategoryLayout class
  */
-class SA_RIBBON_EXPORT SARibbonCategoryLayout : public QLayout
-{
+class SA_RIBBON_EXPORT SARibbonCategoryLayout : public QLayout {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonCategoryLayout)
 public:
@@ -2079,7 +2005,7 @@ public:
 	void doLayout();
 
 	// 返回所有pannels
-	QList< SARibbonPannel* > pannels() const;
+	QList<SARibbonPannel*> pannels() const;
 
 	// 通过obj name获取pannel
 	SARibbonPannel* pannelByObjectName(const QString& objname) const;
@@ -2094,7 +2020,7 @@ public:
 	// pannel的索引
 	int pannelIndex(SARibbonPannel* p) const;
 	// 获取所有的pannel
-	QList< SARibbonPannel* > pannelList() const;
+	QList<SARibbonPannel*> pannelList() const;
 	// 执行滚轮事件
 	void scroll(int px);
 	// 判断是否有滚动过
@@ -2112,20 +2038,18 @@ private slots:
 /**
  * @brief SARibbonCategoryLayoutItem，用于标识SARibbonCategoryLayout的item
  */
-class SA_RIBBON_EXPORT SARibbonCategoryLayoutItem : public QWidgetItem
-{
+class SA_RIBBON_EXPORT SARibbonCategoryLayoutItem : public QWidgetItem {
 public:
 	SARibbonCategoryLayoutItem(SARibbonPannel* w);
 	SARibbonSeparatorWidget* separatorWidget;
 	// 把内部的widget转换为pannel
 	SARibbonPannel* toPannelWidget();
-	QRect mWillSetGeometry;           ///< pannel将要设置的Geometry
-	QRect mWillSetSeparatorGeometry;  ///< pannel将要设置的Separator的Geometry
+	QRect mWillSetGeometry; ///< pannel将要设置的Geometry
+	QRect mWillSetSeparatorGeometry; ///< pannel将要设置的Separator的Geometry
 };
-#endif  // SARIBBONCATEGORYLAYOUT_H
+#endif // SARIBBONCATEGORYLAYOUT_H
 
 /*** End of inlined file: SARibbonCategoryLayout.h ***/
-
 
 /*** Start of inlined file: SARibbonContextCategory.h ***/
 #ifndef SARIBBONCONTEXTCATEGORY_H
@@ -2136,41 +2060,40 @@ public:
 /**
  * @brief 管理上下文标签的类
  */
-class SA_RIBBON_EXPORT SARibbonContextCategory : public QObject
-{
+class SA_RIBBON_EXPORT SARibbonContextCategory : public QObject {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonContextCategory)
 public:
 	SARibbonContextCategory(QWidget* parent = 0);
 	~SARibbonContextCategory();
-	//上下文目录添加下属目录
+	// 上下文目录添加下属目录
 	SARibbonCategory* addCategoryPage(const QString& title);
 	void addCategoryPage(SARibbonCategory* category);
-	//获取上下文标签下管理的标签个数
+	// 获取上下文标签下管理的标签个数
 	int categoryCount() const;
 
-	//设置id
+	// 设置id
 	void setId(const QVariant& id);
 	QVariant id() const;
 
-	//设置上下文颜色
+	// 设置上下文颜色
 	void setContextColor(const QColor color);
 	QColor contextColor() const;
 
-	//上下文标签的内容
+	// 上下文标签的内容
 	QString contextTitle() const;
 	void setContextTitle(const QString& contextTitle);
 
-	//获取对应的tab页
+	// 获取对应的tab页
 	SARibbonCategory* categoryPage(int index);
 
-	//获取所有的SARibbonCategory*
-	QList< SARibbonCategory* > categoryList() const;
+	// 获取所有的SARibbonCategory*
+	QList<SARibbonCategory*> categoryList() const;
 
-	//移除category
+	// 移除category
 	bool takeCategory(SARibbonCategory* category);
 
-	//判断上下文是否维护了此SARibbonCategory
+	// 判断上下文是否维护了此SARibbonCategory
 	bool isHaveCategory(SARibbonCategory* category) const;
 signals:
 	/**
@@ -2201,31 +2124,29 @@ private slots:
 	void onCategoryTitleChanged(const QString& title);
 
 protected:
-	//获取父级窗口
+	// 获取父级窗口
 	QWidget* parentWidget() const;
 	virtual bool eventFilter(QObject* watched, QEvent* e) override;
 };
 
-#endif  // SARIBBONCONTEXTCATEGORY_H
+#endif // SARIBBONCONTEXTCATEGORY_H
 
 /*** End of inlined file: SARibbonContextCategory.h ***/
-
 
 /*** Start of inlined file: SARibbonGalleryItem.h ***/
 #ifndef SARIBBONGALLERYITEM_H
 #define SARIBBONGALLERYITEM_H
 
-#include <QIcon>
-#include <QVariant>
-#include <QMap>
 #include <QAction>
+#include <QIcon>
+#include <QMap>
+#include <QVariant>
 class SARibbonGalleryGroup;
 
 ///
 /// \brief 类似QStandardItem的GalleryItem
 ///
-class SA_RIBBON_EXPORT SARibbonGalleryItem
-{
+class SA_RIBBON_EXPORT SARibbonGalleryItem {
 public:
 	SARibbonGalleryItem();
 	SARibbonGalleryItem(const QString& text, const QIcon& icon);
@@ -2269,15 +2190,14 @@ public:
 
 private:
 	friend class SARibbonGalleryGroupModel;
-	QMap< int, QVariant > m_datas;
+	QMap<int, QVariant> m_datas;
 	Qt::ItemFlags m_flags;
 	QAction* m_action;
 };
 
-#endif  // SARIBBONGALLERYITEM_H
+#endif // SARIBBONGALLERYITEM_H
 
 /*** End of inlined file: SARibbonGalleryItem.h ***/
-
 
 /*** Start of inlined file: SARibbonGalleryGroup.h ***/
 #ifndef SARIBBONGALLERYGROUP_H
@@ -2290,8 +2210,7 @@ private:
 ///
 /// \brief SARibbonGalleryGroup对应的显示代理
 ///
-class SA_RIBBON_EXPORT SARibbonGalleryGroupItemDelegate : public QStyledItemDelegate
-{
+class SA_RIBBON_EXPORT SARibbonGalleryGroupItemDelegate : public QStyledItemDelegate {
 public:
 	SARibbonGalleryGroupItemDelegate(SARibbonGalleryGroup* group, QObject* parent = Q_NULLPTR);
 	virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const Q_DECL_OVERRIDE;
@@ -2308,8 +2227,7 @@ private:
 ///
 /// \brief SARibbonGalleryGroup对应的model
 ///
-class SA_RIBBON_EXPORT SARibbonGalleryGroupModel : public QAbstractListModel
-{
+class SA_RIBBON_EXPORT SARibbonGalleryGroupModel : public QAbstractListModel {
 	Q_OBJECT
 public:
 	SARibbonGalleryGroupModel(QObject* parent = Q_NULLPTR);
@@ -2326,7 +2244,7 @@ public:
 	void append(SARibbonGalleryItem* item);
 
 private:
-	QList< SARibbonGalleryItem* > m_items;
+	QList<SARibbonGalleryItem*> m_items;
 };
 
 /**
@@ -2334,28 +2252,25 @@ private:
  *
  * 组负责显示管理Gallery Item
  */
-class SA_RIBBON_EXPORT SARibbonGalleryGroup : public QListView
-{
+class SA_RIBBON_EXPORT SARibbonGalleryGroup : public QListView {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonGalleryGroup)
 public:
 	/**
 	 * @brief GalleryGroup显示的样式
 	 */
-	enum GalleryGroupStyle
-	{
-		IconWithText,          ///< 图标带文字
-		IconWithWordWrapText,  ///< 图标带文字,文字会换行显示，此模式只会对DisplayOneRow生效，如果不是DisplayOneRow，等同IconWithText
-		IconOnly               ///< 只有图标
+	enum GalleryGroupStyle {
+		IconWithText, ///< 图标带文字
+		IconWithWordWrapText, ///< 图标带文字,文字会换行显示，此模式只会对DisplayOneRow生效，如果不是DisplayOneRow，等同IconWithText
+		IconOnly ///< 只有图标
 	};
 
 	/**
 	 * @brief 定义Gallery在一个pannel下面显示的图标行数
 	 */
-	enum DisplayRow
-	{
-		DisplayOneRow   = 1,  ///< 显示1行，默认
-		DisplayTwoRow   = 2,
+	enum DisplayRow {
+		DisplayOneRow = 1, ///< 显示1行，默认
+		DisplayTwoRow = 2,
 		DisplayThreeRow = 3
 	};
 
@@ -2375,7 +2290,7 @@ public:
 	void addItem(SARibbonGalleryItem* item);
 	// 以一个aciton作为item添加
 	void addActionItem(QAction* act);
-	void addActionItemList(const QList< QAction* >& acts);
+	void addActionItemList(const QList<QAction*>& acts);
 
 	// 构建一个model，这个model的父类是SARibbonGalleryGroup，如果要共享model，需要手动处理model的父类
 	void setupGroupModel();
@@ -2415,10 +2330,9 @@ signals:
 	void hovered(QAction* action);
 };
 
-#endif  // SARIBBONGALLERYGROUP_H
+#endif // SARIBBONGALLERYGROUP_H
 
 /*** End of inlined file: SARibbonGalleryGroup.h ***/
-
 
 /*** Start of inlined file: SARibbonGallery.h ***/
 #ifndef SARIBBONGALLERY_H
@@ -2435,8 +2349,7 @@ class SARibbonGalleryViewport;
 /**
  * @brief 针对SARibbonGallery控件的按钮
  */
-class SA_RIBBON_EXPORT SARibbonGalleryButton : public QToolButton
-{
+class SA_RIBBON_EXPORT SARibbonGalleryButton : public QToolButton {
 	Q_OBJECT
 public:
 	SARibbonGalleryButton(QWidget* parent = 0);
@@ -2463,8 +2376,7 @@ public:
  * gallery->setCurrentViewGroup(group1);
  * @endcode
  */
-class SA_RIBBON_EXPORT SARibbonGallery : public QFrame
-{
+class SA_RIBBON_EXPORT SARibbonGallery : public QFrame {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonGallery)
 public:
@@ -2476,7 +2388,7 @@ public:
 	// 添加一个GalleryGroup
 	void addGalleryGroup(SARibbonGalleryGroup* group);
 	// 快速添加一组actions
-	SARibbonGalleryGroup* addCategoryActions(const QString& title, QList< QAction* > actions);
+	SARibbonGalleryGroup* addCategoryActions(const QString& title, QList<QAction*> actions);
 	// 设置当前显示的SARibbonGalleryGroup
 	void setCurrentViewGroup(SARibbonGalleryGroup* group);
 	// 获取当前显示的SARibbonGalleryGroup
@@ -2523,8 +2435,7 @@ protected:
 ///
 /// \brief SARibbonGallery的Viewport class
 ///
-class SARibbonGalleryViewport : public QWidget
-{
+class SARibbonGalleryViewport : public QWidget {
 	Q_OBJECT
 public:
 	SARibbonGalleryViewport(QWidget* parent);
@@ -2541,13 +2452,12 @@ public slots:
 
 private:
 	QVBoxLayout* m_layout;
-	QMap< QWidget*, QLabel* > _widgetToTitleLable;  ///< QWidget和lable的对应
+	QMap<QWidget*, QLabel*> _widgetToTitleLable; ///< QWidget和lable的对应
 };
 
-#endif  // SARIBBONGALLERY_H
+#endif // SARIBBONGALLERY_H
 
 /*** End of inlined file: SARibbonGallery.h ***/
-
 
 /*** Start of inlined file: SARibbonBar.h ***/
 #ifndef SARIBBONBAR_H
@@ -2638,8 +2548,7 @@ class SARibbonStackedWidget;
   }
   @endcode
  */
-class SA_RIBBON_EXPORT SARibbonBar : public QMenuBar
-{
+class SA_RIBBON_EXPORT SARibbonBar : public QMenuBar {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonBar)
 	friend class SARibbonMainWindow;
@@ -2655,17 +2564,16 @@ class SA_RIBBON_EXPORT SARibbonBar : public QMenuBar
 	Q_PROPERTY(SARibbonPannel::PannelLayoutMode pannelLayoutMode READ pannelLayoutMode WRITE setPannelLayoutMode)
 
 public:
-	enum RibbonStyleFlag
-	{
-		RibbonStyleLoose    = 0x0001,  // bit:0000 0001
-		RibbonStyleCompact  = 0x0002,  // bit:0000 0010
-		RibbonStyleThreeRow = 0x0010,  // bit:0001 0000
-		RibbonStyleTwoRow   = 0x0020,  // bit:0010 0000
+	enum RibbonStyleFlag {
+		RibbonStyleLoose = 0x0001, // bit:0000 0001
+		RibbonStyleCompact = 0x0002, // bit:0000 0010
+		RibbonStyleThreeRow = 0x0010, // bit:0001 0000
+		RibbonStyleTwoRow = 0x0020, // bit:0010 0000
 
-		RibbonStyleLooseThreeRow   = RibbonStyleLoose | RibbonStyleThreeRow,    ///< 宽松结构，3行模式
-		RibbonStyleCompactThreeRow = RibbonStyleCompact | RibbonStyleThreeRow,  ///< 紧凑结构，3行模式
-		RibbonStyleLooseTwoRow     = RibbonStyleLoose | RibbonStyleTwoRow,      ///< 宽松结构，2行模式
-		RibbonStyleCompactTwoRow   = RibbonStyleCompact | RibbonStyleTwoRow     ///< 紧凑结构，2行模式
+		RibbonStyleLooseThreeRow = RibbonStyleLoose | RibbonStyleThreeRow, ///< 宽松结构，3行模式
+		RibbonStyleCompactThreeRow = RibbonStyleCompact | RibbonStyleThreeRow, ///< 紧凑结构，3行模式
+		RibbonStyleLooseTwoRow = RibbonStyleLoose | RibbonStyleTwoRow, ///< 宽松结构，2行模式
+		RibbonStyleCompactTwoRow = RibbonStyleCompact | RibbonStyleTwoRow ///< 紧凑结构，2行模式
 	};
 	Q_ENUM(RibbonStyleFlag)
 	Q_DECLARE_FLAGS(RibbonStyles, RibbonStyleFlag)
@@ -2674,15 +2582,14 @@ public:
 	/**
 	 * @brief 定义当前ribbon 的状态
 	 */
-	enum RibbonMode
-	{
-		MinimumRibbonMode,  ///< 缩小模式
-		NormalRibbonMode    ///< 正常模式
+	enum RibbonMode {
+		MinimumRibbonMode, ///< 缩小模式
+		NormalRibbonMode ///< 正常模式
 	};
 	Q_ENUM(RibbonMode)
 
-	using FpCategoryIterate = std::function< bool(SARibbonCategory*) >;
-	using FpPannelIterate   = SARibbonCategory::FpPannelIterate;
+	using FpCategoryIterate = std::function<bool(SARibbonCategory*)>;
+	using FpPannelIterate = SARibbonCategory::FpPannelIterate;
 
 public:
 	// 判断RibbonStyle是否为2行模式
@@ -2695,7 +2602,7 @@ public:
 	static QString versionString();
 
 	// 获取默认的上下文标签颜色列表
-	static QList< QColor > defaultContextCategoryColorList();
+	static QList<QColor> defaultContextCategoryColorList();
 
 	//
 	static void initHighDpi();
@@ -2749,15 +2656,15 @@ public:
 	void moveCategory(int from, int to);
 
 	// 获取当前显示的所有的SARibbonCategory，包含未显示的SARibbonContextCategory的SARibbonCategory也一并返回
-	QList< SARibbonCategory* > categoryPages(bool getAll = true) const;
+	QList<SARibbonCategory*> categoryPages(bool getAll = true) const;
 
 	// 移除SARibbonCategory
 	void removeCategory(SARibbonCategory* category);
 
 	// 添加一个上下文标签
 	SARibbonContextCategory* addContextCategory(const QString& title,
-												const QColor& color = QColor(),
-												const QVariant& id  = QVariant());
+		const QColor& color = QColor(),
+		const QVariant& id = QVariant());
 	void addContextCategory(SARibbonContextCategory* context);
 
 	// 显示一个上下文标签
@@ -2773,7 +2680,7 @@ public:
 	void setContextCategoryVisible(SARibbonContextCategory* context, bool visible);
 
 	// 获取所有的上下文标签
-	QList< SARibbonContextCategory* > contextCategoryList() const;
+	QList<SARibbonContextCategory*> contextCategoryList() const;
 
 	// 移除ContextCategory
 	void destroyContextCategory(SARibbonContextCategory* context);
@@ -2890,8 +2797,8 @@ public:
 	bool isTitleVisible() const;
 
 	// 上下文标签的颜色列表，上下文标签显示的时候，会从颜色列表中取颜色进行标签的渲染
-	void setContextCategoryColorList(const QList< QColor >& cls);
-	QList< QColor > contextCategoryColorList() const;
+	void setContextCategoryColorList(const QList<QColor>& cls);
+	QList<QColor> contextCategoryColorList() const;
 
 	// 设置context category 标题的文字颜色
 	void setContextCategoryTitleTextColor(const QColor& clr);
@@ -2990,10 +2897,9 @@ protected:
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(SARibbonBar::RibbonStyles)
 
-#endif  // SARIBBONBAR_H
+#endif // SARIBBONBAR_H
 
 /*** End of inlined file: SARibbonBar.h ***/
-
 
 /*** Start of inlined file: SARibbonElementFactory.h ***/
 #ifndef SARIBBONELEMENTFACTORY_H
@@ -3001,8 +2907,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(SARibbonBar::RibbonStyles)
 
 #include <QColor>
 #include <QMargins>
-#include <QSize>
 #include <QScopedPointer>
+#include <QSize>
 
 class QWidget;
 class SARibbonBar;
@@ -3029,8 +2935,7 @@ class SARibbonSystemButtonBar;
 /// 由于SARibbonBar是一个复合控件，很多子窗口组合而成，有些部件的创建如果想继承，那么就需要这个工厂类来处理
 /// 如SARibbonCategory，可以重载此类的createRibbonCategory,返回重载的类的实例
 ///
-class SA_RIBBON_EXPORT SARibbonElementFactory
-{
+class SA_RIBBON_EXPORT SARibbonElementFactory {
 public:
 	SARibbonElementFactory();
 	virtual ~SARibbonElementFactory();
@@ -3052,10 +2957,9 @@ public:
 	virtual SARibbonPannelOptionButton* createRibbonPannelOptionButton(SARibbonPannel* pannel);
 };
 
-#endif  // SARIBBONELEMENTFACTORY_H
+#endif // SARIBBONELEMENTFACTORY_H
 
 /*** End of inlined file: SARibbonElementFactory.h ***/
-
 
 /*** Start of inlined file: SARibbonElementManager.h ***/
 #ifndef SARIBBONELEMENTMANAGER_H
@@ -3086,8 +2990,7 @@ public:
 	这样，SARibbon创建的pannel就是你自己重写的MyRibbonPannel
 
  */
-class SA_RIBBON_EXPORT SARibbonElementManager
-{
+class SA_RIBBON_EXPORT SARibbonElementManager {
 protected:
 	SARibbonElementManager();
 
@@ -3098,7 +3001,7 @@ public:
 	void setupFactory(SARibbonElementFactory* fac);
 
 private:
-	QScopedPointer< SARibbonElementFactory > mFactory;
+	QScopedPointer<SARibbonElementFactory> mFactory;
 };
 #ifndef RibbonSubElementMgr
 #define RibbonSubElementMgr SARibbonElementManager::instance()
@@ -3107,10 +3010,9 @@ private:
 #define RibbonSubElementFactory SARibbonElementManager::instance()->factory()
 #endif
 
-#endif  // SARIBBONELEMENTMANAGER_H
+#endif // SARIBBONELEMENTMANAGER_H
 
 /*** End of inlined file: SARibbonElementManager.h ***/
-
 
 /*** Start of inlined file: SARibbonCustomizeData.h ***/
 #ifndef SARIBBONCUSTOMIZEDATA_H
@@ -3124,102 +3026,100 @@ class SARibbonMainWindow;
  * @brief 记录所有自定义操作的数据类
  * @note 此数据依赖于@ref SARibbonActionsManager 要在SARibbonActionsManager之后使用此类
  */
-class SA_RIBBON_EXPORT SARibbonCustomizeData
-{
+class SA_RIBBON_EXPORT SARibbonCustomizeData {
 public:
-	enum ActionType
-	{
-		UnknowActionType = 0,           ///< 未知操作
-		AddCategoryActionType,          ///< 添加category操作(1)
-		AddPannelActionType,            ///< 添加pannel操作(2)
-		AddActionActionType,            ///< 添加action操作(3)
-		RemoveCategoryActionType,       ///< 删除category操作(4)
-		RemovePannelActionType,         ///< 删除pannel操作(5)
-		RemoveActionActionType,         ///< 删除action操作(6)
-		ChangeCategoryOrderActionType,  ///< 改变category顺序的操作(7)
-		ChangePannelOrderActionType,    ///< 改变pannel顺序的操作(8)
-		ChangeActionOrderActionType,    ///< 改变action顺序的操作(9)
-		RenameCategoryActionType,       ///< 对category更名操作(10)
-		RenamePannelActionType,         ///< 对Pannel更名操作(11)
-		VisibleCategoryActionType       ///< 对category执行隐藏/显示操作(12)
+	enum ActionType {
+		UnknowActionType = 0, ///< 未知操作
+		AddCategoryActionType, ///< 添加category操作(1)
+		AddPannelActionType, ///< 添加pannel操作(2)
+		AddActionActionType, ///< 添加action操作(3)
+		RemoveCategoryActionType, ///< 删除category操作(4)
+		RemovePannelActionType, ///< 删除pannel操作(5)
+		RemoveActionActionType, ///< 删除action操作(6)
+		ChangeCategoryOrderActionType, ///< 改变category顺序的操作(7)
+		ChangePannelOrderActionType, ///< 改变pannel顺序的操作(8)
+		ChangeActionOrderActionType, ///< 改变action顺序的操作(9)
+		RenameCategoryActionType, ///< 对category更名操作(10)
+		RenamePannelActionType, ///< 对Pannel更名操作(11)
+		VisibleCategoryActionType ///< 对category执行隐藏/显示操作(12)
 	};
 	SARibbonCustomizeData();
 	SARibbonCustomizeData(ActionType type, SARibbonActionsManager* mgr = nullptr);
-	//获取CustomizeData的action type
+	// 获取CustomizeData的action type
 	ActionType actionType() const;
 
-	//设置CustomizeData的action type
+	// 设置CustomizeData的action type
 	void setActionType(ActionType a);
 
-	//判断是否是一个正常的CustomizeData
+	// 判断是否是一个正常的CustomizeData
 	bool isValid() const;
 
-	//应用SARibbonCustomizeData
+	// 应用SARibbonCustomizeData
 	bool apply(SARibbonBar* bar) const;
 
-	//获取actionmanager指针
+	// 获取actionmanager指针
 	SARibbonActionsManager* actionManager();
 
-	//设置ActionsManager
+	// 设置ActionsManager
 	void setActionsManager(SARibbonActionsManager* mgr);
 
-	//对应AddCategoryActionType
+	// 对应AddCategoryActionType
 	static SARibbonCustomizeData makeAddCategoryCustomizeData(const QString& title, int index, const QString& objName);
 
-	//对应AddPannelActionType
+	// 对应AddPannelActionType
 	static SARibbonCustomizeData makeAddPannelCustomizeData(const QString& title, int index, const QString& categoryobjName, const QString& objName);
 
-	//对应AddActionActionType
+	// 对应AddActionActionType
 	static SARibbonCustomizeData makeAddActionCustomizeData(const QString& key,
-															SARibbonActionsManager* mgr,
-															SARibbonPannelItem::RowProportion rp,
-															const QString& categoryObjName,
-															const QString& pannelObjName);
+		SARibbonActionsManager* mgr,
+		SARibbonPannelItem::RowProportion rp,
+		const QString& categoryObjName,
+		const QString& pannelObjName);
 
-	//对应RenameCategoryActionType
+	// 对应RenameCategoryActionType
 	static SARibbonCustomizeData makeRenameCategoryCustomizeData(const QString& newname, const QString& categoryobjName);
 
-	//对应RenamePannelActionType
+	// 对应RenamePannelActionType
 	static SARibbonCustomizeData makeRenamePannelCustomizeData(const QString& newname,
-															   const QString& categoryobjName,
-															   const QString& pannelObjName);
+		const QString& categoryobjName,
+		const QString& pannelObjName);
 
-	//对应RemoveCategoryActionType
+	// 对应RemoveCategoryActionType
 	static SARibbonCustomizeData makeRemoveCategoryCustomizeData(const QString& categoryobjName);
 
-	//对应ChangeCategoryOrderActionType
+	// 对应ChangeCategoryOrderActionType
 	static SARibbonCustomizeData makeChangeCategoryOrderCustomizeData(const QString& categoryobjName, int moveindex);
 
-	//对应ChangePannelOrderActionType
+	// 对应ChangePannelOrderActionType
 	static SARibbonCustomizeData makeChangePannelOrderCustomizeData(const QString& categoryobjName,
-																	const QString& pannelObjName,
-																	int moveindex);
+		const QString& pannelObjName,
+		int moveindex);
 
-	//对应ChangeActionOrderActionType
+	// 对应ChangeActionOrderActionType
 	static SARibbonCustomizeData makeChangeActionOrderCustomizeData(const QString& categoryobjName,
-																	const QString& pannelObjName,
-																	const QString& key,
-																	SARibbonActionsManager* mgr,
-																	int moveindex);
+		const QString& pannelObjName,
+		const QString& key,
+		SARibbonActionsManager* mgr,
+		int moveindex);
 
-	//对应RemovePannelActionType
+	// 对应RemovePannelActionType
 	static SARibbonCustomizeData makeRemovePannelCustomizeData(const QString& categoryobjName, const QString& pannelObjName);
 
-	//对应RemoveActionActionType
+	// 对应RemoveActionActionType
 	static SARibbonCustomizeData makeRemoveActionCustomizeData(const QString& categoryobjName,
-															   const QString& pannelObjName,
-															   const QString& key,
-															   SARibbonActionsManager* mgr);
+		const QString& pannelObjName,
+		const QString& key,
+		SARibbonActionsManager* mgr);
 
-	//对应VisibleCategoryActionType
+	// 对应VisibleCategoryActionType
 	static SARibbonCustomizeData makeVisibleCategoryCustomizeData(const QString& categoryobjName, bool isShow);
 
-	//判断是否可以自定义,如果某个action不想被编辑，可以通过此函数设置
+	// 判断是否可以自定义,如果某个action不想被编辑，可以通过此函数设置
 	static bool isCanCustomize(QObject* obj);
 	static void setCanCustomize(QObject* obj, bool canbe = true);
 
-	//对QList<SARibbonCustomizeData>进行简化
-	static QList< SARibbonCustomizeData > simplify(const QList< SARibbonCustomizeData >& csd);
+	// 对QList<SARibbonCustomizeData>进行简化
+	static QList<SARibbonCustomizeData> simplify(const QList<SARibbonCustomizeData>& csd);
 
 public:
 	/**
@@ -3250,19 +3150,18 @@ public:
 	 */
 	QString pannelObjNameValue;
 
-	SARibbonPannelItem::RowProportion actionRowProportionValue;  ///< 行的占比，ribbon中有large，media和small三种占比,见@ref RowProportion
+	SARibbonPannelItem::RowProportion actionRowProportionValue; ///< 行的占比，ribbon中有large，media和small三种占比,见@ref RowProportion
 private:
-	ActionType m_type;  ///< 标记这个data是category还是pannel亦或是action
+	ActionType m_type; ///< 标记这个data是category还是pannel亦或是action
 	SARibbonActionsManager* m_actionsManagerPointer;
 };
 Q_DECLARE_METATYPE(SARibbonCustomizeData)
 
-typedef QList< SARibbonCustomizeData > SARibbonCustomizeDataList;
+typedef QList<SARibbonCustomizeData> SARibbonCustomizeDataList;
 
-#endif  // SARIBBONCUSTOMIZEDATA_H
+#endif // SARIBBONCUSTOMIZEDATA_H
 
 /*** End of inlined file: SARibbonCustomizeData.h ***/
-
 
 /*** Start of inlined file: SARibbonCustomizeWidget.h ***/
 #ifndef SARIBBONCUSTOMIZEWIDGET_H
@@ -3288,82 +3187,79 @@ class QXmlStreamReader;
  * @note SARibbon的自定义是基于步骤的，如果在窗口生成前调用了@ref sa_apply_customize_from_xml_file 类似函数
  * 那么在对话框生成前为了保证同步需要调用@ref SARibbonCustomizeWidget::fromXml 同步配置文件，这样再次修改后的配置文件就一致
  */
-class SA_RIBBON_EXPORT SARibbonCustomizeWidget : public QWidget
-{
+class SA_RIBBON_EXPORT SARibbonCustomizeWidget : public QWidget {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonCustomizeWidget)
 public:
-	//保留接口
+	// 保留接口
 	SARibbonCustomizeWidget(SARibbonMainWindow* ribbonWindow, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-	//对于不使用SARibbonMainWindow的情况，使用此构造函数
+	// 对于不使用SARibbonMainWindow的情况，使用此构造函数
 	SARibbonCustomizeWidget(SARibbonBar* ribbonbar, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	~SARibbonCustomizeWidget();
 
 	/**
 	 * @brief 定义ribbon树的显示类型
 	 */
-	enum RibbonTreeShowType
-	{
-		ShowAllCategory,  ///< 显示所有Category，包括contextcategory
-		ShowMainCategory  ///< 显示主要的category，不包含上下文
+	enum RibbonTreeShowType {
+		ShowAllCategory, ///< 显示所有Category，包括contextcategory
+		ShowMainCategory ///< 显示主要的category，不包含上下文
 	};
 
 	/**
 	 * @brief QStandardItem对应的role
 	 */
-	enum ItemRole
-	{
-		LevelRole            = Qt::UserRole + 1,  ///< 代表这是层级，有0：category 1：pannel 2：item
-		PointerRole          = Qt::UserRole + 2,  ///< 代表这是存放指针。根据LevelRole来进行转
-		CanCustomizeRole     = Qt::UserRole + 3,  ///< 代表个item是可以自定义的.bool
-		CustomizeRole        = Qt::UserRole + 4,  ///< 代表这个是自定义的item,bool,主要用于那些自己添加的标签和pannel，有此角色必有CanCustomizeRole
-		CustomizeObjNameRole = Qt::UserRole + 5   ///< 记录了临时的自定义内容的obj名 QString
+	enum ItemRole {
+		LevelRole = Qt::UserRole + 1, ///< 代表这是层级，有0：category 1：pannel 2：item
+		PointerRole = Qt::UserRole + 2, ///< 代表这是存放指针。根据LevelRole来进行转
+		CanCustomizeRole = Qt::UserRole + 3, ///< 代表个item是可以自定义的.bool
+		CustomizeRole = Qt::UserRole + 4, ///< 代表这个是自定义的item,bool,主要用于那些自己添加的标签和pannel，有此角色必有CanCustomizeRole
+		CustomizeObjNameRole = Qt::UserRole + 5 ///< 记录了临时的自定义内容的obj名 QString
 	};
 
-	//设置action管理器
+	// 设置action管理器
 	void setupActionsManager(SARibbonActionsManager* mgr);
 
-	//判断用户是否有要存储的内容，对应save动作
+	// 判断用户是否有要存储的内容，对应save动作
 	bool isApplied() const;
 
-	//判断用户是否有改动内容，对应apply动作
+	// 判断用户是否有改动内容，对应apply动作
 	bool isCached() const;
 
-	//获取model
+	// 获取model
 	const QStandardItemModel* model() const;
 
-	//根据当前的radiobutton选项来更新model
+	// 根据当前的radiobutton选项来更新model
 	void updateModel();
 
-	//更新model
+	// 更新model
 	void updateModel(RibbonTreeShowType type);
 
-	//应用所有的设定
+	// 应用所有的设定
 	bool applys();
 
-	//转换为xml
+	// 转换为xml
 	bool toXml(QXmlStreamWriter* xml) const;
 	bool toXml(const QString& xmlpath) const;
 
-	//从xml中加载QList<SARibbonCustomizeData>，对于基于配置文件的设置，对话框显示前建议调用此函数，保证叠加设置的正确记录
+	// 从xml中加载QList<SARibbonCustomizeData>，对于基于配置文件的设置，对话框显示前建议调用此函数，保证叠加设置的正确记录
 	void fromXml(QXmlStreamReader* xml);
 	void fromXml(const QString& xmlpath);
 
-	//应用xml配置，可以结合customize_datas_from_xml和customize_datas_apply函数
+	// 应用xml配置，可以结合customize_datas_from_xml和customize_datas_apply函数
 	static bool fromXml(QXmlStreamReader* xml, SARibbonBar* bar, SARibbonActionsManager* mgr);
 
-	//缓存应用的动作,这些动作不会被clear清除，用于本地存储
+	// 缓存应用的动作,这些动作不会被clear清除，用于本地存储
 	void makeActionsApplied();
 
-	//清除applied的动作，cancel操作后需要清空已应用的动作
+	// 清除applied的动作，cancel操作后需要清空已应用的动作
 	void clearApplied();
-	//清除缓存动作，在执行applys函数后，如果要继续调用，应该clear，否则会导致异常
+	// 清除缓存动作，在执行applys函数后，如果要继续调用，应该clear，否则会导致异常
 	void clearCache();
-	//清除所有动作，不包含本地读取的数据
+	// 清除所有动作，不包含本地读取的数据
 	void clear();
 
 protected:
-	//把QList<SARibbonCustomizeData>进行裁剪,把一些动作合并
+	// 把QList<SARibbonCustomizeData>进行裁剪,把一些动作合并
 	void simplify();
 
 	SARibbonPannelItem::RowProportion selectedRowProportion() const;
@@ -3373,24 +3269,24 @@ protected:
 
 	QStandardItem* selectedItem() const;
 
-	//获取选中的ribbon tree 的level
+	// 获取选中的ribbon tree 的level
 	int selectedRibbonLevel() const;
 
-	//根据选中的item判断
+	// 根据选中的item判断
 	int itemLevel(QStandardItem* item) const;
 
-	//设置某个item被选中
+	// 设置某个item被选中
 	void setSelectItem(QStandardItem* item, bool ensureVisible = true);
 
-	//判断itemn能否改动，可以改动返回true
+	// 判断itemn能否改动，可以改动返回true
 	bool isItemCanCustomize(QStandardItem* item) const;
 	bool isSelectedItemCanCustomize() const;
 
-	//判断item是否是自定义的item
+	// 判断item是否是自定义的item
 	bool isCustomizeItem(QStandardItem* item) const;
 	bool isSelectedItemIsCustomize() const;
 
-	//删除一个item
+	// 删除一个item
 	void removeItem(QStandardItem* item);
 
 private slots:
@@ -3429,14 +3325,14 @@ private:
  * @param cds 基于QList<SARibbonCustomizeData>生成的步骤
  * @return 如果出现异常，返回false,如果没有自定义数据也会返回false
  */
-bool SA_RIBBON_EXPORT sa_customize_datas_to_xml(QXmlStreamWriter* xml, const QList< SARibbonCustomizeData >& cds);
+bool SA_RIBBON_EXPORT sa_customize_datas_to_xml(QXmlStreamWriter* xml, const QList<SARibbonCustomizeData>& cds);
 
 /**
  * @brief 通过xml获取QList<SARibbonCustomizeData>
  * @param xml
  * @return QList<SARibbonCustomizeData>
  */
-QList< SARibbonCustomizeData > SA_RIBBON_EXPORT sa_customize_datas_from_xml(QXmlStreamReader* xml, SARibbonActionsManager* mgr);
+QList<SARibbonCustomizeData> SA_RIBBON_EXPORT sa_customize_datas_from_xml(QXmlStreamReader* xml, SARibbonActionsManager* mgr);
 
 /**
  * @brief 应用QList<SARibbonCustomizeData>
@@ -3444,7 +3340,7 @@ QList< SARibbonCustomizeData > SA_RIBBON_EXPORT sa_customize_datas_from_xml(QXml
  * @param w SARibbonBar指针
  * @return 成功应用的个数
  */
-int SA_RIBBON_EXPORT sa_customize_datas_apply(const QList< SARibbonCustomizeData >& cds, SARibbonBar* w);
+int SA_RIBBON_EXPORT sa_customize_datas_apply(const QList<SARibbonCustomizeData>& cds, SARibbonBar* w);
 
 /**
  * @brief 反向取消应用
@@ -3452,7 +3348,7 @@ int SA_RIBBON_EXPORT sa_customize_datas_apply(const QList< SARibbonCustomizeData
  * @param w SARibbonBar指针
  * @return 成功应用的个数
  */
-int SA_RIBBON_EXPORT sa_customize_datas_reverse(const QList< SARibbonCustomizeData >& cds, SARibbonBar* w);
+int SA_RIBBON_EXPORT sa_customize_datas_reverse(const QList<SARibbonCustomizeData>& cds, SARibbonBar* w);
 
 /**
  * @brief 直接加载xml自定义ribbon配置文件用于ribbon的自定义显示
@@ -3470,10 +3366,9 @@ int SA_RIBBON_EXPORT sa_customize_datas_reverse(const QList< SARibbonCustomizeDa
  */
 bool SA_RIBBON_EXPORT sa_apply_customize_from_xml_file(const QString& filePath, SARibbonBar* bar, SARibbonActionsManager* mgr);
 
-#endif  // SARIBBONCUSTOMIZEWIDGET_H
+#endif // SARIBBONCUSTOMIZEWIDGET_H
 
 /*** End of inlined file: SARibbonCustomizeWidget.h ***/
-
 
 /*** Start of inlined file: SARibbonCustomizeDialog.h ***/
 #ifndef SARIBBONCUSTOMIZEDIALOG_H
@@ -3494,47 +3389,45 @@ class QXmlStreamWriter;
  * @note SARibbon的自定义是基于步骤的，如果在窗口生成前调用了@ref sa_apply_customize_from_xml_file 类似函数
  * 那么在对话框生成前为了保证同步需要调用@ref SARibbonCustomizeDialog::fromXml 同步配置文件，这样再次修改后的配置文件就一致
  */
-class SA_RIBBON_EXPORT SARibbonCustomizeDialog : public QDialog
-{
+class SA_RIBBON_EXPORT SARibbonCustomizeDialog : public QDialog {
 	Q_OBJECT
 public:
-	SARibbonCustomizeDialog(SARibbonMainWindow *ribbonWindow, QWidget *p = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-	//设置action管理器
-	void setupActionsManager(SARibbonActionsManager *mgr);
+	SARibbonCustomizeDialog(SARibbonMainWindow* ribbonWindow, QWidget* p = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+	// 设置action管理器
+	void setupActionsManager(SARibbonActionsManager* mgr);
 
-	//判断用户是否有要存储的内容，对应save动作
+	// 判断用户是否有要存储的内容，对应save动作
 	bool isApplied() const;
 
-	//判断用户是否有改动内容，对应apply动作
+	// 判断用户是否有改动内容，对应apply动作
 	bool isCached() const;
 
-	//应用所有的设定
+	// 应用所有的设定
 	bool applys();
 
-	//清除所有动作
+	// 清除所有动作
 	void clear();
 
-	//转换为xml
-	bool toXml(QXmlStreamWriter *xml) const;
+	// 转换为xml
+	bool toXml(QXmlStreamWriter* xml) const;
 	bool toXml(const QString& xmlpath) const;
 
-	//从xml中加载QList<SARibbonCustomizeData>，对于基于配置文件的设置，对话框显示前建议调用此函数，保证叠加设置的正确记录
-	void fromXml(QXmlStreamReader *xml);
+	// 从xml中加载QList<SARibbonCustomizeData>，对于基于配置文件的设置，对话框显示前建议调用此函数，保证叠加设置的正确记录
+	void fromXml(QXmlStreamReader* xml);
 	void fromXml(const QString& xmlpath);
 
-	//返回SARibbonCustomizeWidget窗口指针
-	SARibbonCustomizeWidget *customizeWidget() const;
+	// 返回SARibbonCustomizeWidget窗口指针
+	SARibbonCustomizeWidget* customizeWidget() const;
 
 private:
 	void initConnection();
 
-	SARibbonCustomizeDialogUi *ui;
+	SARibbonCustomizeDialogUi* ui;
 };
 
 #endif // SARIBBONCUSTOMIZEDIALOG_H
 
 /*** End of inlined file: SARibbonCustomizeDialog.h ***/
-
 
 /*** Start of inlined file: SARibbonMainWindow.hpp ***/
 #ifndef SARIBBONMAINWINDOW_H
@@ -3572,8 +3465,7 @@ class QScreen;
  * 通过@ref setRibbonTheme 可改变ribbon的样式，用户也可通过qss自己定义自己的样式
  *
  */
-class SA_RIBBON_EXPORT SARibbonMainWindow : public QMainWindow
-{
+class SA_RIBBON_EXPORT SARibbonMainWindow : public QMainWindow {
 	Q_OBJECT
 	SA_RIBBON_DECLARE_PRIVATE(SARibbonMainWindow)
 	friend class SARibbonBar;
@@ -3630,7 +3522,7 @@ private slots:
  */
 void SA_RIBBON_EXPORT sa_set_ribbon_theme(QWidget* w, SARibbonTheme theme);
 
-#endif  // SARIBBONMAINWINDOW_H
+#endif // SARIBBONMAINWINDOW_H
 
 /*** End of inlined file: SARibbonMainWindow.hpp ***/
 

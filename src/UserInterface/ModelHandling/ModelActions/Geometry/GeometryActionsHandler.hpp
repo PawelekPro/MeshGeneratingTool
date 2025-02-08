@@ -43,8 +43,7 @@ class GeometryActionsHandler : public QObject{
     GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
                            CommandManager* aCommandManager,
                            GeometrySignalSender* aGeometrySignalSender,
-                           TreeStructure* aTreeStructure,
-                           ProgressBar* aProgressBar, 
+                           TreeStructure* aTreeStructure, 
                            QObject* aParent);
 
     private:
@@ -55,8 +54,6 @@ class GeometryActionsHandler : public QObject{
     GeometrySignalSender* _geometrySignalSender;
 
     TreeStructure* _treeStructure;
-    ProgressBar* _progressBar;
-
     public slots:
 
     /**

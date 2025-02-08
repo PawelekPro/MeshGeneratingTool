@@ -15,9 +15,13 @@ add_library(GeometryCore
 
 target_link_libraries(GeometryCore PUBLIC
     ${OCC_LIBRARIES}
+    ${VTK_LIBRARIES}
+    Utils
+    ModelEvents
     GeoDoc
-    GeoShapeEditor
     GeoShapes
+    # GeoShapeEditor
+    GeoUtils
 )
 
 target_include_directories(GeometryCore PUBLIC

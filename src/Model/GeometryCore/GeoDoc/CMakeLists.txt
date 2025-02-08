@@ -5,4 +5,12 @@ add_library(GeoDoc
     TagMap.cpp
 )
 
-target_link_libraries(GeoDoc)
+target_link_libraries(GeoDoc PUBLIC
+    GeoUtils
+    GeoShapes
+    GeoImport
+)
+
+target_include_directories(GeoDoc PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)

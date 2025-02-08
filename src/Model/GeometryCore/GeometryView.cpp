@@ -19,6 +19,6 @@
 
 #include "GeometryView.hpp"
 
-GeometryView::GeometryView(const Geometry& aGeometry)
+GeometryView::GeometryView(const GeometryCore::Geometry& aGeometry)
     : _geometry(aGeometry),
       _geoDoc(aGeometry.doc()){}

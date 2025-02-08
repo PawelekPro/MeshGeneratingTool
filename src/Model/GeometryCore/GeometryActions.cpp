@@ -19,5 +19,5 @@
 
 #include "GeometryActions.hpp"
 
-GeometryActions::GeometryActions(const Geometry& aGeometry)
+GeometryActions::GeometryActions( GeometryCore::Geometry& aGeometry)
     : _geometry(aGeometry){}

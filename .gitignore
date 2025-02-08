@@ -37,4 +37,6 @@ build
 
 # XML test file
 test.xml
+
+# settings ini
 settingsFile.ini

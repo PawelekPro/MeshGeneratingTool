@@ -20,9 +20,13 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+
 #include "Geometry.hpp"
 #include "Mesh.h"
 #include "DocumentHandler.hpp"
+#include "ModelSubject.hpp"
+#include <memory>
+#include <vector>
 
 #ifdef _WIN32
 #include <gmsh.h_cwrap>
@@ -31,14 +35,13 @@
 #ifdef linux
 #include <gmsh.h>
 #endif
-
-
-
+class EventObserver;
 class Model {
 	public:
 	static void initializeGmsh();
 
 	std::string _modelName;
+	ModelSubject subject;
 	GeometryCore::Geometry geometry;
 	MeshCore::Mesh mesh;
 
@@ -48,9 +51,11 @@ class Model {
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
 
+	void addObserver(std::shared_ptr<EventObserver> aObserver);
+
 	//--------Geometry interface-----// 
-    void importSTEP(const std::string& filePath, QWidget* progressBar);
-    void importSTL(const std::string& filePath, QWidget* progressBar);
+    void importSTEP(const std::string& filePath);
+    void importSTL(const std::string& filePath);
 
 	//--------Meshing interface-----// 
 	void meshSurface();
@@ -63,12 +68,13 @@ class Model {
 	void addSizing(const std::vector<int>& verticesTags, double size);
 
 	private:
-		static bool gmshInitialized;
 
-		void applyMeshGlobalSize();
-		void applyMeshSizings();
+	static bool gmshInitialized;
 
-		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
+	void applyMeshGlobalSize();
+	void applyMeshSizings();
+
+	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 };
 
 #endif

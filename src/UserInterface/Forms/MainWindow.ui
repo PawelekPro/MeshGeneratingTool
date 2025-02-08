@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1046</width>
-    <height>754</height>
+    <width>1107</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="font">
@@ -101,7 +101,7 @@
             <number>0</number>
            </property>
            <property name="alternatingRowColors">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <attribute name="headerVisible">
             <bool>true</bool>
@@ -147,6 +147,9 @@
            <attribute name="horizontalHeaderMinimumSectionSize">
             <number>100</number>
            </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
           </widget>
          </widget>
         </item>
@@ -174,10 +177,19 @@
           <property name="cursor">
            <cursorShape>ArrowCursor</cursorShape>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="tabPosition">
            <enum>QTabWidget::South</enum>
           </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
           <widget class="QWidget" name="modelView">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <attribute name="title">
             <string>Model view</string>
            </attribute>
@@ -189,12 +201,17 @@
              <number>0</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>2</number>
             </property>
             <property name="bottomMargin">
              <number>0</number>
             </property>
            </layout>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Page</string>
+           </attribute>
           </widget>
          </widget>
         </item>

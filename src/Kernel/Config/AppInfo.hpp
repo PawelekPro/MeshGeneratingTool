@@ -51,6 +51,10 @@ public:
 		return instance;
 	};
 
+	static const QString appName();
+	static const QString appVersion();
+	static const QString appProjFileVersion();
+
 	/**
 	 * @brief  Get name of application as a QString.
 	 *
@@ -89,7 +93,7 @@ public:
 	 * @return The path to the templates directory as a QString.
 	 */
 	const QString getSubItemsSetupPath();
-	
+
 	/**
 	 * @brief Returns the path to the ComboBox models directory.
 	 *
