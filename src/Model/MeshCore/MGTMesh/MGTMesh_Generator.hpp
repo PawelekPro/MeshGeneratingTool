@@ -36,7 +36,7 @@ public:
 	MGTMesh_Generator(const TopoDS_Shape&, const MGTMesh_Algorithm&);
 	~MGTMesh_Generator();
 
-	bool Compute();
+	int Compute();
 	std::shared_ptr<MGTMesh_MeshObject> GetOutputMesh();
 
 private:

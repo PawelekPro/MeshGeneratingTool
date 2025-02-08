@@ -23,6 +23,7 @@
 */
 
 #include "NetgenPlugin_Mesher.hpp"
+#include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMeshUtils_ControlPoint.h"
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_MeshObject.hpp"
@@ -57,6 +58,8 @@
 #include <meshing.hpp>
 #include <occgeom.hpp>
 
+#include <spdlog/spdlog.h>
+
 #include <map>
 #include <set>
 #include <vector>
@@ -80,8 +83,7 @@ void updateTriangulation(const TopoDS_Shape& shape) {
 
 	try {
 		BRepMesh_IncrementalMesh e(shape, 0.01, true);
-	} catch (Standard_Failure&) {
-	}
+	} catch (Standard_Failure&) { }
 }
 
 //----------------------------------------------------------------------------
@@ -115,8 +117,7 @@ void setLocalSize(const TopoDS_Shape& GeomShape, double LocalSize) {
 
 //----------------------------------------------------------------------------
 void setLocalSize(
-	const TopoDS_Edge& edge, double size, netgen::Mesh& mesh,
-	const bool overrideMinH = true) {
+	const TopoDS_Edge& edge, double size, netgen::Mesh& mesh, const bool overrideMinH = true) {
 	if (size <= std::numeric_limits<double>::min())
 		return;
 
@@ -137,8 +138,7 @@ void setLocalSize(
 		for (int i = 0; i < nb; i++) {
 			Standard_Real u = u1 + delta * i;
 			gp_Pnt p = curve->Value(u);
-			NetgenPlugin_Mesher::RestrictLocalSize(
-				mesh, p.XYZ(), size, overrideMinH);
+			NetgenPlugin_Mesher::RestrictLocalSize(mesh, p.XYZ(), size, overrideMinH);
 			netgen::Point3d pi(p.X(), p.Y(), p.Z());
 			double resultSize = mesh.GetH(pi);
 
@@ -219,19 +219,18 @@ void NetgenPlugin_Mesher::PrepareOCCgeometry(
 }
 
 //----------------------------------------------------------------------------
-bool NetgenPlugin_Mesher::ComputeMesh() {
-	std::cout << "Netgen mesh compute event requested" << std::endl;
+int NetgenPlugin_Mesher::ComputeMesh() {
 	NetgenPlugin_NetgenLibWrapper ngLib;
 	netgen::MeshingParameters& mparams = netgen::mparam;
 
 	netgen::OCCGeometry occgeo;
-	std::cout << "Preparing geometry" << std::endl;
+	SPDLOG_INFO("Preparing geometry...");
 	this->PrepareOCCgeometry(occgeo, _shape);
 	_occgeom = &occgeo;
 
 	_ngMesh = nullptr;
 	NetgenPlugin_MeshInfo initState;
-	int err = 0;
+	int err = MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 
 	mparams.maxh = 100.0;
 	if (mparams.maxh == 0.0)
@@ -240,26 +239,27 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	if (mparams.minh == 0.0 && _fineness != NetgenPlugin_Parameters::UserDefined)
 		mparams.minh = this->GetDefaultMinSize(_shape, mparams.maxh);
 
-	std::cout << mparams << std::endl;
+	std::cout << "Using mesh parametrs: " << mparams << std::endl;
 	occgeo.face_maxh = mparams.maxh;
 	int startWith = netgen::MESHCONST_ANALYSE;
 	int endWith = netgen::MESHCONST_ANALYSE;
 
-	std::cout << "Starting mesh generation process" << std::endl;
+	SPDLOG_INFO("Starting mesh generation process");
+
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith, _ngMesh);
 	} catch (Standard_Failure& ex) {
-		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
-		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+		SPDLOG_ERROR("Netgen Exception: {}", ex.What());
 	}
 
 	if (!_ngMesh)
-		return false;
+		return err;
 	ngLib.setMesh((nglib::Ng_Mesh*)_ngMesh);
 
 	if (err)
-		return false;
+		return err;
 
 	if (!mparams.uselocalh)
 		_ngMesh->LocalHFunction().SetGrading(mparams.grading);
@@ -275,13 +275,13 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
 	} catch (Standard_Failure& ex) {
-		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
-		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+		SPDLOG_ERROR("Netgen Exception: {}", ex.What());
 	}
 
 	if (err)
-		return false;
+		return err;
 
 	// Compute surface mesh
 	mparams.uselocalh = true;
@@ -292,40 +292,41 @@ bool NetgenPlugin_Mesher::ComputeMesh() {
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
 	} catch (Standard_Failure& ex) {
-		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
-		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+		SPDLOG_ERROR("Netgen Exception: {}", ex.What());
 	}
 
-	if (err || !_algorithm->Is3DAlgortihm())
-		return false;
+	if (err)
+		return err;
+	else if (!_algorithm->Is3DAlgortihm())
+		return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 
 	// Compute volume mesh
 	startWith = netgen::MESHCONST_MESHVOLUME;
 	endWith = _optimize ? netgen::MESHCONST_OPTVOLUME : netgen::MESHCONST_MESHVOLUME;
-	std::cout << "Starting volume mesh generation process" << std::endl;
+	SPDLOG_INFO("Starting volume mesh generation process");
 
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
 	} catch (Standard_Failure& ex) {
-		std::cout << "OpenCASCADE Exception: " << ex.GetMessageString() << std::endl;
+		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
-		std::cout << "Netgen Exception: " << ex.What() << std::endl;
+		SPDLOG_ERROR("Netgen Exception: {}", ex.What());
 	}
 
 	if (err)
-		return false;
+		return err;
 
 	NetgenPlugin_Netgen2VTK netgen2vtk = NetgenPlugin_Netgen2VTK(*_ngMesh);
 	_mesh->SetInternalMesh(netgen2vtk.GetInternalMesh());
 	_mesh->SetBoundaryMesh(netgen2vtk.GetBoundaryMesh());
 
-	return !err;
+	return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 }
 
 //----------------------------------------------------------------------------
-double NetgenPlugin_Mesher::GetDefaultMinSize(
-	const TopoDS_Shape& geom, const double maxSize) {
+double NetgenPlugin_Mesher::GetDefaultMinSize(const TopoDS_Shape& geom, const double maxSize) {
 	updateTriangulation(geom);
 
 	TopLoc_Location loc;
@@ -335,8 +336,8 @@ double NetgenPlugin_Mesher::GetDefaultMinSize(
 	TopExp_Explorer fExp(geom, TopAbs_FACE);
 
 	for (; fExp.More(); fExp.Next()) {
-		Handle(Poly_Triangulation) triangulation = BRep_Tool::Triangulation(
-			TopoDS::Face(fExp.Current()), loc);
+		Handle(Poly_Triangulation) triangulation
+			= BRep_Tool::Triangulation(TopoDS::Face(fExp.Current()), loc);
 		if (triangulation.IsNull())
 			continue;
 
@@ -402,8 +403,7 @@ void NetgenPlugin_Mesher::RestrictLocalSize(
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Mesher::SetLocalSize(
-	netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh) {
+void NetgenPlugin_Mesher::SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh) {
 	// edges
 	std::map<int, double>::const_iterator it;
 	for (it = EdgeId2LocalSize.begin(); it != EdgeId2LocalSize.end(); it++) {
@@ -452,7 +452,6 @@ void NetgenPlugin_Mesher::SetLocalSize(
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Mesher::SetParameters(
-	const MGTMeshUtils_ViscousLayers* layersScheme) {
+void NetgenPlugin_Mesher::SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme) {
 	_viscousLayers = layersScheme;
 }

@@ -25,6 +25,7 @@
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
 
+#include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_Generator.hpp"
 
@@ -74,9 +75,9 @@ void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
 }
 
 //----------------------------------------------------------------------------
-bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
+void Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	if (!algorithm)
-		return false;
+		return;
 
 	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
 		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
@@ -84,12 +85,9 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	for (const auto& it : _shapesMap) {
 		spdlog::debug("Creating mesh generator for shape: {}", it.first);
 		MGTMesh_Generator meshGenerator(it.second, *algorithm);
-		bool result = meshGenerator.Compute();
-		if (!result) {
+		int result = meshGenerator.Compute();
+		if (result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
 			SPDLOG_ERROR("Error while generating mesh for shape: {}", it.first);
-			return result;
 		}
 	}
-
-	return false;
 }

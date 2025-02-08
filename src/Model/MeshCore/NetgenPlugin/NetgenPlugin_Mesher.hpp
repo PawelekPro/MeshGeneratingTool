@@ -39,15 +39,12 @@ class NetgenPlugin_Parameters;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(
-		MGTMesh_MeshObject* mesh,
-		const TopoDS_Shape& shape,
+	NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape,
 		const NetgenPlugin_Parameters* algorithm);
 	~NetgenPlugin_Mesher();
-	bool ComputeMesh();
+	int ComputeMesh();
 
-	static void PrepareOCCgeometry(
-		netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
+	static void PrepareOCCgeometry(netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
 	double GetDefaultMinSize(const TopoDS_Shape& geom, const double maxSize);
 
 	static void RestrictLocalSize(

@@ -8,6 +8,7 @@ ADD_LIBRARY(NetgenPlugin
 
 if(WIN32)
     TARGET_LINK_LIBRARIES(NetgenPlugin PUBLIC
+        spdlog::spdlog_header_only
         ${OpenCASCADE_LIBRARIES}
         ${VTK_LIBRARIES}
         ${NETGEN_LIBRARIES}
@@ -15,6 +16,7 @@ if(WIN32)
         MGTMeshUtils)
 else()
     TARGET_LINK_LIBRARIES(NetgenPlugin PUBLIC
+        spdlog::spdlog_header_only    
         ${OCC_LIBRARIES}
         ${VTK_LIBRARIES}
         ${NETGEN_LIBRARIES}

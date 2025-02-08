@@ -23,22 +23,21 @@
 */
 
 #include "MGTMesh_Generator.hpp"
+#include "MGTMeshUtils_ComputeError.hpp"
 #include "NetgenPlugin_Mesher.hpp"
 #include "NetgenPlugin_Parameters.hpp"
 
 //----------------------------------------------------------------------------
-MGTMesh_Generator::MGTMesh_Generator(
-	const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm)
+MGTMesh_Generator::MGTMesh_Generator(const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm)
 	: _shape(&shape)
 	, _algorithm(&algorithm)
-	, _meshObject(std::make_shared<MGTMesh_MeshObject>()) {
-}
+	, _meshObject(std::make_shared<MGTMesh_MeshObject>()) { }
 
 //----------------------------------------------------------------------------
 MGTMesh_Generator::~MGTMesh_Generator() { }
 
 //----------------------------------------------------------------------------
-bool MGTMesh_Generator::Compute() {
+int MGTMesh_Generator::Compute() {
 	if (_algorithm->GetEngineLib() == MGTMesh_Scheme::Engine::NETGEN) {
 		std::unique_ptr<NetgenPlugin_Parameters> netgenAlg
 			= std::make_unique<NetgenPlugin_Parameters>(_algorithm->GetID());
@@ -46,5 +45,5 @@ bool MGTMesh_Generator::Compute() {
 		NetgenPlugin_Mesher netgenMesher(_meshObject.get(), *_shape, netgenAlg.get());
 		return netgenMesher.ComputeMesh();
 	}
-	return false;
+	return MGTMeshUtils_ComputeErrorName::COMPERR_BAD_PARMETERS;
 }

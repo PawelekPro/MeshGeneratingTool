@@ -55,7 +55,7 @@ public:
 	void importSTL(const std::string& filePath, QWidget* progressBar);
 
 	//--------Meshing interface-----//
-	bool generateMesh(const MGTMesh_Algorithm* algorithm);
+	void generateMesh(const MGTMesh_Algorithm* algorithm);
 
 private:
 	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
