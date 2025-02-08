@@ -18,6 +18,7 @@
  */
 
 #include "PropertiesModel.hpp"
+#include "DocUtils.hpp"
 
 //--------------------------------------------------------------------------------------
 bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
@@ -41,7 +42,6 @@ PropertiesModel::PropertiesModel(const QDomElement& aPropertiesElement, QWidget*
 
     this->_header << "Property"
                   << "Value";
-
 
 	QDomNodeList properties = aPropertiesElement.childNodes();
     for (int row = 0; row < properties.length(); ++row) {
@@ -88,8 +88,7 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 	QDomElement propNode = this->_properties[index.row()];
 	QVariant dataVariant;
 	if (index.column() == PropertiesModel::Col::Label) {
-		QDomAttr attr = propNode.attributes().namedItem("label").toAttr();
-		dataVariant = attr.value();
+		dataVariant = QVariant(Properties::getPropertyAttribute(propNode, QString("label")));
 	} else if (index.column() == PropertiesModel::Col::Data) {
 		dataVariant = propNode.firstChild().toText().data();
 	}
@@ -103,18 +102,13 @@ bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, 
 		return false;
 	}
 
-	QDomElement propElement= this->_properties[index.row()];
+	QDomElement property = this->_properties[index.row()];
 	if (index.column() == PropertiesModel::Col::Data) {
-		QDomText textNode = propElement.firstChild().toText();
-		if (textNode.isNull()) {
-			DocumentHandler::getInstance().addTextNode(propElement, value.toString());
-		} else {
-			textNode.setData(value.toString());
-		}
+		Properties::setPropertyValue(property, value.toString());
 		emit dataChanged(index, index);
 		return true;
 	} else if (index.column() == PropertiesModel::Col::Label) {
-		DocumentHandler::setAttribute(propElement, "label", value.toString());
+		Properties::setPropertyAttribute(property, "label", value.toString());
 	} else {
 		qWarning() << "Invalid model index column.";
 	}
@@ -171,10 +165,10 @@ QWidget* PropertiesModel::getWidget( const QModelIndex& aIndex, QWidget* aWidget
 		qWarning("Widget index should have column == 1");
 	}
 
-	QDomElement propertyElement = _properties[aIndex.row()];
-	QString widgetName = DocumentHandler::getAttribute(propertyElement, "widget");
+	QDomElement property = _properties[aIndex.row()];
+	QString widgetName = Properties::getPropertyAttribute(property, "widget");
 	BaseWidget* newWidget = nullptr;
-	newWidget= WidgetFactory::createWidget(widgetName, aWidgetParent);
+	newWidget = WidgetFactory::createWidget(widgetName, aWidgetParent);
 	if(newWidget){
 		newWidget->setIndex(aIndex);
 	} else {

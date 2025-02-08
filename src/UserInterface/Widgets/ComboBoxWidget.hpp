@@ -21,8 +21,8 @@
 #define COMBOBOXWIDGET_HPP
 
 #include "AppInfo.hpp"
-#include "JsonParser.hpp"
 #include "BaseWidget.hpp"
+#include "DefaultsParser.hpp"
 
 #include "document.h"
 #include "filereadstream.h"
@@ -106,6 +106,12 @@ protected:
 	 *       If the model data is missing or malformed, the behavior is undefined.
 	 */
 	QStringListModel* createQStringListModel(const QString&);
+
+
+	/**
+	 * @brief Slot to be triggered when new selection is done to call setData on model
+	 */
+	void onComboBoxIndexChanged(int aIndex);
 
 	QComboBox* _comboBox; /**< Pointer to the ComboBox widget. */
 	QModelIndex _index; /**< The QModelIndex associated with the ComboBoxWidget. */

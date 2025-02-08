@@ -23,6 +23,7 @@
 #include "DoubleLineWidget.hpp"
 #include "EntityPickWidget.hpp"
 #include "IntLineWidget.hpp"
+#include "LabelWidget.hpp"
 #include "RibbonBarWidget.hpp"
 
 namespace WidgetFactory {
@@ -38,6 +39,8 @@ BaseWidget* createWidget(const QString& widgetType, QWidget* parent) {
 		return new EntityPickWidget(parent);
 	} else if (widgetType == "IntLineWidget") {
 		return new IntLineWidget(parent);
+	} else if (widgetType == "LabelWidget") {
+		return new LabelWidget(parent);
 	}
 
 	std::cerr << widgetType.toStdString() << " could not be found in WidgetFactory" << std::endl;

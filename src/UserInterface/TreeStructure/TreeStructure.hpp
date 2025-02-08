@@ -20,11 +20,7 @@
 #ifndef TREESTRUCTURE_HPP
 #define TREESTRUCTURE_HPP
 
-#include "PropertiesModel.hpp"
-#include "TreeContextMenu.hpp"
-#include "DocumentHandler.hpp"
 #include "TreeItem.hpp"
-#include "ModelActionsHandler.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -45,7 +41,7 @@
 
 class TreeContextMenu;
 class TreeItemFactory;
-class TreeItem;
+class ModelActionsHandler;
 
 /**
  * Represents a custom tree structure widget for displaying hierarchical data.
@@ -155,8 +151,6 @@ public:
 	
 	/* getters */
 	ModelActionsHandler* modelHandler(){return _modelHandler;};
-	MeshActionsHandler* meshHandler(){return _modelHandler->_meshHandler;};
-	GeometryActionsHandler* geoHandler(){return _modelHandler->_geometryHandler;};
 	
 private:
 

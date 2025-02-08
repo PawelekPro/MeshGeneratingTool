@@ -19,6 +19,7 @@
 
 #include "ComboBoxWidget.hpp"
 #include "PropertiesModel.hpp"
+#include "DocUtils.hpp"
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::ComboBoxWidget(QWidget* parent)
@@ -33,6 +34,7 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 	layout->addWidget(_comboBox);
 
 	this->setLayout(layout);
+	connect(_comboBox, &QComboBox::currentIndexChanged, this, &ComboBoxWidget::onComboBoxIndexChanged);
 }
 
 //----------------------------------------------------------------------------
@@ -54,46 +56,31 @@ void ComboBoxWidget::setIndex(const QModelIndex& index) {
 	}
 
 	QDomElement element = propsModel->getProperty(index.row());
-	QDomNamedNodeMap attrs = element.attributes();
-	QString modelName = attrs.namedItem("model").toAttr().value();
-
-	QStringListModel* listModel = this->createQStringListModel(modelName);
+	QString modelLabel = Properties::getPropertyAttribute(element, "model");
+QStringListModel* listModel = this->createQStringListModel(modelLabel);
 	_comboBox->setModel(listModel);
+}
+
+void ComboBoxWidget::onComboBoxIndexChanged(int index) {
+    if (!_index.isValid())
+        return;
+
+    QString selectedValue = _comboBox->currentText();
+
+    QAbstractItemModel* model = const_cast<QAbstractItemModel*>(_index.model());
+    if (!model) {
+        qWarning() << "Model is null!";
+        return;
+    }
+
+    if (!model->setData(_index, selectedValue, Qt::EditRole)) {
+        qWarning() << "Failed to set data on the model!";
+    }
 }
 
 //----------------------------------------------------------------------------
 QStringListModel* ComboBoxWidget::createQStringListModel(const QString& name) {
-
-	rapidjson::Document document = JsonParser::initJsonDocument(AppInfo::getInstance().getComboBoxModelsPath());
-
-	if (!document.HasMember(name.toStdString().c_str())
-		|| !(document)[name.toStdString().c_str()].IsObject()) {
-
-		vtkLogF(ERROR, ("No such model: " + name.toStdString()).c_str());
-		return new QStringListModel();
-	}
-
-	const rapidjson::Value& model = (document)[name.toStdString().c_str()];
-
-	std::vector<int> ids;
-	std::vector<QString> m_list;
-
-	for (const auto& pair : model.GetObject()) {
-		const QString key = QString::fromStdString(pair.name.GetString());
-		int id = key.toInt();
-		ids.push_back(id);
-
-		const QString label = QString::fromStdString(pair.value["label"].GetString());
-		m_list.push_back(label);
-	}
-
-	std::sort(ids.begin(), ids.end());
-
-	QStringList qStringList;
-	for (int id : ids) {
-		qStringList << m_list[id];
-	}
-
-	QStringListModel* listModel = new QStringListModel(qStringList);
+	QStringList comboBoxList = DefaultsParser::getComboBoxList(name);
+	QStringListModel* listModel = new QStringListModel(comboBoxList);
 	return listModel;
 }

@@ -9,6 +9,7 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define an option to include/exclude examples
 option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_TESTS "Build tests" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
@@ -221,6 +222,16 @@ if(BUILD_EXAMPLES)
     # Include the examples directory
     add_subdirectory(examples)
 endif()
+
+# GTEST
+######################################################################
+find_package(GTest CONFIG REQUIRED COMPONENTS GTest GMock)
+
+MESSAGE( STATUS "GTest Library FOUND" )
+MESSAGE( STATUS "GTest VERSION: ${GTest_VERSION}" )
+
+INCLUDE_DIRECTORIES(${GTest_INCLUDE_DIRS} ${GMock_INCLUDE_DIRS})
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 
 # Print info
 ######################################################################

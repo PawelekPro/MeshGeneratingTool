@@ -31,7 +31,6 @@
 #include <QtXml/QDomElement>
 
 #include "WidgetFactory.hpp"
-#include "DocumentHandler.hpp"
 
 /**
  * Custom model filter class that filters rows based on a custom criteria.

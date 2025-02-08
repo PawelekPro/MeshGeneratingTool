@@ -19,10 +19,10 @@
 
 #include "EntityPickWidget.hpp"
 #include "RenderSignalSender.hpp"
-#include "DocumentHandler.hpp"
+#include "DocUtils.hpp"
 #include "PropertiesModel.hpp"
 #include "TreeStructure.hpp"
-
+#include "ModelActionsHandler.hpp"
 //----------------------------------------------------------------------------
 EntityPickWidget::EntityPickWidget(QWidget* parent)
 	: _selectionLabel(new QLabel(this))
@@ -82,7 +82,7 @@ void EntityPickWidget::updateAppearance() {
 //----------------------------------------------------------------------------
 void EntityPickWidget::confirmSelection() {
 	std::vector<int> selectedShapes = _signalSender->getSelectedShapes();
-	QString selectedShapesString = DocumentHandler::intsToString(selectedShapes);
+	QString selectedShapesString = DocUtils::intsToString(selectedShapes);
 	_propModel->setData(_index, QVariant::fromValue(selectedShapesString), Qt::EditRole);
 	if (_selected) {
 		this->updateAppearance();

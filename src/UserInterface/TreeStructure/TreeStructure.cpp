@@ -18,6 +18,8 @@
  */
 
 #include "TreeStructure.hpp"
+#include "DocumentHandler.hpp"
+#include "TreeContextMenu.hpp"
 #include "TreeItem.hpp"
 #include "TreeItemFactory.hpp"
 
@@ -53,14 +55,9 @@ void TreeStructure::setModelHandler(ModelActionsHandler* aModelHandler) {
 
 //--------------------------------------------------------------------------------------
 TreeStructure::~TreeStructure() {
-#ifdef _WIN32
-	std::string xmlPath = "test.xml";
-#endif
-#ifdef linux
-	std::string xPath = "/mnt/Data/meshGenerator/MeshGeneratingTool/test.xml";
-#endif
 
-	DocumentHandler::getInstance().writeDocToXML("testRootCreation.xml");
+	std::string xmlPath = "test.xml";
+	DocumentHandler::getInstance().writeDocToXML(xmlPath);
 
 	delete _contextMenu;
 	delete _treeItemFactory;
@@ -147,8 +144,6 @@ void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem) 
 	QDomElement parentElement = aParentItem->getElement();
 	if (!parentElement.isNull()) {
 		parentElement.appendChild(itemElement);
-		DocumentHandler& docHandler = DocumentHandler::getInstance();
-		docHandler.appendExistingElement(parentElement, itemElement);
 	} else {
 		qWarning("Parent item does not have a valid DOM element!");
 	}

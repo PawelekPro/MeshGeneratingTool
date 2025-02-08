@@ -16,50 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DOCITEMTYPES_HPP
-#define DOCITEMTYPES_HPP
 
-#include <variant>
-#include <QString>
-#include <stdexcept>
+#include <gtest/gtest.h>
 
-
-
-namespace ItemTypes{
-
-    enum class Root{
-        Geometry,
-        Mesh,
-        Solution,
-        Results
-    };
-
-    enum class Geometry{
-        ImportSTEP,
-        ExtrudeFace,
-    };
-
-    enum class Mesh{
-        ElementSizing
-    };
-
-    enum class Solution{
-        BoundaryConditions,
-        SourceTerms,
-        Metrics
-    };
-
-    enum class Results{
-        ContourMap,
-        Residuals
-    };
-
-    using Sub = std::variant<Geometry, Mesh, Solution, Results>;
-
-    QString label(const Sub& aSubItem) noexcept;
-    QString label(const Root& aRootItem) noexcept;
-
-    Root rootType(const Sub& aSubType) noexcept;
+int main(int argc, char** argv) 
+{ 
+    testing::InitGoogleTest(&argc, argv); 
+    RUN_ALL_TESTS(); 
 }
-
-#endif
