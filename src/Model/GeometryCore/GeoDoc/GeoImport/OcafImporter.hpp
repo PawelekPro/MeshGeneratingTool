@@ -21,13 +21,17 @@
 
 #include <TDocStd_Document.hxx>
 #include <Standard_Handle.hxx>
-
+#include "IEventSubject.hpp"
 class OcafImporter {
     public:
-        virtual bool importToDocument(const std::string& aFilePath, Handle(TDocStd_Document) aDestDoc) = 0;
+        OcafImporter(const IEventSubject& aModelSubject);
+        virtual bool importToDocument(
+            const std::string& aFilePath,
+            Handle(TDocStd_Document) aDestDoc) = 0;
         virtual ~OcafImporter() = default;
 
     protected:
+        const IEventSubject& _modelSubject;
         static bool filePathExists(const std::string& afilePath);
 
 };

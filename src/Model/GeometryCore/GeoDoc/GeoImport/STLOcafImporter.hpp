@@ -17,34 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELSUBJECT_HPP
-#define MODELSUBJECT_HPP
+#ifndef STLOCAFIMPORTER_HPP
+#define STLOCAFIMPORTER_HPP
 
-#include "IEventSubject.hpp"
+#include "OcafImporter.hpp"
+#include <Standard_Handle.hxx>
+#include "OccProgressWrapper.hpp"
+#include <TopoDS_Shape.hxx>
+#include <Poly_Triangulation.hxx>
 
-#include <vector>
-#include <memory>
-
-class Event;
-class EventObserver;
-
-class ModelSubject : public IEventSubject {
+class STLOcafImporter : public OcafImporter {
 
     public:
-        ModelSubject() = default;
-        ~ModelSubject() = default;
+    bool importToDocument(
+            const std::string& aFilePath, 
+            Handle(TDocStd_Document) aDestDoc
+    ) override;
 
-        void publishEvent(const Event& aEvent) const override;
-
-        void attachObserver(std::shared_ptr<EventObserver>) override;
-        void detachObserver(std::shared_ptr<EventObserver>) override;
+    STLOcafImporter(const IEventSubject& aModelSubject);
+    ~STLOcafImporter() = default;
 
     private:
-        void notifyObservers(const Event& aEvent) const;
-        std::vector<std::shared_ptr<EventObserver>> _observers;
+    bool transferShape(const TopoDS_Shape& aShape, Handle(TDocStd_Document) aDestDoc);
+    TopoDS_Shape extractShells(const TopoDS_Shape& aShape);
+    TopoDS_Shape sewShape(Handle(Poly_Triangulation) aTriangulation);
+    OccProgressWrapper _progress;
 
 };
-
 
 
 #endif

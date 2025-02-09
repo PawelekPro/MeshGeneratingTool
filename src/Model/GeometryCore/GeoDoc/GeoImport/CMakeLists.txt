@@ -4,6 +4,7 @@ ADD_LIBRARY(GeoImport
     STEPImporter.cpp
     STLImporter.cpp
     GeometryImporter.cpp
+    STLOcafImporter.cpp
     )
 
 if(WIN32)

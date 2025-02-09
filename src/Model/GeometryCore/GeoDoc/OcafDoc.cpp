@@ -19,17 +19,20 @@
 
 #include "OcafDoc.hpp"
 #include "STEPOcafImporter.hpp"
+#include "STLOcafImporter.hpp"
+
+
 #include "XCAFApp_Application.hxx"
 #include "XCAFDoc_DocumentTool.hxx"
-#include "STEPCAFControl_Reader.hxx"
+
 #include <XmlXCAFDrivers.hxx>
 #include <TDocStd_Application.hxx>
 #include <Standard_Failure.hxx>
 #include <Storage_Error.hxx>
 #include "XmlXCAFDrivers.hxx"
-#include <locale>
-#include <codecvt>
-OcafDoc::OcafDoc(){
+
+
+OcafDoc::OcafDoc(const IEventSubject& aModelSubject) : _modelSubject(aModelSubject){
     auto app = XCAFApp_Application::GetApplication();
     app->NewDocument("XmlXCAF", this->_document);
     _document->SetUndoLimit(3);
@@ -71,46 +74,50 @@ bool OcafDoc::saveAsXml(const std::string& filePath) const {
 
 std::vector<TopoDS_Shape> OcafDoc::getAllShapes() const {
     std::vector<TopoDS_Shape> shapes;
-
     if (!_shapeTool) {
+        std::cerr << "ShapeTool not initialized" << std::endl;
         return shapes;
     }
-
     TDF_LabelSequence freeShapes;
-    _shapeTool->GetFreeShapes(freeShapes); // Retrieve free shapes
+    _shapeTool->GetFreeShapes(freeShapes);
+    shapes.resize(freeShapes.Length());
+    std::transform(
+        freeShapes.begin(), freeShapes.end(), shapes.begin(),
+        [this](const TDF_Label& label) { return _shapeTool->GetShape(label); }
+    );
 
-    for (Standard_Integer i = 1; i <= freeShapes.Length(); ++i) {
-        TDF_Label shapeLabel = freeShapes.Value(i);
-
-        if (_shapeTool->IsShape(shapeLabel)) {
-            TopoDS_Shape shape = _shapeTool->GetShape(shapeLabel);
-            shapes.push_back(shape);
-        }
-    }
     return shapes;
 }
 
-bool OcafDoc::importSTEP(const std::string& aFilePath) {
+bool OcafDoc::import(OcafImporter& aImporter, const std::string& aFilePath){
     bool result = false;
     try {
-        STEPOcafImporter STEPImporter;
         _document->NewCommand();
-        result = STEPImporter.importToDocument(aFilePath,  _document);
+        result = aImporter.importToDocument(aFilePath,  _document);
         _document->CommitCommand();
     }
-    catch (const std::runtime_error& e) {  // Specific exception type
+    catch (const std::runtime_error& e) {
         std::cerr << "Could not import file, error: " << e.what() << std::endl;
     } 
-    catch (const std::exception& e) {  // Generic standard exception
+    catch (const std::exception& e) {
         std::cerr << "Could not import file, error: " << e.what() << std::endl;
     } 
-    catch (...) {  // Catch-all handler for unknown exceptions
+    catch (...) { 
         std::cerr << "Could not import file, unknown exception" << std::endl;
     }
     return result;
 }
 
 
+bool OcafDoc::importSTL(const std::string& aFilePath) {
+    STLOcafImporter importer(_modelSubject);
+    return import(importer, aFilePath);
+}
+
+bool OcafDoc::importSTEP(const std::string& aFilePath) {
+    STEPOcafImporter importer(_modelSubject);
+    return import(importer, aFilePath);
+}
 
 
 void OcafDoc::undo(){

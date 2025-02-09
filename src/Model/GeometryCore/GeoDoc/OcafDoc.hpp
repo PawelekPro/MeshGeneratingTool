@@ -30,13 +30,15 @@
 #include <gp_Trsf.hxx>
 
 #include "GeoShape.hpp"
-
+#include "IEventSubject.hpp"
+class OcafImporter;
 class OcafDoc{
 
     public: 
-        OcafDoc();
+        OcafDoc(const IEventSubject& aModelSubject);
 
         bool importSTEP(const std::string& aFilePath);
+        bool importSTL(const std::string& aFilePath);
 
         void undo();
         
@@ -44,11 +46,15 @@ class OcafDoc{
 
         std::string getShapeName(const TopoDS_Shape& aShape) const;
         bool saveAsXml(const std::string& filePath) const;
-
+        Handle(XCAFDoc_ShapeTool) shapeTool(){return _shapeTool;};
     private:
         Handle(TDocStd_Document) _document;
         Handle(XCAFDoc_ShapeTool) _shapeTool;
         Handle(XCAFDoc_ColorTool) _colorTool;
-};
+        
+        const IEventSubject& _modelSubject;
+        bool import(OcafImporter& aImporter, const std::string& aFilePath);
+
+    };
 
 #endif

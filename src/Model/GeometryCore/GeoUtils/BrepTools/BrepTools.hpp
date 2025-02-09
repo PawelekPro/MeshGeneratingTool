@@ -17,34 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELSUBJECT_HPP
-#define MODELSUBJECT_HPP
+#ifndef BREPTOOLS_HPP
+#define BREPTOOLS_HPP
 
-#include "IEventSubject.hpp"
+#include <Poly_Triangulation.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeSolid.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
+#include <TopoDS.hxx>
 
-#include <vector>
-#include <memory>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Wire.hxx>
 
-class Event;
-class EventObserver;
+namespace BrepTools{
 
-class ModelSubject : public IEventSubject {
+    TopoDS_Face makeTriangleFace(const gp_Pnt& p1, const gp_Pnt& p2, const gp_Pnt& p3);
 
-    public:
-        ModelSubject() = default;
-        ~ModelSubject() = default;
-
-        void publishEvent(const Event& aEvent) const override;
-
-        void attachObserver(std::shared_ptr<EventObserver>) override;
-        void detachObserver(std::shared_ptr<EventObserver>) override;
-
-    private:
-        void notifyObservers(const Event& aEvent) const;
-        std::vector<std::shared_ptr<EventObserver>> _observers;
-
-};
-
-
+}
 
 #endif

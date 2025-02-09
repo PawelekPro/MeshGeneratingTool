@@ -26,9 +26,13 @@
 class STEPOcafImporter : public OcafImporter {
 
     public:
-        bool importToDocument(const std::string& aFilePath, Handle(TDocStd_Document) aDestDoc) override;
+        bool importToDocument(
+            const std::string& aFilePath,
+            Handle(TDocStd_Document) aDestDoc
+        ) override;
+        
+        STEPOcafImporter(const IEventSubject& aModelSubject);
         ~STEPOcafImporter() = default;
-    
 };
 
 #endif

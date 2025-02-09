@@ -1,3 +1,5 @@
+add_subdirectory(BrepTools)
+
 add_library(GeoUtils
     OccProgressWrapper.cpp
 )
@@ -5,6 +7,7 @@ add_library(GeoUtils
 target_link_libraries(GeoUtils PUBLIC
     ${OCC_LIBRARIES}
     ModelEvents
+    BrepTools
 )
 
 target_include_directories(GeoUtils PUBLIC

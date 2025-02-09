@@ -17,34 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODELSUBJECT_HPP
-#define MODELSUBJECT_HPP
-
-#include "IEventSubject.hpp"
-
-#include <vector>
-#include <memory>
-
-class Event;
-class EventObserver;
-
-class ModelSubject : public IEventSubject {
-
-    public:
-        ModelSubject() = default;
-        ~ModelSubject() = default;
-
-        void publishEvent(const Event& aEvent) const override;
-
-        void attachObserver(std::shared_ptr<EventObserver>) override;
-        void detachObserver(std::shared_ptr<EventObserver>) override;
-
-    private:
-        void notifyObservers(const Event& aEvent) const;
-        std::vector<std::shared_ptr<EventObserver>> _observers;
-
-};
+ #include "GeoDoc.hpp"
 
 
-
-#endif
+ 

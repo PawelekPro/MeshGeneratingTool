@@ -20,6 +20,9 @@
 #include "OcafImporter.hpp"
 #include <filesystem>
 
+OcafImporter::OcafImporter(const IEventSubject& aModelSubject) : 
+    _modelSubject(aModelSubject){}
+
 bool OcafImporter::filePathExists(const std::string& aFilePath){
     if (!std::filesystem::exists(aFilePath)) {
         auto message = "File " + aFilePath + " can not be found.";

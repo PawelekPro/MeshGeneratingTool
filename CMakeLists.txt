@@ -230,7 +230,6 @@ find_package(GTest CONFIG REQUIRED COMPONENTS GTest GMock)
 
 MESSAGE( STATUS "GTest Library FOUND" )
 MESSAGE( STATUS "GTest VERSION: ${GTest_VERSION}" )
-
 INCLUDE_DIRECTORIES(${GTest_INCLUDE_DIRS} ${GMock_INCLUDE_DIRS})
 MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 

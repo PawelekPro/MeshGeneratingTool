@@ -23,10 +23,18 @@
 IMPLEMENT_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
 
 OccProgressWrapper::OccProgressWrapper(
-    const ModelSubject& aSubject, 
+    const IEventSubject& aSubject, 
     const std::string& aInitLabel) :
     _subject(aSubject),
     _progressEvent(ProgressEvent(aInitLabel, 0)){};
+
+void OccProgressWrapper::publishProgress(const std::string& aLabel, int progress){
+    _progressEvent.label = aLabel;
+    _progressEvent.value = progress;
+    _subject.publishEvent(_progressEvent);
+}
+
+
 
 void OccProgressWrapper::Show(
     const Message_ProgressScope& aScope,

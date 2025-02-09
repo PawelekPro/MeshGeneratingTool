@@ -20,6 +20,10 @@
 #include "STEPOcafImporter.hpp"
 #include "STEPCAFControl_Reader.hxx"
 #include <stdexcept>
+#include "OccProgressWrapper.hpp"
+
+STEPOcafImporter::STEPOcafImporter(const IEventSubject& aModelSubject) : 
+    OcafImporter(aModelSubject){}
 
 bool STEPOcafImporter::importToDocument(const std::string& aFilePath, Handle(TDocStd_Document) aDestDoc) {
     if (!filePathExists(aFilePath)) {
@@ -30,10 +34,11 @@ bool STEPOcafImporter::importToDocument(const std::string& aFilePath, Handle(TDo
     cafReader.SetColorMode(true);
     cafReader.SetLayerMode(true);
     cafReader.SetNameMode(true);
+
     IFSelect_ReturnStatus result = cafReader.ReadFile(aFilePath.c_str());
     if (result != IFSelect_RetDone) {
         throw std::runtime_error("Failed to read STEP file.");
     }
-
-    return cafReader.Transfer(aDestDoc);
+    OccProgressWrapper progressWrapper(_modelSubject, aFilePath);
+    return cafReader.Transfer(aDestDoc, progressWrapper.Start());
 }

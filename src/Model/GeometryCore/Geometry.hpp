@@ -17,7 +17,7 @@ namespace GeometryCore {
 
     class Geometry {
     public:
-        Geometry(const ModelSubject& aModelSubject) : _subject(aModelSubject){};
+        Geometry(const ModelSubject& aModelSubject) : _subject(aModelSubject), _doc(aModelSubject){};
         ~Geometry();
 
         const OcafDoc& doc() const {return _doc;};

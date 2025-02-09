@@ -31,8 +31,11 @@ class OccProgressWrapper : public Message_ProgressIndicator{
         
 DEFINE_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
 	public:
+
+	void publishProgress(const std::string& aLabel, int progress);
+
 	Standard_EXPORT OccProgressWrapper(
-		const ModelSubject& aSubject,
+		const IEventSubject& aSubject,
 		const std::string& aInitLabel);
 
 	Standard_EXPORT void Show(
@@ -45,7 +48,7 @@ DEFINE_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
 		const Message_ProgressScope& aScope);
 
 	ProgressEvent _progressEvent;
-	const ModelSubject& _subject;
+	const IEventSubject& _subject;
 };
 
 
