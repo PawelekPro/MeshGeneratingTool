@@ -41,9 +41,11 @@ public:
 	vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh();
 	vtkSmartPointer<vtkPolyData> GetBoundaryMesh();
 
-private:
+public:
 	void ConvertToInternalMesh();
 	void ConvertToBoundaryMesh();
+
+private:
 	vtkSmartPointer<vtkPoints> PopulateMeshNodes();
 
 private:

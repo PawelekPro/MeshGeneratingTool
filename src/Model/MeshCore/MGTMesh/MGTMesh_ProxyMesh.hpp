@@ -36,7 +36,7 @@ class MGTMesh_ProxyMesh {
 public:
 	MGTMesh_ProxyMesh(MGTMesh_MeshObject* mgtMesh);
 	MGTMesh_ProxyMesh(std::unordered_map<int, std::shared_ptr<MGTMesh_MeshObject>> meshObjectsMap);
-	~MGTMesh_ProxyMesh() = default;
+	~MGTMesh_ProxyMesh();
 
 	vtkSmartPointer<vtkActor> GetProxyMeshActor() const;
 

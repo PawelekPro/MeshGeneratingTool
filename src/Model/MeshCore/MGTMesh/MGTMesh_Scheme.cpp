@@ -28,7 +28,7 @@
 MGTMesh_Scheme::MGTMesh_Scheme(int schemeId)
 	: _schemeId(schemeId)
 	, _engineLib(NETGEN)
-	, _type(ALG_2D) {
+	, _type(ALG_3D) {
 	_name = "generic";
 	_shapeType = 0;
 	_alg_dim = -1;

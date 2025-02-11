@@ -28,11 +28,13 @@ vtkStandardNewMacro(MGTMesh_MeshObject);
 //----------------------------------------------------------------------------
 MGTMesh_MeshObject::MGTMesh_MeshObject()
 	: _internalMesh(nullptr)
-	, _boundaryMesh(nullptr) {
-}
+	, _boundaryMesh(nullptr) { }
 
 //----------------------------------------------------------------------------
-MGTMesh_MeshObject::~MGTMesh_MeshObject() = default;
+MGTMesh_MeshObject::~MGTMesh_MeshObject() {
+	this->SetBlock(0, nullptr);
+	this->SetBlock(1, nullptr);
+}
 
 //----------------------------------------------------------------------------
 void MGTMesh_MeshObject::SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) {

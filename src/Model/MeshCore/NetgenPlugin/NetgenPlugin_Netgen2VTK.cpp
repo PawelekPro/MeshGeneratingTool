@@ -40,10 +40,7 @@
 NetgenPlugin_Netgen2VTK::NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh)
 	: _netgenMesh(netgenMesh)
 	, _internalMesh(vtkSmartPointer<vtkUnstructuredGrid>::New())
-	, _boundaryMesh(vtkSmartPointer<vtkPolyData>::New()) {
-	this->ConvertToBoundaryMesh();
-	this->ConvertToInternalMesh();
-}
+	, _boundaryMesh(vtkSmartPointer<vtkPolyData>::New()) { }
 
 //----------------------------------------------------------------------------
 vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
@@ -66,7 +63,7 @@ vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
 void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh() {
 	const int nbE = (int)_netgenMesh.GetNE();
 	if (!nbE) {
-		vtkLogF(WARNING, "No volume elements found in the Netgen mesh.");
+		SPDLOG_WARN("No volume elements found in the Netgen mesh.");
 		return;
 	}
 
@@ -113,7 +110,7 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh() {
 	const int nbSE = (int)_netgenMesh.GetNSE();
 
 	if (!nbSE) {
-		vtkLogF(WARNING, "No surface elements found in the Netgen mesh.");
+		SPDLOG_WARN("No surface elements found in the Netgen mesh.");
 		return;
 	}
 

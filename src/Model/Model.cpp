@@ -46,6 +46,11 @@ Model::Model(std::string modelName)
 //----------------------------------------------------------------------------
 Model::~Model() {
 	// gmsh::finalize();
+	for (auto& pair : _meshObjectsMap) {
+		pair.second.reset();
+	}
+	_meshObjectsMap.clear();
+	_proxyMesh = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -98,7 +103,6 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 			return false;
 		}
 		_meshObjectsMap[algorithm->GetID()] = meshGenerator.GetOutputMesh();
-		SPDLOG_INFO("ADDING OUTPUT MESH TO MAP");
 	}
 	_proxyMesh = std::make_shared<MGTMesh_ProxyMesh>(_meshObjectsMap);
 	return true;

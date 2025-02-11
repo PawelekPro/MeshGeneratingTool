@@ -301,28 +301,31 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 		return err;
 
 	NetgenPlugin_Netgen2VTK netgen2vtk = NetgenPlugin_Netgen2VTK(*_ngMesh);
-	_mesh->SetInternalMesh(netgen2vtk.GetInternalMesh());
+	netgen2vtk.ConvertToBoundaryMesh();
 	_mesh->SetBoundaryMesh(netgen2vtk.GetBoundaryMesh());
 
-	if (!_algorithm->Is3DAlgortihm())
+	if (_algorithm->Is3DAlgortihm()) {
+		// Compute volume mesh
+		startWith = netgen::MESHCONST_MESHVOLUME;
+		endWith = _optimize ? netgen::MESHCONST_OPTVOLUME : netgen::MESHCONST_MESHVOLUME;
+		SPDLOG_INFO("Starting volume mesh generation process");
+
+		try {
+			err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+		} catch (Standard_Failure& ex) {
+			SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
+		} catch (netgen::NgException& ex) {
+			SPDLOG_ERROR("Netgen Exception: {}", ex.What());
+		}
+	} else {
 		return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
-
-	// Compute volume mesh
-	startWith = netgen::MESHCONST_MESHVOLUME;
-	endWith = _optimize ? netgen::MESHCONST_OPTVOLUME : netgen::MESHCONST_MESHVOLUME;
-	SPDLOG_INFO("Starting volume mesh generation process");
-
-	try {
-		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
-	} catch (Standard_Failure& ex) {
-		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
-	} catch (netgen::NgException& ex) {
-		SPDLOG_ERROR("Netgen Exception: {}", ex.What());
 	}
 
 	if (err)
 		return err;
 
+	netgen2vtk.ConvertToInternalMesh();
+	_mesh->SetInternalMesh(netgen2vtk.GetInternalMesh());
 	return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 }
 

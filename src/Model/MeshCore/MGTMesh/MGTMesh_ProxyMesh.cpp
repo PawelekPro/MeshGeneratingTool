@@ -30,6 +30,7 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCompositeDataGeometryFilter.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 
 #include <spdlog/spdlog.h>
 
@@ -45,6 +46,9 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(MGTMesh_MeshObject* mgtMesh) {
 }
 
 //----------------------------------------------------------------------------
+MGTMesh_ProxyMesh::~MGTMesh_ProxyMesh() { }
+
+//----------------------------------------------------------------------------
 MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
 	std::unordered_map<int, std::shared_ptr<MGTMesh_MeshObject>> meshObjectsMap) {
 	if (meshObjectsMap.empty())
@@ -52,6 +56,9 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
 
 	auto appendUnstructuredGrid = vtkSmartPointer<vtkAppendFilter>::New();
 	auto appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
+
+	appendUnstructuredGrid->ReleaseDataFlagOn();
+	appendPolyData->ReleaseDataFlagOn();
 
 	for (auto& pair : meshObjectsMap) {
 		int key = pair.first;
@@ -78,6 +85,11 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
 	_mgtMesh = MGTMesh_MeshObject::New();
 	_mgtMesh->SetInternalMesh(appendUnstructuredGrid->GetOutput());
 	_mgtMesh->SetBoundaryMesh(appendPolyData->GetOutput());
+
+	appendUnstructuredGrid->RemoveAllInputs();
+	appendPolyData->RemoveAllInputs();
+	appendUnstructuredGrid = nullptr;
+	appendPolyData = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -92,6 +104,9 @@ vtkSmartPointer<vtkActor> MGTMesh_ProxyMesh::GetProxyMeshActor() const {
 
 	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
+
+	actor->GetProperty()->SetEdgeVisibility(true);
+	actor->GetProperty()->SetEdgeColor(1.0, 0.0, 0.0);
 
 	return actor;
 }
