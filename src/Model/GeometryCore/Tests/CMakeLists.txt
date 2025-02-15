@@ -1,6 +1,6 @@
 add_executable(utGeometry
     utRun.cpp
-    # utGeometry.cpp
+    utGeometry.cpp
     utOcafDoc.cpp
 )
 

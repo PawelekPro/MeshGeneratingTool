@@ -16,27 +16,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef GEOMETRYACTIONS_HPP
-#define GEOMETRYACTIONS_HPP
-
-#include "Geometry.hpp"
-#include <istream>
-class GeometryActions{
-
-    public:
-        GeometryActions( GeometryCore::Geometry& aGeometry);
-        ~GeometryActions() = default;
-
-        bool importSTEP(const std::istream& aFileStream);
-        bool importSTL(const std::istream& aFileStream);
-
-        bool clearGeometry();    
-        bool loadGeometryDoc();
-        bool saveGeometryDoc();
-    
-    private:
-        GeometryCore::Geometry& _geometry;
-};
-
-#endif

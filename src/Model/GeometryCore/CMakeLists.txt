@@ -9,7 +9,6 @@ add_subdirectory(GeoUtils)
 
 add_library(GeometryCore
     Geometry.cpp
-    GeometryActions.cpp
     GeometryView.cpp
 )
 

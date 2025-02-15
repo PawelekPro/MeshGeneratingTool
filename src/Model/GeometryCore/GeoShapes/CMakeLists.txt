@@ -1,8 +1,11 @@
 add_library(GeoShapes
     GeoShape.cpp
+    ShapeFactory.cpp
+    ShapeManager.cpp
 )
 
 target_link_libraries(GeoShapes PUBLIC
+    GeoDoc 
     ${OCC_LIBRARIES}
 )
 

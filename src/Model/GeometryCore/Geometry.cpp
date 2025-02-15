@@ -11,6 +11,7 @@ void GeometryCore::Geometry::importSTEP(const std::string& filePath){
         this->_tagMap.tagEntities(shape.second);
     }
 };
+
 void GeometryCore::Geometry::importSTL(const std::string& filePath){
     GeometryCore::STLImporter importer;
     importer.import(filePath, _subject);

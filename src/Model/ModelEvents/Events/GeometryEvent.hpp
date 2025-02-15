@@ -15,38 +15,54 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
-#ifndef GEOSHAPE_HPP
-#define GEOSHAPE_HPP
+#ifndef GEOMETRYEVENT_HPP
+#define GEOMETRYEVENT_HPP
 
-#include <TopoDS_Shape.hxx>
-#include <TDF_Label.hxx>
+#include "Event.hpp"
+#include "EventObserver.hpp"
+
 #include <string>
-#include "ShapeID.hpp"
-class GeoShape {
-   
-    friend class ShapeFactory;
+#include "GeometryObserver.hpp"
+
+class GeometryEvent : public Event {
+    
     public:
+    GeometryEvent(){};
 
-        GeoShape(const GeoShape& aShape) = delete;
-        GeoShape& operator=(const GeoShape& aShape) = delete;
+    void accept(EventObserver& aEventObserver) const override {
+        aEventObserver.visit(*this);
+    }
 
-        virtual ~GeoShape();      
+};
 
-        TopoDS_Shape shape() const;
-        TDF_Label ocafLabel() const;
+class NewShapesEvent : GeometryEvent {
+
+    public:
+    NewShapesEvent(){};
+
+    void acceptGeometry(GeometryObserver& aGeometryObserver) const {
+        aGeometryObserver.visit(*this);
+    }
 
     private:
-
-        GeoShape(const ShapeID& aShapeID,
-                 const TopoDS_Shape& aShape,
-                 const TDF_Label& aLabel);
-    
-    protected:
-        
-        TopoDS_Shape _shape;
-        const ShapeID _shapeId;
-        const TDF_Label _ocafLabel;
+    std::vector<TopoDS_Shape> newShapes;
+   
 };
+
+class ShapesRemovedEvent : GeometryEvent {
+
+    public:
+    ShapesRemovedEvent (){};
+
+    void acceptGeometry(GeometryObserver& aGeometryObserver) const {
+        aGeometryObserver.visit(*this);
+    }
+
+    private:
+    std::vector<TopoDS_Shape> removedShapes;
+   
+};
+
 #endif

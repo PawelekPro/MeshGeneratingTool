@@ -17,25 +17,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GeoShape.hpp"
+#ifndef SHAPEID_HPP
+#define SHAPEID_HPP
 
-GeoShape::GeoShape(
-    const ShapeID& aShapeID,
-    const TopoDS_Shape& aShape,
-    const TDF_Label& aLabel,
-    const std::string& aName,
-    int aGmshTag
-    ) : 
-    _shapeId(aShapeID),
-    _shape(aShape),
-    _ocafLabel(aLabel),
-    _name(aName),
-    _gmshTag(aGmshTag){}
+#include <cstdint>
+#include "ShapeFactory.hpp"
 
-int GeoShape::gmshTag() const {
-    return _gmshTag;
-}
+class ShapeID {
+    friend class ShapeFactory;
+    
+    public:
+    
+    bool operator==(const ShapeID& aId){
+         return aId._id == _id;
+    }
+    
+    bool operator>(const ShapeID& aId){
+        return _id > aId._id;
+    }
+    
+    // ShapeID(ShapeID&&) = delete;
+    // ShapeID& operator=(ShapeID&&) = delete;
+    
+    private:
+    explicit ShapeID(const uint64_t& aId) : _id(aId) {};
+        uint64_t _id;
+};
 
-TDF_Label GeoShape::ocafLabel() const {
-    return _ocafLabel;
-} 
+
+
+
+#endif

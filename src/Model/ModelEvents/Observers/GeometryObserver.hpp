@@ -17,7 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "GeometryActions.hpp"
+#ifndef GEOMETRYOBSERVER_HPP 
+#define GEOMETRYOBSERVER_HPP 
 
-GeometryActions::GeometryActions( GeometryCore::Geometry& aGeometry)
-    : _geometry(aGeometry){}
+#include <functional>
+#include <string>
+#include "EventObserver.hpp"
+#include <iostream>
+
+class NewShapesEvent;
+
+class GeometryObserver : public EventObserver {
+
+    public:
+
+    void visit(const ProgressEvent&) override {};
+    void visit(const GeometryEvent&) override {};
+
+    void visit(const NewShapesEvent&) {std::cout << "i am watching new shapes event" << std::endl;};
+
+    private:
+
+};
+
+#endif

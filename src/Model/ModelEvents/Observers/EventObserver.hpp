@@ -23,6 +23,7 @@
 #include "Event.hpp"
 
 class ProgressEvent;
+class GeometryEvent;
 class EventObserver {
    public:
 
@@ -34,6 +35,7 @@ class EventObserver {
    }
 
    virtual void visit(const ProgressEvent& aModelEvent) = 0;
+   virtual void visit(const GeometryEvent& aModelEvent) = 0;
 
 };
 

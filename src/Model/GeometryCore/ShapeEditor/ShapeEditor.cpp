@@ -16,37 +16,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef GEOSHAPE_HPP
-#define GEOSHAPE_HPP
-
-#include <TopoDS_Shape.hxx>
-#include <TDF_Label.hxx>
-#include <string>
-#include "ShapeID.hpp"
-class GeoShape {
-   
-    friend class ShapeFactory;
-    public:
-
-        GeoShape(const GeoShape& aShape) = delete;
-        GeoShape& operator=(const GeoShape& aShape) = delete;
-
-        virtual ~GeoShape();      
-
-        TopoDS_Shape shape() const;
-        TDF_Label ocafLabel() const;
-
-    private:
-
-        GeoShape(const ShapeID& aShapeID,
-                 const TopoDS_Shape& aShape,
-                 const TDF_Label& aLabel);
-    
-    protected:
-        
-        TopoDS_Shape _shape;
-        const ShapeID _shapeId;
-        const TDF_Label _ocafLabel;
-};
-#endif

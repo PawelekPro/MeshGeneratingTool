@@ -17,25 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GeoShape.hpp"
+#include "ShapeFactory.hpp"
 
-GeoShape::GeoShape(
-    const ShapeID& aShapeID,
+    
+ShapeFactory::ShapeFactory(OcafDoc& aOcaf) : _ocaf(aOcaf){};
+
+
+GeoShape createShape(const ShapeId& aShapeId,
     const TopoDS_Shape& aShape,
-    const TDF_Label& aLabel,
-    const std::string& aName,
-    int aGmshTag
-    ) : 
-    _shapeId(aShapeID),
-    _shape(aShape),
-    _ocafLabel(aLabel),
-    _name(aName),
-    _gmshTag(aGmshTag){}
+    const std::string& aInitName) {
+        
+        TDF_Label label = _ocaf.createLabel(aShape);
+        
+        GeoShape(aShapeId, aShape, label);
 
-int GeoShape::gmshTag() const {
-    return _gmshTag;
-}
-
-TDF_Label GeoShape::ocafLabel() const {
-    return _ocafLabel;
-} 
+        return GeoShape;
+     };

@@ -34,8 +34,6 @@ void OccProgressWrapper::publishProgress(const std::string& aLabel, int progress
     _subject.publishEvent(_progressEvent);
 }
 
-
-
 void OccProgressWrapper::Show(
     const Message_ProgressScope& aScope,
     const Standard_Boolean force){

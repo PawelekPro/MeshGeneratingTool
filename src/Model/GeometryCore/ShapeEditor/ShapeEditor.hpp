@@ -17,25 +17,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GeoShape.hpp"
 
-GeoShape::GeoShape(
-    const ShapeID& aShapeID,
-    const TopoDS_Shape& aShape,
-    const TDF_Label& aLabel,
-    const std::string& aName,
-    int aGmshTag
-    ) : 
-    _shapeId(aShapeID),
-    _shape(aShape),
-    _ocafLabel(aLabel),
-    _name(aName),
-    _gmshTag(aGmshTag){}
 
-int GeoShape::gmshTag() const {
-    return _gmshTag;
-}
+#ifndef SHAPEEDITOR_HPP
+#define SHAPEEDITOR_HPP
 
-TDF_Label GeoShape::ocafLabel() const {
-    return _ocafLabel;
-} 
+class ShapeEditor {
+
+    public:
+    ShapeEditor();
+    virtual ~ShapeEditor();
+
+    private:
+
+    bool applyEdition(GeoShape&) = 0;
+    bool undoEdition(GeoShape&) = 0;
+
+    OcafDoc ocafDoc;
+};
+
+#endif 
