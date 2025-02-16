@@ -23,24 +23,21 @@
 #include <cstdint>
 #include "ShapeFactory.hpp"
 
-class ShapeID {
+class ShapeId {
     friend class ShapeFactory;
     
     public:
     
-    bool operator==(const ShapeID& aId){
+    bool operator==(const ShapeId& aId){
          return aId._id == _id;
     }
     
-    bool operator>(const ShapeID& aId){
+    bool operator>(const ShapeId& aId){
         return _id > aId._id;
     }
     
-    // ShapeID(ShapeID&&) = delete;
-    // ShapeID& operator=(ShapeID&&) = delete;
-    
     private:
-    explicit ShapeID(const uint64_t& aId) : _id(aId) {};
+    explicit ShapeId(const uint64_t& aId) : _id(aId) {};
         uint64_t _id;
 };
 

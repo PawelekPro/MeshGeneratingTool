@@ -41,6 +41,7 @@ namespace GeometryCore {
     private:
 
         
+        
         const ModelSubject& _subject;
         PartsMap _shapesMap;
         TagMap _tagMap;

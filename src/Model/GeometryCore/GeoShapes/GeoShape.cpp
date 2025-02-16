@@ -20,21 +20,13 @@
 #include "GeoShape.hpp"
 
 GeoShape::GeoShape(
-    const ShapeID& aShapeID,
+    const ShapeId& aShapeId,
     const TopoDS_Shape& aShape,
-    const TDF_Label& aLabel,
-    const std::string& aName,
-    int aGmshTag
+    const TDF_Label& aLabel
     ) : 
-    _shapeId(aShapeID),
+    _ShapeId(aShapeId),
     _shape(aShape),
-    _ocafLabel(aLabel),
-    _name(aName),
-    _gmshTag(aGmshTag){}
-
-int GeoShape::gmshTag() const {
-    return _gmshTag;
-}
+    _ocafLabel(aLabel){};
 
 TDF_Label GeoShape::ocafLabel() const {
     return _ocafLabel;

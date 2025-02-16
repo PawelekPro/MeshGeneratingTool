@@ -3,7 +3,6 @@ add_subdirectory(GeoImport)
 add_library(GeoDoc
     OcafDoc.cpp
     TagMap.cpp
-    GeoDoc.cpp
 )
 
 target_link_libraries(GeoDoc PUBLIC

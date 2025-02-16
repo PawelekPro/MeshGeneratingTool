@@ -20,24 +20,26 @@
 #ifndef SHAPEMANAGER_HPP
 #define SHPAEMANAGER_HPP
 
+#include "ShapeFactory.hpp"
+#include "GeoShape.hpp"
+
 class ShapeManager {
 
     public:
 
-    ShapeManager(OcafDoc);
+    ShapeManager(OcafDoc& aDoc);
 
-    std::vector<ShapeId> importShapes(Importer);
-    
+    std::vector<ShapeId> importShapes(const GeometryImporter& aImporter);
 
+    void clearAllShapes();
 
-    clearAllShapes();
-
-    removeShape();
-    getShape();
+    bool removeShape();
+    GeoShape getShape();
 
     private:
-
-    shapeMap;
+    OcafDoc&  _ocaf;
+    ShapeMap _shapeMap;
+    ShapeFactory _shapeFactory;
 };
 
 

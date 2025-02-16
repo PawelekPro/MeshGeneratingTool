@@ -1,3 +1,4 @@
+
 /*
 * Copyright (C) 2024 Krystian Fudali
 *
@@ -17,17 +18,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ShapeFactory.hpp"
-#include "OcafDoc.hpp"
-    
-ShapeFactory::ShapeFactory(OcafDoc& aOcaf) : _ocaf(aOcaf){};
+#ifndef BASESHAPE_HPP
+#define BASESHAPE_HPP
 
+#include <TopoDS_Shape.hxx>
+#include "ShapeId.hpp"
 
-GeoShape ShapeFactory::createShape(const ShapeId& aShapeId,
-    const TopoDS_Shape& aShape) {
-        
-        TDF_Label label = _ocaf.shapeLabel(aShape);
-        GeoShape newShape(aShapeId, aShape, label);
+class BaseShape {
 
-        return newShape;
-     };
+    public:
+    BaseShape(){};
+    virtual ~BaseShape(){};
+    virtual TopoDS_Shape shape() const = 0;
+    virtual const ShapeId id() const = 0;
+};
+
+#endif

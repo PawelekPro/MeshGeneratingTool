@@ -20,11 +20,12 @@
 #ifndef GEOSHAPE_HPP
 #define GEOSHAPE_HPP
 
-#include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
 #include <string>
-#include "ShapeID.hpp"
-class GeoShape {
+
+#include "BaseShape.hpp"
+
+class GeoShape : public BaseShape {
    
     friend class ShapeFactory;
     public:
@@ -34,19 +35,20 @@ class GeoShape {
 
         virtual ~GeoShape();      
 
-        TopoDS_Shape shape() const;
+        TopoDS_Shape shape() const override;
         TDF_Label ocafLabel() const;
+        const ShapeId id() const override;
 
     private:
 
-        GeoShape(const ShapeID& aShapeID,
+        GeoShape(const ShapeId& aShapeId,
                  const TopoDS_Shape& aShape,
                  const TDF_Label& aLabel);
     
     protected:
         
         TopoDS_Shape _shape;
-        const ShapeID _shapeId;
+        const ShapeId _ShapeId;
         const TDF_Label _ocafLabel;
 };
 #endif

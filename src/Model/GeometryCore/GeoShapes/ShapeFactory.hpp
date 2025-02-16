@@ -33,8 +33,7 @@ class ShapeFactory {
     
     ShapeFactory(OcafDoc& aOcaf);
     GeoShape createShape(const ShapeId& aShapeId,
-        const TopoDS_Shape& aShape,
-        const std::string& aInitName);
+        const TopoDS_Shape& aShape);
 
     OcafDoc& _ocaf;
 };
