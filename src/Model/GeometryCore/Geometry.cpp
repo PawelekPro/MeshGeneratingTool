@@ -4,22 +4,17 @@ GeometryCore::Geometry::~Geometry(){};
 
 void GeometryCore::Geometry::importSTEP(const std::string& filePath){
 
-    GeometryCore::STEPImporter importer;
-    importer.import(filePath, _subject);
-    this->_shapesMap = std::move(importer.getPartsMap());
-    for(auto shape : _shapesMap){
-        this->_tagMap.tagEntities(shape.second);
-    }
+    ImportSTEPCommand importCommand = _geoCommandFactory.importSTEPCommand(filePath);
+    _geoStack.execute(importCommand);
+
 };
 
 void GeometryCore::Geometry::importSTL(const std::string& filePath){
-    GeometryCore::STLImporter importer;
-    importer.import(filePath, _subject);
-    this->_shapesMap = std::move(importer.getPartsMap());
-    for(auto shape : _shapesMap){
-        this->_tagMap.tagEntities(shape.second);
-    }
-};
+
+    ImportSTLCommand importCommand = _geoCommandFactory.importSTLCommand(filePath);
+    _geoStack.execute(importCommand);
+
+ };
 
 std::vector<int> GeometryCore::Geometry::getShapeVerticesTags(const TopoDS_Shape& shape){
     std::vector<int> vertexTags;
@@ -59,3 +54,5 @@ std::string GeometryCore::Geometry::getShapeName(const TopoDS_Shape& shape){
     std::string name = "shape";
     return name;
 }
+
+

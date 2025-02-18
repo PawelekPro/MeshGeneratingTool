@@ -17,17 +17,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GeoShape.hpp"
+#ifndef SHAPESCHANGEDEVENT_HPP
+#define SHAPESCHANGEDEVENT_HPP
 
-GeoShape::GeoShape(
-    const ShapeId& aShapeId,
-    const TopoDS_Shape& aShape,
-    const TDF_Label& aLabel
-    ) : 
-    _ShapeId(aShapeId),
-    _shape(aShape),
-    _ocafLabel(aLabel){};
+#include "GeometryEvent.hpp"
+#include "ShapeId.hpp"
+#include <vector>
 
-TDF_Label GeoShape::ocafLabel() const {
-    return _ocafLabel;
-} 
+enum class ShapeEdit{
+    Remove,
+    Add,
+    BRepEdit,
+    AttrEdit
+};
+
+class ShapesChangedEvent : public GeometryEvent {
+   
+    public:
+
+    ShapesChangedEvent(
+        const std::vector<ShapeId>& aShapeIdsVec,
+        const ShapeEdit& aShapeEditType) : 
+        shapeIds(aShapeIdsVec),
+        shapeEditType(aShapeEditType){};
+
+    const std::vector<ShapeId> shapeIds;
+    const ShapeEdit shapeEditType; 
+};
+
+#endif

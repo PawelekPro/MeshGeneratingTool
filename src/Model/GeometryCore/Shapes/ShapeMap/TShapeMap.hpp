@@ -16,19 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef TSHAPEMAP_HPP
+#define TSHAPEMAP_HPP
 
-#ifndef SHAPEMAP_HPP
-#define SHAPEMAP_HPP
+#include "ShapeMap.hpp"
+#include <unordered_map>
 
-class ShapeMap {
-
-    public: 
-
-    ShapeMap();
-    virtual ~ShapeMap();
+class TShapeMap : public ShapeMap {
     
-}
+    public:
+    virtual ~ShapeMap() = default;
 
+    virtual bool insert(const ShapeId& id, const TopoDS_Shape& shape) override;
+    virtual bool remove(const ShapeId& id) override;
+    
+    virtual bool contains(const ShapeId& id) const override;
+    virtual TopoDS_Shape at(const ShapeId& id) const override;
+
+    virtual std::size_t size() const override;
+    virtual void clear() const override;
+
+
+    private:
+    std::unordered_map<>
+
+};
 
 #endif
- 

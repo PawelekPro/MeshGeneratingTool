@@ -17,31 +17,51 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEID_HPP
-#define SHAPEID_HPP
+#ifndef TSHAPEID_HPP
+#define TSHAPEID_HPP
 
+#include "ShapeId.hpp"
 #include <cstdint>
-#include "ShapeFactory.hpp"
 
-class ShapeId {
+enum class ShapeType {
+    Vertex,
+    Edge,
+    Face,
+    Solid
+};
+
+class ShapeFactory;
+
+class TShapeId : public ShapeId {
+
     friend class ShapeFactory;
     
     public:
     
-    bool operator==(const ShapeId& aId){
-         return aId._id == _id;
+    bool operator==(const TShapeId& aId){
+        return (_id        == aId._id && 
+                _shapeType == aId._shapeType);
     }
     
-    bool operator>(const ShapeId& aId){
-        return _id > aId._id;
+    bool operator>(const TShapeId& aId){
+        if (_shapeType == aId._shapeType){
+            return _id > aId._id; 
+        } else { 
+            return static_cast<int>(_shapeType) < static_cast<int>(aId._shapeType);
+        }
     }
     
     private:
-    explicit ShapeId(const uint64_t& aId) : _id(aId) {};
-        uint64_t _id;
+    
+    explicit TShapeId(
+        const ShapeType& aType,
+        const uint64_t& aId) :
+        _id(aId), 
+        _shapeType(aType) {};
+    
+    uint64_t _id;
+    ShapeType _shapeType;
+
 };
-
-
-
 
 #endif

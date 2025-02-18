@@ -1,4 +1,3 @@
-
 /*
 * Copyright (C) 2024 Krystian Fudali
 *
@@ -18,19 +17,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BASESHAPE_HPP
-#define BASESHAPE_HPP
 
-#include <TopoDS_Shape.hxx>
-#include "ShapeId.hpp"
+#ifndef OCAFSTATEMANAGER_HPP
+#define OCAFSTATEMANAGER_HPP
 
-class BaseShape {
+#include "ShapeStateManager.hpp"
 
-    public:
-    BaseShape(){};
-    virtual ~BaseShape(){};
-    virtual TopoDS_Shape shape() const = 0;
-    virtual const ShapeId id() const = 0;
+class OcafStateManager : public ShapeStateManager {
+
+
 };
 
 #endif

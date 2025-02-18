@@ -37,32 +37,4 @@ class GeometryEvent : public Event {
 
 };
 
-class NewShapesEvent : GeometryEvent {
-
-    public:
-    NewShapesEvent(){};
-
-    void acceptGeometry(GeometryObserver& aGeometryObserver) const {
-        aGeometryObserver.visit(*this);
-    }
-
-    private:
-    std::vector<TopoDS_Shape> newShapes;
-   
-};
-
-class ShapesRemovedEvent : GeometryEvent {
-
-    public:
-    ShapesRemovedEvent (){};
-
-    void acceptGeometry(GeometryObserver& aGeometryObserver) const {
-        aGeometryObserver.visit(*this);
-    }
-
-    private:
-    std::vector<TopoDS_Shape> removedShapes;
-   
-};
-
 #endif

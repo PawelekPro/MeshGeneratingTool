@@ -17,17 +17,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ShapeFactory.hpp"
-#include "OcafDoc.hpp"
+#ifndef GEOCOMMAND_HPP
+#define GEOCOMMAND_HPP
+
+// TODO: Make GeoCommands just inherit from models commands, here we are doubling code 
+class GeoCommand {
     
-ShapeFactory::ShapeFactory(OcafDoc& aOcaf) : _ocaf(aOcaf){};
+    public:
+    GeoCommand() = default;
+    virtual ~GeoCommand() = default;
 
+    public:
+    virtual void redo() = 0;
+    virtual void undo() = 0;
 
-GeoShape ShapeFactory::createShape(const ShapeId& aShapeId,
-    const TopoDS_Shape& aShape) {
-        
-        TDF_Label label = _ocaf.shapeLabel(aShape);
-        GeoShape newShape(aShapeId, aShape, label);
+};
 
-        return newShape;
-     };
+#endif

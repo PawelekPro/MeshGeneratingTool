@@ -193,9 +193,9 @@ private:
 	 */
 	void createContextMenu();
 
-	/**
-	 * @brief Handles moving cursor to specified position.
+	/**d position.
 	 * @param x The X-coordinate.
+	 * @brief Handles moving cursor to specifie
 	 * @param y The Y-coordinate.
 	 */
 	void MoveTo(Standard_Integer, Standard_Integer);
