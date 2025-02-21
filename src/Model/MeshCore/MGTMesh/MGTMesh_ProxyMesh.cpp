@@ -49,8 +49,7 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(MGTMesh_MeshObject* mgtMesh) {
 MGTMesh_ProxyMesh::~MGTMesh_ProxyMesh() { }
 
 //----------------------------------------------------------------------------
-MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
-	std::unordered_map<int, std::shared_ptr<MGTMesh_MeshObject>> meshObjectsMap) {
+MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(std::unordered_map<int, MGTMesh_MeshObject*> meshObjectsMap) {
 	if (meshObjectsMap.empty())
 		return;
 
@@ -62,7 +61,7 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
 
 	for (auto& pair : meshObjectsMap) {
 		int key = pair.first;
-		std::shared_ptr<MGTMesh_MeshObject> meshObject = pair.second;
+		MGTMesh_MeshObject* meshObject = pair.second;
 		spdlog::debug("Merging sub mesh with id: {}", key);
 
 		if (!meshObject)
@@ -85,11 +84,6 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
 	_mgtMesh = MGTMesh_MeshObject::New();
 	_mgtMesh->SetInternalMesh(appendUnstructuredGrid->GetOutput());
 	_mgtMesh->SetBoundaryMesh(appendPolyData->GetOutput());
-
-	appendUnstructuredGrid->RemoveAllInputs();
-	appendPolyData->RemoveAllInputs();
-	appendUnstructuredGrid = nullptr;
-	appendPolyData = nullptr;
 }
 
 //----------------------------------------------------------------------------

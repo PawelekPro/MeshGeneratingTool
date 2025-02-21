@@ -46,11 +46,11 @@ Model::Model(std::string modelName)
 //----------------------------------------------------------------------------
 Model::~Model() {
 	// gmsh::finalize();
-	for (auto& pair : _meshObjectsMap) {
-		pair.second.reset();
-	}
-	_meshObjectsMap.clear();
-	_proxyMesh = nullptr;
+	// for (auto& pair : _meshObjectsMap) {
+	// 	delete pair.second;
+	// }
+	// _meshObjectsMap.clear();
+	// _proxyMesh = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	for (const auto& it : _shapesMap) {
 		spdlog::debug("Creating mesh generator for shape: {}", it.first);
 
-		std::shared_ptr<MGTMesh_MeshObject> meshObject = std::make_shared<MGTMesh_MeshObject>();
+		MGTMesh_MeshObject* meshObject = new MGTMesh_MeshObject();
 		MGTMesh_Generator meshGenerator(it.second, *algorithm, meshObject);
 		int result = meshGenerator.Compute();
 		if (result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {

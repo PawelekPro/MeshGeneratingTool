@@ -36,12 +36,13 @@ class Mesh;
 class gp_XYZ;
 class TopoDS_Shape;
 class MGTMesh_MeshObject;
+class NetgenPlugin_Netgen2VTK;
 class MGTMeshUtils_ViscousLayers;
 class NetgenPlugin_Parameters;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(std::shared_ptr<MGTMesh_MeshObject> mesh, const TopoDS_Shape& shape,
+	NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape,
 		const NetgenPlugin_Parameters* algorithm);
 	~NetgenPlugin_Mesher();
 	int ComputeMesh();
@@ -57,7 +58,8 @@ public:
 	void SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme);
 
 private:
-	std::shared_ptr<MGTMesh_MeshObject> _mesh;
+	MGTMesh_MeshObject* _mesh;
+
 	const TopoDS_Shape& _shape;
 	const NetgenPlugin_Parameters* _algorithm;
 	bool _optimize;

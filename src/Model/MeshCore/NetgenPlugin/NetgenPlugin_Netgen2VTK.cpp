@@ -22,6 +22,7 @@
 * Date      : 23/11/2024
 */
 #include "NetgenPlugin_Netgen2VTK.h"
+#include "MGTMesh_MeshObject.hpp"
 
 #include <vtkCellArray.h>
 #include <vtkHexahedron.h>
@@ -38,13 +39,11 @@
 
 //----------------------------------------------------------------------------
 NetgenPlugin_Netgen2VTK::NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh)
-	: _netgenMesh(netgenMesh)
-	, _internalMesh(vtkSmartPointer<vtkUnstructuredGrid>::New())
-	, _boundaryMesh(vtkSmartPointer<vtkPolyData>::New()) { }
+	: _netgenMesh(netgenMesh) { }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
-	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+vtkPoints* NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
+	vtkPoints* points = vtkPoints::New();
 	const int nbN = (int)_netgenMesh.GetNP();
 	if (!nbN) {
 		return points;
@@ -60,16 +59,18 @@ vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh() {
+void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) {
 	const int nbE = (int)_netgenMesh.GetNE();
 	if (!nbE) {
 		SPDLOG_WARN("No volume elements found in the Netgen mesh.");
 		return;
 	}
 
-	auto points = this->PopulateMeshNodes();
-	auto cells = vtkSmartPointer<vtkCellArray>::New();
-	auto cellTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
+	vtkUnstructuredGrid* internalMesh = vtkUnstructuredGrid::New();
+
+	vtkPoints* points = this->PopulateMeshNodes();
+	vtkCellArray* cells = vtkCellArray::New();
+	vtkUnsignedCharArray* cellTypes = vtkUnsignedCharArray::New();
 
 	for (int i = 1; i <= nbE; ++i) {
 		const netgen::Element& elem = _netgenMesh.VolumeElement(i);
@@ -99,14 +100,16 @@ void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh() {
 	}
 
 	// Populate internal mesh data
-	_internalMesh->SetPoints(points);
-	_internalMesh->SetCells(cellTypes, cells);
+	internalMesh->SetPoints(points);
+	internalMesh->SetCells(cellTypes, cells);
 	SPDLOG_INFO("Internal mesh conversion completed: {} points, {} cells created.",
 		points->GetNumberOfPoints(), cells->GetNumberOfCells());
+
+	mesh->SetInternalMesh(internalMesh);
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh() {
+void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) {
 	const int nbSE = (int)_netgenMesh.GetNSE();
 
 	if (!nbSE) {
@@ -114,8 +117,9 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh() {
 		return;
 	}
 
-	auto points = this->PopulateMeshNodes();
-	auto polygons = vtkSmartPointer<vtkCellArray>::New();
+	vtkPolyData* boundaryMesh = vtkPolyData::New();
+	vtkPoints* points = this->PopulateMeshNodes();
+	vtkCellArray* polygons = vtkCellArray::New();
 
 	for (int i = 1; i <= nbSE; ++i) {
 		const netgen::Element2d& elem = _netgenMesh.SurfaceElement(i);
@@ -147,16 +151,10 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh() {
 	}
 
 	// Populate poly data
-	_boundaryMesh->SetPoints(points);
-	_boundaryMesh->SetPolys(polygons);
+	boundaryMesh->SetPoints(points);
+	boundaryMesh->SetPolys(polygons);
 	SPDLOG_INFO("Boundary mesh conversion completed: {} points, {} polygons created.",
 		points->GetNumberOfPoints(), polygons->GetNumberOfCells());
-}
 
-//----------------------------------------------------------------------------
-vtkSmartPointer<vtkUnstructuredGrid> NetgenPlugin_Netgen2VTK::GetInternalMesh() {
-	return _internalMesh;
+	mesh->SetBoundaryMesh(boundaryMesh);
 }
-
-//----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> NetgenPlugin_Netgen2VTK::GetBoundaryMesh() { return _boundaryMesh; }

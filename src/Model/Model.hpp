@@ -60,7 +60,7 @@ private:
 private:
 	GeometryCore::PartsMap _shapesMap;
 
-	std::unordered_map<int, std::shared_ptr<MGTMesh_MeshObject>> _meshObjectsMap;
+	std::unordered_map<int, MGTMesh_MeshObject*> _meshObjectsMap;
 
 	std::shared_ptr<MGTMesh_ProxyMesh> _proxyMesh;
 };

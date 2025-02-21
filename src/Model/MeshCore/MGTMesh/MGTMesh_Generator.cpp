@@ -28,8 +28,8 @@
 #include "NetgenPlugin_Parameters.hpp"
 
 //----------------------------------------------------------------------------
-MGTMesh_Generator::MGTMesh_Generator(const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm,
-	std::shared_ptr<MGTMesh_MeshObject> meshObject)
+MGTMesh_Generator::MGTMesh_Generator(
+	const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm, MGTMesh_MeshObject* meshObject)
 	: _shape(&shape)
 	, _algorithm(&algorithm)
 	, _meshObject(meshObject) { }
@@ -38,7 +38,7 @@ MGTMesh_Generator::MGTMesh_Generator(const TopoDS_Shape& shape, const MGTMesh_Al
 MGTMesh_Generator::~MGTMesh_Generator() { }
 
 //----------------------------------------------------------------------------
-std::shared_ptr<MGTMesh_MeshObject> MGTMesh_Generator::GetOutputMesh() { return _meshObject; }
+MGTMesh_MeshObject* MGTMesh_Generator::GetOutputMesh() { return _meshObject; }
 
 //----------------------------------------------------------------------------
 int MGTMesh_Generator::Compute() {
