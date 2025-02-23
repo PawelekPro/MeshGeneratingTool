@@ -42,8 +42,8 @@ class NetgenPlugin_Parameters;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape,
-		const NetgenPlugin_Parameters* algorithm);
+	NetgenPlugin_Mesher(
+		MGTMesh_MeshObject*, const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm);
 	~NetgenPlugin_Mesher();
 	int ComputeMesh();
 

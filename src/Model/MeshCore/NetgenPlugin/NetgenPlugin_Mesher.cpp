@@ -163,7 +163,8 @@ NetgenPlugin_Mesher::NetgenPlugin_Mesher(
 	, _occgeom(nullptr)
 	, _selfPtr(nullptr) {
 
-	std::cout << "Initializing NetgenPlugin_Mesher object" << std::endl;
+	SPDLOG_INFO("Initializing NetgenPlugin_Mesher object");
+
 	this->SetDefaultParameters();
 	ShapesWithLocalSize.Clear();
 	VertexId2LocalSize.clear();
@@ -324,6 +325,7 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 		return err;
 
 	netgen2vtk.ConvertToInternalMesh(_mesh);
+
 	return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 }
 

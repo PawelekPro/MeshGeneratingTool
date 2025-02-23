@@ -44,14 +44,7 @@ Model::Model(std::string modelName)
 };
 
 //----------------------------------------------------------------------------
-Model::~Model() {
-	// gmsh::finalize();
-	// for (auto& pair : _meshObjectsMap) {
-	// 	delete pair.second;
-	// }
-	// _meshObjectsMap.clear();
-	// _proxyMesh = nullptr;
-}
+Model::~Model() { _meshObjectsMap.clear(); }
 
 //----------------------------------------------------------------------------
 void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
@@ -95,13 +88,14 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	for (const auto& it : _shapesMap) {
 		spdlog::debug("Creating mesh generator for shape: {}", it.first);
 
-		MGTMesh_MeshObject* meshObject = new MGTMesh_MeshObject();
+		vtkSmartPointer<MGTMesh_MeshObject> meshObject = vtkSmartPointer<MGTMesh_MeshObject>::New();
 		MGTMesh_Generator meshGenerator(it.second, *algorithm, meshObject);
 		int result = meshGenerator.Compute();
 		if (result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
 			SPDLOG_ERROR("Error while generating mesh for shape: {}", it.first);
 			return false;
 		}
+
 		_meshObjectsMap[algorithm->GetID()] = meshGenerator.GetOutputMesh();
 	}
 	_proxyMesh = std::make_shared<MGTMesh_ProxyMesh>(_meshObjectsMap);

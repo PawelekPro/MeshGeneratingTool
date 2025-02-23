@@ -49,19 +49,17 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(MGTMesh_MeshObject* mgtMesh) {
 MGTMesh_ProxyMesh::~MGTMesh_ProxyMesh() { }
 
 //----------------------------------------------------------------------------
-MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(std::unordered_map<int, MGTMesh_MeshObject*> meshObjectsMap) {
+MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
+	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> meshObjectsMap) {
 	if (meshObjectsMap.empty())
 		return;
 
 	auto appendUnstructuredGrid = vtkSmartPointer<vtkAppendFilter>::New();
 	auto appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
 
-	appendUnstructuredGrid->ReleaseDataFlagOn();
-	appendPolyData->ReleaseDataFlagOn();
-
 	for (auto& pair : meshObjectsMap) {
 		int key = pair.first;
-		MGTMesh_MeshObject* meshObject = pair.second;
+		vtkSmartPointer<MGTMesh_MeshObject> meshObject = pair.second;
 		spdlog::debug("Merging sub mesh with id: {}", key);
 
 		if (!meshObject)

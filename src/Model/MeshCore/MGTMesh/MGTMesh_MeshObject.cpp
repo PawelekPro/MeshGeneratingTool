@@ -27,8 +27,8 @@ vtkStandardNewMacro(MGTMesh_MeshObject);
 
 //----------------------------------------------------------------------------
 MGTMesh_MeshObject::MGTMesh_MeshObject()
-	: _internalMesh(nullptr)
-	, _boundaryMesh(nullptr) { }
+	: _internalMesh(vtkSmartPointer<vtkUnstructuredGrid>::New())
+	, _boundaryMesh(vtkSmartPointer<vtkPolyData>::New()) { }
 
 //----------------------------------------------------------------------------
 MGTMesh_MeshObject::~MGTMesh_MeshObject() {
@@ -37,23 +37,21 @@ MGTMesh_MeshObject::~MGTMesh_MeshObject() {
 }
 
 //----------------------------------------------------------------------------
-void MGTMesh_MeshObject::SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) {
-	this->_internalMesh = mesh;
-	this->SetBlock(0, this->_internalMesh);
+void MGTMesh_MeshObject::SetInternalMesh(vtkUnstructuredGrid* mesh) {
+	_internalMesh = vtkSmartPointer<vtkUnstructuredGrid>::Take(mesh);
+	this->SetBlock(0, _internalMesh);
 }
 
 //----------------------------------------------------------------------------
 vtkSmartPointer<vtkUnstructuredGrid> MGTMesh_MeshObject::GetInternalMesh() const {
-	return this->_internalMesh;
+	return _internalMesh;
 }
 
 //----------------------------------------------------------------------------
-void MGTMesh_MeshObject::SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh) {
-	this->_boundaryMesh = mesh;
-	this->SetBlock(1, this->_boundaryMesh);
+void MGTMesh_MeshObject::SetBoundaryMesh(vtkPolyData* mesh) {
+	_boundaryMesh = vtkSmartPointer<vtkPolyData>::Take(mesh);
+	this->SetBlock(1, _boundaryMesh);
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MGTMesh_MeshObject::GetBoundaryMesh() const {
-	return this->_boundaryMesh;
-}
+vtkSmartPointer<vtkPolyData> MGTMesh_MeshObject::GetBoundaryMesh() const { return _boundaryMesh; }

@@ -38,8 +38,8 @@ public:
 	MGTMesh_MeshObject();
 	~MGTMesh_MeshObject() override;
 
-	void SetInternalMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh);
-	void SetBoundaryMesh(vtkSmartPointer<vtkPolyData> mesh);
+	void SetInternalMesh(vtkUnstructuredGrid* mesh);
+	void SetBoundaryMesh(vtkPolyData* mesh);
 
 	vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
 	vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;

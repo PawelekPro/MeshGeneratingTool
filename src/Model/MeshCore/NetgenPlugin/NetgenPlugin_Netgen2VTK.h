@@ -30,6 +30,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <memory>
+
 class MGTMesh_MeshObject;
 
 namespace netgen {
@@ -45,7 +47,7 @@ public:
 	void ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh);
 
 private:
-	vtkPoints* PopulateMeshNodes();
+	vtkSmartPointer<vtkPoints> PopulateMeshNodes();
 
 private:
 	const netgen::Mesh& _netgenMesh;

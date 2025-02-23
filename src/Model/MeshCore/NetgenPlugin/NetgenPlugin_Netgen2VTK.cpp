@@ -42,8 +42,8 @@ NetgenPlugin_Netgen2VTK::NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh)
 	: _netgenMesh(netgenMesh) { }
 
 //----------------------------------------------------------------------------
-vtkPoints* NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
-	vtkPoints* points = vtkPoints::New();
+vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	const int nbN = (int)_netgenMesh.GetNP();
 	if (!nbN) {
 		return points;
@@ -66,11 +66,11 @@ void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) {
 		return;
 	}
 
-	vtkUnstructuredGrid* internalMesh = vtkUnstructuredGrid::New();
+	vtkSmartPointer<vtkUnstructuredGrid> internalMesh = vtkUnstructuredGrid::New();
 
-	vtkPoints* points = this->PopulateMeshNodes();
-	vtkCellArray* cells = vtkCellArray::New();
-	vtkUnsignedCharArray* cellTypes = vtkUnsignedCharArray::New();
+	vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
+	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+	vtkSmartPointer<vtkUnsignedCharArray> cellTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
 
 	for (int i = 1; i <= nbE; ++i) {
 		const netgen::Element& elem = _netgenMesh.VolumeElement(i);
@@ -117,9 +117,9 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) {
 		return;
 	}
 
-	vtkPolyData* boundaryMesh = vtkPolyData::New();
-	vtkPoints* points = this->PopulateMeshNodes();
-	vtkCellArray* polygons = vtkCellArray::New();
+	vtkSmartPointer<vtkPolyData> boundaryMesh = vtkPolyData::New();
+	vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
+	vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
 
 	for (int i = 1; i <= nbSE; ++i) {
 		const netgen::Element2d& elem = _netgenMesh.SurfaceElement(i);
