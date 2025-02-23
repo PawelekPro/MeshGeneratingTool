@@ -10,6 +10,7 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define an option to include/exclude examples
 option(BUILD_EXAMPLES "Build examples" ON)
 option(ENABLE_NETGEN "Enable Netgen" ON)
+option(ENABLE_GMSH "Enable GMSH" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
@@ -111,55 +112,56 @@ endif()
 
 # GMSH
 ######################################################################
-if(WIN32)
-    find_path(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
-    find_path(GMSH_LIB_DIR gmsh.lib PATHS ${GMSH_ROOT}/lib)
-    FIND_LIBRARY(GMSH_LIB gmsh.lib PATHS ${GMSH_LIB_DIR})
-    FIND_PATH(GMSH_INC gmsh.h_cwrap PATHS ${GMSH_INCLUDE_DIR})
-else()
-    FIND_PATH(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
-    SET(GMSH_LIB_DIR ${GMSH_ROOT}/lib)
-    FIND_LIBRARY(GMSH_LIB libgmsh.so PATHS ${GMSH_LIB_DIR})
-    FIND_PATH(GMSH_INC gmsh.h_cwrap PATHS ${GMSH_INCLUDE_DIR})
+if(ENABLE_GMSH)
+    if(WIN32)
+        find_path(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
+        find_path(GMSH_LIB_DIR gmsh.lib PATHS ${GMSH_ROOT}/lib)
+        FIND_LIBRARY(GMSH_LIB gmsh.lib PATHS ${GMSH_LIB_DIR})
+        FIND_PATH(GMSH_INC gmsh.h_cwrap PATHS ${GMSH_INCLUDE_DIR})
+    else()
+        FIND_PATH(GMSH_INCLUDE_DIR gmsh.h PATHS ${GMSH_ROOT}/include)
+        SET(GMSH_LIB_DIR ${GMSH_ROOT}/lib)
+        FIND_LIBRARY(GMSH_LIB libgmsh.so PATHS ${GMSH_LIB_DIR})
+        FIND_PATH(GMSH_INC gmsh.h_cwrap PATHS ${GMSH_INCLUDE_DIR})
+    endif()
+
+
+    if(NOT GMSH_LIB)
+        MESSAGE(FATAL_ERROR "Could not find libgmsh")
+    else()
+        # Read the content of gmsh.h into a variable
+        file(READ "${GMSH_INCLUDE_DIR}/gmsh.h" GMSH_H_CONTENT)
+        # Extract version information using regular expressions
+        # Major version
+        file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MAJOR
+            REGEX "#define GMSH_API_VERSION_MAJOR.*"
+        )
+        string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MAJOR ${GMSH_API_VERSION_MAJOR})
+        # Minor version
+        file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MINOR
+            REGEX "#define GMSH_API_VERSION_MINOR.*"
+        )
+        string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MINOR ${GMSH_API_VERSION_MINOR})
+        # Patch version
+        file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_PATCH
+            REGEX "#define GMSH_API_VERSION_PATCH.*"
+        )
+        string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_PATCH ${GMSH_API_VERSION_PATCH})
+
+        # Print version information
+        MESSAGE(STATUS "GMSH FOUND")
+        MESSAGE(STATUS "GMSH VERSION: ${GMSH_API_VERSION_MAJOR}.${GMSH_API_VERSION_MINOR}.${GMSH_API_VERSION_PATCH}")
+        MESSAGE(STATUS "GMSH include directory: ${GMSH_INCLUDE_DIR}")
+        MESSAGE(STATUS "GMSH lib directory: ${GMSH_LIB_DIR}")
+        MESSAGE(STATUS "-------------------------------------------------------------------------------")
+    endif()
+
+    if(NOT GMSH_INC)
+        MESSAGE(FATAL_ERROR "Could not find gmsh.h_cwrap")
+    endif()
+
+    INCLUDE_DIRECTORIES(${GMSH_INC})
 endif()
-
-
-if(NOT GMSH_LIB)
-    MESSAGE(FATAL_ERROR "Could not find libgmsh")
-else()
-    # Read the content of gmsh.h into a variable
-    file(READ "${GMSH_INCLUDE_DIR}/gmsh.h" GMSH_H_CONTENT)
-    # Extract version information using regular expressions
-    # Major version
-    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MAJOR
-        REGEX "#define GMSH_API_VERSION_MAJOR.*"
-    )
-    string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MAJOR ${GMSH_API_VERSION_MAJOR})
-    # Minor version
-    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_MINOR
-        REGEX "#define GMSH_API_VERSION_MINOR.*"
-    )
-    string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_MINOR ${GMSH_API_VERSION_MINOR})
-    # Patch version
-    file(STRINGS ${GMSH_INCLUDE_DIR}/gmsh.h GMSH_API_VERSION_PATCH
-        REGEX "#define GMSH_API_VERSION_PATCH.*"
-    )
-    string(REGEX MATCH "[0-9]+" GMSH_API_VERSION_PATCH ${GMSH_API_VERSION_PATCH})
-
-    # Print version information
-    MESSAGE(STATUS "GMSH FOUND")
-    MESSAGE(STATUS "GMSH VERSION: ${GMSH_API_VERSION_MAJOR}.${GMSH_API_VERSION_MINOR}.${GMSH_API_VERSION_PATCH}")
-    MESSAGE(STATUS "GMSH include directory: ${GMSH_INCLUDE_DIR}")
-    MESSAGE(STATUS "GMSH lib directory: ${GMSH_LIB_DIR}")
-    MESSAGE(STATUS "-------------------------------------------------------------------------------")
-endif()
-
-if(NOT GMSH_INC)
-    MESSAGE(FATAL_ERROR "Could not find gmsh.h_cwrap")
-endif()
-
-INCLUDE_DIRECTORIES(${GMSH_INC})
-
 
 # Netgen
 ######################################################################

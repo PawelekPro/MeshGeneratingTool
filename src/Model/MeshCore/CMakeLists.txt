@@ -1,5 +1,6 @@
 add_subdirectory(MGTMeshUtils)
 add_subdirectory(NetgenPlugin)
+add_subdirectory(GMSHPlugin)
 add_subdirectory(MGTMesh)
 
 ADD_LIBRARY(MeshCore SHARED)
@@ -8,4 +9,5 @@ TARGET_LINK_LIBRARIES(MeshCore PUBLIC
     MGTMesh
     MGTMeshUtils
     NetgenPlugin
+    GMSHPlugin
 )
