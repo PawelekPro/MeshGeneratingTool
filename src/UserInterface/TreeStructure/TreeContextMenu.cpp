@@ -89,10 +89,9 @@ void TreeContextMenu::buildGeometryMenu(QMenu* aContextMenu) {
 
 		ModelActionsHandler* modelHandler = _treeStructure->modelHandler();
 		GeometryActionsHandler* goeHandler = modelHandler->_geometryHandler;
-    
+
 		connect(addImporSTEPItemAction, &QAction::triggered, goeHandler,
 			&GeometryActionsHandler::importSTEP);
-
 	}
 	aContextMenu->addActions(geometryActions);
 }
@@ -106,12 +105,8 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu) {
 		ModelActionsHandler* modelHandler = _treeStructure->modelHandler();
 		MeshActionsHandler* meshHandler = modelHandler->_meshHandler;
 
-// 		connect(genereateMeshAction, &QAction::triggered, meshHandler,
-// 				&MeshActionsHandler::meshSurface);
-
-
-		connect(genereateMeshAction, &QAction::triggered, meshHandler,
-			&MeshActionsHandler::meshSurface);
+		// 		connect(genereateMeshAction, &QAction::triggered, meshHandler,
+		// 				&MeshActionsHandler::meshSurface);
 
 		ItemTypes::Sub sizingType { ItemTypes::Mesh::ElementSizing };
 		label = ItemTypes::label(sizingType);
@@ -121,8 +116,7 @@ void TreeContextMenu::buildMeshMenu(QMenu* aContextMenu) {
 
 		connect(addSizingAction, &QAction::triggered, meshHandler,
 
-		&MeshActionsHandler::addSizingToSelectedShapes);
-
+			&MeshActionsHandler::addSizingToSelectedShapes);
 	}
 	aContextMenu->addActions(meshActions);
 }
