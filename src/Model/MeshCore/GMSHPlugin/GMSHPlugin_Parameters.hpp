@@ -74,6 +74,18 @@ public:
 	void SetSmoothSteps(double smoothSteps);
 	double GetSmoothSteps() const { return _smoothSteps; }
 
+	void SetMeshCurvatureSize(double meshCurvaturesize);
+	double GetMeshCurvatureSize() const { return _meshCurvatureSize; };
+
+	void SetMeshSizeFactor(double meshSizeFactor);
+	double GetMeshSizeFactor() const { return _sizeFactor; }
+
+	void SetMeshSizeMin(double minSize);
+	double GetMeshSizeMin() const { return _minSize; }
+
+	void SetMeshSizeMax(double maxSize);
+	double GetMeshSizeMax() const { return _maxSize; }
+
 private:
 	Algo2D _algo2d;
 	Algo3D _algo3d;

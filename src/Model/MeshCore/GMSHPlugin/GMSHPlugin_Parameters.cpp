@@ -98,3 +98,35 @@ void GMSHPlugin_Parameters::SetSmoothSteps(double smoothSteps) {
 		// ToDo: NotifySubMeshesHypothesisModification();
 	}
 }
+
+//----------------------------------------------------------------------------
+void GMSHPlugin_Parameters::SetMeshCurvatureSize(double meshCurvaturesize) {
+	if (meshCurvaturesize != _meshCurvatureSize) {
+		_meshCurvatureSize = meshCurvaturesize;
+		// ToDo: NotifySubMeshesHypothesisModification();
+	}
+}
+
+//----------------------------------------------------------------------------
+void GMSHPlugin_Parameters::SetMeshSizeFactor(double meshSizeFactor) {
+	if (meshSizeFactor != _sizeFactor) {
+		_sizeFactor = meshSizeFactor;
+		// ToDo: NotifySubMeshesHypothesisModification();
+	}
+}
+
+//----------------------------------------------------------------------------
+void GMSHPlugin_Parameters::SetMeshSizeMin(double minSize) {
+	if (minSize != _minSize) {
+		_minSize = minSize;
+		// ToDo: NotifySubMeshesHypothesisModification();
+	}
+}
+
+//----------------------------------------------------------------------------
+void GMSHPlugin_Parameters::SetMeshSizeMax(double maxSize) {
+	if (maxSize != _maxSize) {
+		_maxSize = maxSize;
+		// ToDo: NotifySubMeshesHypothesisModification();
+	}
+}

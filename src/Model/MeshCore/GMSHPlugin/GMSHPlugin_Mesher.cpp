@@ -78,6 +78,10 @@ void GMSHPlugin_Mesher::SetGmshOptions() {
 	gmsh::option::setNumber("Mesh.RemeshAlgorithm", (double)_algorithm->GetRemeshAlgo());
 	gmsh::option::setNumber("Mesh.RemeshParametrization", (double)_algorithm->GetRemeshPara());
 	gmsh::option::setNumber("Mesh.Smoothing", _algorithm->GetSmoothSteps());
+	gmsh::option::setNumber("Mesh.MeshSizeFromCurvature", _algorithm->GetMeshCurvatureSize());
+	gmsh::option::setNumber("Mesh.MeshSizeFactor", _algorithm->GetMeshSizeFactor());
+	gmsh::option::setNumber("Mesh.MeshSizeMin", _algorithm->GetMeshSizeMin());
+	gmsh::option::setNumber("Mesh.MeshSizeMax", _algorithm->GetMeshSizeMax());
 }
 
 //----------------------------------------------------------------------------
@@ -85,6 +89,7 @@ int GMSHPlugin_Mesher::ComputeMesh() {
 	int err = MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 
 	gmsh::initialize();
+	this->SetGmshOptions();
 
-	return err;
+		return err;
 }
