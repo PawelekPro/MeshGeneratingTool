@@ -61,4 +61,5 @@ const QString AppInfo::getRootItemsSetupPath() { return this->rootItemsSetupPath
 //--------------------------------------------------------------------------------------
 const QString AppInfo::getComboBoxModelsPath() { return this->comboBoxModelsPath; }
 
+//--------------------------------------------------------------------------------------
 const QString AppInfo::getSubItemsSetupPath() { return this->subItemsSetupPath; };

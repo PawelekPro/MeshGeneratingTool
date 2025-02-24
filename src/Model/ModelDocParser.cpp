@@ -19,6 +19,7 @@
 
 #include "ModelDocParser.hpp"
 #include "DocUtils.hpp"
+
 #include "MGTMesh_Algorithm.hpp"
 
 ModelDocParser::ModelDocParser(Model& aModel)
@@ -117,6 +118,7 @@ std::unique_ptr<MGTMesh_Algorithm> ModelDocParser::generateMeshAlgorithm(bool su
 	// ToDo: setting up mesh algorithm from document handler (project properties)
 	int schemeId = 0;
 	auto algorithm = std::make_unique<MGTMesh_Algorithm>(schemeId);
+
 
 	if (!surfaceMesh)
 		algorithm->SetType(MGTMesh_Scheme::ALG_3D);
