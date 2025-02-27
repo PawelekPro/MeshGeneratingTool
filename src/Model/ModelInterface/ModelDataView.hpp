@@ -29,7 +29,7 @@ public:
 	using ShapesTags = std::vector<int>;
 	using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
 
-	ModelDataView(const ModelManager& aModelManger);
+	explicit ModelDataView(const ModelManager& aModelManger);
 	~ModelDataView() = default;
 
 	const GeometryCore::PartsMap& getPartsMap() const;
@@ -46,7 +46,7 @@ public:
 	int getShapeTag(const TopoDS_Shape&) const;
 	std::string getShapeName(const TopoDS_Shape&) const;
 
-	vtkSmartPointer<vtkActor> getMeshActor() const;
+	[[nodiscard]] vtkSmartPointer<vtkActor> getMeshActor() const;
 
 private:
 	const ModelManager& _modelManager;

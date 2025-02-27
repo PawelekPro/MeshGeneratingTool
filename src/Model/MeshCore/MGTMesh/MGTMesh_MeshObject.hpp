@@ -30,7 +30,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-class MGTMesh_MeshObject : public vtkMultiBlockDataSet {
+class MGTMesh_MeshObject final : public vtkMultiBlockDataSet {
 public:
 	static MGTMesh_MeshObject* New();
 	vtkTypeMacro(MGTMesh_MeshObject, vtkMultiBlockDataSet);
@@ -41,8 +41,8 @@ public:
 	void SetInternalMesh(vtkUnstructuredGrid* mesh);
 	void SetBoundaryMesh(vtkPolyData* mesh);
 
-	vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
-	vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;
+	[[nodiscard]] vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
+	[[nodiscard]] vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;
 
 private:
 	vtkSmartPointer<vtkUnstructuredGrid> _internalMesh;

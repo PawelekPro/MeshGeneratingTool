@@ -24,6 +24,8 @@
 
 #include "MGTMesh_Algorithm.hpp"
 
+#include "MGTMeshUtils_ComputeError.hpp"
+
 #include <BRep_Tool.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
 #include <GeomAdaptor_Curve.hxx>

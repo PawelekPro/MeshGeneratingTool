@@ -85,14 +85,14 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
 		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
 
-	for (const auto& it : _shapesMap) {
-		spdlog::debug("Creating mesh generator for shape: {}", it.first);
+	for (const auto& [fst, snd] : _shapesMap) {
+		spdlog::debug("Creating mesh generator for shape: {}", fst);
 
 		vtkSmartPointer<MGTMesh_MeshObject> meshObject = vtkSmartPointer<MGTMesh_MeshObject>::New();
-		MGTMesh_Generator meshGenerator(it.second, *algorithm, meshObject);
-		int result = meshGenerator.Compute();
-		if (result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
-			SPDLOG_ERROR("Error while generating mesh for shape: {}", it.first);
+		MGTMesh_Generator meshGenerator(snd, *algorithm, meshObject);
+		if (const int result = meshGenerator.Compute();
+			result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
+			SPDLOG_ERROR("Error while generating mesh for shape: {}", fst);
 			return false;
 		}
 

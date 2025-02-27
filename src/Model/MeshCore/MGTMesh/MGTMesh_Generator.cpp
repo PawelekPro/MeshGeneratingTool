@@ -27,27 +27,31 @@
 #include "NetgenPlugin_Mesher.hpp"
 #include "NetgenPlugin_Parameters.hpp"
 
+#include <memory>
+
 //----------------------------------------------------------------------------
 MGTMesh_Generator::MGTMesh_Generator(
-	const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm, MGTMesh_MeshObject* meshObject)
-	: _shape(&shape)
-	, _algorithm(&algorithm)
-	, _meshObject(meshObject) { }
+	const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm,
+	MGTMesh_MeshObject* meshObject)
+	: _meshObject(meshObject)
+	, _shape(&shape)
+	, _algorithm(&algorithm) { }
 
 //----------------------------------------------------------------------------
-MGTMesh_Generator::~MGTMesh_Generator() { }
+MGTMesh_Generator::~MGTMesh_Generator() = default;
 
 //----------------------------------------------------------------------------
-MGTMesh_MeshObject* MGTMesh_Generator::GetOutputMesh() { return _meshObject; }
+MGTMesh_MeshObject* MGTMesh_Generator::GetOutputMesh() const {
+	return _meshObject;
+}
 
 //----------------------------------------------------------------------------
-int MGTMesh_Generator::Compute() {
+int MGTMesh_Generator::Compute() const {
 	if (_algorithm->GetEngineLib() == MGTMesh_Scheme::Engine::NETGEN) {
-		std::unique_ptr<NetgenPlugin_Parameters> netgenAlg
-			= std::make_unique<NetgenPlugin_Parameters>(_algorithm->GetID());
+		const auto netgenAlg = std::make_unique<NetgenPlugin_Parameters>(_algorithm->GetID());
 
 		NetgenPlugin_Mesher netgenMesher(_meshObject, *_shape, netgenAlg.get());
 		return netgenMesher.ComputeMesh();
 	}
-	return MGTMeshUtils_ComputeErrorName::COMPERR_BAD_PARMETERS;
+	return COMPERR_BAD_PARMETERS;
 }

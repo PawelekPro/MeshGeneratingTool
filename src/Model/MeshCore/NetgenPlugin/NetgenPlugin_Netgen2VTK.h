@@ -26,7 +26,6 @@
 
 #include "NetgenPlugin_Defs.hpp"
 
-#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
@@ -40,14 +39,14 @@ class Mesh;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Netgen2VTK {
 public:
-	NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh);
+	explicit NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh);
 
 public:
-	void ConvertToInternalMesh(MGTMesh_MeshObject* mesh);
-	void ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh);
+	void ConvertToInternalMesh(MGTMesh_MeshObject* mesh) const;
+	void ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) const;
 
 private:
-	vtkSmartPointer<vtkPoints> PopulateMeshNodes();
+	vtkSmartPointer<vtkPoints> PopulateMeshNodes() const;
 
 private:
 	const netgen::Mesh& _netgenMesh;

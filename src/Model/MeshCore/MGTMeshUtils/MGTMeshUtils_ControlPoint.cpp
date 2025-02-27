@@ -36,7 +36,7 @@
 #include <gp_Trsf.hxx>
 
 namespace MGTMeshUtils {
-// Surface sampling funtions
+// Surface sampling functions
 void subdivideTriangle(const gp_Pnt& p1,
 	const gp_Pnt& p2,
 	const gp_Pnt& p3,

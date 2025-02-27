@@ -25,17 +25,19 @@
 #include "MGTMesh_Scheme.hpp"
 
 //----------------------------------------------------------------------------
-MGTMesh_Scheme::MGTMesh_Scheme(int schemeId)
+MGTMesh_Scheme::MGTMesh_Scheme(const int schemeId)
 	: _schemeId(schemeId)
-	, _engineLib(NETGEN)
-	, _type(ALG_3D) {
+	, _type(ALG_3D)
+	, _engineLib(NETGEN) {
 	_name = "generic";
 	_shapeType = 0;
 	_alg_dim = -1;
 }
 
 //----------------------------------------------------------------------------
-const char* MGTMesh_Scheme::GetName() const { return _name.c_str(); }
+const char* MGTMesh_Scheme::GetName() const {
+	return _name.c_str();
+}
 
 //----------------------------------------------------------------------------
 int MGTMesh_Scheme::GetID() const { return _schemeId; }
@@ -53,7 +55,9 @@ bool MGTMesh_Scheme::Is2DAlgortihm() const { return _type == ALG_2D; }
 bool MGTMesh_Scheme::Is1DAlgortihm() const { return _type == ALG_1D; }
 
 //----------------------------------------------------------------------------
-void MGTMesh_Scheme::SetType(MGTMesh_Scheme::SchemeType type) { _type = type; }
+void MGTMesh_Scheme::SetType(MGTMesh_Scheme::SchemeType type) {
+	_type = type;
+}
 
 //----------------------------------------------------------------------------
 void MGTMesh_Scheme::SetDim(int algDim) { _alg_dim = algDim; }
@@ -92,4 +96,6 @@ int MGTMesh_Scheme::GetShapeType() const { return _shapeType; }
 int MGTMesh_Scheme::GetEngineLib() const { return _engineLib; }
 
 //----------------------------------------------------------------------------
-void MGTMesh_Scheme::SetEngineLib(MGTMesh_Scheme::Engine libType) { _engineLib = libType; }
+void MGTMesh_Scheme::SetEngineLib(const MGTMesh_Scheme::Engine libType) {
+	_engineLib = libType;
+}

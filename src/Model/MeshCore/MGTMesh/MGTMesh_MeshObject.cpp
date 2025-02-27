@@ -54,4 +54,6 @@ void MGTMesh_MeshObject::SetBoundaryMesh(vtkPolyData* mesh) {
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MGTMesh_MeshObject::GetBoundaryMesh() const { return _boundaryMesh; }
+vtkSmartPointer<vtkPolyData> MGTMesh_MeshObject::GetBoundaryMesh() const {
+	return _boundaryMesh;
+}

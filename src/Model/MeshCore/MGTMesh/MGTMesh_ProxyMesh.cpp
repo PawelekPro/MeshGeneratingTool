@@ -46,32 +46,30 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(MGTMesh_MeshObject* mgtMesh) {
 }
 
 //----------------------------------------------------------------------------
-MGTMesh_ProxyMesh::~MGTMesh_ProxyMesh() { }
+MGTMesh_ProxyMesh::~MGTMesh_ProxyMesh() = default;
 
 //----------------------------------------------------------------------------
 MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
-	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> meshObjectsMap) {
+	const std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>>& meshObjectsMap) {
 	if (meshObjectsMap.empty())
 		return;
 
-	auto appendUnstructuredGrid = vtkSmartPointer<vtkAppendFilter>::New();
-	auto appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
+	const auto appendUnstructuredGrid = vtkSmartPointer<vtkAppendFilter>::New();
+	const auto appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
 
-	for (auto& pair : meshObjectsMap) {
-		int key = pair.first;
-		vtkSmartPointer<MGTMesh_MeshObject> meshObject = pair.second;
+	for (const auto& [fst, snd] : meshObjectsMap) {
+		int key = fst;
+		const vtkSmartPointer<MGTMesh_MeshObject> meshObject = snd;
 		spdlog::debug("Merging sub mesh with id: {}", key);
 
 		if (!meshObject)
 			continue;
 
-		vtkSmartPointer<vtkUnstructuredGrid> internalMesh = meshObject->GetInternalMesh();
-		if (internalMesh) {
+		if (vtkSmartPointer<vtkUnstructuredGrid> internalMesh = meshObject->GetInternalMesh()) {
 			appendUnstructuredGrid->AddInputData(internalMesh);
 		}
 
-		vtkSmartPointer<vtkPolyData> boundaryMesh = meshObject->GetBoundaryMesh();
-		if (boundaryMesh) {
+		if (vtkSmartPointer<vtkPolyData> boundaryMesh = meshObject->GetBoundaryMesh()) {
 			appendPolyData->AddInputData(boundaryMesh);
 		}
 	}
@@ -86,12 +84,12 @@ MGTMesh_ProxyMesh::MGTMesh_ProxyMesh(
 
 //----------------------------------------------------------------------------
 vtkSmartPointer<vtkActor> MGTMesh_ProxyMesh::GetProxyMeshActor() const {
-	vtkSmartPointer<vtkCompositeDataGeometryFilter> geometryFilter
+	const vtkSmartPointer<vtkCompositeDataGeometryFilter> geometryFilter
 		= vtkSmartPointer<vtkCompositeDataGeometryFilter>::New();
 	geometryFilter->SetInputData(_mgtMesh);
 	geometryFilter->Update();
 
-	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	const vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	mapper->SetInputConnection(geometryFilter->GetOutputPort());
 
 	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();

@@ -24,16 +24,15 @@
 #ifndef MGTMESH_ALGORITHM_H
 #define MGTMESH_ALGORITHM_H
 
-#include "MGTMeshUtils_ComputeError.hpp"
+
 #include "MGTMesh_Scheme.hpp"
 
 #include <TopoDS_Edge.hxx>
-#include <TopoDS_Shape.hxx>
 
 class MGTMesh_Algorithm : public MGTMesh_Scheme {
 public:
-	MGTMesh_Algorithm(int schemeId);
-	~MGTMesh_Algorithm();
+	explicit MGTMesh_Algorithm(int schemeId);
+	~MGTMesh_Algorithm() override;
 
 	static double EdgeLength(const TopoDS_Edge& E);
 

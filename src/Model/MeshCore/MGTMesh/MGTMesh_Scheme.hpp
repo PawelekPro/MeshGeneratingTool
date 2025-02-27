@@ -24,7 +24,6 @@
 #ifndef MGTMESH_SCHEME_H
 #define MGTMESH_SCHEME_H
 
-#include <iostream>
 #include <string>
 
 class MGTMesh_Scheme {
@@ -50,24 +49,24 @@ public:
 		INCOMPAT_SCHEMES //! schemes are incompatible
 	};
 
-	static bool IsStatusFatal(SchemeStatus status) { return status >= UNKNOWN_FATAL; }
+	static bool IsStatusFatal(const SchemeStatus status) { return status >= UNKNOWN_FATAL; }
 
 public:
-	MGTMesh_Scheme(int schemeId);
+	explicit MGTMesh_Scheme(int schemeId);
 	virtual ~MGTMesh_Scheme() = default;
 
 public:
-	const char* GetName() const;
+	[[nodiscard]] const char* GetName() const;
 
-	bool Is3DAlgortihm() const;
-	bool Is2DAlgortihm() const;
-	bool Is1DAlgortihm() const;
+	[[nodiscard]] bool Is3DAlgortihm() const;
+	[[nodiscard]] bool Is2DAlgortihm() const;
+	[[nodiscard]] bool Is1DAlgortihm() const;
 
-	int GetID() const;
-	int GetType() const;
-	int GetDim() const;
-	int GetShapeType() const;
-	int GetEngineLib() const;
+	[[nodiscard]] int GetID() const;
+	[[nodiscard]] int GetType() const;
+	[[nodiscard]] int GetDim() const;
+	[[nodiscard]] int GetShapeType() const;
+	[[nodiscard]] int GetEngineLib() const;
 
 	void SetType(SchemeType type);
 	void SetDim(int algDim);

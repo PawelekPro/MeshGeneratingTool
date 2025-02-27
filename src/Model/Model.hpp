@@ -40,7 +40,7 @@ public:
 	GeometryCore::Geometry geometry;
 	// MeshCore::Mesh mesh;
 
-	Model(std::string modelName);
+	explicit Model(std::string modelName);
 	~Model();
 
 	Model(const Model& aOther) = delete;

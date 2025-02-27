@@ -32,7 +32,7 @@ class Mesh;
 }
 
 struct NetgenPlugin_MeshInfo {
-	NetgenPlugin_MeshInfo(netgen::Mesh* ngMesh = nullptr, bool checkRemovedElems = false);
+	explicit NetgenPlugin_MeshInfo(netgen::Mesh* ngMesh = nullptr, bool checkRemovedElems = false);
 	void transferLocalH(netgen::Mesh* fromMesh, netgen::Mesh* toMesh);
 	void restoreLocalH(netgen::Mesh* ngMesh);
 

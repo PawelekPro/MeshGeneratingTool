@@ -42,9 +42,9 @@ NetgenPlugin_Netgen2VTK::NetgenPlugin_Netgen2VTK(const netgen::Mesh& netgenMesh)
 	: _netgenMesh(netgenMesh) { }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
+vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() const {
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-	const int nbN = (int)_netgenMesh.GetNP();
+	const int nbN = static_cast<int>(_netgenMesh.GetNP());
 	if (!nbN) {
 		return points;
 	}
@@ -52,29 +52,29 @@ vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() {
 	// Insert all node points
 	for (int i = 1; i <= nbN; ++i) {
 		const netgen::MeshPoint& mp = _netgenMesh.Point(i);
-		double coords[3] = { mp(0), mp(1), mp(2) };
+		const double coords[3] = { mp(0), mp(1), mp(2) };
 		points->InsertNextPoint(coords[0], coords[1], coords[2]);
 	}
 	return points;
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) {
-	const int nbE = (int)_netgenMesh.GetNE();
+void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) const {
+	const int nbE = static_cast<int>(_netgenMesh.GetNE());
 	if (!nbE) {
 		SPDLOG_WARN("No volume elements found in the Netgen mesh.");
 		return;
 	}
 
-	vtkSmartPointer<vtkUnstructuredGrid> internalMesh = vtkUnstructuredGrid::New();
+	const vtkSmartPointer<vtkUnstructuredGrid> internalMesh = vtkUnstructuredGrid::New();
 
-	vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
-	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-	vtkSmartPointer<vtkUnsignedCharArray> cellTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
+	const vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
+	const vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+	const vtkSmartPointer<vtkUnsignedCharArray> cellTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
 
 	for (int i = 1; i <= nbE; ++i) {
 		const netgen::Element& elem = _netgenMesh.VolumeElement(i);
-		int elementType = elem.GetType();
+		const int elementType = elem.GetType();
 		const auto vertices = elem.PNums();
 
 		if (elementType == netgen::TET) { //! Tetrahedral element
@@ -109,21 +109,21 @@ void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) {
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) {
-	const int nbSE = (int)_netgenMesh.GetNSE();
+void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) const {
+	const int nbSE = static_cast<int>(_netgenMesh.GetNSE());
 
 	if (!nbSE) {
 		SPDLOG_WARN("No surface elements found in the Netgen mesh.");
 		return;
 	}
 
-	vtkSmartPointer<vtkPolyData> boundaryMesh = vtkPolyData::New();
-	vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
-	vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+	const vtkSmartPointer<vtkPolyData> boundaryMesh = vtkPolyData::New();
+	const vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
+	const vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
 
 	for (int i = 1; i <= nbSE; ++i) {
 		const netgen::Element2d& elem = _netgenMesh.SurfaceElement(i);
-		int elementType = elem.GetType();
+		const int elementType = elem.GetType();
 
 		const auto vertices = elem.PNums();
 

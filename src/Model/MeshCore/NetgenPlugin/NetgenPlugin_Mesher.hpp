@@ -26,8 +26,6 @@
 
 #include "NetgenPlugin_Defs.hpp"
 
-#include <memory>
-
 namespace netgen {
 class OCCGeometry;
 class Mesh;

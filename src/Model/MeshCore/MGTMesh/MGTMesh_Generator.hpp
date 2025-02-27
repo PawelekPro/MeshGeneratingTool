@@ -27,8 +27,6 @@
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_MeshObject.hpp"
 
-#include <memory>
-
 #include <TopoDS_Shape.hxx>
 
 class MGTMesh_Generator {
@@ -37,8 +35,8 @@ public:
 		const TopoDS_Shape&, const MGTMesh_Algorithm&, MGTMesh_MeshObject* meshObject);
 	~MGTMesh_Generator();
 
-	int Compute();
-	MGTMesh_MeshObject* GetOutputMesh();
+	[[nodiscard]] int Compute() const;
+	[[nodiscard]] MGTMesh_MeshObject* GetOutputMesh() const;
 
 private:
 	MGTMesh_MeshObject* _meshObject;
