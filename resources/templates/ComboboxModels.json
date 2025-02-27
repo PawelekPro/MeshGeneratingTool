@@ -1,40 +1,57 @@
 {
-    "SizeModelSelection": {
-        "0": {
-            "name": "geometrySelection",
-            "label": "Geometry selection"
-        },
-        "1": {
-            "name": "namedSelection",
-            "label": "Named selection"
-        }
+  "SizeModelSelection": {
+    "0": {
+      "name": "geometrySelection",
+      "label": "Geometry selection"
     },
-    "EntitySelection": {
-        "0": {
-            "name": "edgeSelection",
-            "label": "Vertex"
-        },
-        "1": {
-            "name": "faceSelection",
-            "label": "Edge"
-        },
-        "2": {
-            "name": "edgeSelection",
-            "label": "Face"
-        },
-        "3": {
-            "name": "faceSelection",
-            "label": "Shape"
-        }
-    },
-    "CosJeszczeInnego": {
-        "0": {
-            "name": "test",
-            "label": "test"
-        },
-        "1": {
-            "name": "test",
-            "label": "test"
-        }
+    "1": {
+      "name": "namedSelection",
+      "label": "Named selection"
     }
+  },
+  "EntitySelection": {
+    "0": {
+      "name": "edgeSelection",
+      "label": "Vertex"
+    },
+    "1": {
+      "name": "faceSelection",
+      "label": "Edge"
+    },
+    "2": {
+      "name": "edgeSelection",
+      "label": "Face"
+    },
+    "3": {
+      "name": "faceSelection",
+      "label": "Shape"
+    }
+  },
+  "GlobalFinenessModel": {
+    "0": {
+      "name": "VeryCoarse",
+      "label": "Very Coarse"
+    },
+    "1": {
+      "name": "Coarse",
+      "label": "Coarse"
+    },
+    "2": {
+      "name": "Moderate",
+      "label": "Moderate"
+    },
+    "3": {
+      "name": "Fine",
+      "label": "Fine"
+    },
+    "4": {
+      "name": "VeryFine",
+      "label": "Very Fine"
+    },
+    "5": {
+      "name": "UserDefined",
+      "label": "User Defined"
+    }
+  }
 }
+

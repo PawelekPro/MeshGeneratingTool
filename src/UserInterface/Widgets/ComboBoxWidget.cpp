@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,12 @@
  */
 
 #include "ComboBoxWidget.hpp"
-#include "PropertiesModel.hpp"
 #include "DocUtils.hpp"
+#include "PropertiesModel.hpp"
+
+#include <QHBoxLayout>
+
+#include <spdlog/spdlog.h>
 
 //----------------------------------------------------------------------------
 ComboBoxWidget::ComboBoxWidget(QWidget* parent)
@@ -28,59 +33,72 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 
 	_index = QModelIndex();
 
-	QHBoxLayout* layout = new QHBoxLayout(this);
+	const auto layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_comboBox);
 
 	this->setLayout(layout);
-	connect(_comboBox, &QComboBox::currentIndexChanged, this, &ComboBoxWidget::onComboBoxIndexChanged);
+	connect(_comboBox, &QComboBox::currentIndexChanged, this,
+		&ComboBoxWidget::onComboBoxIndexChanged);
 }
 
 //----------------------------------------------------------------------------
-ComboBoxWidget::~ComboBoxWidget() {
-	_comboBox->deleteLater();
-}
+ComboBoxWidget::~ComboBoxWidget() { _comboBox->deleteLater(); }
 
 //----------------------------------------------------------------------------
 void ComboBoxWidget::setIndex(const QModelIndex& index) {
 	_index = index;
 
 	const QAbstractItemModel* constModel = index.model();
-	QAbstractItemModel* model = const_cast<QAbstractItemModel*>(constModel);
-	PropertiesModel* propsModel = dynamic_cast<PropertiesModel*>(model);
+	auto* model = const_cast<QAbstractItemModel*>(constModel);
+	auto* propsModel = dynamic_cast<PropertiesModel*>(model);
 
 	if (!propsModel) {
-		throw std::invalid_argument(
-			"The model assigned to the index must be of the 'PropertiesModel' type.");
+		throw std::invalid_argument("The model assigned to the index must be "
+									"of the 'PropertiesModel' type.");
 	}
 
-	QDomElement element = propsModel->getProperty(index.row());
-	QString modelLabel = Properties::getPropertyAttribute(element, "model");
-QStringListModel* listModel = this->createQStringListModel(modelLabel);
+	const QDomElement element = propsModel->getProperty(index.row());
+	const QString modelLabel
+		= Properties::getPropertyAttribute(element, "model");
+
+	QStringListModel* listModel = this->createQStringListModel(modelLabel);
+	const bool old = _comboBox->blockSignals(true);
+
+	if (_comboBox->model()) {
+		_comboBox->model()->deleteLater();
+	}
 	_comboBox->setModel(listModel);
+
+	const QString modelIndex = Properties::getPropertyValue(element);
+	_comboBox->setCurrentIndex(modelIndex.toInt());
+	_comboBox->blockSignals(old);
 }
 
-void ComboBoxWidget::onComboBoxIndexChanged(int index) {
-    if (!_index.isValid())
-        return;
+void ComboBoxWidget::onComboBoxIndexChanged(const int aIndex) const {
+	if (!_index.isValid())
+		return;
 
-    QString selectedValue = _comboBox->currentText();
+	const QString selectedValue = _comboBox->itemText(aIndex);
 
-    QAbstractItemModel* model = const_cast<QAbstractItemModel*>(_index.model());
-    if (!model) {
-        qWarning() << "Model is null!";
-        return;
-    }
+	auto* model = const_cast<QAbstractItemModel*>(_index.model());
+	if (!model) {
+		SPDLOG_ERROR("Model is null!");
+		return;
+	}
 
-    if (!model->setData(_index, selectedValue, Qt::EditRole)) {
-        qWarning() << "Failed to set data on the model!";
-    }
+	if (!model->setData(_index, aIndex, Qt::EditRole)) {
+		SPDLOG_ERROR("Failed to set data on the model!");
+	} else {
+		spdlog::debug(
+			"Set data {} on the model", selectedValue.toStdString().data());
+	}
 }
 
 //----------------------------------------------------------------------------
-QStringListModel* ComboBoxWidget::createQStringListModel(const QString& name) {
-	QStringList comboBoxList = DefaultsParser::getComboBoxList(name);
-	QStringListModel* listModel = new QStringListModel(comboBoxList);
-	return listModel;
+QStringListModel* ComboBoxWidget::createQStringListModel(
+	const QString& name) const {
+	const QStringList comboBoxList = DefaultsParser::getComboBoxList(name);
+	return new QStringListModel(comboBoxList, _comboBox);
 }

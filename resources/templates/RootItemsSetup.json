@@ -39,24 +39,28 @@
         "name": "algName",
         "label": "Algorithm Label",
         "widget": "TextLineWidget",
-        "value": "Netgen Default Algorithm",
-        "hidden": "no"
+        "value": "Netgen Default Algorithm"
       },
       {
         "name": "minElementSize",
-        "label": "Min element size",
+        "label": "Min Cell Size",
         "widget": "DoubleLineWidget",
         "value": "0.1",
-        "hidden": "no",
-        "unit": "unit"
+        "unit": "m"
       },
       {
         "name": "maxElementSize",
-        "label": "Max element size",
+        "label": "Max Cell Size",
         "widget": "DoubleLineWidget",
         "value": "1",
-        "hidden": "no",
-        "unit": "unit"
+        "unit": "m"
+      },
+      {
+        "name": "globalFineness",
+        "label": "Mesh Granularity",
+        "widget": "ComboBoxWidget",
+        "model": "GlobalFinenessModel",
+        "value": 2
       }
     ]
   },

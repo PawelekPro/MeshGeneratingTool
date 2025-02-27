@@ -35,6 +35,7 @@ TextLineWidget::TextLineWidget(QWidget* parent)
 
 	_layout->addWidget(_lineEdit);
 	_layout->setContentsMargins(0, 0, 0, 0);
+	_lineEdit->setFixedHeight(_lineHeight);
 	setLayout(_layout);
 
 	connect(_lineEdit, &QLineEdit::editingFinished, this,

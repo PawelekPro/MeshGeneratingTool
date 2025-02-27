@@ -1,7 +1,8 @@
 /*
 * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,29 +28,31 @@
 #include "BaseWidget.hpp"
 
 #include <QLabel>
+#include <QLineEdit>
 #include <QModelIndex>
 #include <QObject>
-#include <QWidget>
 #include <QVBoxLayout>
-#include <QLineEdit>
+#include <QWidget>
 
 class TextLineWidget final : public BaseWidget {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit TextLineWidget(QWidget* parent = nullptr);
+	explicit TextLineWidget(QWidget* parent = nullptr);
 
-    ~TextLineWidget() override;
+	~TextLineWidget() override;
 
-    void setIndex(const QModelIndex& index) override;
+	void setIndex(const QModelIndex& index) override;
 
 private:
 	QLineEdit* _lineEdit;
-    QModelIndex _index;
-    QVBoxLayout* _layout;
+	QModelIndex _index;
+	QVBoxLayout* _layout;
 
 private slots:
 	void onEditingFinished() const;
 
+private:
+	static constexpr int _lineHeight = 20;
 };
 
 #endif
