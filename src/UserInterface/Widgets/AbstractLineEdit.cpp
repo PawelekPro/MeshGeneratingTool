@@ -19,6 +19,10 @@
 #include "AbstractLineEdit.h"
 #include "PropertiesModel.hpp"
 
+#include <QHBoxLayout>
+#include <QLocale>
+#include <QLabel>
+
 // clang-format off
 QString AbstractLineEdit::labelStyleSheet = QString(R"(
 	padding-left: 1px;

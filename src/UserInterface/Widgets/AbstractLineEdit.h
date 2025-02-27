@@ -22,12 +22,9 @@
 
 #include "BaseWidget.hpp"
 
-#include <QFrame>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QLocale>
+
 #include <QMessageBox>
+#include <QLineEdit>
 #include <QModelIndex>
 #include <QValidator>
 #include <QWidget>

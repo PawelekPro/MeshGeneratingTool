@@ -23,27 +23,27 @@
 #include "DoubleLineWidget.hpp"
 #include "EntityPickWidget.hpp"
 #include "IntLineWidget.hpp"
-#include "LabelWidget.hpp"
+#include "TextLineWidget.hpp"
 #include "RibbonBarWidget.hpp"
 
 namespace WidgetFactory {
 
-BaseWidget* createWidget(const QString& widgetType, QWidget* parent) {
-	if (widgetType == "ColorPickerWidget") {
+BaseWidget* createWidget(const QString& widgetName, QWidget* parent) {
+	if (widgetName == "ColorPickerWidget") {
 		return new ColorPickerWidget(parent);
-	} else if (widgetType == "ComboBoxWidget") {
+	} else if (widgetName == "ComboBoxWidget") {
 		return new ComboBoxWidget(parent);
-	} else if (widgetType == "DoubleLineWidget") {
+	} else if (widgetName == "DoubleLineWidget") {
 		return new DoubleLineWidget(parent);
-	} else if (widgetType == "EntityPickWidget") {
+	} else if (widgetName == "EntityPickWidget") {
 		return new EntityPickWidget(parent);
-	} else if (widgetType == "IntLineWidget") {
+	} else if (widgetName == "IntLineWidget") {
 		return new IntLineWidget(parent);
-	} else if (widgetType == "LabelWidget") {
-		return new LabelWidget(parent);
+	} else if (widgetName == "TextLineWidget") {
+		return new TextLineWidget(parent);
 	}
 
-	std::cerr << widgetType.toStdString() << " could not be found in WidgetFactory" << std::endl;
+	std::cerr << widgetName.toStdString() << " could not be found in WidgetFactory" << std::endl;
 	return nullptr; // Return nullptr if widget type not found
 }
 }

@@ -38,7 +38,7 @@ class PropertiesModel;
 class BaseWidget : public QWidget {
 	Q_OBJECT
 public:
-	BaseWidget(QWidget* parent = nullptr)
+	explicit BaseWidget(QWidget* parent = nullptr)
 		: QWidget(parent) {};
 	virtual ~BaseWidget() {};
 	virtual void setIndex(const QModelIndex& index) = 0;

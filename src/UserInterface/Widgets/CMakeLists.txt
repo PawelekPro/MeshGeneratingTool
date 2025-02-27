@@ -8,13 +8,14 @@ ADD_LIBRARY(Widgets
   EntityPickWidget.cpp
   RibbonBarWidget.cpp
   ColorPickerWidget.cpp
-  LabelWidget.cpp
+  TextLineWidget.cpp
   ${SARIBBON_PATH}/SARibbon.h
   ${SARIBBON_PATH}/SARibbon.cpp
   ${SARIBBON_PATH}/SARibbonBar/resource.qrc
 )
 
-TARGET_LINK_LIBRARIES(Widgets PUBLIC 
+TARGET_LINK_LIBRARIES(Widgets PUBLIC
+  spdlog::spdlog_header_only
   ${VTK_LIBRARIES}  
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core

@@ -1,76 +1,83 @@
 {
-    "Geometry": {
-        "Properties": [
-            {
-                "name": "id0",
-                "label": "Selection scope",
-                "widget": "ComboBoxWidget",
-                "hidden": "no",
-                "model": "SizeModelSelection",
-                "value": "0"
-            },
-            {
-                "name": "id1",
-                "label": "Integer-type input",
-                "widget": "IntLineWidget",
-                "value": "420",
-                "hidden": "no",
-                "unit": "unit"
-            },
-            {
-                "name": "id2",
-                "label": "Double-type input",
-                "widget": "DoubleLineWidget",
-                "value": "2137.69",
-                "hidden": "no",
-                "unit": "unit"
-            },
-            {
-                "name": "id3",
-                "label": "Entity selection",
-                "widget": "EntityPickWidget",
-                "value": ""
-            }
-        ]
-    },
-    "Mesh": {
-        "Properties": [
-            {
-                "name": "minElementSize",
-                "label": "Min element size",
-                "widget": "DoubleLineWidget",
-                "value": "0.1",
-                "hidden": "no",
-                "unit": "unit"
-            },
-            {
-                "name": "maxElementSize",
-                "label": "Max element size",
-                "widget": "DoubleLineWidget",
-                "value": "1",
-                "hidden": "no",
-                "unit": "unit"
-            }
-        ]
-    },
-    "Solution": {
-        "Properties": [
-            {
-                "name": "test",
-                "label": "test",
-                "widget": "test",
-                "value": "0"
-            }
-        ]
-    },
-    "Results": {
-        "Properties": [
-            {
-                "name": "test",
-                "label": "test",
-                "widget": "test",
-                "value": "0"
-            }
-        ]
-    }
+  "Geometry": {
+    "Properties": [
+      {
+        "name": "id0",
+        "label": "Selection scope",
+        "widget": "ComboBoxWidget",
+        "hidden": "no",
+        "model": "SizeModelSelection",
+        "value": "0"
+      },
+      {
+        "name": "id1",
+        "label": "Integer-type input",
+        "widget": "IntLineWidget",
+        "value": "420",
+        "hidden": "no",
+        "unit": "unit"
+      },
+      {
+        "name": "id2",
+        "label": "Double-type input",
+        "widget": "DoubleLineWidget",
+        "value": "2137.69",
+        "hidden": "no",
+        "unit": "unit"
+      },
+      {
+        "name": "id3",
+        "label": "Entity selection",
+        "widget": "EntityPickWidget",
+        "value": ""
+      }
+    ]
+  },
+  "Mesh": {
+    "Properties": [
+      {
+        "name": "algName",
+        "label": "Algorithm Label",
+        "widget": "TextLineWidget",
+        "value": "Netgen Default Algorithm",
+        "hidden": "no"
+      },
+      {
+        "name": "minElementSize",
+        "label": "Min element size",
+        "widget": "DoubleLineWidget",
+        "value": "0.1",
+        "hidden": "no",
+        "unit": "unit"
+      },
+      {
+        "name": "maxElementSize",
+        "label": "Max element size",
+        "widget": "DoubleLineWidget",
+        "value": "1",
+        "hidden": "no",
+        "unit": "unit"
+      }
+    ]
+  },
+  "Solution": {
+    "Properties": [
+      {
+        "name": "test",
+        "label": "test",
+        "widget": "test",
+        "value": "0"
+      }
+    ]
+  },
+  "Results": {
+    "Properties": [
+      {
+        "name": "test",
+        "label": "test",
+        "widget": "test",
+        "value": "0"
+      }
+    ]
+  }
 }

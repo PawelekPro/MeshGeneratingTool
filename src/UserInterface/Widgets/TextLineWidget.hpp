@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+* Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,29 +15,41 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
-#ifndef LABELWIDGET_HPP
-#define LABELWIDGET_HPP
+*=============================================================================
+* File      : TextLineWidget.hpp
+* Author    : Paweł Gilewicz
+* Date      : 27/02/2025
+*/
+#ifndef TEXTLINEWIDGET_HPP
+#define TEXTLINEWIDGET_HPP
 
 #include "BaseWidget.hpp"
+
 #include <QLabel>
 #include <QModelIndex>
 #include <QObject>
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QLineEdit>
 
-class LabelWidget : public BaseWidget {
+class TextLineWidget final : public BaseWidget {
     Q_OBJECT
 public:
-    explicit LabelWidget(QWidget* parent = nullptr);
+    explicit TextLineWidget(QWidget* parent = nullptr);
 
-    ~LabelWidget() override = default;
+    ~TextLineWidget() override;
 
     void setIndex(const QModelIndex& index) override;
+
 private:
-    QLabel* _label;
+	QLineEdit* _lineEdit;
     QModelIndex _index;
+    QVBoxLayout* _layout;
+
+private slots:
+	void onEditingFinished() const;
+
 };
 
 #endif
