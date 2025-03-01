@@ -25,36 +25,36 @@
 #include <QAbstractItemModel>
 #include <QColor>
 #include <QColorDialog>
-#include <QHBoxLayout>
-#include <QModelIndex>
-#include <QPushButton>
 #include <QVariant>
 
 #include <tuple>
 
-class ColorPickerWidget : public BaseWidget {
+class ColorPickerWidget final : public BaseWidget {
 	Q_OBJECT
+
 public:
 	/**
 	 * @brief Construct an ColorPickerWidget object.
 	 *
 	 * @param parent The parent widget to which this widget belongs.
 	 */
-	explicit ColorPickerWidget(QWidget* parent = nullptr);
+	explicit ColorPickerWidget(QWidget *parent = nullptr);
 
 	/**
 	 * @brief Destroy the ColorPickerWidget object.
 	 */
-	~ColorPickerWidget();
+	~ColorPickerWidget() override;
 
-	void setIndex(const QModelIndex& index) override;
-	void setValue(const std::tuple<int, int, int>& color);
-	double* getColorAsDoubleArray();
+	void setIndex(const QModelIndex &index) override;
+
+	void setValue(const std::tuple<int, int, int> &color);
+
+	double *getColorAsDoubleArray();
 
 private:
-	QPushButton* _selectionButton;
+	QPushButton *_selectionButton;
 	QModelIndex _index;
-	double _rgb[3];
+	double _rgb[3]{};
 	QColor _color;
 
 private slots:

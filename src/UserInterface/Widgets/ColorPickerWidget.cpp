@@ -19,22 +19,25 @@
 
 #include "ColorPickerWidget.hpp"
 
-//----------------------------------------------------------------------------
-ColorPickerWidget::ColorPickerWidget(QWidget* parent)
-	: BaseWidget(parent)
-	, _selectionButton(new QPushButton(this))
-	, _index(QModelIndex())
-	, _color(QColor()) {
+#include <QHBoxLayout>
+#include <QModelIndex>
+#include <QPushButton>
 
-	QHBoxLayout* layout = new QHBoxLayout(this);
+//----------------------------------------------------------------------------
+ColorPickerWidget::ColorPickerWidget(QWidget *parent)
+	: BaseWidget(parent)
+	  , _selectionButton(new QPushButton(this))
+	  , _index(QModelIndex())
+	  , _color(QColor()) {
+	auto *layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_selectionButton);
 
 	connect(_selectionButton, &QPushButton::clicked,
-		this, &ColorPickerWidget::onSelectColorClicked);
+	        this, &ColorPickerWidget::onSelectColorClicked);
 
-	QString aButtonStylesheet = QString("border: none;");
+	const auto aButtonStylesheet = QString("border: none;");
 	_selectionButton->setStyleSheet(aButtonStylesheet);
 
 	this->setValue(std::make_tuple(100, 100, 100));
@@ -47,12 +50,11 @@ ColorPickerWidget::~ColorPickerWidget() {
 }
 
 //----------------------------------------------------------------------------
-void ColorPickerWidget::setIndex(const QModelIndex& index) {
+void ColorPickerWidget::setIndex(const QModelIndex &index) {
 	_index = index;
 
-	QVariant val = index.model()->data(index);
-	if (val.isValid()) {
-		QString aColorStr = val.toString();
+	if (const QVariant val = index.model()->data(index); val.isValid()) {
+		const QString aColorStr = val.toString();
 		QStringList aColorList = aColorStr.split(',');
 		int r = aColorList[0].toInt();
 		int g = aColorList[1].toInt();
@@ -62,20 +64,22 @@ void ColorPickerWidget::setIndex(const QModelIndex& index) {
 }
 
 //----------------------------------------------------------------------------
-void ColorPickerWidget::setValue(const std::tuple<int, int, int>& color) {
-	int r = std::get<0>(color);
-	int g = std::get<1>(color);
-	int b = std::get<2>(color);
+void ColorPickerWidget::setValue(const std::tuple<int, int, int> &color) {
+	const int r = std::get<0>(color);
+	const int g = std::get<1>(color);
+	const int b = std::get<2>(color);
 	_color.setRgb(r, g, b);
 
-	QColor aColor = QColor(r, g, b);
-	QString aStyleSheet = QString("background-color: %1").arg(aColor.name());
+	const auto aColor = QColor(r, g, b);
+	const QString aStyleSheet = QString("background-color: %1").arg(
+		aColor.name());
 	this->setStyleSheet(aStyleSheet);
 
-	QString aColorStr = QString("%1, %2, %3").arg(r).arg(g).arg(b);
+	const QString aColorStr = QString("%1, %2, %3").arg(r).arg(g).arg(b);
 
 	if (_index.isValid()) {
-		QAbstractItemModel* model = const_cast<QAbstractItemModel*>(_index.model());
+		auto *model = const_cast<QAbstractItemModel *>(_index.
+			model());
 		model->setData(_index, QVariant(aColorStr));
 	}
 }
@@ -85,24 +89,25 @@ void ColorPickerWidget::onSelectColorClicked() {
 	QColorDialog dlg;
 
 	if (_index.isValid()) {
-		QString aColorStr = _index.model()->data(_index).toString();
+		const QString aColorStr = _index.model()->data(_index).toString();
 		QStringList aColorList = aColorStr.split(',');
-		int r = aColorList[0].toInt();
-		int g = aColorList[1].toInt();
-		int b = aColorList[2].toInt();
-		QColor aColor = QColor(r, g, b);
+		const int r = aColorList[0].toInt();
+		const int g = aColorList[1].toInt();
+		const int b = aColorList[2].toInt();
+		const auto aColor = QColor(r, g, b);
 
 		dlg.setCurrentColor(aColor);
 	}
 
 	if (dlg.exec() == QDialog::Accepted) {
-		QColor newColor = dlg.currentColor();
-		setValue(std::make_tuple(newColor.red(), newColor.green(), newColor.blue()));
+		const QColor newColor = dlg.currentColor();
+		setValue(std::make_tuple(newColor.red(), newColor.green(),
+		                         newColor.blue()));
 	}
 }
 
 //----------------------------------------------------------------------------
-double* ColorPickerWidget::getColorAsDoubleArray() {
+double *ColorPickerWidget::getColorAsDoubleArray() {
 	_rgb[0] = _color.redF();
 	_rgb[1] = _color.greenF();
 	_rgb[2] = _color.blueF();
