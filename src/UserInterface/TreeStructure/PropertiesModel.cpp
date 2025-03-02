@@ -20,75 +20,69 @@
 #include "PropertiesModel.hpp"
 #include "DocUtils.hpp"
 
+#include <QAbstractItemModel>
+
 //--------------------------------------------------------------------------------------
-bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
+bool ModelFilter::filterAcceptsRow(
+	const int sourceRow, const QModelIndex &sourceParent) const {
 	Q_UNUSED(sourceParent);
 
-	QAbstractItemModel* model = this->sourceModel();
-	model->data(model->index(sourceRow, 0), Qt::DisplayRole);
+	QAbstractItemModel *model = this->sourceModel();
 
-	PropertiesModel* propsModel = dynamic_cast<PropertiesModel*>(model);
+	auto *propsModel = dynamic_cast<PropertiesModel *>(model);
 
-	QDomElement propsNode = propsModel->getProperty(sourceRow);
-	QString hidden = propsNode.attributes().namedItem("hidden").toAttr().value();
+	const QDomElement propsNode = propsModel->getProperty(sourceRow);
+	const QString hidden = propsNode.attributes().namedItem(
+		"hidden").toAttr().value();
 
 	return hidden == "no" || hidden.isEmpty();
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(const QDomElement& aPropertiesElement, QWidget* aParent)
-    : QAbstractTableModel(aParent)
-    , _element(aPropertiesElement){
+PropertiesModel::PropertiesModel(
+	const QDomElement &element, QWidget *parent)
+	: QAbstractTableModel(parent)
+	  , _element(element) {
+	this->_header << "Property" << "Value";
 
-    this->_header << "Property"
-                  << "Value";
-
-	QDomNodeList properties = aPropertiesElement.childNodes();
-    for (int row = 0; row < properties.length(); ++row) {
-        if (!properties.at(row).isComment()) {
-            QDomElement propertyElement = properties.at(row).toElement();
-            this->_properties.insert(row, propertyElement);
-        }
-    }
-	// connect(this, &PropertiesModel::dataChanged, this, [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
-    //         QDomNodeList list = this->_element.childNodes();
-    //         for (int i = 0; i < list.length(); ++i) {
-    //             QDomNode node = list.at(i);
-    //             if (node.isElement()) {
-    //                 QDomElement elem = node.toElement();
-    //                 std::cout << "Element: " << elem.tagName().toStdString() << ", Value: " << elem.text().toStdString() << std::endl;
-    //             }
-    //         }
-    //     });
+	const QDomNodeList properties = element.childNodes();
+	for (int row = 0; row < properties.length(); ++row) {
+		if (!properties.at(row).isComment()) {
+			QDomElement propertyElement = properties.at(row).toElement();
+			this->_properties.insert(row, propertyElement);
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------------
-PropertiesModel::~PropertiesModel() { }
+PropertiesModel::~PropertiesModel() = default;
 
 //--------------------------------------------------------------------------------------
-int PropertiesModel::rowCount(const QModelIndex& parent) const {
+int PropertiesModel::rowCount(const QModelIndex &parent) const {
 	Q_UNUSED(parent);
-	return this->_properties.count();
+	return static_cast<int>(this->_properties.count());
 }
 
 //--------------------------------------------------------------------------------------
-int PropertiesModel::columnCount(const QModelIndex& parent) const {
+int PropertiesModel::columnCount(const QModelIndex &parent) const {
 	Q_UNUSED(parent);
 	return 2;
 }
 
 //--------------------------------------------------------------------------------------
-QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
+QVariant PropertiesModel::data(const QModelIndex &index, int role) const {
 	if (!index.isValid())
-		return QVariant();
+		return {};
 
 	if (role != Qt::DisplayRole && role != Qt::EditRole)
-		return QVariant();
+		return {};
 
-	QDomElement propNode = this->_properties[index.row()];
+	const QDomElement propNode = this->_properties[index.row()];
 	QVariant dataVariant;
 	if (index.column() == PropertiesModel::Col::Label) {
-		dataVariant = QVariant(Properties::getPropertyAttribute(propNode, QString("label")));
+		dataVariant = QVariant(
+			Properties::getPropertyAttribute(
+				propNode, QString("label")));
 	} else if (index.column() == PropertiesModel::Col::Data) {
 		dataVariant = propNode.firstChild().toText().data();
 	}
@@ -97,7 +91,8 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 }
 
 //--------------------------------------------------------------------------------------
-bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
+bool PropertiesModel::setData(
+	const QModelIndex &index, const QVariant &value, const int role) {
 	if (!index.isValid() || role != Qt::DisplayRole && role != Qt::EditRole) {
 		return false;
 	}
@@ -108,7 +103,8 @@ bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, 
 		emit dataChanged(index, index);
 		return true;
 	} else if (index.column() == PropertiesModel::Col::Label) {
-		Properties::setPropertyAttribute(property, "label", value.toString());
+		Properties::setPropertyAttribute(
+			property, "label", value.toString());
 	} else {
 		qWarning() << "Invalid model index column.";
 	}
@@ -118,17 +114,18 @@ bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, 
 
 //--------------------------------------------------------------------------------------
 QVariant PropertiesModel::headerData(
-	int section, Qt::Orientation orientation, int role) const {
+	const int section, const Qt::Orientation orientation,
+	const int role) const {
 	if (role == Qt::DisplayRole) {
 		if (orientation == Qt::Horizontal) {
 			return this->_header.value(section);
 		}
 	}
-	return QVariant();
+	return {};
 }
 
 //--------------------------------------------------------------------------------------
-Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
+Qt::ItemFlags PropertiesModel::flags(const QModelIndex &index) const {
 	Qt::ItemFlags _flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 	if (index.column() == 1) {
 		_flags |= Qt::ItemIsEditable;
@@ -137,43 +134,48 @@ Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 }
 
 //--------------------------------------------------------------------------------------
-const QDomElement PropertiesModel::getProperty(int row) {
+QDomElement PropertiesModel::getProperty(const int row) const {
 	if (row < 0 || row >= _properties.size()) {
 		throw std::out_of_range("Invalid row index");
 	}
 	return this->_properties.value(row);
 }
 
-void PropertiesModel::setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value) {
-	QDomNodeList propertyNodes = _element.childNodes();
-    for (int i = 0; i < propertyNodes.count(); ++i) {
-        QDomElement propertyElement = propertyNodes.at(i).toElement();
-        if (!propertyElement.isNull() && propertyElement.attribute("name") == name) {
-            propertyElement.firstChild().setNodeValue(value.toString());
-            break;
-        }
-    }
+void PropertiesModel::setElementProperty(
+	const QModelIndex &index, const QString &name, const QVariant &value) {
+	const QDomNodeList propertyNodes = _element.childNodes();
+	for (int i = 0; i < propertyNodes.count(); ++i) {
+		if (QDomElement propertyElement = propertyNodes.at(i).toElement();
+			!propertyElement.isNull() &&
+			propertyElement.attribute("name") == name) {
+			propertyElement.firstChild().setNodeValue(value.toString());
+			break;
+		}
+	}
 	emit dataChanged(index, index);
 }
 
 //--------------------------------------------------------------------------------------
-QWidget* PropertiesModel::getWidget( const QModelIndex& aIndex, QWidget* aWidgetParent ) {
+QWidget *PropertiesModel::getWidget(
+	const QModelIndex &aIndex, QWidget *aWidgetParent) {
 	if (!aIndex.isValid()) {
 		qWarning("Widget index invalid!");
 	}
-	if(aIndex.column() != PropertiesModel::Col::Data){
+	if (aIndex.column() != PropertiesModel::Col::Data) {
 		qWarning("Widget index should have column == 1");
 	}
 
-	QDomElement property = _properties[aIndex.row()];
-	QString widgetName = Properties::getPropertyAttribute(property, "widget");
-	BaseWidget* newWidget = nullptr;
+	const QDomElement property = _properties[aIndex.row()];
+	const QString widgetName = Properties::getPropertyAttribute(
+		property, "widget");
+	BaseWidget *newWidget = nullptr;
 	newWidget = WidgetFactory::createWidget(widgetName, aWidgetParent);
-	if(newWidget){
+	if (newWidget) {
 		newWidget->setIndex(aIndex);
 	} else {
-		qWarning() << widgetName << " widget could not be added to PropertiesWidget";
+		qWarning() << widgetName <<
+				" widget could not be added to PropertiesWidget";
 	}
-	
+
 	return newWidget;
 }

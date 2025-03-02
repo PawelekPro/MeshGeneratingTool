@@ -34,10 +34,12 @@
  */
 class PropertiesWidget : public QTableView {
 	Q_OBJECT
+
 public:
-	explicit PropertiesWidget(QWidget* parent = nullptr)
-		: QTableView(parent) {};
-		
+	explicit PropertiesWidget(QWidget *parent = nullptr)
+		: QTableView(parent) {
+	};
+
 	~PropertiesWidget();
 
 	// PropertiesWidget(const PropertiesWidget&) = delete;
@@ -53,16 +55,16 @@ public:
 	 *
 	 * @returns None
 	 */
-	void setModel(PropertiesModel* aModel);
+	void setModel(PropertiesModel *aModel);
 
 private:
 	// Container for temporary widgets existing between model selection change event
-	QList<QWidget*> _createdWidgets;
+	QList<QWidget *> _createdWidgets;
 
 	/**
 	 * The height of a row in a table.
 	 */
-	static const int _rowHeight = 20;
+	static constexpr int _rowHeight = 20;
 };
 
 #endif
