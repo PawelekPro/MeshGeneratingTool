@@ -61,6 +61,18 @@
         "widget": "ComboBoxWidget",
         "model": "GlobalFinenessModel",
         "value": 2
+      },
+      {
+        "name": "growthRate",
+        "label": "Growth Rate",
+        "widget": "DoubleLineWidget",
+        "value": 0.3
+      },
+      {
+        "name": "limitSizeBySurfaceCurvature",
+        "label": "Limit Size by Surface Curvature",
+        "widget": "CheckBoxWidget",
+        "value": 0
       }
     ]
   },

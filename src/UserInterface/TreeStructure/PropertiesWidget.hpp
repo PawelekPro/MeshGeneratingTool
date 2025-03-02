@@ -32,7 +32,7 @@
 /**
  * Custom widget for displaying properties using a table view.
  */
-class PropertiesWidget : public QTableView {
+class PropertiesWidget final : public QTableView {
 	Q_OBJECT
 
 public:
@@ -40,7 +40,7 @@ public:
 		: QTableView(parent) {
 	};
 
-	~PropertiesWidget();
+	~PropertiesWidget() Q_DECL_OVERRIDE;
 
 	// PropertiesWidget(const PropertiesWidget&) = delete;
 	// PropertiesWidget& operator=(const PropertiesWidget&) = delete;

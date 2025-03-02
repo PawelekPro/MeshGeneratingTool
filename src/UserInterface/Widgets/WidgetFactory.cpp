@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +19,14 @@
  */
 
 #include "WidgetFactory.hpp"
+#include "CheckBoxWidget.hpp"
 #include "ColorPickerWidget.hpp"
 #include "ComboBoxWidget.hpp"
 #include "DoubleLineWidget.hpp"
 #include "EntityPickWidget.hpp"
 #include "IntLineWidget.hpp"
-#include "TextLineWidget.hpp"
 #include "RibbonBarWidget.hpp"
+#include "TextLineWidget.hpp"
 
 namespace WidgetFactory {
 
@@ -41,9 +43,12 @@ BaseWidget* createWidget(const QString& widgetName, QWidget* parent) {
 		return new IntLineWidget(parent);
 	} else if (widgetName == "TextLineWidget") {
 		return new TextLineWidget(parent);
+	} else if (widgetName == "CheckBoxWidget") {
+		return new CheckBoxWidget(parent);
 	}
 
-	std::cerr << widgetName.toStdString() << " could not be found in WidgetFactory" << std::endl;
+	std::cerr << widgetName.toStdString()
+			  << " could not be found in WidgetFactory" << std::endl;
 	return nullptr; // Return nullptr if widget type not found
 }
 }

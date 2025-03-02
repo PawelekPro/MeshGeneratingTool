@@ -27,7 +27,6 @@
 #include <QTableView>
 #include <Qt>
 #include <QtXml/QDomElement>
-#include <QModelIndex>
 
 #include "WidgetFactory.hpp"
 
@@ -57,11 +56,13 @@ protected:
 	 * @returns True if the row should be accepted, false otherwise.
 	 */
 	[[nodiscard]] bool
-	filterAcceptsRow(int, const QModelIndex &) const override;
+	filterAcceptsRow(
+		int source_row, const QModelIndex &source_parent) const override;
 };
 
 /**
- * A custom interface for displaying properties of a QDomElement in a QtTableView based widget.
+ * A custom interface for displaying properties of a QDomElement in a
+ * QtTableView based widget.
  */
 class PropertiesModel final : public QAbstractTableModel {
 	Q_OBJECT
@@ -72,8 +73,8 @@ public:
 		Data
 	};
 
-	explicit PropertiesModel(const QDomElement &element,
-	                         QWidget *parent = nullptr);
+	explicit PropertiesModel(
+		const QDomElement &element, QWidget *parent = nullptr);
 
 	~PropertiesModel() override;
 
@@ -127,8 +128,9 @@ public:
 	 *
 	 * @returns A QVariant containing the data for the specified header section.
 	 */
-	[[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation,
-	                                  int role) const Q_DECL_OVERRIDE;
+	[[nodiscard]] QVariant headerData(
+		int section, Qt::Orientation orientation,
+		int role) const Q_DECL_OVERRIDE;
 
 	/**
 	 * Returns the item flags for the given index.
@@ -147,7 +149,7 @@ public:
 	 * @param id The integer identifier of the property.
 	 * @return The QDomElement representing the property.
 	 */
-	QDomElement getProperty(int) const;
+	[[nodiscard]] QDomElement getProperty(int) const;
 
 	/**
 	 * Returns the QDomElement corresponding to the property with the given integer identifier.
@@ -158,8 +160,9 @@ public:
 	 * @param value value to be assigned to the property
 	 * @return The QDomElement representing the property.
 	 */
-	void setElementProperty(const QModelIndex &index, const QString &name,
-	                        const QVariant &value);
+	void setElementProperty(
+		const QModelIndex &index, const QString &name,
+		const QVariant &value);
 
 	/**
 	 * @brief creates and returns QWidget based on the name stored in QDomElement that is stored

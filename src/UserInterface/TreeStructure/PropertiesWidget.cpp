@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +23,11 @@
 
 //--------------------------------------------------------------------------------------
 PropertiesWidget::~PropertiesWidget() {
-	QAbstractItemModel* model = this->model();
-	if (model) {
-		ModelFilter* proxy = qobject_cast<ModelFilter*>(model);
-		
-		if (proxy) {
+	if (QAbstractItemModel* model = this->model()) {
+		if (const auto proxy = qobject_cast<ModelFilter*>(model)) {
 			for (int i = 0; i < proxy->rowCount(); ++i) {
 				QModelIndex index = proxy->index(i, 1);
-				QWidget* widget = indexWidget(index);
+				const QWidget* widget = indexWidget(index);
 				delete widget;
 			}
 		}
@@ -37,24 +35,21 @@ PropertiesWidget::~PropertiesWidget() {
 }
 
 //--------------------------------------------------------------------------------------
-void PropertiesWidget::setModel(PropertiesModel* model) {
-    qDeleteAll(_createdWidgets);
-    _createdWidgets.clear();
+void PropertiesWidget::setModel(PropertiesModel* aModel) {
+	qDeleteAll(_createdWidgets);
+	_createdWidgets.clear();
 
-    ModelFilter* proxy = new ModelFilter(this);
-    proxy->setSourceModel(model);
-    QTableView::setModel(proxy);
+	const auto proxy = new ModelFilter(this);
+	proxy->setSourceModel(aModel);
+	QTableView::setModel(proxy);
 
-    if (proxy) {
-        for (int i = 0; i < proxy->rowCount(); ++i) {
-            this->setRowHeight(i, this->_rowHeight);
-            QModelIndex index = proxy->index(i, PropertiesModel::Col::Data);
-            QModelIndex indexSource = proxy->mapToSource(index);
+	for (int i = 0; i < proxy->rowCount(); ++i) {
+		this->setRowHeight(i, this->_rowHeight);
+		QModelIndex index = proxy->index(i, PropertiesModel::Col::Data);
+		QModelIndex indexSource = proxy->mapToSource(index);
 
-            QWidget* widget = model->getWidget(indexSource, this);
-            this->setIndexWidget(index, widget);
-            _createdWidgets.append(widget);
-        }
-    }
+		QWidget* widget = aModel->getWidget(indexSource, this);
+		this->setIndexWidget(index, widget);
+		_createdWidgets.append(widget);
+	}
 }
-
