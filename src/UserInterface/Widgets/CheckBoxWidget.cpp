@@ -38,8 +38,13 @@ CheckBoxWidget::CheckBoxWidget(QWidget* parent)
 	_checkBox->setFixedHeight(_indicatorHeight);
 	setLayout(_layout);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
 	connect(_checkBox, &QCheckBox::checkStateChanged, this,
 		&CheckBoxWidget::onCheckStateChanged);
+#else
+	connect(_checkBox, &QCheckBox::stateChanged, this,
+		&CheckBoxWidget::onCheckStateChanged);
+#endif
 }
 
 //----------------------------------------------------------------------------
