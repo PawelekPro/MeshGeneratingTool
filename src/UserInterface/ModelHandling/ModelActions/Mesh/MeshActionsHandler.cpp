@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,48 +15,61 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
-#include "AddSizingCommand.hpp"
+*=============================================================================
+* File      : ModelActionsHandler.cpp
+* Author    : Krystian Fudali, Paweł Gilewicz
+* Date      : 28/01/2025
+*/
+
 #include "MeshActionsHandler.hpp"
-#include "ModelInterface.hpp"
+#include "AddSizingCommand.hpp"
 #include "CommandManager.hpp"
+#include "ModelInterface.hpp"
 
-MeshActionsHandler::MeshActionsHandler(
-    std::shared_ptr<ModelInterface> aModelInterface, 
-    CommandManager* aCommandManager,
-    RenderSignalSender* aSignalSender,
-    TreeStructure* aTreeStructure,
-    ProgressBar* aProgressBar, 
-    QObject* aParent
-    ) :
-    QObject(aParent),
-    _modelInterface(aModelInterface),
-    _commandManager(aCommandManager),
-    _signalSender(aSignalSender),
-    _treeStructure(aTreeStructure),
-    _progressBar(aProgressBar){};
+// logging
+#include <spdlog/spdlog.h>
 
-void MeshActionsHandler::meshSurface(){
-    _modelInterface->meshSurface();
-    emit _signalSender->meshSignals->meshGenerated();
-    return;
+//----------------------------------------------------------------------------
+MeshActionsHandler::MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
+	CommandManager* aCommandManager, RenderSignalSender* aSignalSender,
+	TreeStructure* aTreeStructure, ProgressBar* aProgressBar, QObject* aParent)
+	: QObject(aParent)
+	, _modelInterface(aModelInterface)
+	, _commandManager(aCommandManager)
+	, _signalSender(aSignalSender)
+	, _treeStructure(aTreeStructure)
+	, _progressBar(aProgressBar) { };
+
+//----------------------------------------------------------------------------
+void MeshActionsHandler::generate3DMesh() {
+	SPDLOG_INFO("Generating volume mesh triggered");
+	if (_modelInterface->generateMesh()) {
+		SPDLOG_INFO("Adding proxy mesh object to render view");
+		emit _signalSender->meshSignals->meshGenerated();
+	}
 }
 
-void MeshActionsHandler::meshVolume(){
-    // _modelInterface->meshVolume();
-    //TODO: send signal to update the renderer
-    return;
+//----------------------------------------------------------------------------
+void MeshActionsHandler::generate2DMesh() {
+	SPDLOG_INFO("Generating surface mesh triggered");
+	if (_modelInterface->generateMesh(true)) {
+		SPDLOG_INFO("Adding proxy mesh object to render view");
+		emit _signalSender->meshSignals->meshGenerated();
+	}
 }
 
-void MeshActionsHandler::addSizingToShapes(const std::vector<int>& aShapesVec){
-    AddSizingCommand* sizingCommand = new AddSizingCommand(_signalSender->geometrySignals, _treeStructure);
-    _commandManager->executeCommand(sizingCommand);
-    return;
+//----------------------------------------------------------------------------
+void MeshActionsHandler::addSizingToShapes(const std::vector<int>& aShapesVec) {
+	AddSizingCommand* sizingCommand
+		= new AddSizingCommand(_signalSender->geometrySignals, _treeStructure);
+	_commandManager->executeCommand(sizingCommand);
+	return;
 }
 
-void MeshActionsHandler::addSizingToSelectedShapes(){
-    const std::vector<int> shapesIds = _signalSender->geometrySignals->getSelectedShapes();
-    addSizingToShapes(shapesIds);
-    return;
+//----------------------------------------------------------------------------
+void MeshActionsHandler::addSizingToSelectedShapes() {
+	const std::vector<int> shapesIds = _signalSender->geometrySignals->getSelectedShapes();
+	addSizingToShapes(shapesIds);
+	return;
 }

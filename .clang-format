@@ -3,3 +3,5 @@ IndentWidth: 4
 UseTab: Always
 TabWidth: 4
 BreakBeforeBraces: Attach
+ColumnLimit: 100
+Language: Cpp

@@ -23,23 +23,22 @@
 #include <QObject>
 
 /**
- * Class that serves as a collection of signals to handle renderer upon mesh generation/modifiaction.
- * To implement new  render interaction create signal here, implement slot in MeshSignalHandler and 
- * connect them in mainwindow. 
+ * Class that serves as a collection of signals to handle renderer upon mesh
+ * generation/modifiaction. To implement new  render interaction create signal here, implement slot
+ * in MeshSignalHandler and connect them in mainwindow.
  */
-class MeshSignalSender : public QObject{
-    Q_OBJECT
+class MeshSignalSender : public QObject {
+	Q_OBJECT
 
-    public:
-    MeshSignalSender(QObject* aParent);
+public:
+	MeshSignalSender(QObject* aParent);
 
-    signals:
+signals:
 
-    /**
-     * Signal to be sent when the model generates a mesh.
-     */
-    void meshGenerated();
-
+	/**
+	 * Signal to be sent when the model generates a mesh.
+	 */
+	void meshGenerated();
 };
 
 #endif

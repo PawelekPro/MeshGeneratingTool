@@ -18,9 +18,13 @@
  */
 
 #include "RibbonBarWidget.hpp"
+#include "MeshActionsHandler.hpp"
+#include "ModelActionsHandler.hpp"
 
+//----------------------------------------------------------------------------
 RibbonBarWidget::RibbonBarWidget(QWidget* parent)
-	: QWidget(parent) {
+	: QWidget(parent)
+	, _modelHandler(nullptr) {
 
 	this->setupUi();
 
@@ -33,16 +37,22 @@ RibbonBarWidget::RibbonBarWidget(QWidget* parent)
 	_ribbonBar->setApplicationButton(nullptr);
 
 	sa_set_ribbon_theme(_ribbonBar, SARibbonTheme::Default);
-
 	this->verticalLayout->setMenuBar(_ribbonBar);
-	buildRibbon(_ribbonBar);
 }
 
+//----------------------------------------------------------------------------
+void RibbonBarWidget::initialize() {
+	_QVTKRender = _mainWindow->getRenderWindow();
+	this->buildRibbon(_ribbonBar);
+}
+
+//----------------------------------------------------------------------------
 RibbonBarWidget::~RibbonBarWidget() {
 	delete verticalLayout;
 	delete _ribbonBar;
 }
 
+//----------------------------------------------------------------------------
 void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	SARibbonCategory* page1 = new SARibbonCategory(this);
 	page1->setCategoryName("Home");
@@ -59,31 +69,34 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	page1->addPannel(pannel2);
 
 	QAction* settingsAct = createAction("setting", ":/icons/icons/customize0.svg");
-	connect(settingsAct, &QAction::triggered, _mainWindow,
-		&MainWindow::onShowDialogButtonClicked);
+	connect(settingsAct, &QAction::triggered, _mainWindow, &MainWindow::onShowDialogButtonClicked);
 
 	pannel2->addLargeAction(settingsAct);
 
 	pannel2->addLargeAction(createAction("windowsflag", ":/icons/icons/windowsflag-normal.svg"));
 	bar->addCategoryPage(page1);
 
+	/* ================================================================
+	  Mesh page
+	  ===================================================================*/
 	SARibbonCategory* page2 = new SARibbonCategory(this);
 	page2->setCategoryName("Mesh");
 	bar->addCategoryPage(page2);
 
-	SARibbonPannel* sizeFieldPanel
-		= new SARibbonPannel("Size fields", page2);
-	page2->addPannel(sizeFieldPanel);
+	SARibbonPannel* meshGenerationPanel = new SARibbonPannel("Generate mesh", page2);
+	page2->addPannel(meshGenerationPanel);
+	QAction* generate3DMeshAction = createAction("generate3DMesh", ":/icons/icons/Volume_mesh.svg");
+	generate3DMeshAction->setIconText("Volume mesh");
+	meshGenerationPanel->addAction(generate3DMeshAction);
+	connect(generate3DMeshAction, &QAction::triggered, _modelHandler->_meshHandler,
+		&MeshActionsHandler::generate3DMesh);
 
-	QActionGroup* sizeFieldGroup = new QActionGroup(this);
-	sizeFieldGroup->setExclusive(true);
-
-	QAction* elementSizeAct = createAction("elementSize", ":/icons/icons/Selection_face.svg");
-	elementSizeAct->setIconText("Element Size");
-	sizeFieldGroup->addAction(elementSizeAct);
-	sizeFieldPanel->addLargeAction(elementSizeAct);
-	connect(sizeFieldGroup, &QActionGroup::triggered, this,
-		&RibbonBarWidget::onPressedSizeField);
+	QAction* generate2DMeshAction
+		= createAction("generate2DMesh", ":/icons/icons/Surface_mesh.svg");
+	generate2DMeshAction->setIconText("Surface mesh");
+	meshGenerationPanel->addAction(generate2DMeshAction);
+	connect(generate2DMeshAction, &QAction::triggered, _modelHandler->_meshHandler,
+		&MeshActionsHandler::generate2DMesh);
 
 	/* ================================================================
 	  Display page
@@ -98,29 +111,27 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	QActionGroup* viewRepGroup = new QActionGroup(this);
 	viewRepGroup->setExclusive(true);
 
-	QAction* shadedRepAction = createAction(
-		"Shaded", ":/icons/icons/Shaded_representation.svg");
+	QAction* shadedRepAction = createAction("Shaded", ":/icons/icons/Shaded_representation.svg");
 	shadedRepAction->setIconText("Shaded");
 	shadedRepAction->setCheckable(true);
 	viewRepGroup->addAction(shadedRepAction);
 	viewRepPanel->addLargeAction(shadedRepAction);
 
-	QAction* surfaceWithEdgesRepAction = createAction(
-		"Surface with edges", ":/icons/icons/Surface_with_edges_representation.svg");
+	QAction* surfaceWithEdgesRepAction
+		= createAction("Surface with edges", ":/icons/icons/Surface_with_edges_representation.svg");
 	surfaceWithEdgesRepAction->setIconText("Surface with edges");
 	surfaceWithEdgesRepAction->setCheckable(true);
 	viewRepGroup->addAction(surfaceWithEdgesRepAction);
 	viewRepPanel->addLargeAction(surfaceWithEdgesRepAction);
 
-	QAction* wireframeRepAction = createAction(
-		"Wireframe", ":/icons/icons/Wireframe_representation.svg");
+	QAction* wireframeRepAction
+		= createAction("Wireframe", ":/icons/icons/Wireframe_representation.svg");
 	wireframeRepAction->setIconText("Wireframe");
 	wireframeRepAction->setCheckable(true);
 	viewRepGroup->addAction(wireframeRepAction);
 	viewRepPanel->addLargeAction(wireframeRepAction);
 
-	QAction* pointsRepAction = createAction(
-		"Points", ":/icons/icons/Points_representation.svg");
+	QAction* pointsRepAction = createAction("Points", ":/icons/icons/Points_representation.svg");
 	pointsRepAction->setIconText("Points");
 	pointsRepAction->setCheckable(true);
 	viewRepGroup->addAction(pointsRepAction);
@@ -166,14 +177,15 @@ void RibbonBarWidget::buildRibbon(SARibbonBar* bar) {
 	selectionGroup->addAction(volSelAct);
 	selectionPanel->addLargeAction(volSelAct);
 
-	connect(selectionGroup, &QActionGroup::triggered, this,
-		&RibbonBarWidget::onEntitySelectionChanged);
+	connect(
+		selectionGroup, &QActionGroup::triggered, this, &RibbonBarWidget::onEntitySelectionChanged);
 
 	SARibbonQuickAccessBar* qbar = _ribbonBar->quickAccessBar();
 	// qbar->addAction(createAction("undo", ":/icons/icons/undo.svg"));
 	// qbar->addAction(createAction("redo", ":/icons/icons/redo.svg"));
 }
 
+//----------------------------------------------------------------------------
 QAction* RibbonBarWidget::createAction(const QString& text, const QString& iconurl) {
 	QAction* act = new QAction(this);
 	act->setText(text);
@@ -225,11 +237,10 @@ void RibbonBarWidget::onViewRepresentationChanged(QAction* action) {
 
 	_QVTKRender->RenderScene();
 }
-//----------------------------------------------------------------------------
-void RibbonBarWidget::onPressedSizeField(QAction* action) {
-	const QString& actionText = action->text();
 
-	if (actionText == "elementSize") {
-		// this->_QVTKRender->model->addEdgeSizing()
+//----------------------------------------------------------------------------
+void RibbonBarWidget::setModelHandler(ModelActionsHandler* aModelHandler) {
+	if (aModelHandler) {
+		_modelHandler = aModelHandler;
 	}
 }

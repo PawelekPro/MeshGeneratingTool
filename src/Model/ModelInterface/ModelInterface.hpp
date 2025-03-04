@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,33 +15,39 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : ModelInterface.hpp
+* Author    : Krystian Fudali, Paweł Gilewicz
+* Date      : 28/01/2025
+*/
 
 #ifndef MODELINTERFACE_HPP
 #define MODELINTERFACE_HPP
 
-#include "ModelManager.hpp"
 #include "ModelDataView.hpp"
+#include "ModelManager.hpp"
 
-class ModelInterface{
+class MGTMesh_ProxyMesh;
+class vtkActor;
 
-    public:
-        ModelInterface(ModelManager& aModelManager);
+class ModelInterface {
 
-        void createNewModel(const QString& aNewModelName);
+public:
+	ModelInterface(ModelManager& aModelManager);
 
-        int importSTEP(const QString& aFilePath,  QWidget* progressBar);
-        int importSTL(const QString& aFilePath,  QWidget* progressBar);
+	void createNewModel(const QString& aNewModelName);
 
-        void meshSurface();
-        void meshVolume();
+	int importSTEP(const QString& aFilePath, QWidget* progressBar);
+	int importSTL(const QString& aFilePath, QWidget* progressBar);
 
-        const ModelDataView& modelDataView(){return _modelDataView;};
+	bool generateMesh(bool surfaceMesh = false);
 
-    private:
+	const ModelDataView& modelDataView() { return _modelDataView; };
 
-        ModelManager& _modelManager;
-        const ModelDataView _modelDataView;
-}; 
+private:
+	ModelManager& _modelManager;
+	const ModelDataView _modelDataView;
+};
 
 #endif

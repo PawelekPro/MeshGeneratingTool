@@ -1,20 +1,11 @@
-ADD_LIBRARY(MeshCore 
-    Mesh.cpp
-    MeshContainers.hpp
-)
+add_subdirectory(MGTMeshUtils)
+add_subdirectory(NetgenPlugin)
+add_subdirectory(MGTMesh)
 
-if(WIN32)
-    TARGET_LINK_LIBRARIES(MeshCore PUBLIC
-        ${OpenCASCADE_LIBRARIES}
-        ${VTK_LIBRARIES}
-        )
-else()
-    TARGET_LINK_LIBRARIES(MeshCore PUBLIC
-        ${OCC_LIBRARIES}
-        ${VTK_LIBRARIES}
-        )
-endif()
+ADD_LIBRARY(MeshCore SHARED)
 
-TARGET_INCLUDE_DIRECTORIES(MeshCore PUBLIC
-    ${PRJ_SOURCE_DIR}/src/Model/MeshCore
+TARGET_LINK_LIBRARIES(MeshCore PUBLIC
+    MGTMesh
+    MGTMeshUtils
+    NetgenPlugin
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,60 +15,53 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : Model.hpp
+* Author    : Paweł Gilewicz, Krystian Fudali
+* Date      : 26/01/2025
+*/
 
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#include "Geometry.hpp"
-#include "Mesh.h"
 #include "DocumentHandler.hpp"
+#include "Geometry.hpp"
 
-#ifdef _WIN32
-#include <gmsh.h_cwrap>
-#endif
+#include <unordered_map>
 
-#ifdef linux
-#include <gmsh.h>
-#endif
-
-
+class MGTMesh_Algorithm;
+class MGTMesh_MeshObject;
+class MGTMesh_ProxyMesh;
 
 class Model {
-	public:
-	static void initializeGmsh();
-
+public:
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
-	MeshCore::Mesh mesh;
+	// MeshCore::Mesh mesh;
 
-	Model(std::string modelName);
+	explicit Model(std::string modelName);
 	~Model();
 
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
 
-	//--------Geometry interface-----// 
-    void importSTEP(const std::string& filePath, QWidget* progressBar);
-    void importSTL(const std::string& filePath, QWidget* progressBar);
+	//--------Geometry interface-----//
+	void importSTEP(const std::string& filePath, QWidget* progressBar);
+	void importSTL(const std::string& filePath, QWidget* progressBar);
 
-	//--------Meshing interface-----// 
-	void meshSurface();
-	void meshVolume();
-	vtkSmartPointer<vtkActor> getMeshActor();
+	//--------Meshing interface-----//
+	bool generateMesh(const MGTMesh_Algorithm* algorithm);
+	MGTMesh_ProxyMesh* getProxyMesh() const;
 
-	void applyMeshSettings();
+private:
+	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 
-	void addSizing(const std::vector<std::reference_wrapper<const TopoDS_Shape>> selectedShapes);
-	void addSizing(const std::vector<int>& verticesTags, double size);
+private:
+	GeometryCore::PartsMap _shapesMap;
 
-	private:
-		static bool gmshInitialized;
-
-		void applyMeshGlobalSize();
-		void applyMeshSizings();
-
-		void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
+	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> _meshObjectsMap;
+	std::shared_ptr<MGTMesh_ProxyMesh> _proxyMesh;
 };
 
 #endif

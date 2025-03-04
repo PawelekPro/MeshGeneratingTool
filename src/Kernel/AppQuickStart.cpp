@@ -26,7 +26,7 @@
 #include <QVTKOpenGLNativeWidget.h>
 #include <memory>
 
-// logging lib
+// logging
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 	}
-	Model::initializeGmsh();
+
 	ModelManager modelManager;
 	modelManager.createNewModel("NewModel");
 	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);

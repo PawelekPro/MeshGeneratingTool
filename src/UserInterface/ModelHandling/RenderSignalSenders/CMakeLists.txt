@@ -6,6 +6,7 @@ add_library(RenderSignalSenders
 
 target_include_directories(RenderSignalSenders PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${PRJ_SOURCE_DIR}/src/Model/MeshCore/MGTMesh
 )
 
 target_link_libraries(RenderSignalSenders PUBLIC
@@ -13,3 +14,4 @@ target_link_libraries(RenderSignalSenders PUBLIC
     ${OpenCASCADE_LIBRARIES}
     ${VTK_LIBRARIES}
 )
+
