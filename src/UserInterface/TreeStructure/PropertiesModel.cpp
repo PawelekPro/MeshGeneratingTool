@@ -19,11 +19,24 @@
  */
 
 #include "PropertiesModel.hpp"
+
+#include "CheckBoxWidget.hpp"
 #include "DocUtils.hpp"
 
 #include <QAbstractItemModel>
 
-//--------------------------------------------------------------------------------------
+#include <spdlog/spdlog.h>
+
+//-----------------------------------------------------------------------------
+ModelFilter::ModelFilter(QObject* parent)
+	: QSortFilterProxyModel(parent) { }
+
+void ModelFilter::onFilterModelDataChanged() {
+	std::cout << "ModelFilter::onFilterModelDataChanged()" << std::endl;
+	this->invalidate();
+}
+
+//-----------------------------------------------------------------------------
 bool ModelFilter::filterAcceptsRow(
 	const int sourceRow, const QModelIndex& sourceParent) const {
 	Q_UNUSED(sourceParent);
@@ -39,10 +52,12 @@ bool ModelFilter::filterAcceptsRow(
 	return hidden == "no" || hidden.isEmpty();
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
 	: QAbstractTableModel(parent)
-	, _element(element) {
+	, _element(element)
+	, _visibilityManager(new PropertyVisibilityManager(parent))
+	, _proxyFilter(nullptr) {
 	this->_header << "Property" << "Value";
 
 	const QDomNodeList properties = element.childNodes();
@@ -54,22 +69,29 @@ PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
 	}
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 PropertiesModel::~PropertiesModel() = default;
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void PropertiesModel::setProxyFilter(ModelFilter* aFilter) {
+	_proxyFilter = aFilter;
+}
+
+ModelFilter* PropertiesModel::getProxyFilter() const { return _proxyFilter; }
+
+//-----------------------------------------------------------------------------
 int PropertiesModel::rowCount(const QModelIndex& parent) const {
 	Q_UNUSED(parent);
 	return static_cast<int>(this->_properties.count());
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 int PropertiesModel::columnCount(const QModelIndex& parent) const {
 	Q_UNUSED(parent);
 	return 2;
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QVariant PropertiesModel::data(const QModelIndex& index, const int role) const {
 	if (!index.isValid())
 		return {};
@@ -89,7 +111,7 @@ QVariant PropertiesModel::data(const QModelIndex& index, const int role) const {
 	return dataVariant;
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 bool PropertiesModel::setData(
 	const QModelIndex& index, const QVariant& value, const int role) {
 	if (!index.isValid() || role != Qt::DisplayRole && role != Qt::EditRole) {
@@ -110,7 +132,7 @@ bool PropertiesModel::setData(
 	return false;
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QVariant PropertiesModel::headerData(const int section,
 	const Qt::Orientation orientation, const int role) const {
 	if (role == Qt::DisplayRole) {
@@ -121,7 +143,7 @@ QVariant PropertiesModel::headerData(const int section,
 	return {};
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags _flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 	if (index.column() == 1) {
@@ -130,7 +152,7 @@ Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 	return _flags;
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QDomElement PropertiesModel::getProperty(const int row) const {
 	if (row < 0 || row >= _properties.size()) {
 		throw std::out_of_range("Invalid row index");
@@ -152,27 +174,54 @@ void PropertiesModel::setElementProperty(
 	emit dataChanged(index, index);
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QWidget* PropertiesModel::getWidget(
 	const QModelIndex& aIndex, QWidget* aWidgetParent) {
 	if (!aIndex.isValid()) {
-		qWarning("Widget index invalid!");
+		SPDLOG_WARN("Widget index invalid!");
 	}
 	if (aIndex.column() != PropertiesModel::Col::Data) {
-		qWarning("Widget index should have column == 1");
+		SPDLOG_WARN("Widget index should have column == 1");
 	}
 
 	const QDomElement property = _properties[aIndex.row()];
-	const QString widgetName
+	const QString widgetClass
 		= Properties::getPropertyAttribute(property, "widget");
+
 	BaseWidget* newWidget = nullptr;
-	newWidget = WidgetFactory::createWidget(widgetName, aWidgetParent);
+	newWidget = WidgetFactory::createWidget(widgetClass, aWidgetParent);
 	if (newWidget) {
 		newWidget->setIndex(aIndex);
 	} else {
-		qWarning() << widgetName
-				   << " widget could not be added to PropertiesWidget";
+		SPDLOG_WARN("Widget {} could not be added to PropertiesWidget",
+			widgetClass.toStdString().data());
+	}
+
+	const QString widgetName
+		= Properties::getPropertyAttribute(property, "name");
+
+	if (widgetClass.toStdString() == "CheckBoxWidget") {
+
+		std::cout << widgetName.toStdString().data() << std::endl;
+		if (widgetName.toStdString() == "limitSizeBySurfaceCurvature") {
+
+			_visibilityManager->registerVisibilityRule(
+				aIndex, false, { index(6, 1), index(7, 1) });
+		}
+
+		const auto* checkBox = qobject_cast<CheckBoxWidget*>(newWidget);
+		connect(checkBox, &CheckBoxWidget::checkStateChanged, this,
+			&PropertiesModel::onCheckBoxWidgetStateChanged,
+			Qt::UniqueConnection);
 	}
 
 	return newWidget;
+}
+
+//-----------------------------------------------------------------------------
+void PropertiesModel::onCheckBoxWidgetStateChanged(
+	const QModelIndex& index, const bool checked) {
+	if (_visibilityManager) {
+		_visibilityManager->handleStateChange(index, QVariant(checked), this);
+	}
 }

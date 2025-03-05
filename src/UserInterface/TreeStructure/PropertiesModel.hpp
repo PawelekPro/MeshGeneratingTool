@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,31 +21,32 @@
 #ifndef PROPERTIESMODEL_HPP
 #define PROPERTIESMODEL_HPP
 
-#include <QSortFilterProxyModel>
+#include "PropertyVisibilityManager.hpp"
+#include "WidgetFactory.hpp"
+
 #include <QAbstractTableModel>
+#include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
 #include <QTableView>
 #include <Qt>
 #include <QtXml/QDomElement>
 
-#include "WidgetFactory.hpp"
-
 /**
  * Custom model filter class that filters rows based on a custom criteria.
  *
- * This class inherits from QSortFilterProxyModel and overrides the filterAcceptsRow method
- * to provide custom filtering logic.
+ * This class inherits from QSortFilterProxyModel and overrides the
+ * filterAcceptsRow method to provide custom filtering logic.
  */
 class ModelFilter final : public QSortFilterProxyModel {
 	Q_OBJECT
 
 public:
-	explicit ModelFilter(QObject *parent = nullptr)
-		: QSortFilterProxyModel(parent) {
-	}
-
+	explicit ModelFilter(QObject* parent = nullptr);
 	~ModelFilter() override = default;
+
+public slots:
+	void onFilterModelDataChanged();
 
 protected:
 	/**
@@ -55,9 +57,8 @@ protected:
 	 *
 	 * @returns True if the row should be accepted, false otherwise.
 	 */
-	[[nodiscard]] bool
-	filterAcceptsRow(
-		int source_row, const QModelIndex &source_parent) const override;
+	[[nodiscard]] bool filterAcceptsRow(
+		int source_row, const QModelIndex& source_parent) const override;
 };
 
 /**
@@ -68,13 +69,10 @@ class PropertiesModel final : public QAbstractTableModel {
 	Q_OBJECT
 
 public:
-	enum Col {
-		Label,
-		Data
-	};
+	enum Col { Label, Data };
 
 	explicit PropertiesModel(
-		const QDomElement &element, QWidget *parent = nullptr);
+		const QDomElement& element, QWidget* parent = nullptr);
 
 	~PropertiesModel() override;
 
@@ -84,31 +82,33 @@ public:
 	 * @param parent The parent index. If not specified, the root index is used.
 	 * @return The number of rows under the parent index.
 	 */
-	[[nodiscard]] int rowCount(const QModelIndex &parent) const
-	Q_DECL_OVERRIDE;
+	[[nodiscard]] int rowCount(const QModelIndex& parent) const Q_DECL_OVERRIDE;
 
 	/**
 	 * Returns the number of columns in the model under the given parent index.
 	 *
 	 * @param parent The parent index in the model (default is the root index).
-	 * @return The number of columns in the model under the specified parent index.
+	 * @return The number of columns in the model under the specified parent
+	 * index.
 	 */
-	[[nodiscard]] int columnCount(const QModelIndex &parent) const
-	Q_DECL_OVERRIDE;
+	[[nodiscard]] int columnCount(
+		const QModelIndex& parent) const Q_DECL_OVERRIDE;
 
 	/**
 	 * Returns the data for the specified role and index in the model.
 	 *
 	 * @param index The index of the item in the model.
-	 * @param role The role for which the data is required (default is Qt::DisplayRole).
+	 * @param role The role for which the data is required (default is
+	 * Qt::DisplayRole).
 	 *
 	 * @returns A QVariant containing the data for the specified role and index.
 	 */
-	[[nodiscard]] QVariant data(const QModelIndex &index, int role) const
-	Q_DECL_OVERRIDE;
+	[[nodiscard]] QVariant data(
+		const QModelIndex& index, int role) const Q_DECL_OVERRIDE;
 
 	/**
-	 * Sets the data for the item at the specified index with the given value and role.
+	 * Sets the data for the item at the specified index with the given value
+	 * and role.
 	 *
 	 * @param index The model index of the item.
 	 * @param value The new value to set for the item.
@@ -116,20 +116,21 @@ public:
 	 *
 	 * @returns True if the data was successfully set, false otherwise.
 	 */
-	bool setData(const QModelIndex &index, const QVariant &value, int role)
-	Q_DECL_OVERRIDE;
+	bool setData(const QModelIndex& index, const QVariant& value,
+		int role) Q_DECL_OVERRIDE;
 
 	/**
-	 * Returns the data for the header section specified by the given role, section, and orientation.
+	 * Returns the data for the header section specified by the given role,
+	 * section, and orientation.
 	 *
 	 * @param section The index of the header section.
-	 * @param orientation The orientation of the header (horizontal or vertical).
+	 * @param orientation The orientation of the header (horizontal or
+	 * vertical).
 	 * @param role The role of the header data to be retrieved.
 	 *
 	 * @returns A QVariant containing the data for the specified header section.
 	 */
-	[[nodiscard]] QVariant headerData(
-		int section, Qt::Orientation orientation,
+	[[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation,
 		int role) const Q_DECL_OVERRIDE;
 
 	/**
@@ -140,11 +141,12 @@ public:
 	 * @param index The model index for which to retrieve the item flags.
 	 * @return The item flags for the specified index.
 	 */
-	[[nodiscard]] Qt::ItemFlags flags(const QModelIndex &index) const
-	Q_DECL_OVERRIDE;
+	[[nodiscard]] Qt::ItemFlags flags(
+		const QModelIndex& index) const Q_DECL_OVERRIDE;
 
 	/**
-	 * Returns the QDomElement corresponding to the property with the given integer identifier.
+	 * Returns the QDomElement corresponding to the property with the given
+	 * integer identifier.
 	 *
 	 * @param id The integer identifier of the property.
 	 * @return The QDomElement representing the property.
@@ -152,7 +154,8 @@ public:
 	[[nodiscard]] QDomElement getProperty(int) const;
 
 	/**
-	 * Returns the QDomElement corresponding to the property with the given integer identifier.
+	 * Returns the QDomElement corresponding to the property with the given
+	 * integer identifier.
 	 *
 	 * @param index
 	 * @param row row of the changed property
@@ -161,18 +164,28 @@ public:
 	 * @return The QDomElement representing the property.
 	 */
 	void setElementProperty(
-		const QModelIndex &index, const QString &name,
-		const QVariant &value);
+		const QModelIndex& index, const QString& name, const QVariant& value);
 
 	/**
-	 * @brief creates and returns QWidget based on the name stored in QDomElement that is stored
-	 * in QMap<int, QDomElement>. The element is accessed via aIndex.
+	 * @brief creates and returns QWidget based on the name stored in
+	 * QDomElement that is stored in QMap<int, QDomElement>. The element is
+	 * accessed via aIndex.
 	 *
-	 * @param aIndex - index of QDomElement in _properties QMap that will be used to get name of
-	 * widget to be created.
-	 * @param aWidgetParent - parent that will be set to the newly created widget
+	 * @param aIndex - index of QDomElement in _properties QMap that will be
+	 * used to get name of widget to be created.
+	 * @param aWidgetParent - parent that will be set to the newly created
+	 * widget
 	 */
-	QWidget *getWidget(const QModelIndex &aIndex, QWidget *aWidgetParent);
+	QWidget* getWidget(const QModelIndex& aIndex, QWidget* aWidgetParent);
+
+	void setProxyFilter(ModelFilter* aFilter);
+	[[nodiscard]] ModelFilter* getProxyFilter() const;
+
+signals:
+	void modelDataChanged(PropertiesModel* aModel);
+
+private:
+	void onCheckBoxWidgetStateChanged(const QModelIndex& index, bool checked);
 
 private:
 	QDomElement _element; // Pointer to a QDomElement object.
@@ -180,6 +193,10 @@ private:
 	QMap<int, QDomElement> _properties; // Map of properties
 
 	QStringList _header; // A list of header strings.
+
+	PropertyVisibilityManager* _visibilityManager;
+
+	ModelFilter* _proxyFilter;
 };
 
 #endif

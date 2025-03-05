@@ -26,6 +26,8 @@
 #include "PropertyVisibilityManager.hpp"
 #include "PropertiesModel.hpp"
 
+#include <QTreeWidget>
+
 //-----------------------------------------------------------------------------
 PropertyVisibilityManager::PropertyVisibilityManager(QObject* parent)
 	: QObject(parent) { }
@@ -34,6 +36,15 @@ PropertyVisibilityManager::PropertyVisibilityManager(QObject* parent)
 void PropertyVisibilityManager::registerVisibilityRule(
 	const QModelIndex& triggerIndex, const QVariant& expectedValue,
 	const QList<QModelIndex>& affectedIndices) {
+
+	for (const auto& rule : _visibilityRules) {
+		if (rule.triggerIndex == triggerIndex
+			&& rule.expectedValue == expectedValue
+			&& rule.affectedIndices == affectedIndices) {
+			return;
+		}
+	}
+
 	_visibilityRules.append({ triggerIndex, expectedValue, affectedIndices });
 }
 
@@ -41,13 +52,16 @@ void PropertyVisibilityManager::registerVisibilityRule(
 void PropertyVisibilityManager::handleStateChange(
 	const QModelIndex& changedIndex, const QVariant& newValue,
 	PropertiesModel* model) {
+
 	for (auto& rule : _visibilityRules) {
+		std::cout << rule.expectedValue.toString().data() << std::endl;
+
 		if (rule.triggerIndex == changedIndex) {
 			const bool shouldHide
 				= (rule.expectedValue.typeId() == QVariant::Bool)
 				? (newValue.toBool() == rule.expectedValue.toBool())
 				: (newValue.toString() == rule.expectedValue.toString());
-
+			std::cout << shouldHide << std::endl;
 			for (const auto& index : rule.affectedIndices) {
 				if (QDomElement property = model->getProperty(index.row());
 					!property.isNull()) {
@@ -59,9 +73,7 @@ void PropertyVisibilityManager::handleStateChange(
 					// }
 				}
 			}
-
-			// model->dataChanged(model->index(0, 0),
-			// 	model->index(model->rowCount() - 1, model->columnCount() - 1));
 		}
 	}
+	emit model->modelDataChanged(model);
 }

@@ -73,6 +73,20 @@
         "label": "Limit Size by Surface Curvature",
         "widget": "CheckBoxWidget",
         "value": 0
+      },
+      {
+        "name": "nbPerEdge",
+        "label": "Min Nb. Segments per Edge",
+        "widget": "IntLineWidget",
+        "value": 1,
+        "hidden": "yes"
+      },
+      {
+        "name": "nbPerRadius",
+        "label": "Min Nb. Segments per Radius",
+        "widget": "IntLineWidget",
+        "value": 1,
+        "hidden": "yes"
       }
     ]
   },

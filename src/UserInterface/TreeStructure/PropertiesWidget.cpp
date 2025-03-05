@@ -21,6 +21,15 @@
 #include "PropertiesWidget.hpp"
 #include "TreeItem.hpp"
 
+#include <QApplication>
+
+//--------------------------------------------------------------------------------------
+PropertiesWidget::PropertiesWidget(QWidget* parent)
+	: QTableView(parent) {
+	qApp->setProperty("PropertiesWidget", QVariant::fromValue(this));
+	std::cout << "INITIAL PROPERTIES WIDGET" << std::endl;
+}
+
 //--------------------------------------------------------------------------------------
 PropertiesWidget::~PropertiesWidget() {
 	if (QAbstractItemModel* model = this->model()) {
@@ -39,17 +48,44 @@ void PropertiesWidget::setModel(PropertiesModel* aModel) {
 	qDeleteAll(_createdWidgets);
 	_createdWidgets.clear();
 
+	if (QAbstractItemModel* model = this->model()) {
+		std::cout << "CURRENT MODEL: " << model << std::endl;
+		model->deleteLater();
+	}
+
 	const auto proxy = new ModelFilter(this);
 	proxy->setSourceModel(aModel);
+	aModel->setProxyFilter(proxy);
+
 	QTableView::setModel(proxy);
 
 	for (int i = 0; i < proxy->rowCount(); ++i) {
-		this->setRowHeight(i, this->_rowHeight);
+		this->setRowHeight(i, PropertiesWidget::_rowHeight);
 		QModelIndex index = proxy->index(i, PropertiesModel::Col::Data);
 		QModelIndex indexSource = proxy->mapToSource(index);
 
 		QWidget* widget = aModel->getWidget(indexSource, this);
 		this->setIndexWidget(index, widget);
 		_createdWidgets.append(widget);
+	}
+}
+
+//--------------------------------------------------------------------------------------
+void PropertiesWidget::onModelDataChanged(PropertiesModel* aModel) {
+	std::cout << "Data change registered " << aModel << std::endl;
+
+	const auto proxy = new ModelFilter(this);
+	proxy->setSourceModel(aModel);
+	aModel->setProxyFilter(proxy);
+
+	QTableView::setModel(proxy);
+
+	for (int i = 0; i < proxy->rowCount(); ++i) {
+		this->setRowHeight(i, PropertiesWidget::_rowHeight);
+		QModelIndex index = proxy->index(i, PropertiesModel::Col::Data);
+		QModelIndex indexSource = proxy->mapToSource(index);
+
+		QWidget* widget = aModel->getWidget(indexSource, this);
+		this->setIndexWidget(index, widget);
 	}
 }
