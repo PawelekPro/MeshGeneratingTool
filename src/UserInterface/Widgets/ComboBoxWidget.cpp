@@ -44,7 +44,7 @@ ComboBoxWidget::ComboBoxWidget(QWidget* parent)
 }
 
 //----------------------------------------------------------------------------
-ComboBoxWidget::~ComboBoxWidget() { _comboBox->deleteLater(); }
+ComboBoxWidget::~ComboBoxWidget() = default;
 
 //----------------------------------------------------------------------------
 void ComboBoxWidget::setIndex(const QModelIndex& index) {

@@ -90,16 +90,18 @@ TreeItem* TreeItemFactory::createItemElementSizing(
 }
 
 TreeItem* TreeItemFactory::createRootItem(
-	const ItemTypes::Root& aRootItemType) {
+	const ItemTypes::Root& aRootItemType) const {
 
 	DocumentHandler& docHandler = DocumentHandler::getInstance();
-	QDomElement element = docHandler.createRootElement(aRootItemType);
+	const QDomElement element = docHandler.createRootElement(aRootItemType);
 
-	QDomElement properties = DocUtils::getSubElement(element, "Properties");
+	const QDomElement properties
+		= DocUtils::getSubElement(element, "Properties");
 
-	PropertiesModel* propertiesModel
+	const auto propertiesModel
 		= new PropertiesModel(properties, _treeStructure);
-	TreeItem* newRootItem
+
+	const auto newRootItem
 		= new TreeItem(_treeStructure, element, propertiesModel, aRootItemType);
 	newRootItem->setData(0,
 		static_cast<int>(TreeItem::DataRole::PropertiesModel),
@@ -108,12 +110,6 @@ TreeItem* TreeItemFactory::createRootItem(
 	QVariant testVariant = newRootItem->data(0, Qt::UserRole + 1);
 	newRootItem->setText(static_cast<int>(TreeStructure::Column::Label),
 		ItemTypes::label(aRootItemType));
-
-	auto propertiesWidget
-		= qApp->property("PropertiesWidget").value<PropertiesWidget*>();
-	QObject::connect(propertiesModel, &PropertiesModel::modelDataChanged,
-		propertiesWidget, &PropertiesWidget::onModelDataChanged,
-		Qt::UniqueConnection);
 
 	return newRootItem;
 }

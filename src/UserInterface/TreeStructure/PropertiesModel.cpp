@@ -56,8 +56,7 @@ bool ModelFilter::filterAcceptsRow(
 PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
 	: QAbstractTableModel(parent)
 	, _element(element)
-	, _visibilityManager(new PropertyVisibilityManager(parent))
-	, _proxyFilter(nullptr) {
+	, _visibilityManager(new PropertyVisibilityManager(parent)) {
 	this->_header << "Property" << "Value";
 
 	const QDomNodeList properties = element.childNodes();
@@ -71,13 +70,6 @@ PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
 
 //-----------------------------------------------------------------------------
 PropertiesModel::~PropertiesModel() = default;
-
-//-----------------------------------------------------------------------------
-void PropertiesModel::setProxyFilter(ModelFilter* aFilter) {
-	_proxyFilter = aFilter;
-}
-
-ModelFilter* PropertiesModel::getProxyFilter() const { return _proxyFilter; }
 
 //-----------------------------------------------------------------------------
 int PropertiesModel::rowCount(const QModelIndex& parent) const {
@@ -221,6 +213,7 @@ QWidget* PropertiesModel::getWidget(
 //-----------------------------------------------------------------------------
 void PropertiesModel::onCheckBoxWidgetStateChanged(
 	const QModelIndex& index, const bool checked) {
+	std::cout << index.row() << std::endl;
 	if (_visibilityManager) {
 		_visibilityManager->handleStateChange(index, QVariant(checked), this);
 	}

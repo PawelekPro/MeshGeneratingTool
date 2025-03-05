@@ -178,9 +178,6 @@ public:
 	 */
 	QWidget* getWidget(const QModelIndex& aIndex, QWidget* aWidgetParent);
 
-	void setProxyFilter(ModelFilter* aFilter);
-	[[nodiscard]] ModelFilter* getProxyFilter() const;
-
 signals:
 	void modelDataChanged(PropertiesModel* aModel);
 
@@ -195,8 +192,6 @@ private:
 	QStringList _header; // A list of header strings.
 
 	PropertyVisibilityManager* _visibilityManager;
-
-	ModelFilter* _proxyFilter;
 };
 
 #endif

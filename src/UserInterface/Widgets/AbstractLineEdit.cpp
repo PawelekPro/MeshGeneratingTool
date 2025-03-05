@@ -71,10 +71,7 @@ AbstractLineEdit::AbstractLineEdit(QWidget* parent, QValidator* validator)
 }
 
 //----------------------------------------------------------------------------
-AbstractLineEdit::~AbstractLineEdit() {
-	delete _suffixLabel;
-	delete _lineEdit;
-}
+AbstractLineEdit::~AbstractLineEdit() = default;
 
 //----------------------------------------------------------------------------
 void AbstractLineEdit::initialize(const QModelIndex& index) {

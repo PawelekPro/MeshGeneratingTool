@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +25,18 @@
 #include <QPushButton>
 
 //----------------------------------------------------------------------------
-ColorPickerWidget::ColorPickerWidget(QWidget *parent)
+ColorPickerWidget::ColorPickerWidget(QWidget* parent)
 	: BaseWidget(parent)
-	  , _selectionButton(new QPushButton(this))
-	  , _index(QModelIndex())
-	  , _color(QColor()) {
-	auto *layout = new QHBoxLayout(this);
+	, _selectionButton(new QPushButton(this))
+	, _index(QModelIndex())
+	, _color(QColor()) {
+	auto* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_selectionButton);
 
-	connect(_selectionButton, &QPushButton::clicked,
-	        this, &ColorPickerWidget::onSelectColorClicked);
+	connect(_selectionButton, &QPushButton::clicked, this,
+		&ColorPickerWidget::onSelectColorClicked);
 
 	const auto aButtonStylesheet = QString("border: none;");
 	_selectionButton->setStyleSheet(aButtonStylesheet);
@@ -45,12 +46,10 @@ ColorPickerWidget::ColorPickerWidget(QWidget *parent)
 }
 
 //----------------------------------------------------------------------------
-ColorPickerWidget::~ColorPickerWidget() {
-	_selectionButton->deleteLater();
-}
+ColorPickerWidget::~ColorPickerWidget() = default;
 
 //----------------------------------------------------------------------------
-void ColorPickerWidget::setIndex(const QModelIndex &index) {
+void ColorPickerWidget::setIndex(const QModelIndex& index) {
 	_index = index;
 
 	if (const QVariant val = index.model()->data(index); val.isValid()) {
@@ -64,22 +63,21 @@ void ColorPickerWidget::setIndex(const QModelIndex &index) {
 }
 
 //----------------------------------------------------------------------------
-void ColorPickerWidget::setValue(const std::tuple<int, int, int> &color) {
+void ColorPickerWidget::setValue(const std::tuple<int, int, int>& color) {
 	const int r = std::get<0>(color);
 	const int g = std::get<1>(color);
 	const int b = std::get<2>(color);
 	_color.setRgb(r, g, b);
 
 	const auto aColor = QColor(r, g, b);
-	const QString aStyleSheet = QString("background-color: %1").arg(
-		aColor.name());
+	const QString aStyleSheet
+		= QString("background-color: %1").arg(aColor.name());
 	this->setStyleSheet(aStyleSheet);
 
 	const QString aColorStr = QString("%1, %2, %3").arg(r).arg(g).arg(b);
 
 	if (_index.isValid()) {
-		auto *model = const_cast<QAbstractItemModel *>(_index.
-			model());
+		auto* model = const_cast<QAbstractItemModel*>(_index.model());
 		model->setData(_index, QVariant(aColorStr));
 	}
 }
@@ -101,13 +99,13 @@ void ColorPickerWidget::onSelectColorClicked() {
 
 	if (dlg.exec() == QDialog::Accepted) {
 		const QColor newColor = dlg.currentColor();
-		setValue(std::make_tuple(newColor.red(), newColor.green(),
-		                         newColor.blue()));
+		setValue(
+			std::make_tuple(newColor.red(), newColor.green(), newColor.blue()));
 	}
 }
 
 //----------------------------------------------------------------------------
-double *ColorPickerWidget::getColorAsDoubleArray() {
+double* ColorPickerWidget::getColorAsDoubleArray() {
 	_rgb[0] = _color.redF();
 	_rgb[1] = _color.greenF();
 	_rgb[2] = _color.blueF();

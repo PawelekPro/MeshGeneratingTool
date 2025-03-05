@@ -48,10 +48,7 @@ CheckBoxWidget::CheckBoxWidget(QWidget* parent)
 }
 
 //----------------------------------------------------------------------------
-CheckBoxWidget::~CheckBoxWidget() {
-	delete _checkBox;
-	delete _layout;
-}
+CheckBoxWidget::~CheckBoxWidget() = default;
 
 //----------------------------------------------------------------------------
 void CheckBoxWidget::setIndex(const QModelIndex& index) {

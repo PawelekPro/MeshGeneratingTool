@@ -25,7 +25,9 @@
 
 #include "PropertyVisibilityManager.hpp"
 #include "PropertiesModel.hpp"
+#include "PropertiesWidget.hpp"
 
+#include <QApplication>
 #include <QTreeWidget>
 
 //-----------------------------------------------------------------------------
@@ -75,5 +77,7 @@ void PropertyVisibilityManager::handleStateChange(
 			}
 		}
 	}
-	emit model->modelDataChanged(model);
+	const auto propertiesWidget
+		= qApp->property("PropertiesWidget").value<PropertiesWidget*>();
+	propertiesWidget->updateView();
 }

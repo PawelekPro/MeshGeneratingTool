@@ -43,10 +43,7 @@ TextLineWidget::TextLineWidget(QWidget* parent)
 }
 
 //----------------------------------------------------------------------------
-TextLineWidget::~TextLineWidget() {
-	delete _lineEdit;
-	delete _layout;
-}
+TextLineWidget::~TextLineWidget() = default;
 
 //----------------------------------------------------------------------------
 void TextLineWidget::setIndex(const QModelIndex& index) {

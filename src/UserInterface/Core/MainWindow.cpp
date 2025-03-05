@@ -158,6 +158,7 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
 	// 	buttonGroup.id(button)));
 }
+
 //----------------------------------------------------------------------------
 void MainWindow::onItemSelectionChanged() {
 	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
