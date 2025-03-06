@@ -11,7 +11,7 @@ target_include_directories(RenderSignalSenders PUBLIC
 
 target_link_libraries(RenderSignalSenders PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
-    ${OpenCASCADE_LIBRARIES}
+    ${OCC_LIBRARIES}
     ${VTK_LIBRARIES}
 )
 
