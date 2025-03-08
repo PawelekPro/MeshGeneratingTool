@@ -33,7 +33,6 @@ void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* pa
 		auto errorCode = std::make_error_code(std::errc::device_or_resource_busy);
 		throw std::filesystem::filesystem_error(message, errorCode);
 	}
-
 	if (!cafReader.Transfer(this->_dataFrame, theProgress->Start())) {
 		auto message = "Error while reading file:" + fileName;
 		vtkLogF(ERROR, message.c_str());

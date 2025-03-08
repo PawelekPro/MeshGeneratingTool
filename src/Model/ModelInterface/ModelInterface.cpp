@@ -65,3 +65,8 @@ bool ModelInterface::generateMesh(bool surfaceMesh) {
 
 	return model.generateMesh(algorithm.get());
 }
+
+void ModelInterface::addObserver(std::shared_ptr<EventObserver> aObserver){
+    Model& model = _modelManager.getModel();
+    model.addObserver(aObserver);
+}

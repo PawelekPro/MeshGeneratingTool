@@ -25,7 +25,20 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+
 #include "DocumentHandler.hpp"
+#include "ModelSubject.hpp"
+#include <memory>
+#include <vector>
+
+#ifdef _WIN32
+#include <gmsh.h_cwrap>
+#endif
+
+#ifdef linux
+#include <gmsh.h>
+#endif
+class EventObserver;
 #include "Geometry.hpp"
 
 #include <unordered_map>
@@ -39,12 +52,15 @@ public:
 	std::string _modelName;
 	GeometryCore::Geometry geometry;
 	// MeshCore::Mesh mesh;
+	ModelSubject subject;
 
 	explicit Model(std::string modelName);
 	~Model();
 
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
+
+	void addObserver(std::shared_ptr<EventObserver> aObserver);
 
 	//--------Geometry interface-----//
 	void importSTEP(const std::string& filePath, QWidget* progressBar);

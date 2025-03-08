@@ -1,6 +1,7 @@
 add_subdirectory(GeometryCore)
 add_subdirectory(MeshCore)
 add_subdirectory(ModelInterface)
+add_subdirectory(ModelEvents)
 
 ADD_LIBRARY(Model
     Model.cpp
@@ -8,13 +9,13 @@ ADD_LIBRARY(Model
     ModelDocParser.cpp
 )
 
-
 TARGET_LINK_LIBRARIES(Model PUBLIC 
     spdlog::spdlog_header_only
     ${GMSH_LIB}
     GeometryCore
     MeshCore
     Document
+    ModelEvents
 )
 
 

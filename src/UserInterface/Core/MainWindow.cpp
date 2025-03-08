@@ -23,6 +23,7 @@
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
 
+#include "ProgressObserver.hpp"
 #include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
@@ -61,6 +62,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->connectActionsToModel();
 	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
 
+	this->setupModelObservers();
 	AppTheme& appTheme = AppTheme::getInstance();
 	appTheme.initializeAppStylesheet();
 }
@@ -74,6 +76,22 @@ MainWindow::~MainWindow() {
 	delete progressBar;
 	delete ui;
 }
+
+void MainWindow::setupModelObservers(){
+	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>();
+	modelObserver->setProgressCallback([this](const std::string& aLabel, int progress){
+		if(progress == 0){
+			this->progressBar->initialize();
+		}
+		this->progressBar->setValue(progress);
+		this->progressBar->setProgressMessage(aLabel);
+		if (progress == 100){
+			this->progressBar->finish();
+		}
+	});
+	_modelInterface->addObserver(modelObserver);
+}
+
 
 //----------------------------------------------------------------------------
 void MainWindow::connectActionsToModel() {
