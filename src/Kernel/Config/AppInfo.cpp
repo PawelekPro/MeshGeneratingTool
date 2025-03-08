@@ -47,30 +47,19 @@ QString AppInfo::getValue(const QString& key) {
 }
 
 //--------------------------------------------------------------------------------------
-QString AppInfo::getAppVersion() {
-	return this->getValue("Version");
-}
+QString AppInfo::getAppVersion() { return this->getValue("Version"); }
 
 //--------------------------------------------------------------------------------------
-QString AppInfo::getAppName() {
-	return this->getValue("Name");
-}
+QString AppInfo::getAppName() { return this->getValue("Name"); }
 
 //--------------------------------------------------------------------------------------
-QString AppInfo::getAppProjFileVersion() {
-	return this->getValue("ProjFileVersion");
-}
+QString AppInfo::getAppProjFileVersion() { return this->getValue("ProjFileVersion"); }
 
 //--------------------------------------------------------------------------------------
-const QString AppInfo::getRootItemsSetupPath() {
-	return this->rootItemsSetupPath;
-}
+const QString AppInfo::getRootItemsSetupPath() { return this->rootItemsSetupPath; }
 
 //--------------------------------------------------------------------------------------
-const QString AppInfo::getComboBoxModelsPath() {
-	return this->comboBoxModelsPath;
-}
+const QString AppInfo::getComboBoxModelsPath() { return this->comboBoxModelsPath; }
 
-const QString AppInfo::getSubItemsSetupPath(){
-	return this->subItemsSetupPath;
-};
+//--------------------------------------------------------------------------------------
+const QString AppInfo::getSubItemsSetupPath() { return this->subItemsSetupPath; };

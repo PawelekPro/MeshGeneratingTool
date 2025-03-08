@@ -40,3 +40,4 @@ test.xml
 
 # settings ini
 settingsFile.ini
+/.idea/*

@@ -1,9 +1,11 @@
 ADD_LIBRARY(Utils 
+  QVTKProgressBar/ProgressBarPlugin.cpp  
   ProgressBar.cpp
   FileDialogUtils.cpp
 )
 
 TARGET_LINK_LIBRARIES(Utils PUBLIC
+  ${OCC_LIBRARIES}
   ${VTK_LIBRARIES}
   Qt${QT_VERSION_MAJOR}::Core
 )

@@ -10,9 +10,22 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 # Define an option to include/exclude examples
 option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_TESTS "Build tests" ON)
+option(ENABLE_NETGEN "Enable Netgen" ON)
 
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
+
+if(WIN32)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /Od /DDEBUG")
+        message(STATUS "Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+    endif()
+else()
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -DDEBUG")
+        message(STATUS "Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+    endif()
+endif()
 
 set(FORMS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/Forms)
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
@@ -56,7 +69,7 @@ if(WIN32)
     CommonColor FiltersCore FiltersSources InteractionStyle
     RenderingContextOpenGL2 RenderingCore RenderingFreeType
     RenderingGL2PSOpenGL2 RenderingOpenGL2 IOGeometry
-    InfovisLayout ViewsInfovis GUISupportQt RenderingQt RenderingAnnotation)
+    InfovisLayout ViewsInfovis GUISupportQt RenderingQt RenderingAnnotation FiltersGeometry)
 else()
     find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
     vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
@@ -89,6 +102,7 @@ if(WIN32)
     if(OpenCASCADE_INCLUDE_DIR) 
         include_directories(SYSTEM ${OpenCASCADE_INCLUDE_DIR})
         link_directories(${OpenCASCADE_LIBRARY_DIR})
+        set(OCC_LIBRARIES ${OpenCASCADE_LIBRARIES})
     endif()
 else()
     find_package(OCC REQUIRED)
@@ -161,6 +175,23 @@ endif()
 INCLUDE_DIRECTORIES(${GMSH_INC})
 
 
+# Netgen
+######################################################################
+if(ENABLE_NETGEN)
+    find_package(Netgen REQUIRED)
+
+    if (NETGEN_VERSION)
+        set(NETGEN_LIBRARIES nglib ngcore)
+        MESSAGE(STATUS "NETGEN FOUND")
+        MESSAGE(STATUS "NETGEN VERSION: ${NETGEN_VERSION_MAJOR}.${NETGEN_VERSION_MINOR}.${NETGEN_VERSION_PATCH}")
+        MESSAGE(STATUS "NETGEN include directory: ${NETGEN_INCLUDE_DIRS}")
+        MESSAGE(STATUS "NETGEN lib directory: ${NETGEN_LIBRARY_DIR}")
+        MESSAGE(STATUS "-------------------------------------------------------------------------------")
+    else()
+        message(WARNING "NETGEN not found!")
+    endif()
+endif()
+
 # rapidjson library for parsing json files
 ######################################################################
 set(RAPIDJSON_PATH ${CMAKE_SOURCE_DIR}/src/ThirdParty/rapidjson)
@@ -179,6 +210,11 @@ MESSAGE( STATUS "RapidJSON FOUND" )
 MESSAGE( STATUS "RapidJSON VERSION: ${RAPIDJSON_MAJOR_VERSION}.${RAPIDJSON_MINOR_VERSION}")
 MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 INCLUDE_DIRECTORIES(${RAPIDJSON_PATH})
+
+
+# spdlog library for logging
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ThirdParty/spdlog)
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 
 
 # SARibbonBar library (ribbon bar widget)

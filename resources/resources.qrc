@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/Volume_mesh.svg</file>
+    <file>icons/Surface_mesh.svg</file>
     <file>icons/Points_representation.svg</file>
     <file>icons/Shaded_representation.svg</file>
     <file>icons/Surface_with_edges_representation.svg</file>

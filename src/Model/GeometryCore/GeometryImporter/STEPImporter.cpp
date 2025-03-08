@@ -1,9 +1,7 @@
 #include "STEPImporter.hpp"
 
-DEFINE_STANDARD_HANDLE(Progress, Message_ProgressIndicator);
-IMPLEMENT_STANDARD_RTTIEXT(Progress, Message_ProgressIndicator)
 
-void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* parent){
+void GeometryCore::STEPImporter::import(const std::string& fileName, QWidget* parent) {
 
 	Handle(Progress) theProgress = new Progress(parent, fileName);
 

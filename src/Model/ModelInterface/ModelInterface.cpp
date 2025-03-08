@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,41 +15,56 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : ModelInterface.cpp
+* Author    : Krystian Fudali, Paweł Gilewicz
+* Date      : 28/01/2025
+*/
 
 #include "ModelInterface.hpp"
+#include "ModelDocParser.hpp"
 
-ModelInterface::ModelInterface(ModelManager& aManager) :
-                              _modelManager(aManager),
-                              _modelDataView(aManager){};
+#include "MGTMesh_Algorithm.hpp"
+#include "MGTMesh_ProxyMesh.hpp"
 
+#include <spdlog/spdlog.h>
 
-int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget){
-    Model& model = _modelManager.getModel();
-    model.importSTEP(aFilePath.toStdString(), aWidget);
-    return 0; //TODO return tags of imported shapes
+#include <vtkActor.h>
+#include <vtkSmartPointer.h>
+
+ModelInterface::ModelInterface(ModelManager& aManager)
+	: _modelManager(aManager)
+	, _modelDataView(aManager) { };
+
+int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget) {
+	Model& model = _modelManager.getModel();
+	model.importSTEP(aFilePath.toStdString(), aWidget);
+	return 0; // TODO return tags of imported shapes
 }
 
-int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget){
-    Model& model = _modelManager.getModel();
-    model.importSTL(aFilePath.toStdString(), aWidget);
-    return 0; //TODO return tags of imported shapes
+int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget) {
+	Model& model = _modelManager.getModel();
+	model.importSTL(aFilePath.toStdString(), aWidget);
+	return 0; // TODO return tags of imported shapes
 }
 
-void ModelInterface::createNewModel(const QString& aNewModelName){
-    _modelManager.createNewModel(aNewModelName);
-    return;
+void ModelInterface::createNewModel(const QString& aNewModelName) {
+	_modelManager.createNewModel(aNewModelName);
+	return;
 }
 
-void ModelInterface::meshSurface(){
-    Model& model = _modelManager.getModel();
-    model.meshSurface();
-};
+//----------------------------------------------------------------------------
+bool ModelInterface::generateMesh(bool surfaceMesh) {
+	spdlog::debug(
+		std::format("Mesh generation process started with surfaceMesh arg: {}", surfaceMesh));
 
-void ModelInterface::meshVolume(){
-    Model& model = _modelManager.getModel();
-    model.meshVolume();
-};
+	Model& model = _modelManager.getModel();
+	ModelDocParser modelDocument(model);
+	std::unique_ptr<MGTMesh_Algorithm> algorithm = modelDocument.generateMeshAlgorithm(surfaceMesh);
+
+	return model.generateMesh(algorithm.get());
+}
 
 void ModelInterface::addObserver(std::shared_ptr<EventObserver> aObserver){
     Model& model = _modelManager.getModel();

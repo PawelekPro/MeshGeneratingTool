@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+ * Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
  *
@@ -15,7 +15,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : ModelActionsHandler.hpp
+* Author    : Krystian Fudali, Paweł Gilewicz
+* Date      : 28/01/2025
+*/
 
 #ifndef MESHACTIONSHANDELR_HPP
 #define MESHACTIONSHANDELR_HPP
@@ -30,60 +35,52 @@ class CommandManager;
 class ProgressBar;
 class TreeStructure;
 
-
 /**
  * Class that serves as a centrilzed access point to interaction with Model' mesh module
- * Each undo-able action should be added as a Command and be exectued with CommandManager 
+ * Each undo-able action should be added as a Command and be exectued with CommandManager
  * execute method.
  */
 class MeshActionsHandler : public QObject {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-
-    MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                       CommandManager* aCommandManager,
-                       RenderSignalSender* aSignalSender,
-                       TreeStructure* aTreeStructure,
-                       ProgressBar* aProgressBar, 
-                       QObject* aParent);
+	MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
+		CommandManager* aCommandManager,
+		RenderSignalSender* aSignalSender,
+		TreeStructure* aTreeStructure,
+		ProgressBar* aProgressBar,
+		QObject* aParent);
 
 private:
-    std::shared_ptr<ModelInterface> _modelInterface;
-    
-    CommandManager* _commandManager;
-    RenderSignalSender* _signalSender;
+	std::shared_ptr<ModelInterface> _modelInterface;
 
-    TreeStructure* _treeStructure;
-    ProgressBar* _progressBar;
+	CommandManager* _commandManager;
+	RenderSignalSender* _signalSender;
+
+	TreeStructure* _treeStructure;
+	ProgressBar* _progressBar;
 
 public slots:
-    /**
-     * @brief Action that calls model's meshSurface. Model will generate a mesh based on settings
-     * stored in apps QDomDocument and create a vtkActor with mesh representation. The action clears
-     * the renderer and adds genereted mesh actor.
-     */
-    void meshSurface();
-    
-    /**
-     * @brief Action that calls model's meshSurface. Model will generate a mesh based on settings
-     * stored in apps QDomDocument and create a vtkActor with mesh representation. The action clears
-     * the renderer and adds genereted mesh actor.
-     */
-    void meshVolume();
+	/**
+	 * @brief Action that calls model's meshSurface. Model will generate a mesh based on settings
+	 * stored in apps QDomDocument and create a vtkActor with mesh representation. The action clears
+	 * the renderer and adds genereted mesh actor.
+	 */
+	void generate3DMesh();
 
-    /**
-     * @brief Undoable action that creates fetches currently selected shapes ids 
-     * and creates an ElementSizing TreeItem adding it to TreeStructure.
-     */
-    void addSizingToSelectedShapes();
-    
-    /**
-     * @brief Undoable action that creates creates an ElementSizing tree item adding it to TreeStructure.
-     * @param aShapeIds - initial shapes ids added to created ElementSizing TreeITem.
-     */
-    void addSizingToShapes(const std::vector<int>& aShapesIds);
+	void generate2DMesh();
 
+	/**
+	 * @brief Undoable action that creates fetches currently selected shapes ids
+	 * and creates an ElementSizing TreeItem adding it to TreeStructure.
+	 */
+	void addSizingToSelectedShapes();
+
+	/**
+	 * @brief Undoable action that creates creates an ElementSizing tree item adding it to TreeStructure.
+	 * @param aShapeIds - initial shapes ids added to created ElementSizing TreeITem.
+	 */
+	void addSizingToShapes(const std::vector<int>& aShapesIds);
 };
 
 #endif

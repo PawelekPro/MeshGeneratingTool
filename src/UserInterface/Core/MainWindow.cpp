@@ -42,17 +42,22 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->QVTKRender = new Rendering::QVTKRenderWindow(ui->modelView);
 	this->QVTKRender->enableCameraOrientationWidget();
 	this->QVTKRender->enableWaterMark();
-	this->ui->ribbonBar->initialize();
 
 	this->progressBar = new ProgressBar(this);
-	
-	_renderSignalHandler = new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
+
 	_renderSignalSender = new RenderSignalSender(this);
-	_modelHandler = new ModelActionsHandler(_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
+	_renderSignalHandler
+		= new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
+	_modelHandler = new ModelActionsHandler(
+		_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
 
 	this->ui->statusBar->addWidget(progressBar);
 
 	this->ui->treeWidget->setModelHandler(_modelHandler);
+
+	// Note: ribbonBar needs _modelHandler during initializing to connect signals
+	this->ui->ribbonBar->setModelHandler(_modelHandler);
+	this->ui->ribbonBar->initialize();
 
 	this->connectActionsToModel();
 	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
@@ -63,8 +68,8 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
-	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
-		this, &MainWindow::onItemSelectionChanged);
+	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged, this,
+		&MainWindow::onItemSelectionChanged);
 
 	delete _modelHandler;
 	delete QVTKRender;
@@ -91,30 +96,26 @@ void MainWindow::setupModelObservers(){
 //----------------------------------------------------------------------------
 void MainWindow::connectActionsToModel() {
 
-	connect(ui->actionUndo, &QAction::triggered,
-		_modelHandler, &ModelActionsHandler::undo);
+	connect(ui->actionUndo, &QAction::triggered, _modelHandler, &ModelActionsHandler::undo);
 
-	connect(ui->actionImportSTEP, &QAction::triggered,
-		_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
+	connect(ui->actionImportSTEP, &QAction::triggered, _modelHandler->_geometryHandler,
+		&GeometryActionsHandler::importSTEP);
 
-	connect(ui->actionImportSTL, &QAction::triggered,
-		_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
+	connect(ui->actionImportSTL, &QAction::triggered, _modelHandler->_geometryHandler,
+		&GeometryActionsHandler::importSTL);
 
-	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
-		this, &MainWindow::handleSelectorButtonClicked);
+	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this,
+		&MainWindow::handleSelectorButtonClicked);
 
-	connect(ui->actionGenerateMesh, &QAction::triggered, [this]() {
-		_modelHandler->_meshHandler->meshSurface();
-		ui->actionShowMesh->setChecked(true);
-	});
-
-	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged,
-		this, &MainWindow::onItemSelectionChanged, Qt::DirectConnection);
+	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged, this,
+		&MainWindow::onItemSelectionChanged, Qt::DirectConnection);
 }
 
 //----------------------------------------------------------------------------
-void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler) {
-	// TODO: unify the handler so that both are set in the same way (now one is a field, the other via method)
+void MainWindow::connectModelToRenderWindow(
+	RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler) {
+	// TODO: unify the handler so that both are set in the same way (now one is a field, the other
+	// via method)
 	// TODO: Fun task - encapsulate the connections in a helper map/class/namespace
 	GeometrySignalSender* geometrySignals = aSignalSender->geometrySignals;
 	Rendering::GeometryRenderHandler* geoRender = aSignalHandler->geometry();
@@ -122,11 +123,11 @@ void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, R
 	MeshSignalSender* meshSignals = aSignalSender->meshSignals;
 	Rendering::MeshRenderHandler* meshRender = aSignalHandler->mesh();
 
-	QObject::connect(geometrySignals, &GeometrySignalSender::geometryImported,
-		geoRender, &Rendering::GeometryRenderHandler::addAllShapesToRenderer);
+	QObject::connect(geometrySignals, &GeometrySignalSender::geometryImported, geoRender,
+		&Rendering::GeometryRenderHandler::addAllShapesToRenderer);
 
-	QObject::connect(meshSignals, &MeshSignalSender::meshGenerated,
-		meshRender, &Rendering::MeshRenderHandler::showMeshActor);
+	QObject::connect(meshSignals, &MeshSignalSender::meshGenerated, meshRender,
+		&Rendering::MeshRenderHandler::showMeshActor);
 
 	QObject::connect(ui->actionShowMesh, &QAction::toggled, [geoRender, meshRender](bool checked) {
 		if (checked) {
@@ -136,14 +137,14 @@ void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender, R
 		}
 	});
 
-	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectedShapes,
-		geoRender, &Rendering::GeometryRenderHandler::selectedShapesRequested);
+	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectedShapes, geoRender,
+		&Rendering::GeometryRenderHandler::selectedShapesRequested);
 
 	QObject::connect(geoRender, &Rendering::GeometryRenderHandler::sendSelectedShapes,
 		geometrySignals, &GeometrySignalSender::receiveSelectedShapes);
 
-	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectionType,
-		geoRender, &Rendering::GeometryRenderHandler::selectionTypeRequested);
+	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectionType, geoRender,
+		&Rendering::GeometryRenderHandler::selectionTypeRequested);
 
 	QObject::connect(geoRender, &Rendering::GeometryRenderHandler::sendSelctionType,
 		geometrySignals, &GeometrySignalSender::receiveSelectionType);

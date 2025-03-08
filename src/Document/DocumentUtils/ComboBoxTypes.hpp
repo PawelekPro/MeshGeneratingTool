@@ -20,16 +20,15 @@
 #ifndef COMBOBOXTYPES_HPP
 #define COMBOBOXTYPES_HPP
 
-#include <Qstring>
+#include <qstring.h>
 
 enum class ComboBoxTypes {
-    EntitySelection,
-    SizeModelSelection
+	EntitySelection,
+	SizeModelSelection
 };
 
 namespace ComboBoxUtils {
-    QString label(const ComboBoxTypes& aComboBoxType);
+QString label(const ComboBoxTypes& aComboBoxType);
 }
-
 
 #endif

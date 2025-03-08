@@ -5,6 +5,7 @@ ADD_LIBRARY(Kernel
 )
 
 TARGET_LINK_LIBRARIES(Kernel PRIVATE 
+  spdlog::spdlog_header_only
   ${VTK_LIBRARIES}
   Qt${QT_VERSION_MAJOR}::Widgets
   UserInterface

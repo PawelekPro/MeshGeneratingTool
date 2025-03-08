@@ -21,18 +21,13 @@ else()
     endif()
 endif()
 
-if(WIN32)
-    TARGET_LINK_LIBRARIES(selectionAlgorithm PRIVATE
-        ${OpenCASCADE_LIBRARIES}
-        ${VTK_LIBRARIES}
-    )
-else()
-    TARGET_LINK_LIBRARIES(selectionAlgorithm PRIVATE
-        ${OCC_LIBRARIES}
-        ${VTK_LIBRARIES}
 
-    )
-endif()
+TARGET_LINK_LIBRARIES(selectionAlgorithm PRIVATE
+    ${OCC_LIBRARIES}
+    ${VTK_LIBRARIES}
+
+)
+
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/geometrySample
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

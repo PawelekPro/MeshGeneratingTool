@@ -26,7 +26,14 @@
 #include <QVTKOpenGLNativeWidget.h>
 #include <memory>
 
+// logging
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
 int main(int argc, char* argv[]) {
+	spdlog::set_level(spdlog::level::trace);
+	spdlog::debug("Starting application");
+
 	// Before initializing QApplication, set the default surface format
 	// (https://vtk.org/doc/nightly/html/classQVTKOpenGLNativeWidget.html#details)
 	auto format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -44,7 +51,7 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 	}
-	Model::initializeGmsh();
+
 	ModelManager modelManager;
 	modelManager.createNewModel("NewModel");
 	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);

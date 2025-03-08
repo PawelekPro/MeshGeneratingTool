@@ -7,7 +7,7 @@ ADD_LIBRARY(RenderWindow
 )
 
 target_link_libraries(RenderWindow PUBLIC
-  ${OpenCASCADE_LIBRARIES}
+  ${OCC_LIBRARIES}
   ${VTK_LIBRARIES}
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::OpenGLWidgets 

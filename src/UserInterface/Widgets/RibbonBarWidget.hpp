@@ -31,15 +31,16 @@
 #include <QtWidgets/QWidget>
 
 class SARibbonBar;
+class ModelActionsHandler;
+
 class RibbonBarWidget : public QWidget {
 	Q_OBJECT
 
 public:
 	RibbonBarWidget(QWidget* parent = nullptr);
 	~RibbonBarWidget();
-	void initialize() {
-		_QVTKRender = _mainWindow->getRenderWindow();
-	};
+	void initialize();
+	void setModelHandler(ModelActionsHandler* aModelHandler);
 
 public:
 	QVBoxLayout* verticalLayout;
@@ -53,13 +54,14 @@ private:
 private slots:
 	void onEntitySelectionChanged(QAction* action);
 	void onViewRepresentationChanged(QAction* action);
-	void onPressedSizeField(QAction* action);
 
 private:
 	MainWindow* _mainWindow;
 	Rendering::QVTKRenderWindow* _QVTKRender;
 	SARibbonBar* _ribbonBar { nullptr };
 	QComboBox* mComboTheme { nullptr };
+
+	ModelActionsHandler* _modelHandler; //! For interactions with model layer
 };
 
 #endif
