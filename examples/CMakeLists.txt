@@ -1,2 +1,3 @@
 ADD_SUBDIRECTORY(selectionAlgorithm)
-ADD_SUBDIRECTORY(unitTesting) 
+ADD_SUBDIRECTORY(unitTesting)
+ADD_SUBDIRECTORY(ocaf)
