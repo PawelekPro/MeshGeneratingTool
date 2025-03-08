@@ -24,7 +24,7 @@
 
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
-
+#include "ProgressEvent.hpp"
 #include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_Generator.hpp"
@@ -104,3 +104,7 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 
 //----------------------------------------------------------------------------
 MGTMesh_ProxyMesh* Model::getProxyMesh() const { return _proxyMesh.get(); }
+
+void Model::addObserver(std::shared_ptr<EventObserver> aObserver){
+    subject.attachObserver(aObserver);
+}
