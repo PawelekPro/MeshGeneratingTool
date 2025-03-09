@@ -2,6 +2,11 @@ add_subdirectory(GeometryCore)
 add_subdirectory(MeshCore)
 add_subdirectory(ModelInterface)
 add_subdirectory(ModelEvents)
+add_subdirectory(ModelCommands)
+
+if (BUILD_TESTS)
+    add_subdirectory(Tests)
+endif()
 
 ADD_LIBRARY(Model
     Model.cpp

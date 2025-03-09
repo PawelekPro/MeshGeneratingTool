@@ -33,3 +33,6 @@ TEST(GeometryOcafDoc, StepImportIncreasesNumOfShapes){
     shapes = doc.getAllShapes();
     EXPECT_EQ(shapes.size(), 0);
 }
+
+
+
