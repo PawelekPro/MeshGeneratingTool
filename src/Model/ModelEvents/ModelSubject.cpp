@@ -22,7 +22,7 @@
 #include "Event.hpp"
 #include <algorithm>
 
-void ModelSubject::publishEvent(const Event& aModelEvent){
+void ModelSubject::publishEvent(const Event& aModelEvent) const {
     notifyObservers(aModelEvent);
 }
 
@@ -36,7 +36,7 @@ void ModelSubject::detachObserver(std::shared_ptr<EventObserver> aObserver){
         _observers.end());
 }
 
-void ModelSubject::notifyObservers(const Event& aEvent){
+void ModelSubject::notifyObservers(const Event& aEvent) const{
     std::for_each(
         _observers.begin(), 
         _observers.end(), 

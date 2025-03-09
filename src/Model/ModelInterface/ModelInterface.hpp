@@ -39,8 +39,8 @@ public:
 	void createNewModel(const QString& aNewModelName);
     void addObserver(std::shared_ptr<EventObserver> aObserver);
 
-	int importSTEP(const QString& aFilePath, QWidget* progressBar);
-	int importSTL(const QString& aFilePath, QWidget* progressBar);
+        int importSTEP(const QString& aFilePath);
+        int importSTL(const QString& aFilePath);
 
 	bool generateMesh(bool surfaceMesh = false);
 

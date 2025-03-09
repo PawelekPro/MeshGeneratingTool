@@ -8,7 +8,7 @@
 #include "STEPImporter.hpp"
 #include "STLImporter.hpp"
 #include "TagMap.hpp"
-
+#include "ModelSubject.hpp"
 namespace GeometryCore {
 
     using namespace std::string_literals;
@@ -16,15 +16,15 @@ namespace GeometryCore {
 
     class Geometry {
     public:
-        Geometry();
+        Geometry(const ModelSubject& aModelSubject) : _subject(aModelSubject){};
         ~Geometry();
         const PartsMap& getShapesMap() const {return this->_shapesMap;};
 
         const TagMap& getTagMap() const {return this->_tagMap;};
 
-        void importSTEP(const std::string& filePath, QWidget* progressBar);
+        void importSTEP(const std::string& filePath);
         
-        void importSTL(const std::string& filePath, QWidget* progressBar);
+        void importSTL(const std::string& filePath);
 
         std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
 
@@ -37,7 +37,7 @@ namespace GeometryCore {
     private:
 
         
-
+        const ModelSubject& _subject;
         PartsMap _shapesMap;
         TagMap _tagMap;
     };

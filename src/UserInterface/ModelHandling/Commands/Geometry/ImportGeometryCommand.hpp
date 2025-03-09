@@ -40,7 +40,6 @@ class ImportGeometryCommand : public Command{
 
     public: 
     ImportGeometryCommand(std::shared_ptr<ModelInterface> aModelInterface,
-                          ProgressBar* aProgressBar,
                           GeometrySignalSender* aSignalSender,
                           TreeStructure* aTreeStructure,
                           const QString& aFilePath);
@@ -57,7 +56,6 @@ class ImportGeometryCommand : public Command{
     void undo() override;
 
     private:
-    ProgressBar* _progressBar;
     GeometrySignalSender* _signalSender;
     TreeStructure* _treeStructure;
     std::shared_ptr<ModelInterface> _modelInterface;

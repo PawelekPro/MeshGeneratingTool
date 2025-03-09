@@ -23,39 +23,51 @@
 #include "ImportGeometryCommand.hpp"
 #include "ModelInterface.hpp"
 
-GeometryActionsHandler::GeometryActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
-	CommandManager* aCommandManager, GeometrySignalSender* aSignalSender,
-	TreeStructure* aTreeStructure, ProgressBar* aProgressBar, QObject* aParent)
-	: QObject(aParent)
-	, _modelInterface(aModelInterface)
-	, _commandManager(aCommandManager)
-	, _geometrySignalSender(aSignalSender)
-	, _treeStructure(aTreeStructure)
-	, _progressBar(aProgressBar) { };
-
-void GeometryActionsHandler::importSTEP() {
-	QString filePath
-		= FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
-
-	if (filePath.isEmpty())
-		return;
-
-	ImportGeometryCommand* importCommand = new ImportGeometryCommand(
-		_modelInterface, _progressBar, _geometrySignalSender, _treeStructure, filePath);
-
-	_commandManager->executeCommand(importCommand);
+GeometryActionsHandler::GeometryActionsHandler(
+    std::shared_ptr<ModelInterface> aModelInterface, 
+    CommandManager* aCommandManager,
+    GeometrySignalSender* aSignalSender,
+    TreeStructure* aTreeStructure,
+    QObject* aParent
+    ) :
+    QObject(aParent),
+    _modelInterface(aModelInterface),
+    _commandManager(aCommandManager),
+    _geometrySignalSender(aSignalSender),
+    _treeStructure(aTreeStructure){};
+    
+void GeometryActionsHandler::importSTEP(){
+    QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
+    if (filePath.isEmpty()){
+        qInfo("Import STEP cancelled");
+        return;
+    }
+    ImportGeometryCommand* importCommand = new ImportGeometryCommand(
+        _modelInterface,
+        _geometrySignalSender, 
+        _treeStructure,
+        filePath
+        );
+    try {
+        _commandManager->executeCommand(importCommand);
+    } catch (const std::filesystem::filesystem_error& e) {
+        qDebug() << "Error: File not found - " << e.what();
+    } catch (const std::exception& e) {
+        qDebug() << "Import STEP failed: " << e.what();
+    } catch (...) {
+        qDebug() << "An unknown error occurred while importing STEP file.";
+    }
 
 	// TODO: addShapes should send only the new shapes ids
 	return;
 }
 
-void GeometryActionsHandler::importSTL() {
-	QString filePath
-		= FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
-
-	if (filePath.isEmpty())
-		return;
-
-	_modelInterface->importSTL(filePath, _progressBar);
-	return;
+void GeometryActionsHandler::importSTL(){
+    QString filePath = FileDialogUtils::getFileSelection("Import STEP", FileDialogUtils::FilterSTEP);
+if (filePath.isEmpty()){
+        qInfo("Import STL cancelled");
+        return;
+    }
+    _modelInterface->importSTL(filePath);
+    return;
 }
