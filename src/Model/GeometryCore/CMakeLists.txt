@@ -2,6 +2,9 @@ if(BUILD_TESTS)
     add_subdirectory(Tests)
 endif()
 
+add_subdirectory(GeoCommands)
+add_subdirectory(GeoEvents)
+
 ADD_LIBRARY(GeometryCore 
     GeometryImporter/GeometryImporter.cpp
     GeometryImporter/STEPImporter.cpp
@@ -18,6 +21,7 @@ if(WIN32)
         ${VTK_LIBRARIES}
         Utils
         ModelEvents
+        GeoEvents
         )
 else()
     TARGET_LINK_LIBRARIES(GeometryCore PUBLIC

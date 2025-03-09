@@ -1,6 +1,7 @@
 add_library(ModelEvents
     ModelSubject.cpp
     Observers/ProgressObserver.cpp
+    Observers/GeometryObserver.cpp
 )
 
 # target_link_libraries(ModelEvents PUBLIC

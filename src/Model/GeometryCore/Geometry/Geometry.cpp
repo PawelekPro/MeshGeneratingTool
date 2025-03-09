@@ -1,5 +1,5 @@
 #include "Geometry.hpp"
-
+#include "ShapeEvents.hpp"
 GeometryCore::Geometry::~Geometry(){};
 
 void GeometryCore::Geometry::importSTEP(const std::string& filePath){
@@ -10,6 +10,8 @@ void GeometryCore::Geometry::importSTEP(const std::string& filePath){
     for(auto shape : _shapesMap){
         this->_tagMap.tagEntities(shape.second);
     }
+    NewShapesEvent event;
+    _subject.publishEvent(event);
 };
 void GeometryCore::Geometry::importSTL(const std::string& filePath){
     GeometryCore::STLImporter importer;

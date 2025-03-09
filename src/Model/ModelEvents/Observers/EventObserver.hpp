@@ -23,6 +23,7 @@
 #include "Event.hpp"
 
 class ProgressEvent;
+class GeoEvent;
 class EventObserver {
    public:
 
@@ -32,8 +33,8 @@ class EventObserver {
    void notify(const Event& aEvent){
       aEvent.accept(*this);
    }
-
-   virtual void visit(const ProgressEvent& aModelEvent) = 0;
+   virtual void visit(const ProgressEvent& aModelEvent){}
+   virtual void visit(const GeoEvent& aModelEvent){}
 
 };
 

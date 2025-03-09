@@ -17,25 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSOBSERVER_HPP
-#define PROGRESSOBSERVER_HPP
+#ifndef IMPORTSTEPCOMMAND_HPP
+#define IMPORTSTEPCOMMAND_HPP
 
-#include <functional>
+#include "Command.hpp"
 #include <string>
-#include "EventObserver.hpp"
+#include <vector>
+#include <TopoDS_Shape.hxx>
+#include "Geometry.hpp"
 
-class ProgressObserver : public EventObserver {
+class ImportSTEPCommand : public Command {
 
-    using ProgressCallback = std::function<void(const std::string&, int)>;
-    
     public:
 
-    void setProgressCallback(ProgressCallback aProgressCallback);
-    void visit(const ProgressEvent&) override;
-    
+    ImportSTEPCommand(GeometryCore::Geometry& aGeometry, const std::string& aFilePath);
+    bool execute() override;
+    bool undo() override;
 
     private:
-    ProgressCallback _progressCallback = [](const std::string&, int) {};
+    GeometryCore::Geometry& _geometry;
+    const std::string _filePath;
+    std::vector<TopoDS_Shape> _importedShapes;
+
 };
 
 #endif

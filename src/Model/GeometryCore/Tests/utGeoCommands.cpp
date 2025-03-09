@@ -17,25 +17,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSOBSERVER_HPP
-#define PROGRESSOBSERVER_HPP
+#include "ImportSTEPCommand.hpp"
+#include <gtest/gtest.h>
 
-#include <functional>
-#include <string>
-#include "EventObserver.hpp"
 
-class ProgressObserver : public EventObserver {
 
-    using ProgressCallback = std::function<void(const std::string&, int)>;
-    
-    public:
 
-    void setProgressCallback(ProgressCallback aProgressCallback);
-    void visit(const ProgressEvent&) override;
-    
-
-    private:
-    ProgressCallback _progressCallback = [](const std::string&, int) {};
-};
-
-#endif

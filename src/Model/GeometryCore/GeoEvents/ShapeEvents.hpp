@@ -17,25 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSOBSERVER_HPP
-#define PROGRESSOBSERVER_HPP
+#ifndef SHAPEEVENT_HPP
+#define SHAPEEVENT_HPP
 
-#include <functional>
-#include <string>
-#include "EventObserver.hpp"
+#include "GeoEvent.hpp"
 
-class ProgressObserver : public EventObserver {
-
-    using ProgressCallback = std::function<void(const std::string&, int)>;
-    
+class NewShapesEvent : public GeoEvent {
     public:
+    NewShapesEvent() = default;
 
-    void setProgressCallback(ProgressCallback aProgressCallback);
-    void visit(const ProgressEvent&) override;
-    
+    void accept(GeometryObserver& aEventObserver) const override {
+       aEventObserver.visit(*this);
+    }
 
-    private:
-    ProgressCallback _progressCallback = [](const std::string&, int) {};
+};
+
+class ShapesRemovedEvent : public GeoEvent {
+    public:
+    ShapesRemovedEvent() = default;
+
+    void accept(GeometryObserver& aEventObserver) const override {
+       aEventObserver.visit(*this);
+    }
 };
 
 #endif

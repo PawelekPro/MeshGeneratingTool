@@ -17,25 +17,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSOBSERVER_HPP
-#define PROGRESSOBSERVER_HPP
+#include "ImportSTEPCommand.hpp"
+#include "Geometry.hpp"
 
-#include <functional>
-#include <string>
-#include "EventObserver.hpp"
+ImportSTEPCommand::ImportSTEPCommand(
+    GeometryCore::Geometry& aGeometry,
+    const std::string& aFilePath) : 
+    _geometry(aGeometry),
+    _filePath(aFilePath){}
 
-class ProgressObserver : public EventObserver {
+bool ImportSTEPCommand::execute(){
+    _geometry.importSTEP(_filePath);
+    return true;
+}
 
-    using ProgressCallback = std::function<void(const std::string&, int)>;
-    
-    public:
-
-    void setProgressCallback(ProgressCallback aProgressCallback);
-    void visit(const ProgressEvent&) override;
-    
-
-    private:
-    ProgressCallback _progressCallback = [](const std::string&, int) {};
-};
-
-#endif
+bool ImportSTEPCommand::undo(){
+    return true;
+}
