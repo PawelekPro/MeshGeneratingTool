@@ -38,10 +38,8 @@ Model::Model(std::string modelName)
 	: _modelName(modelName)
 	, _shapesMap(GeometryCore::PartsMap())
 	, _meshObjectsMap {}
-	, _proxyMesh(nullptr) {
-
-	this->geometry = GeometryCore::Geometry();
-};
+	, _proxyMesh(nullptr)
+	, geometry(subject) {};
 
 //----------------------------------------------------------------------------
 Model::~Model() { _meshObjectsMap.clear(); }
@@ -63,14 +61,14 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 }
 
 //----------------------------------------------------------------------------
-void Model::importSTL(const std::string& filePath, QWidget* progressBar) {
-	geometry.importSTL(filePath, progressBar);
+void Model::importSTL(const std::string& filePath) {
+	geometry.importSTL(filePath);
 	const GeometryCore::PartsMap& shapesMap = geometry.getShapesMap();
 	addShapesToModel(shapesMap);
 }
 
-void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
-	geometry.importSTEP(filePath, progressBar);
+void Model::importSTEP(const std::string& filePath) {
+	geometry.importSTEP(filePath);
 	const GeometryCore::PartsMap& shapesMap = geometry.getShapesMap();
 	addShapesToModel(shapesMap);
 }

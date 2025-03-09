@@ -37,16 +37,16 @@ ModelInterface::ModelInterface(ModelManager& aManager)
 	: _modelManager(aManager)
 	, _modelDataView(aManager) { };
 
-int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget) {
-	Model& model = _modelManager.getModel();
-	model.importSTEP(aFilePath.toStdString(), aWidget);
-	return 0; // TODO return tags of imported shapes
+int ModelInterface::importSTEP(const QString& aFilePath){
+    Model& model = _modelManager.getModel();
+    model.importSTEP(aFilePath.toStdString());
+    return 0; //TODO return tags of imported shapes
 }
 
-int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget) {
-	Model& model = _modelManager.getModel();
-	model.importSTL(aFilePath.toStdString(), aWidget);
-	return 0; // TODO return tags of imported shapes
+int ModelInterface::importSTL(const QString& aFilePath){
+    Model& model = _modelManager.getModel();
+    model.importSTL(aFilePath.toStdString());
+    return 0; //TODO return tags of imported shapes
 }
 
 void ModelInterface::createNewModel(const QString& aNewModelName) {

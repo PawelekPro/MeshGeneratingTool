@@ -50,9 +50,9 @@ class MGTMesh_ProxyMesh;
 class Model {
 public:
 	std::string _modelName;
+	ModelSubject subject;
 	GeometryCore::Geometry geometry;
 	// MeshCore::Mesh mesh;
-	ModelSubject subject;
 
 	explicit Model(std::string modelName);
 	~Model();
@@ -62,9 +62,9 @@ public:
 
 	void addObserver(std::shared_ptr<EventObserver> aObserver);
 
-	//--------Geometry interface-----//
-	void importSTEP(const std::string& filePath, QWidget* progressBar);
-	void importSTL(const std::string& filePath, QWidget* progressBar);
+	//--------Geometry interface-----// 
+    void importSTEP(const std::string& filePath);
+    void importSTL(const std::string& filePath);
 
 	//--------Meshing interface-----//
 	bool generateMesh(const MGTMesh_Algorithm* algorithm);

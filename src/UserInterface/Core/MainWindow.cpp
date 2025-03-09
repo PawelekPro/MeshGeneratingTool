@@ -24,7 +24,7 @@
 #include "MeshActionsHandler.hpp"
 
 #include "ProgressObserver.hpp"
-#include "ProgressBarPlugin.hpp"
+// #include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
@@ -49,7 +49,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	_renderSignalHandler
 		= new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_modelHandler = new ModelActionsHandler(
-		_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
+		_modelInterface, _renderSignalSender, ui->treeWidget, this);
 
 	this->ui->statusBar->addWidget(progressBar);
 
