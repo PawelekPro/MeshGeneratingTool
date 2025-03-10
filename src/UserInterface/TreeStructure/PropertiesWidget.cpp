@@ -24,6 +24,7 @@
 */
 
 #include "PropertiesWidget.hpp"
+#include "ModelFilter.hpp"
 #include "TreeItem.hpp"
 
 #include <QApplication>
@@ -59,10 +60,7 @@ void PropertiesWidget::setModel(PropertiesModel* aModel) {
 	_widgetsMap.clear();
 
 	_propertiesModel = aModel;
-
-	if (_proxyModel) {
-		delete _proxyModel;
-	}
+	delete _proxyModel;
 
 	_proxyModel = new ModelFilter(this);
 	_proxyModel->setSourceModel(aModel);

@@ -24,6 +24,7 @@
 */
 
 #include "CheckBoxWidget.hpp"
+#include "PropertyVisibilityManager.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -62,7 +63,7 @@ void CheckBoxWidget::setIndex(const QModelIndex& index) {
 }
 
 //----------------------------------------------------------------------------
-void CheckBoxWidget::onCheckStateChanged() {
+void CheckBoxWidget::onCheckStateChanged() const {
 	if (_index.isValid() && _index.model()) {
 		auto* mutableModel = const_cast<QAbstractItemModel*>(_index.model());
 		const QString newValue = QString::number(_checkBox->checkState());
@@ -74,5 +75,8 @@ void CheckBoxWidget::onCheckStateChanged() {
 		SPDLOG_WARN("Invalid model in QModelIndex.");
 	}
 
-	emit checkStateChanged(_index, _checkBox->isChecked());
+	if (_visibilityManager) {
+		_visibilityManager->updateViewAttributes(
+			_index, _checkBox->checkState() == Qt::Checked);
+	}
 }

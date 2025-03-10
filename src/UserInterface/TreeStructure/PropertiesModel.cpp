@@ -28,31 +28,6 @@
 #include <spdlog/spdlog.h>
 
 //-----------------------------------------------------------------------------
-ModelFilter::ModelFilter(QObject* parent)
-	: QSortFilterProxyModel(parent) { }
-
-void ModelFilter::onFilterModelDataChanged() {
-	std::cout << "ModelFilter::onFilterModelDataChanged()" << std::endl;
-	this->invalidate();
-}
-
-//-----------------------------------------------------------------------------
-bool ModelFilter::filterAcceptsRow(
-	const int sourceRow, const QModelIndex& sourceParent) const {
-	Q_UNUSED(sourceParent);
-
-	QAbstractItemModel* model = this->sourceModel();
-
-	auto* propsModel = dynamic_cast<PropertiesModel*>(model);
-
-	const QDomElement propsNode = propsModel->getProperty(sourceRow);
-	const QString hidden
-		= propsNode.attributes().namedItem("hidden").toAttr().value();
-
-	return hidden == "no" || hidden.isEmpty();
-}
-
-//-----------------------------------------------------------------------------
 PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
 	: QAbstractTableModel(parent)
 	, _element(element)
@@ -64,6 +39,41 @@ PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
 		if (!properties.at(row).isComment()) {
 			QDomElement propertyElement = properties.at(row).toElement();
 			this->_properties.insert(row, propertyElement);
+		}
+	}
+
+	QMap<QString, int> nameToIndex;
+	for (int row = 0; row < _properties.size(); ++row) {
+		QString propertyName = _properties.value(row).attribute("name");
+		nameToIndex[propertyName] = row;
+	}
+
+	for (int row = 0; row < _properties.size(); ++row) {
+		QDomElement propertyElement = _properties.value(row);
+
+		QDomElement displayRules
+			= propertyElement.firstChildElement("DisplayRules");
+		if (!displayRules.isNull()) {
+			QDomNodeList rules = displayRules.elementsByTagName("Hide");
+			QList<QModelIndex> toBeAffected;
+
+			for (int i = 0; i < rules.count(); ++i) {
+				QDomElement rule = rules.at(i).toElement();
+				QString affectedName = rule.attribute("name");
+
+				if (!nameToIndex.contains(affectedName)) {
+					continue;
+				}
+
+				const int affectedIndex = nameToIndex[affectedName];
+				QModelIndex affectedWidgetIndex
+					= QAbstractTableModel::index(affectedIndex, 1);
+				toBeAffected.append(affectedWidgetIndex);
+			}
+
+			if (!toBeAffected.isEmpty()) {
+				_displayRules[row] = toBeAffected;
+			}
 		}
 	}
 }
@@ -189,32 +199,11 @@ QWidget* PropertiesModel::getWidget(
 			widgetClass.toStdString().data());
 	}
 
-	const QString widgetName
-		= Properties::getPropertyAttribute(property, "name");
-
-	if (widgetClass.toStdString() == "CheckBoxWidget") {
-
-		std::cout << widgetName.toStdString().data() << std::endl;
-		if (widgetName.toStdString() == "limitSizeBySurfaceCurvature") {
-
-			_visibilityManager->registerVisibilityRule(
-				aIndex, false, { index(6, 1), index(7, 1) });
-		}
-
-		const auto* checkBox = qobject_cast<CheckBoxWidget*>(newWidget);
-		connect(checkBox, &CheckBoxWidget::checkStateChanged, this,
-			&PropertiesModel::onCheckBoxWidgetStateChanged,
-			Qt::UniqueConnection);
+	if (!_displayRules[aIndex.row()].isEmpty()) {
+		newWidget->registerWithManager(_visibilityManager);
+		_visibilityManager->registerVisibilityRule(
+			aIndex, _displayRules[aIndex.row()], this);
 	}
 
 	return newWidget;
-}
-
-//-----------------------------------------------------------------------------
-void PropertiesModel::onCheckBoxWidgetStateChanged(
-	const QModelIndex& index, const bool checked) {
-	std::cout << index.row() << std::endl;
-	if (_visibilityManager) {
-		_visibilityManager->handleStateChange(index, QVariant(checked), this);
-	}
 }

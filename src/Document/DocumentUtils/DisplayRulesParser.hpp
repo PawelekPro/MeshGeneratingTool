@@ -18,39 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : PropertyVisibilityManager.hpp
+* File      : DisplayRulesParser.hpp
 * Author    : Paweł Gilewicz
-* Date      : 27/02/2025
+* Date      : 09/03/2025
 */
-#ifndef PROPERTYVISIBILITYMANAGER_H
-#define PROPERTYVISIBILITYMANAGER_H
 
-#include <QAbstractItemView>
-#include <QObject>
-#include <QVariant>
+#ifndef VISIBILITYRULESPARSER_HPP
+#define VISIBILITYRULESPARSER_HPP
 
-class PropertiesModel;
+#include <QMap>
+#include <QString>
 
-struct VisibilityRule {
-	QModelIndex triggerIndex;
-	QList<QModelIndex> affectedIndices;
-	PropertiesModel* parentModel;
-};
-
-class PropertyVisibilityManager final : public QObject {
-	Q_OBJECT
-
+class DisplayRulesParser {
 public:
-	explicit PropertyVisibilityManager(QObject* parent = nullptr);
-
-	void registerVisibilityRule(const QModelIndex& triggerIndex,
-		const QList<QModelIndex>& affectedIndices, PropertiesModel* model);
-
-	void updateViewAttributes(
-		const QModelIndex& changedIndex, const QVariant& newValue);
-
-private:
-	QList<VisibilityRule> _visibilityRules {};
+	static QMap<QString, QStringList> parseVisibilityRules(
+		const QString& filePath);
 };
 
-#endif // PROPERTYVISIBILITYMANAGER_H
+#endif

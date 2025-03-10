@@ -33,6 +33,7 @@
 #include <QTableView>
 #include <QWidget>
 
+class ModelFilter;
 /**
  * Custom widget for displaying properties using a table view.
  */
@@ -64,7 +65,7 @@ public:
 private:
 	static constexpr int _rowHeight = 20; //! The height of a row in a table.
 
-	ModelFilter* _proxyModel; //! Proxy for filtering hidden items
+	ModelFilter* _proxyModel {}; //! Proxy for filtering hidden items
 
 	PropertiesModel* _propertiesModel;
 

@@ -6,6 +6,7 @@ ADD_LIBRARY(TreeStructure
         TreeStructure.cpp
         TreeContextMenu.cpp
         PropertyVisibilityManager.cpp
+        ModelFilter.cpp
 )
 
 TARGET_LINK_LIBRARIES(TreeStructure PUBLIC

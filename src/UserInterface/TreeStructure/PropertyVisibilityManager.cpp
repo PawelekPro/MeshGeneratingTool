@@ -26,6 +26,7 @@
 #include "PropertyVisibilityManager.hpp"
 #include "PropertiesModel.hpp"
 #include "PropertiesWidget.hpp"
+#include "spdlog/spdlog.h"
 
 #include <QApplication>
 #include <QTreeWidget>
@@ -36,43 +37,36 @@ PropertyVisibilityManager::PropertyVisibilityManager(QObject* parent)
 
 //-----------------------------------------------------------------------------
 void PropertyVisibilityManager::registerVisibilityRule(
-	const QModelIndex& triggerIndex, const QVariant& expectedValue,
-	const QList<QModelIndex>& affectedIndices) {
+	const QModelIndex& triggerIndex, const QList<QModelIndex>& affectedIndices,
+	PropertiesModel* model) {
 
-	for (const auto& rule : _visibilityRules) {
+	for (const VisibilityRule& rule : _visibilityRules) {
 		if (rule.triggerIndex == triggerIndex
-			&& rule.expectedValue == expectedValue
-			&& rule.affectedIndices == affectedIndices) {
+			&& rule.affectedIndices == affectedIndices
+			&& rule.parentModel == model) {
+			// SPDLOG_WARN("Display rule already exists for widget: {}",
+			// 	triggerIndex.row());
 			return;
 		}
 	}
 
-	_visibilityRules.append({ triggerIndex, expectedValue, affectedIndices });
+	_visibilityRules.append({ triggerIndex, affectedIndices, model });
 }
 
 //-----------------------------------------------------------------------------
-void PropertyVisibilityManager::handleStateChange(
-	const QModelIndex& changedIndex, const QVariant& newValue,
-	PropertiesModel* model) {
+void PropertyVisibilityManager::updateViewAttributes(
+	const QModelIndex& changedIndex, const QVariant& newValue) {
 
 	for (auto& rule : _visibilityRules) {
-		std::cout << rule.expectedValue.toString().data() << std::endl;
 
 		if (rule.triggerIndex == changedIndex) {
-			const bool shouldHide
-				= (rule.expectedValue.typeId() == QVariant::Bool)
-				? (newValue.toBool() == rule.expectedValue.toBool())
-				: (newValue.toString() == rule.expectedValue.toString());
-			std::cout << shouldHide << std::endl;
-			for (const auto& index : rule.affectedIndices) {
-				if (QDomElement property = model->getProperty(index.row());
-					!property.isNull()) {
-					property.setAttribute("hidden", shouldHide ? "yes" : "no");
+			const bool checked = newValue.toBool();
 
-					// if (rule.newLabel.contains(newValue.toString())) {
-					// 	property.setAttribute(
-					// 		"label", rule.newLabel[newValue.toString()]);
-					// }
+			for (const auto& index : rule.affectedIndices) {
+				if (QDomElement property
+					= rule.parentModel->getProperty(index.row());
+					!property.isNull()) {
+					property.setAttribute("hidden", checked ? "no" : "yes");
 				}
 			}
 		}

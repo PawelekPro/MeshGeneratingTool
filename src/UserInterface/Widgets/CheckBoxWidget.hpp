@@ -39,16 +39,13 @@ public:
 
 	void setIndex(const QModelIndex& index) Q_DECL_OVERRIDE;
 
-signals:
-	void checkStateChanged(QModelIndex index, bool state);
-
 private:
 	QCheckBox* _checkBox;
 	QModelIndex _index;
 	QVBoxLayout* _layout;
 
 private slots:
-	void onCheckStateChanged();
+	void onCheckStateChanged() const;
 
 private:
 	static constexpr int _indicatorHeight = 16;

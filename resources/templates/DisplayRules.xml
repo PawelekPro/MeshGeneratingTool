@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DisplayRules version="1.0">
+    <Rule trigger="limitSizeBySurfaceCurvature" expectedValue="true">
+        <Hide name="nbPerEdge"/>
+        <Hide name="nbPerRadius"/>
+    </Rule>
+</DisplayRules>

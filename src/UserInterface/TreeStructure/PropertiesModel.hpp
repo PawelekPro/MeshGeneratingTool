@@ -33,35 +33,6 @@
 #include <QtXml/QDomElement>
 
 /**
- * Custom model filter class that filters rows based on a custom criteria.
- *
- * This class inherits from QSortFilterProxyModel and overrides the
- * filterAcceptsRow method to provide custom filtering logic.
- */
-class ModelFilter final : public QSortFilterProxyModel {
-	Q_OBJECT
-
-public:
-	explicit ModelFilter(QObject* parent = nullptr);
-	~ModelFilter() override = default;
-
-public slots:
-	void onFilterModelDataChanged();
-
-protected:
-	/**
-	 * Determines if a row should be accepted by the filter.
-	 *
-	 * @param source_row The row index in the source model.
-	 * @param source_parent The parent index in the source model.
-	 *
-	 * @returns True if the row should be accepted, false otherwise.
-	 */
-	[[nodiscard]] bool filterAcceptsRow(
-		int source_row, const QModelIndex& source_parent) const override;
-};
-
-/**
  * A custom interface for displaying properties of a QDomElement in a
  * QtTableView based widget.
  */
@@ -178,16 +149,12 @@ public:
 	 */
 	QWidget* getWidget(const QModelIndex& aIndex, QWidget* aWidgetParent);
 
-signals:
-	void modelDataChanged(PropertiesModel* aModel);
-
-private:
-	void onCheckBoxWidgetStateChanged(const QModelIndex& index, bool checked);
-
 private:
 	QDomElement _element; // Pointer to a QDomElement object.
 
 	QMap<int, QDomElement> _properties; // Map of properties
+
+	QMap<int, QList<QModelIndex>> _displayRules; // Map of display rules
 
 	QStringList _header; // A list of header strings.
 

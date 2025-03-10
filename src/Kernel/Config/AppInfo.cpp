@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +20,20 @@
 
 #include "AppInfo.hpp"
 
-const QString AppInfo::appName() { return "MeshGeneratingTool"; }
-const QString AppInfo::appVersion() { return "1.0.0"; }
-const QString AppInfo::appProjFileVersion() { return "1.0"; }
+QString AppInfo::appName() { return "MeshGeneratingTool"; }
+QString AppInfo::appVersion() { return "1.0.0"; }
+QString AppInfo::appProjFileVersion() { return "1.0"; }
 
-const QString AppInfo::subItemsSetupPath = ":templates/templates/SubItemsSetup.json";
-const QString AppInfo::rootItemsSetupPath = ":templates/templates/RootItemsSetup.json";
-const QString AppInfo::comboBoxModelsPath = ":templates/templates/ComboboxModels.json";
+const QString AppInfo::subItemsSetupPath
+	= QStringLiteral(":templates/templates/SubItemsSetup.json");
+const QString AppInfo::rootItemsSetupPath
+	= QStringLiteral(":templates/templates/RootItemsSetup.json");
+const QString AppInfo::comboBoxModelsPath
+	= QStringLiteral(":templates/templates/ComboboxModels.json");
+const QString AppInfo::visibilityRulesPath
+	= QStringLiteral(":templates/templates/DisplayRules.xml");
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 AppInfo::AppInfo()
 	: settings("settingsFile.ini", QSettings::IniFormat) {
 
@@ -38,7 +44,7 @@ AppInfo::AppInfo()
 	settings.endGroup();
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QString AppInfo::getValue(const QString& key) {
 	this->settings.beginGroup("ApplicationDefaults");
 	QString value = this->settings.value(key).toString();
@@ -46,20 +52,32 @@ QString AppInfo::getValue(const QString& key) {
 	return value;
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QString AppInfo::getAppVersion() { return this->getValue("Version"); }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QString AppInfo::getAppName() { return this->getValue("Name"); }
 
-//--------------------------------------------------------------------------------------
-QString AppInfo::getAppProjFileVersion() { return this->getValue("ProjFileVersion"); }
+//-----------------------------------------------------------------------------
+QString AppInfo::getAppProjFileVersion() {
+	return this->getValue("ProjFileVersion");
+}
 
-//--------------------------------------------------------------------------------------
-const QString AppInfo::getRootItemsSetupPath() { return this->rootItemsSetupPath; }
+//-----------------------------------------------------------------------------
+QString AppInfo::getRootItemsSetupPath() const {
+	return this->rootItemsSetupPath;
+}
 
-//--------------------------------------------------------------------------------------
-const QString AppInfo::getComboBoxModelsPath() { return this->comboBoxModelsPath; }
+//-----------------------------------------------------------------------------
+QString AppInfo::getComboBoxModelsPath() const {
+	return this->comboBoxModelsPath;
+}
 
-//--------------------------------------------------------------------------------------
-const QString AppInfo::getSubItemsSetupPath() { return this->subItemsSetupPath; };
+//-----------------------------------------------------------------------------
+QString AppInfo::getSubItemsSetupPath() const {
+	return this->subItemsSetupPath;
+};
+
+QString AppInfo::getVisibilityRulesPath() const {
+	return this->visibilityRulesPath;
+}
