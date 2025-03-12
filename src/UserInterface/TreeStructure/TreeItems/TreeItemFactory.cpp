@@ -22,9 +22,23 @@
 #include "PropertiesWidget.hpp"
 #include "TreeStructure.hpp"
 
-#include <utility>
-
 #include <QApplication>
+
+class IconManager {
+public:
+	static QIcon getIcon(const ItemTypes::Root type) {
+		switch (type) {
+		case ItemTypes::Root::Geometry:
+			return QIcon(":/icons/icons/Geometry.svg");
+		case ItemTypes::Root::Mesh:
+			return QIcon(":/icons/icons/Mesh.svg");
+		case ItemTypes::Root::Solution:
+			return QIcon(":/icons/icons/Solution.svg");
+		default:
+			return {};
+		}
+	}
+};
 
 TreeItemFactory::TreeItemFactory(TreeStructure* aTreeStructure)
 	: _treeStructure(aTreeStructure) { };
@@ -107,9 +121,11 @@ TreeItem* TreeItemFactory::createRootItem(
 		static_cast<int>(TreeItem::DataRole::PropertiesModel),
 		QVariant::fromValue(propertiesModel));
 
-	QVariant testVariant = newRootItem->data(0, Qt::UserRole + 1);
 	newRootItem->setText(static_cast<int>(TreeStructure::Column::Label),
 		ItemTypes::label(aRootItemType));
+
+	const QIcon icon = IconManager::getIcon(aRootItemType);
+	newRootItem->setIcon(static_cast<int>(TreeStructure::Column::Label), icon);
 
 	return newRootItem;
 }

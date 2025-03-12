@@ -27,14 +27,13 @@
 
 #include <QAbstractItemView>
 #include <QObject>
-#include <QVariant>
 
 class PropertiesModel;
 
 struct VisibilityRule {
 	QModelIndex triggerIndex;
 	QList<QModelIndex> affectedIndices;
-	PropertiesModel* parentModel;
+	PropertiesModel* parentModel {};
 };
 
 class PropertyVisibilityManager final : public QObject {

@@ -1,59 +1,62 @@
 <RCC>
-    <qresource prefix="icons">
-        <file>icons/Volume_mesh.svg</file>
-        <file>icons/Surface_mesh.svg</file>
-        <file>icons/Points_representation.svg</file>
-        <file>icons/Shaded_representation.svg</file>
-        <file>icons/Surface_with_edges_representation.svg</file>
-        <file>icons/Wireframe_representation.svg</file>
-        <file>icons/Theme.svg</file>
-        <file>icons/Ok_icon.svg</file>
-        <file>icons/Cancel_icon.svg</file>
-        <file>icons/Color_palette.svg</file>
-        <file>icons/Preferences.svg</file>
-        <file>icons/windowsflag-normal.svg</file>
-        <file>icons/useqss.svg</file>
-        <file>icons/undo.svg</file>
-        <file>icons/save.svg</file>
-        <file>icons/redo.svg</file>
-        <file>icons/hidePannel.svg</file>
-        <file>icons/folder-star.svg</file>
-        <file>icons/customize0.svg</file>
-        <file>icons/action2.svg</file>
-        <file>icons/action.svg</file>
-        <file>icons/draft.svg</file>
-        <file>icons/Selection_volume.svg</file>
-        <file>icons/Selection_vertex.svg</file>
-        <file>icons/Selection_face.svg</file>
-        <file>icons/Selection_edge.svg</file>
-    </qresource>
-    <qresource prefix="images">
-        <file>images/Titlebar_Unshade.png</file>
-        <file>images/Titlebar_Shade.png</file>
-        <file>images/Titlebar_Normal_Hover.svg</file>
-        <file>images/Titlebar_Normal.svg</file>
-        <file>images/Titlebar_Min_Hover.svg</file>
-        <file>images/Titlebar_Min.svg</file>
-        <file>images/Titlebar_Max_Hover.svg</file>
-        <file>images/Titlebar_Max.svg</file>
-        <file>images/Titlebar_Close_Hover.svg</file>
-        <file>images/Titlebar_Close.svg</file>
-        <file>images/ribbonPannelOptionButton.png</file>
-        <file>images/define-color.svg</file>
-        <file>images/ArrowUp.png</file>
-        <file>images/ArrowMore.png</file>
-        <file>images/ArrowDown.png</file>
-    </qresource>
-    <qresource prefix="theme">
-        <file>themes/default-theme.qss</file>
-    </qresource>
-    <qresource prefix="templates">
-        <file>templates/DisplayRules.xml</file>
-        <file>templates/ComboboxModels.json</file>
-        <file>templates/RootItemsSetup.json</file>
-        <file>templates/SubItemsSetup.json</file>
-    </qresource>
-    <qresource prefix="uiSetup">
-        <file>icons/watermark.png</file>
-    </qresource>
+  <qresource prefix="icons">
+    <file>icons/Solution.svg</file>
+    <file>icons/Mesh.svg</file>
+    <file>icons/Volume_mesh.svg</file>
+    <file>icons/Geometry.svg</file>
+    <file>icons/Surface_mesh.svg</file>
+    <file>icons/Points_representation.svg</file>
+    <file>icons/Shaded_representation.svg</file>
+    <file>icons/Surface_with_edges_representation.svg</file>
+    <file>icons/Wireframe_representation.svg</file>
+    <file>icons/Theme.svg</file>
+    <file>icons/Ok_icon.svg</file>
+    <file>icons/Cancel_icon.svg</file>
+    <file>icons/Color_palette.svg</file>
+    <file>icons/Preferences.svg</file>
+    <file>icons/windowsflag-normal.svg</file>
+    <file>icons/useqss.svg</file>
+    <file>icons/undo.svg</file>
+    <file>icons/save.svg</file>
+    <file>icons/redo.svg</file>
+    <file>icons/hidePannel.svg</file>
+    <file>icons/folder-star.svg</file>
+    <file>icons/customize0.svg</file>
+    <file>icons/action2.svg</file>
+    <file>icons/action.svg</file>
+    <file>icons/draft.svg</file>
+    <file>icons/Selection_volume.svg</file>
+    <file>icons/Selection_vertex.svg</file>
+    <file>icons/Selection_face.svg</file>
+    <file>icons/Selection_edge.svg</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>images/Titlebar_Unshade.png</file>
+    <file>images/Titlebar_Shade.png</file>
+    <file>images/Titlebar_Normal_Hover.svg</file>
+    <file>images/Titlebar_Normal.svg</file>
+    <file>images/Titlebar_Min_Hover.svg</file>
+    <file>images/Titlebar_Min.svg</file>
+    <file>images/Titlebar_Max_Hover.svg</file>
+    <file>images/Titlebar_Max.svg</file>
+    <file>images/Titlebar_Close_Hover.svg</file>
+    <file>images/Titlebar_Close.svg</file>
+    <file>images/ribbonPannelOptionButton.png</file>
+    <file>images/define-color.svg</file>
+    <file>images/ArrowUp.png</file>
+    <file>images/ArrowMore.png</file>
+    <file>images/ArrowDown.png</file>
+  </qresource>
+  <qresource prefix="theme">
+    <file>themes/default-theme.qss</file>
+  </qresource>
+  <qresource prefix="templates">
+    <file>templates/DisplayRules.xml</file>
+    <file>templates/ComboboxModels.json</file>
+    <file>templates/RootItemsSetup.json</file>
+    <file>templates/SubItemsSetup.json</file>
+  </qresource>
+  <qresource prefix="uiSetup">
+    <file>icons/watermark.png</file>
+  </qresource>
 </RCC>
