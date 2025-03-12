@@ -17,31 +17,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IMPORTSTEPCOMMAND_HPP
-#define IMPORTSTEPCOMMAND_HPP
+#include "ProgressObserver.hpp"
+#include "ModelEvents.hpp"
 
-#include "Command.hpp"
-#include <string>
-#include <vector>
-#include <TopoDS_Shape.hxx>
-#include "Geometry.hpp"
+ProgressObserver::ProgressObserver(ProgressBar* aProgressBarWidget) : 
+_progressBar(aProgressBarWidget){}
 
-class ImportSTEPCommand : public Command {
-
-    public:
-
-    ImportSTEPCommand(
-        GeometryCore::Geometry& aGeometry, 
-        const std::string& aFilePath
-    );
-    bool execute() override;
-    bool undo() override;
-
-    private:
-    GeometryCore::Geometry& _geometry;
-    const std::string _filePath;
-    std::vector<TopoDS_Shape> _importedShapes;
-
+void ProgressObserver::visit(const ProgressOperationEvent& aProgressEvent) const {
+    if (aProgressEvent.value == 0){
+        _progressBar->initialize();
+    } else
+    if (aProgressEvent.value == 100) {
+        _progressBar->finish();
+    } else {
+        _progressBar->setProgressMessage(aProgressEvent.label);
+        _progressBar->setValue(aProgressEvent.value);
+    }
 };
-
-#endif

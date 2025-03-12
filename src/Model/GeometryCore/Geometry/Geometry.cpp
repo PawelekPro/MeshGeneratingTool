@@ -10,7 +10,8 @@ void GeometryCore::Geometry::importSTEP(const std::string& filePath){
     for(auto shape : _shapesMap){
         this->_tagMap.tagEntities(shape.second);
     }
-    NewShapesEvent event;
+    // std::unique_ptr<NewShapesEvent> event = std::make_unique<NewShapesEvent>();
+    NewShapesEvent event; 
     _subject.publishEvent(event);
 };
 void GeometryCore::Geometry::importSTL(const std::string& filePath){

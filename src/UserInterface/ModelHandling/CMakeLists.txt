@@ -1,3 +1,4 @@
 add_subdirectory(Commands)
 add_subdirectory(ModelActions)
 add_subdirectory(RenderSignalSenders)
+add_subdirectory(ModelObservers)

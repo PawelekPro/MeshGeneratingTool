@@ -26,7 +26,7 @@ class NewShapesEvent : public GeoEvent {
     public:
     NewShapesEvent() = default;
 
-    void accept(GeometryObserver& aEventObserver) const override {
+    void accept(BaseGeometryObserver& aEventObserver) const override {
        aEventObserver.visit(*this);
     }
 
@@ -36,7 +36,7 @@ class ShapesRemovedEvent : public GeoEvent {
     public:
     ShapesRemovedEvent() = default;
 
-    void accept(GeometryObserver& aEventObserver) const override {
+    void accept(BaseGeometryObserver& aEventObserver) const override {
        aEventObserver.visit(*this);
     }
 };

@@ -17,25 +17,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSOBSERVER_HPP
-#define PROGRESSOBSERVER_HPP
+#ifndef PROGRESSOBSERVER_HPP 
+#define PROGRESSOBSERVER_HPP 
 
-#include <functional>
-#include <string>
-#include "EventObserver.hpp"
+#include "BaseModelObserver.hpp"
+#include "ProgressBar.hpp"
 
-class ProgressObserver : public EventObserver {
+class ProgressObserver : public BaseModelObserver {
+   public:
+   ProgressObserver(ProgressBar* aProgressBarWidget);
 
-    using ProgressCallback = std::function<void(const std::string&, int)>;
-    
-    public:
+   void notify(const Event& aEvent) override {
+       aEvent.accept(*this); 
+   }
 
-    void setProgressCallback(ProgressCallback aProgressCallback);
-    void visit(const ProgressEvent&) override;
-    
+   void visit(const ProgressOperationEvent&) const override;
 
-    private:
-    ProgressCallback _progressCallback = [](const std::string&, int) {};
+   private:
+   ProgressBar* _progressBar;
 };
 
 #endif

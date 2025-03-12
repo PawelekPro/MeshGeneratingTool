@@ -21,10 +21,14 @@
 #define EVENT_HPP
 
 class EventObserver;
-
+class BaseModelObserver;
+class BaseGeometryObserver;
 class Event {
     public:
     virtual void accept(EventObserver&) const = 0;
+    virtual void accept(BaseModelObserver&) const = 0;
+    virtual void accept(BaseGeometryObserver&) const = 0;
+    
     virtual ~Event() = default;
 };
 

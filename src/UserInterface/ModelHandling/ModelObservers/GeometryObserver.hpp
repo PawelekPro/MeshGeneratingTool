@@ -1,4 +1,3 @@
-
 /*
 * Copyright (C) 2024 Krystian Fudali
 *
@@ -18,28 +17,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSEVENT_HPP
-#define PROGRESSEVENT_HPP
+#ifndef GEOMETRYOBSERVER_HPP
+#define GEOMETRYOBSERVER_HPP
 
-#include "Event.hpp"
-#include "EventObserver.hpp"
+#include "BaseGeometryObserver.hpp"
 
-#include <string>
+class GeometryObserver : public BaseGeometryObserver {
 
-class ProgressEvent : public Event {
-    
     public:
-    ProgressEvent(const std::string& aLabel,
-                  int aValue) : 
-                  label(aLabel),
-                  value(aValue){};
 
-    std::string label = "";
-    int value = 0;
-
-    void accept(EventObserver& aEventObserver) const override {
-        aEventObserver.visit(*this);
-    }
+    void visit(const NewShapesEvent&) const override;
+    void visit(const ShapesRemovedEvent&) const override;
 
 };
 

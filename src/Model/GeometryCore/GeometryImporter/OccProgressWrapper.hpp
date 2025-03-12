@@ -22,7 +22,7 @@
 
 #include <Message_ProgressIndicator.hxx>
 #include "ModelSubject.hpp"
-#include "ProgressEvent.hpp"
+#include "ModelEvents.hpp"
 #include <sstream>
 
 
@@ -44,7 +44,7 @@ DEFINE_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
 	std::stringstream getProgressMessage(
 		const Message_ProgressScope& aScope);
 
-	ProgressEvent _progressEvent;
+	ProgressOperationEvent _progressEvent;
 	const ModelSubject& _subject;
 };
 

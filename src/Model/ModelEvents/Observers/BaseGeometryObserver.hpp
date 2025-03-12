@@ -17,8 +17,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOMETRYOBSERVER_HPP
-#define GEOMETRYOBSERVER_HPP
+#ifndef BASEGEOMETRYOBSERVER_HPP
+#define BASEGEOMETRYOBSERVER_HPP
 
 #include <functional>
 #include <string>
@@ -27,12 +27,17 @@
 class NewShapesEvent;
 class ShapesRemovedEvent;
 
-class GeometryObserver : public EventObserver {
-
+class BaseGeometryObserver : public EventObserver {
+    
     public:
-    void visit(const GeoEvent&) override;
-    void visit(const NewShapesEvent&);
-    void visit(const ShapesRemovedEvent&);
+    virtual ~BaseGeometryObserver() = default;
+
+    void notify(const Event& aEvent) override {
+        aEvent.accept(*this);
+    }
+    virtual void visit(const NewShapesEvent&) const = 0;
+    virtual void visit(const ShapesRemovedEvent&) const = 0;
+
 };
 
 #endif

@@ -21,19 +21,18 @@
 #define GEOEVENT_HPP
 
 #include "Event.hpp"
-#include "GeometryObserver.hpp"
+#include "BaseGeometryObserver.hpp"
 
 class GeoEvent : public Event {
     
     public:
-    GeoEvent() = default;
+    virtual ~GeoEvent() = default;
 
-    virtual void accept(EventObserver& aEventObserver) const override {}
-    virtual void accept(GeometryObserver& aEventObserver) const {
-       aEventObserver.visit(*this);
-    }
-
+    virtual void accept(EventObserver&) const override{};
+    virtual void accept(BaseModelObserver& aEventObserver) const {};
+    
+    virtual void accept(BaseGeometryObserver& aEventObserver) const = 0;
+    
 };
-
 
 #endif

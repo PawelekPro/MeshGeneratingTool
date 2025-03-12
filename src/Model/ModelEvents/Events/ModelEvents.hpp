@@ -17,31 +17,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IMPORTSTEPCOMMAND_HPP
-#define IMPORTSTEPCOMMAND_HPP
+#ifndef MODELEVENTS_HPP
+#define MODELEVENTS_HPP
 
-#include "Command.hpp"
-#include <string>
-#include <vector>
-#include <TopoDS_Shape.hxx>
-#include "Geometry.hpp"
+#include "Event.hpp"
+#include "BaseModelObserver.hpp"
 
-class ImportSTEPCommand : public Command {
+class ProgressOperationEvent : public Event {
+   public:
+   ProgressOperationEvent(const std::string& aLabel, int aValue)
+       : label(aLabel), value(aValue) {}
 
-    public:
+   std::string label;
+   int value;
 
-    ImportSTEPCommand(
-        GeometryCore::Geometry& aGeometry, 
-        const std::string& aFilePath
-    );
-    bool execute() override;
-    bool undo() override;
+   void accept(EventObserver& aEventObserver) const override {}
 
-    private:
-    GeometryCore::Geometry& _geometry;
-    const std::string _filePath;
-    std::vector<TopoDS_Shape> _importedShapes;
-
+   void accept(BaseModelObserver& aEventObserver) const override {
+       aEventObserver.visit(*this);
+   }
 };
-
 #endif
+

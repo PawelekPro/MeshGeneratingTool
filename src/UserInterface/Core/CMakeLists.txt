@@ -14,6 +14,7 @@ TARGET_LINK_LIBRARIES(Core PUBLIC
   Widgets
   ModelInterface
   ModelActionsHandler
+  ModelObservers
 )
 
 TARGET_INCLUDE_DIRECTORIES(Core PUBLIC

@@ -24,7 +24,7 @@
 #include "MeshActionsHandler.hpp"
 
 #include "ProgressObserver.hpp"
-// #include "ProgressBarPlugin.hpp"
+#include "GeometryObserver.hpp"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
@@ -78,18 +78,12 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::setupModelObservers(){
-	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>();
-	modelObserver->setProgressCallback([this](const std::string& aLabel, int progress){
-		if(progress == 0){
-			this->progressBar->initialize();
-		}
-		this->progressBar->setValue(progress);
-		this->progressBar->setProgressMessage(aLabel);
-		if (progress == 100){
-			this->progressBar->finish();
-		}
-	});
+
+	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>(this->progressBar);
+	std::shared_ptr<GeometryObserver> geometryObserver = std::make_shared<GeometryObserver>();
+
 	_modelInterface->addObserver(modelObserver);
+	_modelInterface->addObserver(geometryObserver);
 }
 
 

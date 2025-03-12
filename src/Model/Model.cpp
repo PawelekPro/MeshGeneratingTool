@@ -24,7 +24,7 @@
 
 #include "Model.hpp"
 #include "ModelDocParser.hpp"
-#include "ProgressEvent.hpp"
+#include "ModelEvents.hpp"
 #include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_Generator.hpp"

@@ -20,17 +20,10 @@
 #include "GeometryObserver.hpp"
 #include <iostream>
 
-void GeometryObserver::visit(const GeoEvent&){
-    std::cout << "visited GeoEvent" << std::endl;
-    return;
-}
+void GeometryObserver::visit(const NewShapesEvent&) const {
+    std::cout << "New shapes imported!" << std::endl;
+};
 
-void GeometryObserver::visit(const NewShapesEvent&){
-    std::cout << "visited NewShapesEvent" << std::endl;
-    return;
-}
+void GeometryObserver::visit(const ShapesRemovedEvent&) const {
 
-void GeometryObserver::visit(const ShapesRemovedEvent&){
-    std::cout << "visited NewShapesEvent" << std::endl;
-    return;
-}
+};
