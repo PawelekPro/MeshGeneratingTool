@@ -87,6 +87,25 @@
         "widget": "IntLineWidget",
         "value": 1,
         "hidden": "yes"
+      },
+      {
+        "name": "quadDominated",
+        "label": "Quad-dominated",
+        "widget": "CheckBoxWidget",
+        "value": 0
+      },
+      {
+        "name": "elementsOrder",
+        "label": "Elements order",
+        "widget": "ComboBoxWidget",
+        "model": "MeshElementsOrder",
+        "value": 0
+      },
+      {
+        "name": "optimizeMesh",
+        "label": "Optimize mesh quality",
+        "widget": "CheckBoxWidget",
+        "value": 0
       }
     ]
   },

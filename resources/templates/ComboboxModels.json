@@ -29,28 +29,38 @@
   },
   "GlobalFinenessModel": {
     "0": {
-      "name": "VeryCoarse",
+      "name": "veryCoarse",
       "label": "Very Coarse"
     },
     "1": {
-      "name": "Coarse",
+      "name": "coarse",
       "label": "Coarse"
     },
     "2": {
-      "name": "Moderate",
+      "name": "moderate",
       "label": "Moderate"
     },
     "3": {
-      "name": "Fine",
+      "name": "fine",
       "label": "Fine"
     },
     "4": {
-      "name": "VeryFine",
+      "name": "veryFine",
       "label": "Very Fine"
     },
     "5": {
-      "name": "UserDefined",
+      "name": "userDefined",
       "label": "User Defined"
+    }
+  },
+  "MeshElementsOrder": {
+    "0": {
+      "name": "firstOrder",
+      "label": "First order"
+    },
+    "1": {
+      "name": "secondOrder",
+      "label": " Second order"
     }
   }
 }
