@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +31,11 @@
 
 #include <string>
 
-class NETGENPLUGIN_EXPORT NetgenPlugin_Parameters : public MGTMesh_Algorithm {
+class NETGENPLUGIN_EXPORT NetgenPlugin_Parameters final
+	: public MGTMesh_Algorithm {
 public:
-	NetgenPlugin_Parameters(int schemeId);
-
-	enum Fineness {
-		VeryCoarse,
-		Coarse,
-		Moderate,
-		Fine,
-		VeryFine,
-		UserDefined
-	};
+	explicit NetgenPlugin_Parameters(int schemeId);
+	explicit NetgenPlugin_Parameters(const MGTMesh_Algorithm& algorithm);
 
 	static Fineness GetDefaultFineness() { return Moderate; }
 	static bool GetDefaultSecondOrder() { return false; }
@@ -59,32 +53,6 @@ public:
 	static bool GetDefaultUseDelauney() { return true; }
 	static bool GetDefaultCheckOverlapping() { return true; }
 	static bool GetDefaultCheckChartBoundary() { return true; }
-
-private:
-	// General
-	Fineness _fineness;
-	bool _secondOrder;
-	bool _quadAllowed;
-
-	// Mesh size
-	double _maxSize, _minSize;
-	double _growthRate;
-	std::string _meshSizeFile;
-	double _nbSegPerRadius;
-	double _nbSegPerEdge;
-
-	// Optimizer
-	bool _optimize;
-	int _nbSurfOptSteps;
-	int _nbVolOptSteps;
-	double _elemSizeWeight;
-	int _worstElemMeasure;
-
-	// Insider
-	bool _surfaceCurvature;
-	bool _useDelauney;
-	bool _checkOverlapping;
-	bool _checkChartBoundary;
 };
 
 #endif

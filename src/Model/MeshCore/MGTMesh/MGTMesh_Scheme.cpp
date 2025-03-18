@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +36,7 @@ MGTMesh_Scheme::MGTMesh_Scheme(const int schemeId)
 }
 
 //----------------------------------------------------------------------------
-const char* MGTMesh_Scheme::GetName() const {
-	return _name.c_str();
-}
+const char* MGTMesh_Scheme::GetName() const { return _name.c_str(); }
 
 //----------------------------------------------------------------------------
 int MGTMesh_Scheme::GetID() const { return _schemeId; }
@@ -55,9 +54,7 @@ bool MGTMesh_Scheme::Is2DAlgortihm() const { return _type == ALG_2D; }
 bool MGTMesh_Scheme::Is1DAlgortihm() const { return _type == ALG_1D; }
 
 //----------------------------------------------------------------------------
-void MGTMesh_Scheme::SetType(MGTMesh_Scheme::SchemeType type) {
-	_type = type;
-}
+void MGTMesh_Scheme::SetType(MGTMesh_Scheme::SchemeType type) { _type = type; }
 
 //----------------------------------------------------------------------------
 void MGTMesh_Scheme::SetDim(int algDim) { _alg_dim = algDim; }
@@ -99,3 +96,6 @@ int MGTMesh_Scheme::GetEngineLib() const { return _engineLib; }
 void MGTMesh_Scheme::SetEngineLib(const MGTMesh_Scheme::Engine libType) {
 	_engineLib = libType;
 }
+
+//----------------------------------------------------------------------------
+void MGTMesh_Scheme::SetSchemeName(const std::string& name) { _name = name; }

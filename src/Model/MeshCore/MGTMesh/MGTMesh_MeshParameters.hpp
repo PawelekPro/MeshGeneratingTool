@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+* Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool.
 (https://github.com/PawelekPro/MeshGeneratingTool)
@@ -18,27 +18,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_Algorithm.hpp
+* File      : MGTMesh_MeshParameters.hpp
 * Author    : Paweł Gilewicz
-* Date      : 25/01/2025
+* Date      : 18/03/2025
 */
-#ifndef MGTMESH_ALGORITHM_H
-#define MGTMESH_ALGORITHM_H
 
-#include "MGTMesh_Scheme.hpp"
+#ifndef MGTMESH_MESHPARAMETRS_HPP
+#define MGTMESH_MESHPARAMETRS_HPP
 
-#include <TopoDS_Edge.hxx>
+#include <string>
 
-class MGTMesh_Algorithm : public MGTMesh_Scheme {
+class MGTMesh_MeshParameters {
 public:
-	explicit MGTMesh_Algorithm(int schemeId);
-	MGTMesh_Algorithm(const MGTMesh_Algorithm&) = default;
-	~MGTMesh_Algorithm();
+	explicit MGTMesh_MeshParameters() = default;
+	~MGTMesh_MeshParameters() = default;
 
-	static double EdgeLength(const TopoDS_Edge& E);
+	enum Fineness { VeryCoarse, Coarse, Moderate, Fine, VeryFine, UserDefined };
 
-private:
-	int _error; //!< MGTMeshUtils_ComputeErrorName
+public:
+	Fineness fineness { Moderate };
+	bool secondOrder {};
+	bool quadAllowed {};
+
+	// Mesh size
+	double maxSize {}, minSize {};
+	double growthRate {};
+	std::string meshSizeFile;
+	double nbSegPerRadius {};
+	double nbSegPerEdge {};
+
+	// Optimizer
+	bool optimize {};
+	int nbSurfOptSteps {};
+	int nbVolOptSteps {};
+	double elemSizeWeight {};
+	int worstElemMeasure {};
+
+	// Insider
+	bool surfaceCurvature {};
+	bool useDelauney {};
+	bool checkOverlapping {};
+	bool checkChartBoundary {};
 };
 
 #endif

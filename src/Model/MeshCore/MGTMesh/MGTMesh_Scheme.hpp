@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,9 @@
 
 #include <string>
 
-class MGTMesh_Scheme {
+#include "MGTMesh_MeshParameters.hpp"
+
+class MGTMesh_Scheme : public MGTMesh_MeshParameters {
 public:
 	enum Engine { NETGEN, GMSH };
 
@@ -43,17 +46,20 @@ public:
 		NOTCONFORM, //! not conform mesh is produced applying a scheme
 		ALREADY_EXIST, //! several applicable schemes of same priority assigned
 		BAD_DIM, //! bad dimension
-		BAD_SUBSHAPE, //! shape is neither the main one, nor its sub-shape, nor a group
+		BAD_SUBSHAPE, //! shape is neither the main one, nor its sub-shape, nor
+					  //! a group
 		BAD_GEOMETRY, //! shape geometry mismatches algorithm's expectation
 		NEED_SHAPE, //! algorithm can work on shape only
 		INCOMPAT_SCHEMES //! schemes are incompatible
 	};
 
-	static bool IsStatusFatal(const SchemeStatus status) { return status >= UNKNOWN_FATAL; }
+	static bool IsStatusFatal(const SchemeStatus status) {
+		return status >= UNKNOWN_FATAL;
+	}
 
 public:
 	explicit MGTMesh_Scheme(int schemeId);
-	virtual ~MGTMesh_Scheme() = default;
+	~MGTMesh_Scheme() = default;
 
 public:
 	[[nodiscard]] const char* GetName() const;
@@ -72,6 +78,7 @@ public:
 	void SetDim(int algDim);
 	void SetShapeType(int shapeType);
 	void SetEngineLib(MGTMesh_Scheme::Engine libType);
+	void SetSchemeName(const std::string& name);
 
 protected:
 	std::string _name; //! identifier of scheme type

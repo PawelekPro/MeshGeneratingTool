@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+* Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool.
 (https://github.com/PawelekPro/MeshGeneratingTool)
@@ -18,27 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_Algorithm.hpp
+* File      : MGTMesh_MeshParameters.cpp
 * Author    : Paweł Gilewicz
-* Date      : 25/01/2025
+* Date      : 18/03/2025
 */
-#ifndef MGTMESH_ALGORITHM_H
-#define MGTMESH_ALGORITHM_H
 
-#include "MGTMesh_Scheme.hpp"
-
-#include <TopoDS_Edge.hxx>
-
-class MGTMesh_Algorithm : public MGTMesh_Scheme {
-public:
-	explicit MGTMesh_Algorithm(int schemeId);
-	MGTMesh_Algorithm(const MGTMesh_Algorithm&) = default;
-	~MGTMesh_Algorithm();
-
-	static double EdgeLength(const TopoDS_Edge& E);
-
-private:
-	int _error; //!< MGTMeshUtils_ComputeErrorName
-};
-
-#endif
+#include "MGTMesh_MeshParameters.hpp"

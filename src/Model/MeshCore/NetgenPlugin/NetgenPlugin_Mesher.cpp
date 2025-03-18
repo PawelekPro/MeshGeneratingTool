@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,8 +117,8 @@ void setLocalSize(const TopoDS_Shape& GeomShape, double LocalSize) {
 }
 
 //----------------------------------------------------------------------------
-void setLocalSize(
-	const TopoDS_Edge& edge, double size, netgen::Mesh& mesh, const bool overrideMinH = true) {
+void setLocalSize(const TopoDS_Edge& edge, double size, netgen::Mesh& mesh,
+	const bool overrideMinH = true) {
 	if (size <= std::numeric_limits<double>::min())
 		return;
 
@@ -129,7 +130,8 @@ void setLocalSize(
 		if (!vIt.More())
 			return;
 		gp_Pnt p = BRep_Tool::Pnt(TopoDS::Vertex(vIt.Value()));
-		NetgenPlugin_Mesher::RestrictLocalSize(mesh, p.XYZ(), size, overrideMinH);
+		NetgenPlugin_Mesher::RestrictLocalSize(
+			mesh, p.XYZ(), size, overrideMinH);
 
 	} else {
 		const int nb = (int)(1.5 * MGTMesh_Algorithm::EdgeLength(edge) / size);
@@ -138,7 +140,8 @@ void setLocalSize(
 		for (int i = 0; i < nb; i++) {
 			Standard_Real u = u1 + delta * i;
 			gp_Pnt p = curve->Value(u);
-			NetgenPlugin_Mesher::RestrictLocalSize(mesh, p.XYZ(), size, overrideMinH);
+			NetgenPlugin_Mesher::RestrictLocalSize(
+				mesh, p.XYZ(), size, overrideMinH);
 			netgen::Point3d pi(p.X(), p.Y(), p.Z());
 			double resultSize = mesh.GetH(pi);
 
@@ -151,8 +154,8 @@ void setLocalSize(
 }
 
 //----------------------------------------------------------------------------
-NetgenPlugin_Mesher::NetgenPlugin_Mesher(
-	MGTMesh_MeshObject* mesh, const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm)
+NetgenPlugin_Mesher::NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh,
+	const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm)
 	: _mesh(mesh)
 	, _shape(shape)
 	, _algorithm(algorithm)
@@ -197,7 +200,8 @@ void NetgenPlugin_Mesher::SetDefaultParameters() {
 	//! rate of growth of size between elements
 	mparams.grading = NetgenPlugin_Parameters::GetDefaultGrowthRate();
 	//! safety factor for curvatures (elements per radius)
-	mparams.curvaturesafety = NetgenPlugin_Parameters::GetDefaultNbSegPerRadius();
+	mparams.curvaturesafety
+		= NetgenPlugin_Parameters::GetDefaultNbSegPerRadius();
 	//! create elements of second order
 	mparams.secondorder = NetgenPlugin_Parameters::GetDefaultSecondOrder();
 
@@ -216,7 +220,7 @@ void NetgenPlugin_Mesher::PrepareOCCgeometry(
 	occgeom.BuildFMap();
 	occgeom.BuildVisualizationMesh(0.01);
 	occgeom.CalcBoundingBox();
-	occgeom.PrintNrShapes();
+	// occgeom.PrintNrShapes();
 }
 
 //----------------------------------------------------------------------------
@@ -226,7 +230,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 
 	netgen::OCCGeometry occgeo;
 	SPDLOG_INFO("Preparing geometry...");
-	this->PrepareOCCgeometry(occgeo, _shape);
+	std::cout << "ALG MAX SIZE: " << _algorithm->maxSize << std::endl;
+	NetgenPlugin_Mesher::PrepareOCCgeometry(occgeo, _shape);
 	_occgeom = &occgeo;
 
 	_ngMesh = nullptr;
@@ -237,7 +242,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	if (mparams.maxh == 0.0)
 		mparams.maxh = occgeo.boundingbox.Diam();
 
-	if (mparams.minh == 0.0 && _fineness != NetgenPlugin_Parameters::UserDefined)
+	if (mparams.minh == 0.0
+		&& _fineness != NetgenPlugin_Parameters::UserDefined)
 		mparams.minh = this->GetDefaultMinSize(_shape, mparams.maxh);
 
 	std::cout << "Using mesh parametrs: " << mparams << std::endl;
@@ -287,7 +293,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	// Compute surface mesh
 	mparams.uselocalh = true;
 	startWith = netgen::MESHCONST_MESHSURFACE;
-	endWith = _optimize ? netgen::MESHCONST_OPTSURFACE : netgen::MESHCONST_MESHSURFACE;
+	endWith = _optimize ? netgen::MESHCONST_OPTSURFACE
+						: netgen::MESHCONST_MESHSURFACE;
 	std::cout << "Starting surface mesh generation process" << std::endl;
 
 	try {
@@ -307,7 +314,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	if (_algorithm->Is3DAlgortihm()) {
 		// Compute volume mesh
 		startWith = netgen::MESHCONST_MESHVOLUME;
-		endWith = _optimize ? netgen::MESHCONST_OPTVOLUME : netgen::MESHCONST_MESHVOLUME;
+		endWith = _optimize ? netgen::MESHCONST_OPTVOLUME
+							: netgen::MESHCONST_MESHVOLUME;
 		SPDLOG_INFO("Starting volume mesh generation process");
 
 		try {
@@ -330,7 +338,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 }
 
 //----------------------------------------------------------------------------
-double NetgenPlugin_Mesher::GetDefaultMinSize(const TopoDS_Shape& geom, const double maxSize) {
+double NetgenPlugin_Mesher::GetDefaultMinSize(
+	const TopoDS_Shape& geom, const double maxSize) {
 	updateTriangulation(geom);
 
 	TopLoc_Location loc;
@@ -389,8 +398,8 @@ double NetgenPlugin_Mesher::GetDefaultMinSize(const TopoDS_Shape& geom, const do
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Mesher::RestrictLocalSize(
-	netgen::Mesh& ngMesh, const gp_XYZ& p, double size, const bool overrideMinH) {
+void NetgenPlugin_Mesher::RestrictLocalSize(netgen::Mesh& ngMesh,
+	const gp_XYZ& p, double size, const bool overrideMinH) {
 	if (size <= std::numeric_limits<double>::min())
 		return;
 
@@ -407,7 +416,8 @@ void NetgenPlugin_Mesher::RestrictLocalSize(
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Mesher::SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh) {
+void NetgenPlugin_Mesher::SetLocalSize(
+	netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh) {
 	// edges
 	std::map<int, double>::const_iterator it;
 	for (it = EdgeId2LocalSize.begin(); it != EdgeId2LocalSize.end(); it++) {
@@ -418,7 +428,8 @@ void NetgenPlugin_Mesher::SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh
 	}
 
 	// vertices
-	for (it = VertexId2LocalSize.begin(); it != VertexId2LocalSize.end(); it++) {
+	for (it = VertexId2LocalSize.begin(); it != VertexId2LocalSize.end();
+		it++) {
 		int key = (*it).first;
 		double hi = (*it).second;
 		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
@@ -435,12 +446,15 @@ void NetgenPlugin_Mesher::SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh
 
 		if (faceNgID >= 1) {
 			occgeo.SetFaceMaxH(faceNgID, val, netgen::mparam);
-			for (TopExp_Explorer edgeExp(shape, TopAbs_EDGE); edgeExp.More(); edgeExp.Next()) {
+			for (TopExp_Explorer edgeExp(shape, TopAbs_EDGE); edgeExp.More();
+				edgeExp.Next()) {
 				setLocalSize(TopoDS::Edge(edgeExp.Current()), val, ngMesh);
 			}
 		} else if (!ShapesWithControlPoints.count(key)) {
-			std::cout << "Creating control points for face " << key << std::endl;
-			MGTMeshUtils::createPointsSampleFromFace(TopoDS::Face(shape), val, ControlPoints);
+			std::cout << "Creating control points for face " << key
+					  << std::endl;
+			MGTMeshUtils::createPointsSampleFromFace(
+				TopoDS::Face(shape), val, ControlPoints);
 			ShapesWithControlPoints.insert(key);
 		}
 	}
@@ -456,6 +470,7 @@ void NetgenPlugin_Mesher::SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Mesher::SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme) {
+void NetgenPlugin_Mesher::SetParameters(
+	const MGTMeshUtils_ViscousLayers* layersScheme) {
 	_viscousLayers = layersScheme;
 }

@@ -134,11 +134,57 @@ std::unique_ptr<MGTMesh_Algorithm> ModelDocParser::generateMeshAlgorithm(
 		= _doc.getPropertyNodeMap(ItemTypes::Root::Mesh);
 
 	for (const QString& propName : propMap.keys()) {
-		std::cout << propName.toStdString() << std::endl;
+		std::cout << propName.toStdString() << " : "
+				  << propMap.value(propName).toStdString() << std::endl;
 	}
 
 	int schemeId = 0;
 	auto algorithm = std::make_unique<MGTMesh_Algorithm>(schemeId);
+	algorithm->SetSchemeName(propMap.value("algName").toStdString());
+
+	const std::unordered_map<QString, std::function<void(const QString&)>>
+		setters = {
+			{ "elementsOrder",
+				[&](const QString& v) {
+					algorithm->secondOrder = v.toInt() != 0;
+				} },
+			{ "globalFineness",
+				[&](const QString& v) {
+					algorithm->fineness
+						= static_cast<MGTMesh_MeshParameters::Fineness>(
+							v.toInt());
+				} },
+			{ "quadDominated",
+				[&](const QString& v) {
+					algorithm->quadAllowed = v.toInt() != 0;
+				} },
+			{ "maxElementSize",
+				[&](const QString& v) { algorithm->maxSize = v.toDouble(); } },
+			{ "minElementSize",
+				[&](const QString& v) { algorithm->minSize = v.toDouble(); } },
+			{ "growthRate",
+				[&](const QString& v) {
+					algorithm->growthRate = v.toDouble();
+				} },
+			{ "nbPerRadius",
+				[&](const QString& v) {
+					algorithm->nbSegPerRadius = v.toDouble();
+				} },
+			{ "nbPerEdge",
+				[&](const QString& v) {
+					algorithm->nbSegPerEdge = v.toDouble();
+				} },
+			{ "optimizeMesh",
+				[&](const QString& v) {
+					algorithm->optimize = v.toInt() != 0;
+				} },
+		};
+
+	for (auto it = propMap.constBegin(); it != propMap.constEnd(); ++it) {
+		if (auto setter = setters.find(it.key()); setter != setters.end()) {
+			setter->second(it.value());
+		}
+	}
 
 	if (!surfaceMesh)
 		algorithm->SetType(MGTMesh_Scheme::ALG_3D);
