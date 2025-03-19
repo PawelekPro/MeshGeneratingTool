@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ public:
 
 	[[nodiscard]] vtkSmartPointer<vtkUnstructuredGrid> GetInternalMesh() const;
 	[[nodiscard]] vtkSmartPointer<vtkPolyData> GetBoundaryMesh() const;
+	[[nodiscard]] bool IsEmpty() const;
 
 private:
 	vtkSmartPointer<vtkUnstructuredGrid> _internalMesh;

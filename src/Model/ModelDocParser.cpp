@@ -121,9 +121,6 @@ void ModelDocParser::applyMeshSettings() {
 	}
 
 	std::cout << "settting sizes: " << minSize << " " << maxSize;
-
-	// gmsh::option::setNumber("Mesh.MeshSizeMin", minSize);
-	// gmsh::option::setNumber("Mesh.MeshSizeMax", maxSize);
 }
 
 //----------------------------------------------------------------------------

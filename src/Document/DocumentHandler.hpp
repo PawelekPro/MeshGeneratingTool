@@ -102,7 +102,7 @@ public:
 	 */
 	void writeDocToXML(const std::string& aSavePath) const;
 
-	QMap<QString, QString> getPropertyNodeMap(
+	[[nodiscard]] QMap<QString, QString> getPropertyNodeMap(
 		const ItemTypes::Root& aRootType) const;
 
 private:

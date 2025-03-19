@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,8 @@ void MGTMesh_MeshObject::SetInternalMesh(vtkUnstructuredGrid* mesh) {
 }
 
 //----------------------------------------------------------------------------
-vtkSmartPointer<vtkUnstructuredGrid> MGTMesh_MeshObject::GetInternalMesh() const {
+vtkSmartPointer<vtkUnstructuredGrid>
+MGTMesh_MeshObject::GetInternalMesh() const {
 	return _internalMesh;
 }
 
@@ -56,4 +58,14 @@ void MGTMesh_MeshObject::SetBoundaryMesh(vtkPolyData* mesh) {
 //----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MGTMesh_MeshObject::GetBoundaryMesh() const {
 	return _boundaryMesh;
+}
+
+//----------------------------------------------------------------------------
+bool MGTMesh_MeshObject::IsEmpty() const {
+	return (!_internalMesh
+			   || (_internalMesh->GetNumberOfPoints() == 0
+				   && _internalMesh->GetNumberOfCells() == 0))
+		&& (!_boundaryMesh
+			|| (_boundaryMesh->GetNumberOfPoints() == 0
+				&& _boundaryMesh->GetNumberOfCells() == 0));
 }
