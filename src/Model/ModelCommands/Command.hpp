@@ -30,7 +30,6 @@ class Command {
     virtual bool undo() = 0;
 };
 
-
 class SpyCommand : public Command{
 
     public:

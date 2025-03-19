@@ -21,7 +21,6 @@
 #define GEOMETRYOBSERVER_HPP
 
 #include "BaseGeometryObserver.hpp"
-
 class GeometryObserver : public BaseGeometryObserver {
 
     public:

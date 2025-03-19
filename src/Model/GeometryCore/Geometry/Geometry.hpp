@@ -5,10 +5,11 @@
 #include <vector>
 #include <array>
 
-#include "STEPImporter.hpp"
-#include "STLImporter.hpp"
 #include "TagMap.hpp"
 #include "ModelSubject.hpp"
+#include "CommandStack.hpp"
+#include "GeoService.hpp"
+#include "GeoCommandsFactory.hpp"
 namespace GeometryCore {
 
     using namespace std::string_literals;
@@ -16,15 +17,16 @@ namespace GeometryCore {
 
     class Geometry {
     public:
-        Geometry(const ModelSubject& aModelSubject) : _subject(aModelSubject){};
+        Geometry(const ModelSubject&, CommandStack&);
         ~Geometry();
-        const PartsMap& getShapesMap() const {return this->_shapesMap;};
-
-        const TagMap& getTagMap() const {return this->_tagMap;};
 
         void importSTEP(const std::string& filePath);
         
         void importSTL(const std::string& filePath);
+        
+        const TagMap& getTagMap() const {return this->_tagMap;};
+        
+        PartsMap getShapes() const;
 
         std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
 
@@ -36,9 +38,13 @@ namespace GeometryCore {
 
     private:
         
-        const ModelSubject& _subject;
-        PartsMap _shapesMap;
+        GeoState _geoState;
+        GeoService _geoService;
+        GeoCommandsFactory _commandFactory;
         TagMap _tagMap;
+
+        const ModelSubject& _subject;
+        CommandStack& _commandStack; 
     };
 
     // Geometry utils 

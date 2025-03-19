@@ -13,6 +13,8 @@ ADD_LIBRARY(GeometryCore
     Geometry/Geometry.cpp
     Geometry/TagMap.cpp
     GeometryImporter/OccProgressWrapper.cpp
+    Geometry/GeoService.cpp
+    Geometry/GeoState.cpp
 )
 
 if(WIN32)
@@ -21,6 +23,8 @@ if(WIN32)
         ${VTK_LIBRARIES}
         Utils
         ModelEvents
+        ModelCommands
+        GeoCommands
         GeoEvents
         )
 else()

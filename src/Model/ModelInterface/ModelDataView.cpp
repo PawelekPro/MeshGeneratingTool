@@ -28,7 +28,7 @@ ModelDataView::ModelDataView(const ModelManager& aModelManager)
 
 const GeometryCore::PartsMap& ModelDataView::getPartsMap() const {
 	const Model& model = _modelManager.getModel();
-	const GeometryCore::PartsMap& partsMap = model.geometry.getShapesMap();
+	const GeometryCore::PartsMap& partsMap = model.geometry.getShapes();
 	return partsMap;
 };
 

@@ -21,14 +21,16 @@
 #define SHAPEEVENT_HPP
 
 #include "GeoEvent.hpp"
-
+#include <TopoDS_Shape.hxx>
+#include <map>
 class NewShapesEvent : public GeoEvent {
     public:
-    NewShapesEvent() = default;
+    NewShapesEvent(const std::map<std::string, TopoDS_Shape>& aShapes) : newShapes(aShapes){};
 
     void accept(BaseGeometryObserver& aEventObserver) const override {
        aEventObserver.visit(*this);
     }
+    const std::map<std::string, TopoDS_Shape> newShapes;
 
 };
 

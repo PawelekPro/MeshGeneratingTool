@@ -17,29 +17,35 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMMANDSTACK_HPP
-#define COMMANDSTACK_HPP
+#ifndef GEOSERVICE_HPP
+#define GEOSERVICE_HPP
 
-#include <memory>
-#include <stack>
-#include "Command.hpp"
-class CommandStack {
+#include "ModelSubject.hpp"
+#include "GeoState.hpp"
+#include "TagMap.hpp"
+#include <map>
+
+class GeoService {
 
     public:
-    CommandStack() = default;
-    ~CommandStack() = default;
+    GeoService(
+        const ModelSubject& aModelSubject,
+        GeoState& aGeoState
+    );
 
-    void execute(std::unique_ptr<Command> aCommand);
-    void undo();
-    void redo();
+    std::map<std::string, TopoDS_Shape> importSTEP(
+        const std::string& aFilePath
+    );
    
-    size_t undoStackLength(){return _undoStack.size();};
-    size_t redoStackLength(){return _redoStack.size();}; 
-    
+    std::map<std::string, TopoDS_Shape> importSTL(
+        const std::string& aFilePath
+    );
+
+    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
+        
     private:
-    
-    std::stack<std::unique_ptr<Command>> _undoStack;
-    std::stack<std::unique_ptr<Command>> _redoStack;
+    GeoState& _geoState;
+    const ModelSubject& _modelSubject;
 };
 
 #endif

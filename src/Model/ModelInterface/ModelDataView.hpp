@@ -20,8 +20,8 @@
 #ifndef MODELDATAVIEW_HPP
 #define MODELDATAVIEW_HPP
 
+#include <vtkActor.h>
 #include "ModelManager.hpp"
-
 class ModelDataView {
 
 public:
@@ -34,14 +34,25 @@ public:
 
 	const GeometryCore::PartsMap& getPartsMap() const;
 
-	const TopoDS_Shape& getShape(const EntityType& aEntityType, int aShapeTag) const;
 	const TopoDS_Shape& getShape(
-		const EntityType& aEntityType, const std::string& aShapeName) const;
+		const EntityType& aEntityType, 
+		int aShapeTag
+	) const;
+	
+	const TopoDS_Shape& getShape(
+		const EntityType& aEntityType, 
+		const std::string& aShapeName
+	) const;
 
 	const std::vector<ShapeRef> getShapes(
-		const EntityType& aEntityType, const std::vector<int>& aShapesTags) const;
+		const EntityType& aEntityType, 
+		const std::vector<int>& aShapesTags
+	) const;
+	
 	const std::vector<ShapeRef> getShapes(
-		const EntityType& aEntityType, const std::vector<std::string>& aShapesNames) const;
+		const EntityType& aEntityType, 
+		const std::vector<std::string>& aShapesNames
+	) const;
 
 	int getShapeTag(const TopoDS_Shape&) const;
 	std::string getShapeName(const TopoDS_Shape&) const;

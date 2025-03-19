@@ -35,11 +35,9 @@
 
 //----------------------------------------------------------------------------
 Model::Model(std::string modelName)
-	: _modelName(modelName)
-	, _shapesMap(GeometryCore::PartsMap())
-	, _meshObjectsMap {}
-	, _proxyMesh(nullptr)
-	, geometry(subject) {};
+	: _modelName(modelName), 
+	_proxyMesh(nullptr),
+	geometry(subject, _commandStack){};
 
 //----------------------------------------------------------------------------
 Model::~Model() { _meshObjectsMap.clear(); }
@@ -49,9 +47,9 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 	for (const auto& it : shapesMap) {
 		const std::string& key = it.first;
 		const TopoDS_Shape& shape = it.second;
-
-		if (_shapesMap.find(key) == _shapesMap.end()) {
-			_shapesMap[key] = shape;
+		GeometryCore::PartsMap geoShapesMap = geometry.getShapes();
+		if (geoShapesMap.find(key) == geoShapesMap.end()) {
+			geoShapesMap[key] = shape;
 			spdlog::debug("Shape added to model: {}", key);
 		}
 		// std::vector<std::pair<int, int>> outDimTags;
@@ -63,13 +61,13 @@ void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
 //----------------------------------------------------------------------------
 void Model::importSTL(const std::string& filePath) {
 	geometry.importSTL(filePath);
-	const GeometryCore::PartsMap& shapesMap = geometry.getShapesMap();
+	const GeometryCore::PartsMap& shapesMap = geometry.getShapes();
 	addShapesToModel(shapesMap);
 }
 
 void Model::importSTEP(const std::string& filePath) {
 	geometry.importSTEP(filePath);
-	const GeometryCore::PartsMap& shapesMap = geometry.getShapesMap();
+	const GeometryCore::PartsMap& shapesMap = geometry.getShapes();
 	addShapesToModel(shapesMap);
 }
 
@@ -83,7 +81,8 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
 		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
 
-	for (const auto& [fst, snd] : _shapesMap) {
+	GeometryCore::PartsMap shapesMap = geometry.getShapes();
+	for (const auto& [fst, snd] : shapesMap) {
 		spdlog::debug("Creating mesh generator for shape: {}", fst);
 
 		vtkSmartPointer<MGTMesh_MeshObject> meshObject = vtkSmartPointer<MGTMesh_MeshObject>::New();

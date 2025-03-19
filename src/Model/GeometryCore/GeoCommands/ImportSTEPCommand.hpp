@@ -23,25 +23,27 @@
 #include "Command.hpp"
 #include <string>
 #include <vector>
+#include <map>
 #include <TopoDS_Shape.hxx>
 #include "Geometry.hpp"
+#include "GeoService.hpp"
 
 class ImportSTEPCommand : public Command {
 
     public:
 
     ImportSTEPCommand(
-        GeometryCore::Geometry& aGeometry, 
+        GeoService& aGeoService,
         const std::string& aFilePath
     );
+    
     bool execute() override;
     bool undo() override;
 
     private:
-    GeometryCore::Geometry& _geometry;
+    GeoService& _geoService;
     const std::string _filePath;
-    std::vector<TopoDS_Shape> _importedShapes;
-
+    std::map<std::string, TopoDS_Shape> _importedShapes;
 };
 
 #endif

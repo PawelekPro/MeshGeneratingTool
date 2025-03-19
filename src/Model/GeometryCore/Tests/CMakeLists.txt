@@ -11,7 +11,6 @@ target_link_libraries(utGeometry PUBLIC
     GTest::GTest 
     GTest::Main
     GeometryCore
-    Qt${QT_VERSION_MAJOR}::Core
 )
 
 include(GoogleTest)

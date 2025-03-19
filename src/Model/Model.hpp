@@ -25,12 +25,6 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-
-#include "DocumentHandler.hpp"
-#include "ModelSubject.hpp"
-#include <memory>
-#include <vector>
-
 #ifdef _WIN32
 #include <gmsh.h_cwrap>
 #endif
@@ -38,18 +32,26 @@
 #ifdef linux
 #include <gmsh.h>
 #endif
-class EventObserver;
+
 #include "Geometry.hpp"
+#include "DocumentHandler.hpp"
+
+#include "CommandStack.hpp"
+#include "ModelSubject.hpp"
+#include <memory>
+#include <vector>
 
 #include <unordered_map>
+#include <vtkSmartPointer.h>
 
+class EventObserver;
 class MGTMesh_Algorithm;
 class MGTMesh_MeshObject;
 class MGTMesh_ProxyMesh;
 
 class Model {
 public:
-	std::string _modelName;
+	CommandStack _commandStack;
 	ModelSubject subject;
 	GeometryCore::Geometry geometry;
 	// MeshCore::Mesh mesh;
@@ -74,10 +76,9 @@ private:
 	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 
 private:
-	GeometryCore::PartsMap _shapesMap;
-
 	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> _meshObjectsMap;
 	std::shared_ptr<MGTMesh_ProxyMesh> _proxyMesh;
+	std::string _modelName;
 };
 
 #endif

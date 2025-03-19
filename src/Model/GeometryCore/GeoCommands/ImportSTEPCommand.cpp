@@ -21,16 +21,18 @@
 #include "Geometry.hpp"
 
 ImportSTEPCommand::ImportSTEPCommand(
-    GeometryCore::Geometry& aGeometry,
-    const std::string& aFilePath) : 
-    _geometry(aGeometry),
+    GeoService& aGeoService, 
+    const std::string& aFilePath
+    ) : 
+    _geoService(aGeoService),
     _filePath(aFilePath){}
 
 bool ImportSTEPCommand::execute(){
-    _geometry.importSTEP(_filePath);
+    _importedShapes = _geoService.importSTEP(_filePath);
     return true;
 }
 
 bool ImportSTEPCommand::undo(){
+    // _geoService.removeShapes(_importedShapes);
     return true;
 }

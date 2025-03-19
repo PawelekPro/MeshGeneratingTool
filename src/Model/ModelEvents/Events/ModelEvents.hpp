@@ -32,7 +32,7 @@ class ProgressOperationEvent : public Event {
    int value;
 
    void accept(EventObserver& aEventObserver) const override {}
-
+   void accept(BaseGeometryObserver&) const override {}
    void accept(BaseModelObserver& aEventObserver) const override {
        aEventObserver.visit(*this);
    }

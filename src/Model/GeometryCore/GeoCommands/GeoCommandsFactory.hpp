@@ -17,29 +17,31 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMMANDSTACK_HPP
-#define COMMANDSTACK_HPP
+#ifndef GEOCOMMANDSFACTORY_HPP
+#define GEOCOMMANDSFACTORY_HPP
 
+#include "ModelSubject.hpp"
 #include <memory>
-#include <stack>
-#include "Command.hpp"
-class CommandStack {
+#include <string>
 
-    public:
-    CommandStack() = default;
-    ~CommandStack() = default;
+class ImportSTEPCommand;
+class GeoService;
 
-    void execute(std::unique_ptr<Command> aCommand);
-    void undo();
-    void redo();
-   
-    size_t undoStackLength(){return _undoStack.size();};
-    size_t redoStackLength(){return _redoStack.size();}; 
-    
+class GeoCommandsFactory {
+
+    public:    
+    GeoCommandsFactory(
+        const ModelSubject& aModelSubject,
+        GeoService& aGeoService
+    );
+
+    std::unique_ptr<ImportSTEPCommand> importSTEP(
+        const std::string& aFilePath
+    ) const;
+
     private:
-    
-    std::stack<std::unique_ptr<Command>> _undoStack;
-    std::stack<std::unique_ptr<Command>> _redoStack;
+    const GeoService& _geoService;
+    const ModelSubject& _modelSubject;
 };
 
 #endif

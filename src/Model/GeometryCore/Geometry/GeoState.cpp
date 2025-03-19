@@ -17,29 +17,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMMANDSTACK_HPP
-#define COMMANDSTACK_HPP
+#include "GeoState.hpp"
 
-#include <memory>
-#include <stack>
-#include "Command.hpp"
-class CommandStack {
+void GeoState::addShapes(const std::map<std::string, TopoDS_Shape>& aShapes){
+    for (auto shapePair : aShapes){
+        _shapes.insert(shapePair);
+    }
+}
 
-    public:
-    CommandStack() = default;
-    ~CommandStack() = default;
+std::map<std::string, TopoDS_Shape> GeoState::shapes() const {
+    return _shapes;
+}
 
-    void execute(std::unique_ptr<Command> aCommand);
-    void undo();
-    void redo();
-   
-    size_t undoStackLength(){return _undoStack.size();};
-    size_t redoStackLength(){return _redoStack.size();}; 
-    
-    private:
-    
-    std::stack<std::unique_ptr<Command>> _undoStack;
-    std::stack<std::unique_ptr<Command>> _redoStack;
-};
-
-#endif
+void GeoState::removeShapes(const std::vector<TopoDS_Shape>& aShapes){
+    // This will be reworked, i am just trying to push command pattern out.
+    for (auto shape : aShapes){
+        for (auto shapePair : _shapes){
+            if (shape == shapePair.second){
+                _shapes.erase(shapePair.first);
+            }
+        }
+    }
+} 
