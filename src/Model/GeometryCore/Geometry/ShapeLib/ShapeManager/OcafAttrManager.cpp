@@ -17,26 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#include "OcafAttrManager.hpp"
 
-#include <TopoDS_Shape.hxx>
-#include <string>
-#include <map>
 
-class GeoState {
+OcafAttrManager::OcafAttrManager(
+    std::shared_ptr<ShapeMap> aShapeMap, 
+    std::shared_ptr<OcafDoc> aOcafDoc
+) : ShapeAttrManager(aShapeMap),
+    _ocafDoc(aOcafDoc) {}
 
-    public: 
-    GeoState() = default;
+bool OcafAttrManager::commitRename(const ShapeId&, const std::string&){
+    return true;
+}
 
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-
-    std::map<std::string, TopoDS_Shape> shapes() const;
-
-    private:
-    std::map<std::string, TopoDS_Shape> _shapes;
-
-};
-
-#endif
+bool OcafAttrManager::undoLastCommit(){
+    return true;
+}

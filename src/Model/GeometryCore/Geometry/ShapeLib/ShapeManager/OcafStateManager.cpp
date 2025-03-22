@@ -17,26 +17,33 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#include "OcafStateManager.hpp"
 
-#include <TopoDS_Shape.hxx>
-#include <string>
-#include <map>
+OcafStateManager::OcafStateManager(
+    std::shared_ptr<ShapeMap> aShapeMap, 
+    std::shared_ptr<OcafDoc> aOcafDoc
+    ) : 
+    ShapeStateManager(aShapeMap),
+    _ocafDoc(aOcafDoc) {}
 
-class GeoState {
-
-    public: 
-    GeoState() = default;
-
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-
-    std::map<std::string, TopoDS_Shape> shapes() const;
-
-    private:
-    std::map<std::string, TopoDS_Shape> _shapes;
-
+std::pair<bool, std::vector<ShapeId>> OcafStateManager::commitRegisterNew(
+    const std::vector<GeoShape>& aGeoShapes
+){
+    return std::make_pair(true, std::vector<ShapeId>{});
 };
 
-#endif
+bool OcafStateManager::commitRemove(
+    const std::vector<ShapeId>& aShapeIds
+){
+    return true;
+};
+
+bool OcafStateManager::commitEdit(
+    const std::vector<std::pair<ShapeId, GeoShape>>& aNewShapes
+){
+    return true;
+};
+
+bool OcafStateManager::undoLastCommit(){
+    return true;
+};

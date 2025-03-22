@@ -1,7 +1,3 @@
-if(BUILD_TESTS)
-    add_subdirectory(Tests)
-endif()
-
 add_subdirectory(GeoCommands)
 add_subdirectory(GeoEvents)
 

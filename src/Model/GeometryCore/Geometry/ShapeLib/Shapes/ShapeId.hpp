@@ -17,26 +17,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#ifndef SHAPEID_HPP
+#define SHAPEID_HPP
 
-#include <TopoDS_Shape.hxx>
+#include "ShapeTypes.hpp"
 #include <string>
-#include <map>
+#include <cstdint>
+#include <memory>
 
-class GeoState {
+class ShapeId {
 
-    public: 
-    GeoState() = default;
+    public:
+    ShapeId(
+        uint64_t id,
+        const ShapeType& type,
+        std::shared_ptr<const ShapeId> parentId = nullptr
+    );
+    virtual ~ShapeId() = default;
 
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
+    virtual bool operator==(const ShapeId& other) const;
+    virtual bool operator<(const ShapeId& other) const;
 
-    std::map<std::string, TopoDS_Shape> shapes() const;
+    virtual const ShapeType shapeType() const;
+    virtual std::shared_ptr<const ShapeId> parentId() const;
+    virtual std::string toString() const;
+    virtual const uint64_t toInt() const;
 
-    private:
-    std::map<std::string, TopoDS_Shape> _shapes;
-
+    protected:
+    const uint64_t _id;
+    const ShapeType _shapeType;
+    std::shared_ptr<const ShapeId> _parentId;
 };
 
 #endif

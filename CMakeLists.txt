@@ -305,3 +305,7 @@ TARGET_LINK_LIBRARIES (meshGenerator PRIVATE
     UserInterface
     Kernel
 ) 
+
+if (BUILD_TESTS)
+    add_subdirectory(tests)
+endif()

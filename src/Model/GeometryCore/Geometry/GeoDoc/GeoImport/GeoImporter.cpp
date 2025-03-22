@@ -17,22 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtest/gtest.h>
-#include "Geometry.hpp"
-#include "OcafDoc.hpp"
+#include "GeoImporter.hpp"
+#include <filesystem>
 
-TEST(GeometryOcafDoc, StepImportIncreasesNumOfShapes){
-    std::string filePath = TESTS_RESOURCES_PATH;
-    filePath += "/tests/cube.stp";
-    OcafDoc doc;
-    doc.importSTEP(filePath);
-    doc.saveAsXml("abc.xml");
-    std::vector<TopoDS_Shape> shapes = doc.getAllShapes();
-    EXPECT_EQ(shapes.size(), 1);
-    doc.undo();
-    shapes = doc.getAllShapes();
-    EXPECT_EQ(shapes.size(), 0);
+OcafImporter::OcafImporter(const IEventSubject& aModelSubject) : 
+    _modelSubject(aModelSubject){}
+
+bool OcafImporter::filePathExists(const std::string& aFilePath){
+    if (!std::filesystem::exists(aFilePath)) {
+        auto message = "File " + aFilePath + " can not be found.";
+        auto errorCode = std::make_error_code(std::errc::no_such_file_or_directory);
+        throw std::filesystem::filesystem_error(message, errorCode);
+        return false;
+    } else {
+        return true;
+    }
 }
-
-
-

@@ -17,25 +17,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#ifndef EVENTPROGRESSINDICATOR_HPP
+#define EVENTPROGRESSINDICATOR_HPP
 
-#include <TopoDS_Shape.hxx>
-#include <string>
-#include <map>
+#include "ProgressIndicator.hpp"
+#include "ModelSubject.hpp"
 
-class GeoState {
+class EventProgressIndicator : public ProgessIndicator{
 
-    public: 
-    GeoState() = default;
+    public:
+    EventProgressIndicator(ModelSubject& aModelSubject);
+    ~EventProgressIndicator() = default;
 
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-
-    std::map<std::string, TopoDS_Shape> shapes() const;
-
+    void begin(const std::string& aMessage, int aMaxProgress) const override;
+    void progress(const std::string& aMessage, int aProgress) const override;
+    void finish(const std::string& aMessage) const override;
+    
     private:
-    std::map<std::string, TopoDS_Shape> _shapes;
+    ModelSubject& _subject;
 
 };
 

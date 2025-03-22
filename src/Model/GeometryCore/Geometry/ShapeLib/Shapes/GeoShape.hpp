@@ -17,26 +17,33 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#ifndef GEOSHAPE_HPP
+#define GEOSHAPE_HPP
 
 #include <TopoDS_Shape.hxx>
-#include <string>
-#include <map>
+#include "ShapeId.hpp"
 
-class GeoState {
+struct ShapeAttr{
+    std::string name;
+};
 
-    public: 
-    GeoState() = default;
+class GeoShape {
 
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
+    public:
+    GeoShape(
+        const TopoDS_Shape& aShape,
+        const ShapeId& aShapeId
+        const ShapeAttr& aAttr
+    );
+    
+    const TopoDS_Shape shape() const;
 
-    std::map<std::string, TopoDS_Shape> shapes() const;
+    const std::string name() const;
 
     private:
-    std::map<std::string, TopoDS_Shape> _shapes;
-
+    TopoDS_Shape& _shape;
+    ShapeAttr _attr;
+    ShapeId _id;
 };
 
 #endif

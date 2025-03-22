@@ -17,25 +17,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#ifndef STEPIMPORTER_HPP
+#define STEPIMPORTER_HPP
 
-#include <TopoDS_Shape.hxx>
-#include <string>
-#include <map>
+#include "ShapeImporter.hpp"
 
-class GeoState {
-
-    public: 
-    GeoState() = default;
-
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-
-    std::map<std::string, TopoDS_Shape> shapes() const;
-
-    private:
-    std::map<std::string, TopoDS_Shape> _shapes;
+class STEPImporter : public ShapeImporter{
+    virtual ~STEPImporter() = default;
+    
+    virtual std::vector<GeoShape>& import(
+        const std::string& aFilePath, 
+        ProgressIndicator& aProgressIndicator
+    ) const override 
 
 };
 

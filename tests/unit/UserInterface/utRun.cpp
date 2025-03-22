@@ -17,26 +17,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
+#include <gtest/gtest.h>
 
-#include <TopoDS_Shape.hxx>
-#include <string>
-#include <map>
+int main(int argc, char** argv) 
+{ 
+    testing::InitGoogleTest(&argc, argv); 
+    RUN_ALL_TESTS(); 
+}
 
-class GeoState {
-
-    public: 
-    GeoState() = default;
-
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-
-    std::map<std::string, TopoDS_Shape> shapes() const;
-
-    private:
-    std::map<std::string, TopoDS_Shape> _shapes;
-
-};
-
-#endif

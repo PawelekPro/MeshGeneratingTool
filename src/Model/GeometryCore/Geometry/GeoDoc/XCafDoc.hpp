@@ -16,27 +16,34 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef XCAFDOC_HPP
+#define XCAFDOC_HPP
 
-#ifndef GEOSTATE_HPP
-#define GEOSTATE_HPP
-
-#include <TopoDS_Shape.hxx>
 #include <string>
-#include <map>
 
-class GeoState {
+#include "OCafDoc.hpp"
+#include "IEventSubject.hpp"
+
+class XCafDoc : public OcafDoc{
 
     public: 
-    GeoState() = default;
+    XCafDoc(const IEventSubject& aModelSubject);
+    virtual ~XCafDoc() = default;     
 
-    void addShapes(const std::map<std::string, TopoDS_Shape>& aShapes);
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-
-    std::map<std::string, TopoDS_Shape> shapes() const;
-
+    virtual std::optional<TopoDS_Shape> getShape(const TDF_Label& aLabel) const override;
+    virtual std::optional<TDF_Label> getLabel(const TopoDS_Shape& aShape) const override; 
+    
+    virtual std::vector<TDF_Label> importShapes(const OcafImporter& aImporter) override; 
+    
+    virtual void undo() override;
+    virtual bool save(const std::string& filePath) const override;
+    
     private:
-    std::map<std::string, TopoDS_Shape> _shapes;
-
+    Handle(TDocStd_Document) _document;
+    Handle(XCAFDoc_ShapeTool) _shapeTool;
+    Handle(XCAFDoc_ColorTool) _colorTool;
+    
+    const IEventSubject& _modelSubject;
 };
 
 #endif
