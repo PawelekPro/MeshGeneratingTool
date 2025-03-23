@@ -22,20 +22,21 @@
 
 #include <vector>
 #include <memory>
+#include "EventPublisher.hpp"
 
 class Event;
 class EventObserver;
 
-class ModelSubject {
+class ModelSubject : public EventPublisher {
 
     public:
         ModelSubject() = default;
         ~ModelSubject() = default;
 
-        void publishEvent(const Event& aEvent) const;
+        void publishEvent(const Event& aEvent) const override;
 
-        void attachObserver(std::shared_ptr<EventObserver>);
-        void detachObserver(std::shared_ptr<EventObserver>);
+        void attachObserver(std::shared_ptr<EventObserver>) override;
+        void detachObserver(std::shared_ptr<EventObserver>) override;
 
     private:
         void notifyObservers(const Event& aEvent) const;

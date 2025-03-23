@@ -36,6 +36,4 @@ class EventPublisher {
     virtual void detachObserver(std::shared_ptr<EventObserver>) = 0;
 };
 
-
-
 #endif

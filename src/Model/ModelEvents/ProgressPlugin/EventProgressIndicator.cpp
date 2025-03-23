@@ -21,25 +21,26 @@
 #include "ModelEvents.hpp"
 
 EventProgressIndicator::EventProgressIndicator(
-    ModelSubject& aModelSubject
+    EventPublisher& aModelSubject
 ) : _subject(aModelSubject){}
 
 void EventProgressIndicator::begin(
-    const std::string& aMessage, 
+    const std::string& aMessage,
     int aMaxProgress
 ) const {
-
-// Empty on purpose to fail the test
+    ProgressEvent event(aMessage, aMaxProgress, ProgressState::Begin);
+    _subject.publishEvent(event);
 }
-
 void EventProgressIndicator::progress(
     const std::string& aMessage, 
     int aProgress
 ) const {
-
+    ProgressEvent event(aMessage, aProgress, ProgressState::Progress);
+    _subject.publishEvent(event);
 }
 
 void EventProgressIndicator::finish(
     const std::string& aMessage) const {
-
+    ProgressEvent event(aMessage, 100, ProgressState::Finish);
+    _subject.publishEvent(event);
 }

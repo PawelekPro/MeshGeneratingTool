@@ -21,7 +21,7 @@
 #include <gmock/gmock.h>
 #include "EventProgressIndicator.hpp"
 #include "ModelEvents.hpp"
-
+#include "ModelSubject.hpp"
 
 class MockModelSubject : public ModelSubject {
 public:
@@ -34,10 +34,24 @@ protected:
     EventProgressIndicator indicator{subject};
 };
 
+MATCHER_P3(MatchProgressEvent, 
+    expectedLabel, 
+    expectedValue, 
+    expectedState, 
+    "") {
+    const auto* progressEvent = dynamic_cast<const ProgressEvent*>(&arg);
+    return progressEvent &&
+           progressEvent->label == expectedLabel &&
+           progressEvent->value == expectedValue &&
+           progressEvent->state == expectedState;
+}
+
 TEST_F(ProgressIndicatorTest, IndicatorPublishesBeginEventOnBegin) {
     ProgressEvent expectedEvent("begin", 100, ProgressState::Begin);
-    EXPECT_CALL(subject, publishEvent(testing::Ref(expectedEvent)))
-        .Times(1);
+    
+    EXPECT_CALL(subject, publishEvent(MatchProgressEvent(
+        "begin", 100, ProgressState::Begin)));
+
     indicator.begin("begin", 100);
     
     EXPECT_EQ(testing::Mock::VerifyAndClearExpectations(&subject), true);
@@ -45,18 +59,22 @@ TEST_F(ProgressIndicatorTest, IndicatorPublishesBeginEventOnBegin) {
 
 TEST_F(ProgressIndicatorTest, IndicatorPublishesProgressEventOnProgress) {
     ProgressEvent expectedEvent("progress", 50, ProgressState::Progress);
-    EXPECT_CALL(subject, publishEvent(testing::Ref(expectedEvent)))
-        .Times(1);
-    indicator.begin("progress", 100);
+
+    EXPECT_CALL(subject, publishEvent(MatchProgressEvent(
+        "progress", 50, ProgressState::Progress)));
+    
+    indicator.progress("progress", 50);
     
     EXPECT_EQ(testing::Mock::VerifyAndClearExpectations(&subject), true);
 }
 
 TEST_F(ProgressIndicatorTest, IndicatorPublishesFinishEventOnFinish) {
     ProgressEvent expectedEvent("finish", 100, ProgressState::Finish);
-    EXPECT_CALL(subject, publishEvent(testing::Ref(expectedEvent)))
-        .Times(1);
-    indicator.begin("finish", 100);
+    
+    EXPECT_CALL(subject, publishEvent(MatchProgressEvent(
+        "finish", 100, ProgressState::Finish)));
+    
+    indicator.finish("finish");
     
     EXPECT_EQ(testing::Mock::VerifyAndClearExpectations(&subject), true);
 }

@@ -21,12 +21,12 @@
 #define EVENTPROGRESSINDICATOR_HPP
 
 #include "ProgressIndicator.hpp"
-#include "ModelSubject.hpp"
+#include "EventPublisher.hpp"
 
-class EventProgressIndicator : public ProgessIndicator{
+class EventProgressIndicator : public ProgessIndicator {
 
     public:
-    EventProgressIndicator(ModelSubject& aModelSubject);
+    EventProgressIndicator(EventPublisher& aModelSubject);
     ~EventProgressIndicator() = default;
 
     void begin(const std::string& aMessage, int aMaxProgress) const override;
@@ -34,7 +34,7 @@ class EventProgressIndicator : public ProgessIndicator{
     void finish(const std::string& aMessage) const override;
     
     private:
-    ModelSubject& _subject;
+    EventPublisher& _subject;
 
 };
 
