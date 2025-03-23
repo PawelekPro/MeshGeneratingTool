@@ -19,4 +19,10 @@
 
 #include "STEPImporter.hpp"
 
-STEPImporter::
+std::vector<GeoShape> STEPImporter::import(
+        const std::string& aFilePath, 
+        ProgressIndicator& aProgressIndicator
+){
+    std::vector<GeoShape> shapes;
+    return shapes
+}

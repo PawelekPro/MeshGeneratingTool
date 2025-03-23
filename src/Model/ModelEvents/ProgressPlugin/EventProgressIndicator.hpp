@@ -23,7 +23,7 @@
 #include "ProgressIndicator.hpp"
 #include "EventPublisher.hpp"
 
-class EventProgressIndicator : public ProgessIndicator {
+class EventProgressIndicator : public ProgressIndicator {
 
     public:
     EventProgressIndicator(EventPublisher& aModelSubject);

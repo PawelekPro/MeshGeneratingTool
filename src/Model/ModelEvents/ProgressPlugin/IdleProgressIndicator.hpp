@@ -16,3 +16,22 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#ifndef IDLEPROGRESSINDICATOR_HPP
+#define IDLEPROGRESSINDICATOR_HPP
+
+#include "ProgressIndicator.hpp"
+
+class IdleProgressIndicator : public ProgressIndicator {
+
+    public:
+    IdleProgressIndicator() = default;
+    ~IdleProgressIndicator() = default;
+
+    void begin(const std::string& aMessage, int aMaxProgress) const override {};
+    void progress(const std::string& aMessage, int aProgress) const override {};
+    void finish(const std::string& aMessage) const override {};
+    
+};
+
+#endif

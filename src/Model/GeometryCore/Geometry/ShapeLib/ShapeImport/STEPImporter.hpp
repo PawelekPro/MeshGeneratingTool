@@ -24,8 +24,9 @@
 
 class STEPImporter : public ShapeImporter{
     virtual ~STEPImporter() = default;
-    
-    virtual std::vector<GeoShape>& import(
+   
+    public:
+    virtual std::vector<GeoShape> import(
         const std::string& aFilePath, 
         ProgressIndicator& aProgressIndicator
     ) const override 

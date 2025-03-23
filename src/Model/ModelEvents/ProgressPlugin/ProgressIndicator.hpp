@@ -22,10 +22,10 @@
 
 #include <string>
 
-class ProgessIndicator{
+class ProgressIndicator{
 
     public:
-    virtual ~ProgessIndicator() = default;
+    virtual ~ProgressIndicator() = default;
 
     virtual void begin(const std::string& aMessage, int aMaxProgress) const = 0;
     virtual void progress(const std::string& aMessage, int aProgress) const = 0;

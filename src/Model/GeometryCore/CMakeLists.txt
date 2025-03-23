@@ -1,5 +1,7 @@
 add_subdirectory(GeoCommands)
 add_subdirectory(GeoEvents)
+add_subdirectory(Geometry/ShapeLib)
+add_subdirectory(Geometry/OccUtils)
 
 ADD_LIBRARY(GeometryCore 
     GeometryImporter/GeometryImporter.cpp
@@ -22,6 +24,7 @@ if(WIN32)
         ModelCommands
         GeoCommands
         GeoEvents
+        OccUtils
         )
 else()
     TARGET_LINK_LIBRARIES(GeometryCore PUBLIC

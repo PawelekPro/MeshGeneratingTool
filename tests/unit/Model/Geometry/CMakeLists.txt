@@ -1,5 +1,6 @@
 add_library(utGeometry
-    utGeoCommands.cpp
+    utImportSTEP.cpp
+    utOccProgressIndicator.cpp
 )
 
 find_package(GTest REQUIRED)

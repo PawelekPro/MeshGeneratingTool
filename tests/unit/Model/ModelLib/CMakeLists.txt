@@ -6,7 +6,6 @@ add_library(utModelLib
 
 target_link_libraries(utModelLib PUBLIC
     GTest::gmock_main
-    # GTest::gtest_main
 )
 
 target_link_libraries(utModelLib PUBLIC
