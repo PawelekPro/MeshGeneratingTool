@@ -4,7 +4,7 @@
 
 void GeometryCore::STLImporter::import(const std::string& aFileName, const ModelSubject& aModelSubject){
 	std::string actionLabel = "Importing STL from file: " + aFileName;
-	ProgressOperationEvent progressEvent("Importing STL geometry: " + aFileName, 0);
+	ProgressEvent progressEvent("Importing STL geometry: " + aFileName, 0);
 	aModelSubject.publishEvent(progressEvent);
 
 	TCollection_AsciiString aName((Standard_CString)aFileName.data());

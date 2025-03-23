@@ -3,10 +3,10 @@ add_library(utModelLib
     utProgressIndicator.cpp
 )
 
-find_package(GTest REQUIRED)
+
 target_link_libraries(utModelLib PUBLIC
-    GTest::GTest 
-    GTest::Main
+    GTest::gmock_main
+    # GTest::gtest_main
 )
 
 target_link_libraries(utModelLib PUBLIC

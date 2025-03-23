@@ -23,7 +23,7 @@
 ProgressObserver::ProgressObserver(ProgressBar* aProgressBarWidget) : 
 _progressBar(aProgressBarWidget){}
 
-void ProgressObserver::visit(const ProgressOperationEvent& aProgressEvent) const {
+void ProgressObserver::visit(const ProgressEvent& aProgressEvent) const {
     if (aProgressEvent.value == 0){
         _progressBar->initialize();
     } else

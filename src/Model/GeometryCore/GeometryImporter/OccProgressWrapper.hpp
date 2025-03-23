@@ -44,7 +44,7 @@ DEFINE_STANDARD_RTTIEXT(OccProgressWrapper, Message_ProgressIndicator);
 	std::stringstream getProgressMessage(
 		const Message_ProgressScope& aScope);
 
-	ProgressOperationEvent _progressEvent;
+	ProgressEvent _progressEvent;
 	const ModelSubject& _subject;
 };
 

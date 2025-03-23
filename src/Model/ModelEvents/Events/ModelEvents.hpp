@@ -23,19 +23,27 @@
 #include "Event.hpp"
 #include "BaseModelObserver.hpp"
 
-class ProgressOperationEvent : public Event {
-   public:
-   ProgressOperationEvent(const std::string& aLabel, int aValue)
-       : label(aLabel), value(aValue) {}
+enum class ProgressState{
+    Begin,
+    Progress,
+    Finish
+};
+class ProgressEvent : public Event {
+    public:
+    ProgressEvent(
+        const std::string& aLabel, 
+        int aValue, 
+        const ProgressState& aState = ProgressState::Progress
+    ) : label(aLabel), value(aValue), state(aState) {}
 
-   std::string label;
-   int value;
-
-   void accept(EventObserver& aEventObserver) const override {}
-   void accept(BaseGeometryObserver&) const override {}
-   void accept(BaseModelObserver& aEventObserver) const override {
-       aEventObserver.visit(*this);
-   }
+    std::string label;
+    int value;
+    ProgressState state;
+    void accept(EventObserver& aEventObserver) const override {}
+    void accept(BaseGeometryObserver&) const override {}
+    void accept(BaseModelObserver& aEventObserver) const override {
+        aEventObserver.visit(*this);
+    }
 };
 #endif
 

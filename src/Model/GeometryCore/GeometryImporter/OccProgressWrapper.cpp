@@ -26,7 +26,7 @@ OccProgressWrapper::OccProgressWrapper(
     const ModelSubject& aSubject, 
     const std::string& aInitLabel) :
     _subject(aSubject),
-    _progressEvent(ProgressOperationEvent(aInitLabel, 0)){};
+    _progressEvent(ProgressEvent(aInitLabel, 0)){};
 
 void OccProgressWrapper::Show(
     const Message_ProgressScope& aScope,

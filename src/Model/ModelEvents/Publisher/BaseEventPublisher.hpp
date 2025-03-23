@@ -16,23 +16,3 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef BASEMODELOBSERVER_HPP
-#define BASEMODELOBSERVER_HPP
-
-#include <functional>
-#include <string>
-#include "EventObserver.hpp"
-
-class ProgressEvent;
-
-class BaseModelObserver : public EventObserver {
-
-    public:
-    virtual ~BaseModelObserver() = default;
-   
-    virtual void visit(const ProgressEvent&) const = 0;
-
-};
-
-#endif

@@ -20,7 +20,6 @@
 #include "EventProgressIndicator.hpp"
 #include "ModelEvents.hpp"
 
-
 EventProgressIndicator::EventProgressIndicator(
     ModelSubject& aModelSubject
 ) : _subject(aModelSubject){}
@@ -30,7 +29,7 @@ void EventProgressIndicator::begin(
     int aMaxProgress
 ) const {
 
-
+// Empty on purpose to fail the test
 }
 
 void EventProgressIndicator::progress(

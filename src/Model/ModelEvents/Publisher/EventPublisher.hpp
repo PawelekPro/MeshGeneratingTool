@@ -17,22 +17,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BASEMODELOBSERVER_HPP
-#define BASEMODELOBSERVER_HPP
+#ifndef EVENTPUBLISHER_HPP 
+#define EVENTPUBLISHER_HPP 
 
-#include <functional>
-#include <string>
-#include "EventObserver.hpp"
+#include <vector>
+#include <memory>
 
-class ProgressEvent;
+class Event;
+class EventObserver;
 
-class BaseModelObserver : public EventObserver {
-
+class EventPublisher {
     public:
-    virtual ~BaseModelObserver() = default;
-   
-    virtual void visit(const ProgressEvent&) const = 0;
+    
+    virtual ~EventPublisher() = default;
+    virtual void publishEvent(const Event& aEvent) const = 0;
 
+    virtual void attachObserver(std::shared_ptr<EventObserver>) = 0;
+    virtual void detachObserver(std::shared_ptr<EventObserver>) = 0;
 };
+
+
 
 #endif

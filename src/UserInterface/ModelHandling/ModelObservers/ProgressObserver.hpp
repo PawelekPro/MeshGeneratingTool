@@ -31,7 +31,7 @@ class ProgressObserver : public BaseModelObserver {
        aEvent.accept(*this); 
    }
 
-   void visit(const ProgressOperationEvent&) const override;
+   void visit(const ProgressEvent&) const override;
 
    private:
    ProgressBar* _progressBar;
