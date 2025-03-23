@@ -20,8 +20,6 @@ meshing tool with parametric input and flexible visualization capabilities.
 
 # About the Project
 
-<video src="docs/video.mp4" width="600" height="400" controls></video>
-
 # Project Status
 
 # Getting Started
