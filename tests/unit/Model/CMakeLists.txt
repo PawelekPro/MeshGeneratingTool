@@ -4,6 +4,7 @@ add_executable(utModel
     utRun.cpp
 )
 
+
 find_package(GTest REQUIRED)
 target_link_libraries(utModel PUBLIC
     GTest::GTest 
@@ -32,3 +33,5 @@ endif()
 
 include(GoogleTest)
 gtest_discover_tests(utModel)
+
+add_test(NAME ModelTest COMMAND utModel)

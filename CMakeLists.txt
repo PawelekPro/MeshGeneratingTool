@@ -307,5 +307,6 @@ TARGET_LINK_LIBRARIES (meshGenerator PRIVATE
 ) 
 
 if (BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
