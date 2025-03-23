@@ -155,6 +155,10 @@ std::unique_ptr<MGTMesh_Algorithm> ModelDocParser::generateMeshAlgorithm(
 				[&](const QString& v) {
 					algorithm->quadAllowed = v.toInt() != 0;
 				} },
+			{ "limitSizeBySurfaceCurvature",
+				[&](const QString& v) {
+					algorithm->surfaceCurvature = v.toInt() != 0;
+				} },
 			{ "maxElementSize",
 				[&](const QString& v) { algorithm->maxSize = v.toDouble(); } },
 			{ "minElementSize",

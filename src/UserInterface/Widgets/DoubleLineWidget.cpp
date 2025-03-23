@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +31,16 @@ void DoubleLineWidget::setIndex(const QModelIndex& index) {
 	AbstractLineEdit::initialize(index);
 	_index = index;
 
-	QVariant val = index.model()->data(index);
-	if (val.isValid()) {
+	if (QVariant val = index.model()->data(index); val.isValid()) {
 		this->setValue(val.toString().toStdString());
 	}
 
 	if (QObject::receivers(SIGNAL(valueChanged(QString))) > 0) {
-		QObject::disconnect(
-			this, SIGNAL(valueChanged(QString)),
-			this, SLOT(onValueChanged(QString)));
+		QObject::disconnect(this, SIGNAL(valueChanged(QString)), this,
+			SLOT(onValueChanged(QString)));
 	}
-	QObject::connect(this, SIGNAL(valueChanged(QString)),
-		this, SLOT(onValueChanged(QString)));
+	QObject::connect(this, SIGNAL(valueChanged(QString)), this,
+		SLOT(onValueChanged(QString)));
 }
 
 //----------------------------------------------------------------------------

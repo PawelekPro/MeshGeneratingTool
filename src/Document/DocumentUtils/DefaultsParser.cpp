@@ -205,23 +205,4 @@ QDomElement jsonValueToProperty(
 	}
 }
 
-//----------------------------------------------------------------------------
-QMap<QString, QString> getPropertyNodeMap(
-	const QDomDocument& aDomDoc, const ItemTypes::Root& aRootType) {
-	QMap<QString, QString> propertiesMap;
-
-	const QDomElement properties = getItemProperties(aDomDoc, aRootType);
-	const QDomNodeList nodeList = properties.elementsByTagName("Property");
-
-	for (int i = 0; i < nodeList.count(); ++i) {
-		QDomElement property = nodeList.at(i).toElement();
-		QString propertyName = property.attribute("name");
-		const QString propertyValue = property.text().trimmed();
-
-		propertiesMap[propertyName] = propertyValue;
-	}
-
-	return propertiesMap;
-}
-
 }

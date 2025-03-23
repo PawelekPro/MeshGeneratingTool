@@ -48,9 +48,6 @@ QDomElement jsonValueToProperty(
 QStringList getComboBoxListFromJson(
 	const rapidjson::Document& aJsonDoc, const QString& aComboBoxEntry);
 
-QMap<QString, QString> getPropertyNodeMap(
-	const QDomDocument& aDomDoc, const ItemTypes::Root& aRootType);
-
 };
 
 #endif

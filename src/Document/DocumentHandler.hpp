@@ -87,7 +87,7 @@ public:
 	 * @brief removes the element from QDomDoc.
 	 * @param aElementToRemove - element that will be removed from the doc.
 	 */
-	void removeElement(QDomElement& aElementToRemove);
+	void removeElement(const QDomElement& aElementToRemove);
 
 	/**
 	 * @brief Adds text node to element with QString value.

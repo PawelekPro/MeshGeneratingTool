@@ -1,17 +1,18 @@
 ADD_LIBRARY(MGTMeshUtils
-    MGTMeshUtils_ControlPoint.cpp
-    MGTMeshUtils_ViscousLayers.cpp
-    MGTMeshUtils_ComputeError.hpp
+        MGTMeshUtils_ControlPoint.cpp
+        MGTMeshUtils_ViscousLayers.cpp
+        MGTMeshUtils_ComputeError.hpp
+        MGTMeshUtils_DefaultParameters.cpp
 )
 
-if(WIN32)
+if (WIN32)
     TARGET_LINK_LIBRARIES(MGTMeshUtils PUBLIC
-        ${OpenCASCADE_LIBRARIES}
-        ${VTK_LIBRARIES})
-else()
+            ${OpenCASCADE_LIBRARIES}
+            ${VTK_LIBRARIES})
+else ()
     TARGET_LINK_LIBRARIES(MGTMeshUtils PUBLIC
-        ${OCC_LIBRARIES}
-        ${VTK_LIBRARIES})
-endif()
+            ${OCC_LIBRARIES}
+            ${VTK_LIBRARIES})
+endif ()
 
 include_directories()

@@ -27,6 +27,8 @@
 
 #include "DisplayRulesParser.hpp"
 
+#include <DocUtils.hpp>
+
 //----------------------------------------------------------------------------
 DocumentHandler::DocumentHandler() {
 	this->_appRootElement
@@ -71,9 +73,9 @@ QDomElement DocumentHandler::createRootElement(
 	const QDomNodeList propertyNodes = properties.elementsByTagName("Property");
 	for (int i = 0; i < propertyNodes.count(); ++i) {
 		QDomElement property = propertyNodes.at(i).toElement();
-		QString propertyName = property.attribute("name");
 
-		if (displayRulesMap.contains(propertyName)) {
+		if (QString propertyName = property.attribute("name");
+			displayRulesMap.contains(propertyName)) {
 			// Create VisibilityRules element and add it as child to property
 			QDomElement displayRules
 				= _domDocument.createElement("DisplayRules");
@@ -112,12 +114,11 @@ QDomElement DocumentHandler::createSubElement(
 //----------------------------------------------------------------------------
 QList<QDomElement> DocumentHandler::getSubElements(
 	const ItemTypes::Sub& aSubType) const {
-	QDomNodeList nodeList
+	const QDomNodeList nodeList
 		= _domDocument.elementsByTagName(ItemTypes::label(aSubType));
 	QList<QDomElement> elementList;
 	for (int i = 0; i < nodeList.size(); ++i) {
-		QDomNode node = nodeList.at(i);
-		if (node.isElement()) {
+		if (QDomNode node = nodeList.at(i); node.isElement()) {
 			elementList.append(node.toElement());
 		}
 	}
@@ -127,16 +128,16 @@ QList<QDomElement> DocumentHandler::getSubElements(
 //----------------------------------------------------------------------------
 QDomElement DocumentHandler::getRootElement(
 	const ItemTypes::Root& rootTag) const {
-	QDomNodeList nodeList
+	const QDomNodeList nodeList
 		= this->_domDocument.elementsByTagName(ItemTypes::label(rootTag));
 	QDomElement rootElement = nodeList.at(0).toElement();
 	return rootElement;
 }
 
 //----------------------------------------------------------------------------
-void DocumentHandler::removeElement(QDomElement& aElementToRemove) {
-	QDomNode parentNode = aElementToRemove.parentNode();
-	if (parentNode.isElement()) {
+void DocumentHandler::removeElement(const QDomElement& aElementToRemove) {
+	if (QDomNode parentNode = aElementToRemove.parentNode();
+		parentNode.isElement()) {
 		QDomElement parentElement = parentNode.toElement();
 		parentElement.removeChild(aElementToRemove);
 		return;
@@ -146,12 +147,13 @@ void DocumentHandler::removeElement(QDomElement& aElementToRemove) {
 //----------------------------------------------------------------------------
 void DocumentHandler::addTextNode(
 	QDomElement& aElement, const QString& aValue) {
-	QDomText valueNode = _domDocument.createTextNode(aValue);
+	const QDomText valueNode = _domDocument.createTextNode(aValue);
 	aElement.appendChild(valueNode);
 }
 
 //----------------------------------------------------------------------------
 QMap<QString, QString> DocumentHandler::getPropertyNodeMap(
 	const ItemTypes::Root& aRootType) const {
-	return DefaultsParser::getPropertyNodeMap(_domDocument, aRootType);
+	const QDomElement elem = getRootElement(aRootType);
+	return Properties::getPropertyNodeMap(elem);
 }

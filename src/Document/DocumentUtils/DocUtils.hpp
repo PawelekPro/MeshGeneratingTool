@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+* Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+	(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,36 +16,48 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : DocUtils.hpp
+* Author    : Paweł Gilewicz
+* Date      : 23/03/2025
+*/
 
 #ifndef DOCUTILS_HPP
 #define DOCUTILS_HPP
-
-#include "document.h"
 
 #include <QDomElement>
 #include <QString>
 
 #include <vector>
 
-namespace DocUtils{
+#include "DocItemTypes.hpp"
 
-    QDomElement getSubElement(const QDomElement& aParentElement, const QString& aSearchedElementText);
+namespace DocUtils {
 
-    QString intsToString(const std::vector<int>& aIntVec);
-    
+QDomElement getSubElement(
+	const QDomElement& aParentElement, const QString& aSearchedElementText);
+
+QString intsToString(const std::vector<int>& aIntVec);
+
 }
 
-namespace Properties{
+namespace Properties {
 
-    QDomElement getProperty(const QDomElement& aParentElement, const QString& aPropertyName);
-    bool isProperty(const QDomElement& aProperty);
+QDomElement getProperty(
+	const QDomElement& aParentElement, const QString& aPropertyName);
+bool isProperty(const QDomElement& aProperty);
 
-    QString getPropertyValue(const QDomElement& aProperty);
-    void setPropertyValue(QDomElement& aProperty, const QString& aNewValue);
+QString getPropertyValue(const QDomElement& aProperty);
+void setPropertyValue(QDomElement& aProperty, const QString& aNewValue);
 
-    QString getPropertyAttribute(const QDomElement& aProperty, const QString& aAttribute);
-    void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute, const QString& aNewValue);
+QString getPropertyAttribute(
+	const QDomElement& aProperty, const QString& aAttribute);
+void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute,
+	const QString& aNewValue);
+
+QMap<QString, QString> getPropertyNodeMap(const QDomElement& aDomElement);
+
 }
 
 #endif
