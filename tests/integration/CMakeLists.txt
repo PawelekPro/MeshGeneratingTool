@@ -1,1 +1,2 @@
-# placeholder 
+add_subdirectory(Model)
+add_subdirectory(UserInterface)

@@ -6,8 +6,7 @@ add_executable(utModel
 
 find_package(GTest REQUIRED)
 target_link_libraries(utModel PUBLIC
-    GTest::GTest 
-    GTest::Main
+    GTest::gmock_main
 )
 
 target_link_libraries(utModel PRIVATE utModelLib)
@@ -17,7 +16,6 @@ target_link_options(utModel PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utMo
 
 target_link_options(utModel PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utGeometry> 
                                      $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--whole-archive>)
-# target_link_options(utModel PRIVATE $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--no-whole-archive>)
 
 if (TEST_GEOMETRY)
     add_subdirectory(Geometry)

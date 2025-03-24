@@ -1,12 +1,10 @@
 add_library(utGeometry
-    utImportSTEP.cpp
     utOccProgressIndicator.cpp
 )
 
 find_package(GTest REQUIRED)
 target_link_libraries(utGeometry PUBLIC
-    GTest::GTest 
-    GTest::Main
+    GTest::gmock_main
 )
 
 target_link_libraries(utGeometry PUBLIC
