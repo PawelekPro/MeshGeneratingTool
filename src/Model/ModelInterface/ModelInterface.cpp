@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +58,13 @@ void ModelInterface::createNewModel(const QString& aNewModelName) {
 //----------------------------------------------------------------------------
 bool ModelInterface::generateMesh(bool surfaceMesh) {
 	spdlog::debug(
-		std::format("Mesh generation process started with surfaceMesh arg: {}", surfaceMesh));
+		std::format("Mesh generation process started with surfaceMesh arg: {}",
+			surfaceMesh));
 
 	Model& model = _modelManager.getModel();
-	ModelDocParser modelDocument(model);
-	std::unique_ptr<MGTMesh_Algorithm> algorithm = modelDocument.generateMeshAlgorithm(surfaceMesh);
+	const ModelDocParser modelDocument(model);
+	const std::unique_ptr<MGTMesh_Algorithm> algorithm
+		= modelDocument.generateMeshAlgorithm(surfaceMesh);
 
 	return model.generateMesh(algorithm.get());
 }

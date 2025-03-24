@@ -237,7 +237,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	SPDLOG_INFO("Starting mesh generation process");
 
 	try {
-		err = ngLib.GenerateMesh(occgeo, startWith, endWith, _ngMesh);
+		err = NetgenPlugin_NetgenLibWrapper::GenerateMesh(
+			occgeo, startWith, endWith, _ngMesh);
 	} catch (Standard_Failure& ex) {
 		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
@@ -251,8 +252,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	if (err)
 		return err;
 
-	if (!mParams.uselocalh)
-		_ngMesh->LocalHFunction().SetGrading(mParams.grading);
+	// if (!mParams.uselocalh)
+	// 	_ngMesh->LocalHFunction().SetGrading(mParams.grading);
 
 	// const TopoDS_Shape& shape = occgeo.fmap.FindKey(1);
 	// setLocalSize(shape, 2);

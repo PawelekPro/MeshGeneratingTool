@@ -130,11 +130,6 @@ std::unique_ptr<MGTMesh_Algorithm> ModelDocParser::generateMeshAlgorithm(
 	const QMap<QString, QString> propMap
 		= _doc.getPropertyNodeMap(ItemTypes::Root::Mesh);
 
-	for (const QString& propName : propMap.keys()) {
-		std::cout << propName.toStdString() << " : "
-				  << propMap.value(propName).toStdString() << std::endl;
-	}
-
 	int schemeId = 0;
 	auto algorithm = std::make_unique<MGTMesh_Algorithm>(schemeId);
 	algorithm->SetSchemeName(propMap.value("algName").toStdString());

@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,18 +60,22 @@ vtkSmartPointer<vtkPoints> NetgenPlugin_Netgen2VTK::PopulateMeshNodes() const {
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) const {
+void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(
+	MGTMesh_MeshObject* mesh) const {
 	const int nbE = static_cast<int>(_netgenMesh.GetNE());
 	if (!nbE) {
 		SPDLOG_WARN("No volume elements found in the Netgen mesh.");
 		return;
 	}
 
-	const vtkSmartPointer<vtkUnstructuredGrid> internalMesh = vtkUnstructuredGrid::New();
+	const vtkSmartPointer<vtkUnstructuredGrid> internalMesh
+		= vtkUnstructuredGrid::New();
 
 	const vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
-	const vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-	const vtkSmartPointer<vtkUnsignedCharArray> cellTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
+	const vtkSmartPointer<vtkCellArray> cells
+		= vtkSmartPointer<vtkCellArray>::New();
+	const vtkSmartPointer<vtkUnsignedCharArray> cellTypes
+		= vtkSmartPointer<vtkUnsignedCharArray>::New();
 
 	for (int i = 1; i <= nbE; ++i) {
 		const netgen::Element& elem = _netgenMesh.VolumeElement(i);
@@ -95,21 +100,24 @@ void NetgenPlugin_Netgen2VTK::ConvertToInternalMesh(MGTMesh_MeshObject* mesh) co
 			cellTypes->InsertNextValue(VTK_HEXAHEDRON);
 
 		} else {
-			std::cerr << "Unsupported element type encountered: " << elementType << std::endl;
+			std::cerr << "Unsupported element type encountered: " << elementType
+					  << std::endl;
 		}
 	}
 
 	// Populate internal mesh data
 	internalMesh->SetPoints(points);
 	internalMesh->SetCells(cellTypes, cells);
-	SPDLOG_INFO("Internal mesh conversion completed: {} points, {} cells created.",
+	SPDLOG_INFO(
+		"Internal mesh conversion completed: {} points, {} cells created.",
 		points->GetNumberOfPoints(), cells->GetNumberOfCells());
 
 	mesh->SetInternalMesh(internalMesh);
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) const {
+void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(
+	MGTMesh_MeshObject* mesh) const {
 	const int nbSE = static_cast<int>(_netgenMesh.GetNSE());
 
 	if (!nbSE) {
@@ -119,7 +127,8 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) co
 
 	const vtkSmartPointer<vtkPolyData> boundaryMesh = vtkPolyData::New();
 	const vtkSmartPointer<vtkPoints> points = this->PopulateMeshNodes();
-	const vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+	const vtkSmartPointer<vtkCellArray> polygons
+		= vtkSmartPointer<vtkCellArray>::New();
 
 	for (int i = 1; i <= nbSE; ++i) {
 		const netgen::Element2d& elem = _netgenMesh.SurfaceElement(i);
@@ -145,7 +154,8 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) co
 			polygons->InsertNextCell(quad);
 
 		} else {
-			vtkLogF(ERROR, "Unsupported element type encountered: %d", elementType);
+			SPDLOG_ERROR(
+				"Unsupported element type encountered: {}", elementType);
 			continue;
 		}
 	}
@@ -153,7 +163,8 @@ void NetgenPlugin_Netgen2VTK::ConvertToBoundaryMesh(MGTMesh_MeshObject* mesh) co
 	// Populate poly data
 	boundaryMesh->SetPoints(points);
 	boundaryMesh->SetPolys(polygons);
-	SPDLOG_INFO("Boundary mesh conversion completed: {} points, {} polygons created.",
+	SPDLOG_INFO(
+		"Boundary mesh conversion completed: {} points, {} polygons created.",
 		points->GetNumberOfPoints(), polygons->GetNumberOfCells());
 
 	mesh->SetBoundaryMesh(boundaryMesh);
