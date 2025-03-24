@@ -20,7 +20,11 @@ meshing tool with parametric input and flexible visualization capabilities.
 
 # About the Project
 
+![Workflow](docs/video.gif)
+
 # Project Status
+
+In progress ...
 
 # Getting Started
 
