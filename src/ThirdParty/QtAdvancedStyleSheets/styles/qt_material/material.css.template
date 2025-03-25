@@ -1318,3 +1318,19 @@ CheckBoxWidget QCheckBox::indicator {
     width: 20px;
     height: 20px;
 }
+
+ProgressBar QPushButton {
+    width: 12px;
+    height: 12px;
+    background-color: #ff0000;
+    border: unset;
+    border-radius: 4px;
+}
+
+ProgressBar QPushButton:hover {
+    background-color: #cc0000;
+}
+
+ProgressBar QPushButton:pressed {
+    background-color: #880000;
+}
