@@ -1,13 +1,13 @@
-add_library(ShapeStateManager
+add_library(ShapeManager
     OcafStateManager.cpp
 )
 
-target_link_libraries(ShapeStateManager PUBLIC
+target_link_libraries(ShapeManager PUBLIC
     ${OCC_LIBRARIES} 
-    ShapeIds
+    Shapes
     ShapeMap
 )
 
-target_include_directories(ShapeStateManager PUBLIC
+target_include_directories(ShapeManager PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

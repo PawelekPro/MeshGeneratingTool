@@ -17,18 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPIMPORTER_HPP
-#define STEPIMPORTER_HPP
+#include "BrepUtils.hpp"
 
-#include "ShapeImporter.hpp"
+namespace BrepUtils
+{
 
-class STEPImporter : public ShapeImporter{
-    public:
-    ~STEPImporter() = default;    
-    virtual std::vector<GeoShape> import(
-        const std::string& aFilePath, 
-        ProgressIndicator& aProgressIndicator
-    ) const override;
+TopoDS_Face makeTriangleFace(const gp_Pnt& p1, const gp_Pnt& p2, const gp_Pnt& p3){
+    TopoDS_Face face; 
+    if (!(!p1.IsEqual(p2, 0.0) && !p1.IsEqual(p3, 0.0))) {
+        std::cerr << "Doubled points, returning empty face.";
+    }
+
+    TopoDS_Vertex v1 = BRepBuilderAPI_MakeVertex(p1);
+    TopoDS_Vertex v2 = BRepBuilderAPI_MakeVertex(p2);
+    TopoDS_Vertex v3 = BRepBuilderAPI_MakeVertex(p3);
+
+    TopoDS_Wire wire = BRepBuilderAPI_MakePolygon(v1, v2, v3, Standard_True);
+    face = BRepBuilderAPI_MakeFace(wire);
+    
+    return face;
 };
 
-#endif
+
+
+
+}

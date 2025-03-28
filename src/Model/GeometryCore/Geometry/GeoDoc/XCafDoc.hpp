@@ -22,12 +22,11 @@
 #include <string>
 
 #include "OCafDoc.hpp"
-#include "IEventSubject.hpp"
 
 class XCafDoc : public OcafDoc{
 
     public: 
-    XCafDoc(const IEventSubject& aModelSubject);
+    XCafDoc();
     virtual ~XCafDoc() = default;     
 
     virtual std::optional<TopoDS_Shape> getShape(const TDF_Label& aLabel) const override;
@@ -42,8 +41,6 @@ class XCafDoc : public OcafDoc{
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;
-    
-    const IEventSubject& _modelSubject;
 };
 
 #endif

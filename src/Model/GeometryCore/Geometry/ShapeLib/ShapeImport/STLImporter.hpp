@@ -17,14 +17,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPIMPORTER_HPP
-#define STEPIMPORTER_HPP
+#ifndef STLIMPORTER_HPP
+#define STLIMPORTER_HPP
 
 #include "ShapeImporter.hpp"
 
-class STEPImporter : public ShapeImporter{
+class STLImporter : public ShapeImporter{
     public:
-    ~STEPImporter() = default;    
+    ~STLImporter() override = default;
     virtual std::vector<GeoShape> import(
         const std::string& aFilePath, 
         ProgressIndicator& aProgressIndicator

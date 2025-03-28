@@ -17,18 +17,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPIMPORTER_HPP
-#define STEPIMPORTER_HPP
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include "ShapeImporter.hpp"
+#include "STEPImporter.hpp"
 
-class STEPImporter : public ShapeImporter{
-    public:
-    ~STEPImporter() = default;    
-    virtual std::vector<GeoShape> import(
-        const std::string& aFilePath, 
-        ProgressIndicator& aProgressIndicator
-    ) const override;
+class STEPImporpterTest : public ::testing::Test {
+protected:
+    STEPImporter importer;
 };
 
-#endif
+TEST(STEPImporterTets, TestImportingCubeSTEPFile){
+    EXPECT_EQ(1,1);
+}

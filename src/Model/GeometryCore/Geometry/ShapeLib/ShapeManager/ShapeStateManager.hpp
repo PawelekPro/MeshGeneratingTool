@@ -26,7 +26,7 @@
 #include "OcafDoc.hpp"
 #include "ShapeMap.hpp"
 #include "ShapeId.hpp"
-
+#include "GeoShape.hpp"
 class ShapeStateManager {
 
     public:
@@ -58,7 +58,7 @@ class ShapeStateManager {
 
     protected:
     
-    std::shared_ptr<const ShapeMap> _shapeMap
+    std::shared_ptr<const ShapeMap> _shapeMap;
 
 };
 

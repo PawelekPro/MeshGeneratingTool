@@ -21,12 +21,11 @@
 #define SHAPEIMPORTER_HPP
 
 #include "GeoShape.hpp"
-#include "ProgressPlugin.hpp"
+#include "ProgressIndicator.hpp"
 
 class ShapeImporter{
-    virtual ~ShapeImporter() = default;
-     
     public: 
+    virtual ~ShapeImporter() = default;
     virtual std::vector<GeoShape> import(
         const std::string& aFilePath, 
         ProgressIndicator& aProgressIndicator

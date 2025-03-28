@@ -17,6 +17,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#ifndef BREPUTILS_HPP
+#define BREPUTILS_HPP
 
+#include <Poly_Triangulation.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeSolid.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
+#include <TopoDS.hxx>
+
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Wire.hxx>
+
+namespace BrepUtils{
+
+    TopoDS_Face makeTriangleFace(const gp_Pnt& p1, const gp_Pnt& p2, const gp_Pnt& p3);
+
+}
+
+#endif

@@ -17,33 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STLOCAFIMPORTER_HPP
-#define STLOCAFIMPORTER_HPP
+#include "STLImporter.hpp"
 
-#include "GeoImporter.hpp"
-#include <Standard_Handle.hxx>
-#include "OccProgressPlugin.hpp"
-#include <TopoDS_Shape.hxx>
-#include <Poly_Triangulation.hxx>
-
-class STLOcafImporter : public OcafImporter {
-
-    public:
-    bool importToDocument(
-            const std::string& aFilePath, 
-            Handle(TDocStd_Document) aDestDoc
-    ) override;
-
-    STLOcafImporter(const IEventSubject& aModelSubject);
-    ~STLOcafImporter() = default;
-
-    private:
-    bool transferShape(const TopoDS_Shape& aShape, Handle(TDocStd_Document) aDestDoc);
-    TopoDS_Shape extractShells(const TopoDS_Shape& aShape);
-    TopoDS_Shape sewShape(Handle(Poly_Triangulation) aTriangulation);
-    OccProgressPlugin _progress;
-
+std::vector<GeoShape> STLImporter::import(
+	const std::string& aFilePath, ProgressIndicator& aProgressIndicator) const {
+	return std::vector<GeoShape>();
 };
-
-
-#endif

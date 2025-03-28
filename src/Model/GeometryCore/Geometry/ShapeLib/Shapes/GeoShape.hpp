@@ -32,7 +32,7 @@ class GeoShape {
     public:
     GeoShape(
         const TopoDS_Shape& aShape,
-        const ShapeId& aShapeId
+        const ShapeId& aShapeId,
         const ShapeAttr& aAttr
     );
     
@@ -41,7 +41,7 @@ class GeoShape {
     const std::string name() const;
 
     private:
-    TopoDS_Shape& _shape;
+    const TopoDS_Shape& _shape;
     ShapeAttr _attr;
     ShapeId _id;
 };

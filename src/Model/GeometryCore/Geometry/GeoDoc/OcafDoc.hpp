@@ -30,7 +30,6 @@
 #include <TopoDS_Shape.hxx>
 #include <gp_Trsf.hxx>
 
-#include "IEventSubject.hpp"
 
 class OcafImporter;
 

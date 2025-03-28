@@ -6,7 +6,7 @@ add_library(ShapeMap
 target_link_libraries(ShapeMap PUBLIC
     ${OCC_LIBRARIES}
     GeoDoc
-    ShapeIds
+    Shapes
 )
 
 target_include_directories(ShapeMap PUBLIC

@@ -28,7 +28,8 @@ class OcafStateManager : public ShapeStateManager {
     OcafStateManager(
         std::shared_ptr<ShapeMap> aShapeMap, 
         std::shared_ptr<OcafDoc> aOcafDoc
-    )
+    );
+    
     virtual std::pair<bool, std::vector<ShapeId>> commitRegisterNew(
         const std::vector<GeoShape>& aGeoShapes
     ) override;

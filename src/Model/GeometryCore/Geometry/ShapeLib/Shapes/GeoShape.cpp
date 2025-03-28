@@ -21,7 +21,7 @@
 
 GeoShape::GeoShape(
     const TopoDS_Shape& aShape,
-    const ShpaeId& aShapeId,
+    const ShapeId& aShapeId,
     const ShapeAttr& aAttr
 ) : _shape(aShape),
     _id(aShapeId),

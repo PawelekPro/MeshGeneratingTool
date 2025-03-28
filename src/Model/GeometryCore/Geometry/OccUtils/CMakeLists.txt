@@ -1,5 +1,6 @@
 add_library(OccUtils
     OccProgressIndicator.cpp
+    BrepUtils.cpp
 )
 
 target_link_libraries(OccUtils PUBLIC

@@ -31,7 +31,7 @@
 
 #include "XcafDoc.hpp"
 
-XCafDoc::XCafDoc(const IEventSubject& aModelSubject) : _modelSubject(aModelSubject){
+XCafDoc::XCafDoc() {
     auto app = XCAFApp_Application::GetApplication();
     app->NewDocument("XmlXCAF", this->_document);
     _document->SetUndoLimit(3);
@@ -75,15 +75,15 @@ bool XCafDoc::save(const std::string& filePath) const {
 
 
 std::optional<TopoDS_Shape> getShape(const TDF_Label& aLabel){
-    
+   return std::nullopt; 
 }
 
 std::optional<TDF_Label> getLabel(const TopoDS_Shape& aShape){
-
+    return std::nullopt;
 }
 
 std::vector<TDF_Label> importShapes(const OcafImporter& aImporter){
-
+    return std::vector<TDF_Label>();
 }
 
 void XCafDoc::undo(){

@@ -22,7 +22,37 @@
 std::vector<GeoShape> STEPImporter::import(
         const std::string& aFilePath, 
         ProgressIndicator& aProgressIndicator
-){
+) const {
     std::vector<GeoShape> shapes;
-    return shapes
+    return shapes;
 }
+
+
+// std::optional<std::vector<TDF_Label>> STEPOcafImporter::importToDocument(const std::string& aFilePath, Handle(TDocStd_Document) aDestDoc) {
+//     if (!filePathExists(aFilePath)) {
+//         return std::nullopt;
+//     }
+
+//     STEPCAFControl_Reader cafReader;
+//     cafReader.SetColorMode(true);
+//     cafReader.SetLayerMode(true);
+//     cafReader.SetNameMode(true);
+
+//     IFSelect_ReturnStatus result = cafReader.ReadFile(aFilePath.c_str());
+//     if (result != IFSelect_RetDone) {
+//         throw std::runtime_error("Failed to read STEP file.");
+//     }
+//     OccProgressPlugin progressWrapper(_modelSubject, aFilePath);
+//     cafReader.Transfer(aDestDoc, progressWrapper.Start());
+//     const XCAFDoc_DataMapOfShapeLabel labelMap = cafReader.GetShapeLabelMap();
+//     std::vector<TopoDS_Shape> shapes(labelMap.Extent());
+//     std::vector<TDF_Label> labels(labelMap.Extent());
+
+//     std::transform(labelMap.cbegin(), labelMap.cend(), std::back_inserter(shapes),
+//         [](const auto& elem) { return elem.Key(); });
+
+//     std::transform(shapes.cbegin(), shapes.cend(), std::back_inserter(labels),
+//         [](const auto& shape) { return aDestDoc.getLabel(shape); });
+        
+//     return labels;
+// }
