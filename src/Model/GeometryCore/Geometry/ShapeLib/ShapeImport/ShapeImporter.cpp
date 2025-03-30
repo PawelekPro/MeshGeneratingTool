@@ -17,21 +17,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IDLEPROGRESSINDICATOR_HPP
-#define IDLEPROGRESSINDICATOR_HPP
+#include "ShapeImporter.hpp"
+#include <stdexcept>
 
-#include "ProgressIndicator.hpp"
+std::vector<std::pair<TopoDS_Shape, ShapeAttr>> ShapeImporter::importFile(
+    const std::string& aFilePath, 
+    const ProgressIndicator& aProgressIndicator
+) const {
+    std::ifstream file(aFilePath);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file: " + aFilePath);
+    }
+    return import(file, aProgressIndicator);
+}
 
-class IdleProgressIndicator : public ProgressIndicator {
-
-    public:
-    IdleProgressIndicator() = default;
-    ~IdleProgressIndicator() = default;
-
-    void begin(const std::string& aMessage, int aMaxProgress) const override {};
-    void progress(const std::string& aMessage, int aProgress) const override {};
-    void finish(const std::string& aMessage) const override {};
-    
-};
-
-#endif
+std::vector<std::pair<TopoDS_Shape, ShapeAttr>> ShapeImporter::importFile(
+    const std::string& aFilePath
+) const {
+    IdleProgressIndicator progressIndicator;
+    return importFile(aFilePath, progressIndicator);
+}

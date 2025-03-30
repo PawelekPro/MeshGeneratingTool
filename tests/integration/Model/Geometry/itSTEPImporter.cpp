@@ -21,12 +21,19 @@
 #include <gmock/gmock.h>
 
 #include "STEPImporter.hpp"
+#include "ShapeImporter.hpp"
+#include <iostream>
+#include <sstream>
 
-class STEPImporpterTest : public ::testing::Test {
+class STEPImporterTest : public ::testing::Test {
 protected:
     STEPImporter importer;
 };
 
-TEST(STEPImporterTets, TestImportingCubeSTEPFile){
-    EXPECT_EQ(1,1);
+TEST_F(STEPImporterTest, TestImportingCubeSTEPFile){
+    std::string coloredPartPath = std::string(TESTS_DATA_PATH) + "/flange.stp";
+    IdleProgressIndicator indicator;
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
+        importer.importFile(coloredPartPath, indicator);
+    EXPECT_EQ(shapes.size(), 3);
 }

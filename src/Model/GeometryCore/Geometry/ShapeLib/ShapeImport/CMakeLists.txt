@@ -1,4 +1,5 @@
 add_library(ShapeImport
+    ShapeImporter.cpp
     STEPImporter.cpp
     STLImporter.cpp
 )

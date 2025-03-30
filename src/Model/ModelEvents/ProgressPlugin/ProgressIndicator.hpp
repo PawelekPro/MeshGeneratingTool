@@ -33,4 +33,15 @@ class ProgressIndicator{
 
 };
 
+class IdleProgressIndicator : public ProgressIndicator {
+
+    public:
+    IdleProgressIndicator() = default;
+    ~IdleProgressIndicator() = default;
+
+    void begin(const std::string& aMessage, int aMaxProgress) const override {};
+    void progress(const std::string& aMessage, int aProgress) const override {};
+    void finish(const std::string& aMessage) const override {};
+};
+
 #endif

@@ -26,7 +26,7 @@
 class EventProgressIndicator : public ProgressIndicator {
 
     public:
-    EventProgressIndicator(EventPublisher& aModelSubject);
+    EventProgressIndicator(const EventPublisher& aModelSubject);
     ~EventProgressIndicator() = default;
 
     void begin(const std::string& aMessage, int aMaxProgress) const override;
@@ -34,7 +34,7 @@ class EventProgressIndicator : public ProgressIndicator {
     void finish(const std::string& aMessage) const override;
     
     private:
-    EventPublisher& _subject;
+    const EventPublisher& _subject;
 
 };
 

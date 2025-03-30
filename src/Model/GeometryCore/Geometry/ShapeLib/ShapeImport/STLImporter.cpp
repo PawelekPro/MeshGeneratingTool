@@ -19,7 +19,9 @@
 
 #include "STLImporter.hpp"
 
-std::vector<GeoShape> STLImporter::import(
-	const std::string& aFilePath, ProgressIndicator& aProgressIndicator) const {
-	return std::vector<GeoShape>();
+std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STLImporter::import(
+        std::istream& aFileStream, 
+        const ProgressIndicator& aProgressIndicator
+) const {
+	return std::vector<std::pair<TopoDS_Shape, ShapeAttr>>();
 };

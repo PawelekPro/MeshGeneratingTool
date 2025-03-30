@@ -22,15 +22,27 @@
 
 #include "GeoShape.hpp"
 #include "ProgressIndicator.hpp"
+#include <vector>
+#include <string>
+#include <fstream>
 
-class ShapeImporter{
-    public: 
+class ShapeImporter {
+    
+    public:
     virtual ~ShapeImporter() = default;
-    virtual std::vector<GeoShape> import(
-        const std::string& aFilePath, 
-        ProgressIndicator& aProgressIndicator
-    ) const = 0;
 
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> importFile(
+        const std::string& aFilePath, 
+        const ProgressIndicator& aProgressIndicator
+    ) const;
+
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> 
+        importFile(const std::string& aFilePath) const;
+    
+    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> import(
+        std::istream& aFileStream, 
+        const ProgressIndicator& aProgressIndicator
+    ) const = 0;
 };
 
 #endif

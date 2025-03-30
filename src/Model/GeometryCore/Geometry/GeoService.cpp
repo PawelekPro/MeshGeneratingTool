@@ -22,6 +22,7 @@
 #include "STEPImporter.hpp"
 #include "ShapeEvents.hpp"
 #include "STLImporter.hpp"
+#include "EventProgressIndicator.hpp"
 
 GeoService::GeoService(const ModelSubject& aModelSubject, GeoState& aGeoState)
 	: _modelSubject(aModelSubject)
@@ -30,8 +31,17 @@ GeoService::GeoService(const ModelSubject& aModelSubject, GeoState& aGeoState)
 std::map<std::string, TopoDS_Shape> GeoService::importSTEP(
 	const std::string& aFilePath) {
 	std::map<std::string, TopoDS_Shape> shapes;
-	NewShapesEvent event(shapes);
-	_modelSubject.publishEvent(event);
+
+	STEPImporter importer;
+	EventProgressIndicator indicator(_modelSubject);
+	
+	// std::vector<std::pair<TopoDS_Shape, ShapeAttrs>> shapes;
+	// shapes = importer.import(aFilePath, indicator);
+
+	// std::vector<GeoShape> geoShapes = ShapeManager.registerShapes(shapes);
+
+	// NewShapesEvent event(geoShapes);
+	// _modelSubject.publishEvent(event);
 	return shapes;
 }
 

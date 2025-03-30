@@ -21,7 +21,7 @@
 #include "ModelEvents.hpp"
 
 EventProgressIndicator::EventProgressIndicator(
-    EventPublisher& aModelSubject
+    const EventPublisher& aModelSubject
 ) : _subject(aModelSubject){}
 
 void EventProgressIndicator::begin(

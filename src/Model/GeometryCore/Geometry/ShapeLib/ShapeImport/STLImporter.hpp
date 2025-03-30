@@ -25,9 +25,9 @@
 class STLImporter : public ShapeImporter{
     public:
     ~STLImporter() override = default;
-    virtual std::vector<GeoShape> import(
-        const std::string& aFilePath, 
-        ProgressIndicator& aProgressIndicator
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> import(
+        std::istream& aFileStream, 
+        const ProgressIndicator& aProgressIndicator
     ) const override;
 };
 

@@ -16,18 +16,18 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef STEPIMPORTER_HPP
 #define STEPIMPORTER_HPP
 
 #include "ShapeImporter.hpp"
 
-class STEPImporter : public ShapeImporter{
+class STEPImporter : public ShapeImporter {
     public:
-    ~STEPImporter() = default;    
-    virtual std::vector<GeoShape> import(
-        const std::string& aFilePath, 
-        ProgressIndicator& aProgressIndicator
+    ~STEPImporter() = default;
+
+    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> import(
+        std::istream& aFileStream, 
+        const ProgressIndicator& aProgressIndicator
     ) const override;
 };
 

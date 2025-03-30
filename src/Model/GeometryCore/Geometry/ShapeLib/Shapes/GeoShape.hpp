@@ -23,8 +23,15 @@
 #include <TopoDS_Shape.hxx>
 #include "ShapeId.hpp"
 
+struct ShapeColor{
+    int r;
+    int g;
+    int b;
+};
+
 struct ShapeAttr{
     std::string name;
+    ShapeColor color;
 };
 
 class GeoShape {
