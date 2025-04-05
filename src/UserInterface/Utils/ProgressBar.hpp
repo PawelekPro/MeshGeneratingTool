@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,6 @@
 
 #include <iostream>
 
-#include <vtkLogger.h>
-
-#include <QEvent>
 #include <QPushButton>
 #include <QWidget>
 #include <QtCore/QtGlobal>
@@ -35,19 +33,19 @@ class ProgressBar;
 }
 QT_END_NAMESPACE
 
-class ProgressBar : public QWidget {
+class ProgressBar final : public QWidget {
 	Q_OBJECT
 
 public:
-	ProgressBar(QWidget* parent = nullptr);
-	~ProgressBar();
+	explicit ProgressBar(QWidget* parent = nullptr);
+	~ProgressBar() override;
 
 	/**
 	 * @brief  Set currently displayed value of progress bar.
 	 *
 	 * @param  {int} value : Progress value of current process.
 	 */
-	void setValue(const int value);
+	void setValue(const int value) const;
 
 	/**
 	 * @brief  Set up the initial state of the widget and display it..
@@ -60,14 +58,14 @@ public:
 	 *
 	 * @param  {int} max : Maximum value.
 	 */
-	void setMaximum(const int max);
+	void setMaximum(const int max) const;
 
 	/**
 	 * @brief  Set minimum value of progress bar.
 	 *
 	 * @param  {int} min : Minimum value.
 	 */
-	void setMinimum(const int min);
+	void setMinimum(const int min) const;
 
 	/**
 	 * @brief  Finish progress indication and hide progress bar.
@@ -79,14 +77,14 @@ public:
 	 *
 	 * @param  {std::string} text : Text to be displayed.
 	 */
-	void setProgressMessage(const std::string text);
+	void setProgressMessage(const std::string& text) const;
 
 	/**
 	 * @brief  Get terminate signal (bool indicator).
 	 *
 	 * @return {bool}  : True if process aborted, false otherwise.
 	 */
-	bool getTerminateIndicator();
+	bool getTerminateIndicator() const;
 
 	/**
 	 * @brief  Set terminate signal indicator.
@@ -94,6 +92,9 @@ public:
 	 * @param  {bool} sigTerm : True if terminated, false otherwise.
 	 */
 	void setTerminateIndicator(const bool);
+
+signals:
+	void terminateProcess();
 
 private:
 	// interface

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Paweł Gilewicz
+* Copyright (C) 2024 Paweł Gilewicz
  *
  * This file is part of the Mesh Generating Tool.
 (https://github.com/PawelekPro/MeshGeneratingTool)
@@ -18,33 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *=============================================================================
-* File      : MGTMesh_Generator.hpp
+* File      : ProcessRunner.cpp
 * Author    : Paweł Gilewicz
-* Date      : 25/01/2025
+* Date      : 25/03/2025
 */
-#ifndef MGTMESH_GENERATOR_HPP
-#define MGTMESH_GENERATOR_HPP
-
-#include "MGTMesh_Algorithm.hpp"
-#include "MGTMesh_MeshObject.hpp"
-
-#include <TopoDS_Shape.hxx>
-
-class MGTMesh_Generator {
-public:
-	MGTMesh_Generator(const TopoDS_Shape&, const MGTMesh_Algorithm&,
-		MGTMesh_MeshObject* meshObject);
-	MGTMesh_Generator();
-	~MGTMesh_Generator();
-
-	[[nodiscard]] int Compute() const;
-	[[nodiscard]] MGTMesh_MeshObject* GetOutputMesh() const;
-	void CancelMeshGeneration() const;
-
-private:
-	MGTMesh_MeshObject* _meshObject;
-	const TopoDS_Shape* _shape;
-	const MGTMesh_Algorithm* _algorithm;
-};
-
-#endif
+#include "ProcessRunner.hpp"

@@ -38,6 +38,12 @@ MGTMesh_Generator::MGTMesh_Generator(const TopoDS_Shape& shape,
 	, _algorithm(&algorithm) { }
 
 //----------------------------------------------------------------------------
+MGTMesh_Generator::MGTMesh_Generator()
+	: _meshObject(nullptr)
+	, _shape(nullptr)
+	, _algorithm(nullptr) { }
+
+//----------------------------------------------------------------------------
 MGTMesh_Generator::~MGTMesh_Generator() = default;
 
 //----------------------------------------------------------------------------
@@ -55,4 +61,9 @@ int MGTMesh_Generator::Compute() const {
 		return netgenMesher.ComputeMesh();
 	}
 	return COMPERR_BAD_PARMETERS;
+}
+//----------------------------------------------------------------------------
+void MGTMesh_Generator::CancelMeshGeneration() const {
+	NetgenPlugin_Mesher netgenMesher(*_shape);
+	netgenMesher.CancelMeshGeneration();
 }

@@ -27,36 +27,37 @@
 #include "ModelDocParser.hpp"
 
 #include "MGTMesh_Algorithm.hpp"
-#include "MGTMesh_ProxyMesh.hpp"
 
 #include <spdlog/spdlog.h>
 
-#include <vtkActor.h>
-#include <vtkSmartPointer.h>
+//----------------------------------------------------------------------------
+ModelInterface::ModelInterface(ModelManager& aModelManager)
+	: _modelManager(aModelManager)
+	, _modelDataView(aModelManager) { };
 
-ModelInterface::ModelInterface(ModelManager& aManager)
-	: _modelManager(aManager)
-	, _modelDataView(aManager) { };
-
-int ModelInterface::importSTEP(const QString& aFilePath, QWidget* aWidget) {
+//----------------------------------------------------------------------------
+int ModelInterface::importSTEP(
+	const QString& aFilePath, QWidget* progressBar) const {
 	Model& model = _modelManager.getModel();
-	model.importSTEP(aFilePath.toStdString(), aWidget);
+	model.importSTEP(aFilePath.toStdString(), progressBar);
 	return 0; // TODO return tags of imported shapes
-}
-
-int ModelInterface::importSTL(const QString& aFilePath, QWidget* aWidget) {
-	Model& model = _modelManager.getModel();
-	model.importSTL(aFilePath.toStdString(), aWidget);
-	return 0; // TODO return tags of imported shapes
-}
-
-void ModelInterface::createNewModel(const QString& aNewModelName) {
-	_modelManager.createNewModel(aNewModelName);
-	return;
 }
 
 //----------------------------------------------------------------------------
-bool ModelInterface::generateMesh(bool surfaceMesh) {
+int ModelInterface::importSTL(
+	const QString& aFilePath, QWidget* progressBar) const {
+	Model& model = _modelManager.getModel();
+	model.importSTL(aFilePath.toStdString(), progressBar);
+	return 0; // TODO return tags of imported shapes
+}
+
+//----------------------------------------------------------------------------
+void ModelInterface::createNewModel(const QString& aNewModelName) const {
+	_modelManager.createNewModel(aNewModelName);
+}
+
+//----------------------------------------------------------------------------
+bool ModelInterface::generateMesh(bool surfaceMesh) const {
 	spdlog::debug(
 		std::format("Mesh generation process started with surfaceMesh arg: {}",
 			surfaceMesh));
@@ -67,4 +68,9 @@ bool ModelInterface::generateMesh(bool surfaceMesh) {
 		= modelDocument.generateMeshAlgorithm(surfaceMesh);
 
 	return model.generateMesh(algorithm.get());
+}
+//----------------------------------------------------------------------------
+void ModelInterface::CancelMeshGeneration() const {
+	Model& model = _modelManager.getModel();
+	model.CancelMeshGeneration();
 }

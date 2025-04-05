@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,13 +83,15 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 
 	_meshObjectsMap.clear();
 
-	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
+	spdlog::debug(std::format(
+		"Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
 		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
 
 	for (const auto& [fst, snd] : _shapesMap) {
 		spdlog::debug("Creating mesh generator for shape: {}", fst);
 
-		vtkSmartPointer<MGTMesh_MeshObject> meshObject = vtkSmartPointer<MGTMesh_MeshObject>::New();
+		vtkSmartPointer<MGTMesh_MeshObject> meshObject
+			= vtkSmartPointer<MGTMesh_MeshObject>::New();
 		MGTMesh_Generator meshGenerator(snd, *algorithm, meshObject);
 		if (const int result = meshGenerator.Compute();
 			result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
@@ -104,3 +107,10 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 
 //----------------------------------------------------------------------------
 MGTMesh_ProxyMesh* Model::getProxyMesh() const { return _proxyMesh.get(); }
+
+//----------------------------------------------------------------------------
+void Model::CancelMeshGeneration() {
+	SPDLOG_WARN("Mesh generation canceled by user");
+	const MGTMesh_Generator meshGenerator {};
+	meshGenerator.CancelMeshGeneration();
+}

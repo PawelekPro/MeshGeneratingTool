@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,11 @@
 // logging
 #include <spdlog/spdlog.h>
 
+#include "ProcessRunner/ProcessRunner.hpp"
+
 //----------------------------------------------------------------------------
-MeshActionsHandler::MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
+MeshActionsHandler::MeshActionsHandler(
+	std::shared_ptr<ModelInterface> aModelInterface,
 	CommandManager* aCommandManager, RenderSignalSender* aSignalSender,
 	TreeStructure* aTreeStructure, ProgressBar* aProgressBar, QObject* aParent)
 	: QObject(aParent)
@@ -53,10 +57,42 @@ void MeshActionsHandler::generate3DMesh() {
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate2DMesh() {
 	SPDLOG_INFO("Generating surface mesh triggered");
-	if (_modelInterface->generateMesh(true)) {
-		SPDLOG_INFO("Adding proxy mesh object to render view");
-		emit _signalSender->meshSignals->meshGenerated();
-	}
+	_progressBar->show();
+
+	QPointer runner = new ProcessRunner(this);
+	disconnect(_progressBar, &ProgressBar::terminateProcess, nullptr, nullptr);
+
+	connect(
+		_progressBar, &ProgressBar::terminateProcess, this, [runner, this]() {
+			if (!runner)
+				return;
+			_modelInterface->CancelMeshGeneration();
+			runner->stop();
+			runner->exit();
+		});
+
+	connect(
+		runner, &ProcessRunner::finishedSuccessfully, this, [this, runner]() {
+			SPDLOG_INFO("Mesh generation completed successfully.");
+			emit _signalSender->meshSignals->meshGenerated();
+			runner->deleteLater();
+			_progressBar->hide();
+		});
+
+	connect(runner, &ProcessRunner::failed, this,
+		[this, runner](const QString& error) {
+			SPDLOG_ERROR("Mesh generation failed: {}", error.toStdString());
+			runner->deleteLater();
+			_progressBar->hide();
+		});
+
+	runner->runAsync([this, runner]() {
+		if (_modelInterface->generateMesh(true)) {
+			SPDLOG_INFO("Mesh generation completed.");
+		} else {
+			throw std::runtime_error("Mesh generation failed.");
+		}
+	});
 }
 
 //----------------------------------------------------------------------------
@@ -69,7 +105,8 @@ void MeshActionsHandler::addSizingToShapes(const std::vector<int>& aShapesVec) {
 
 //----------------------------------------------------------------------------
 void MeshActionsHandler::addSizingToSelectedShapes() {
-	const std::vector<int> shapesIds = _signalSender->geometrySignals->getSelectedShapes();
+	const std::vector<int> shapesIds
+		= _signalSender->geometrySignals->getSelectedShapes();
 	addSizingToShapes(shapesIds);
 	return;
 }

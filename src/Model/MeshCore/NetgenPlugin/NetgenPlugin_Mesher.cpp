@@ -164,6 +164,18 @@ NetgenPlugin_Mesher::NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh,
 }
 
 //----------------------------------------------------------------------------
+NetgenPlugin_Mesher::NetgenPlugin_Mesher(const TopoDS_Shape& shape)
+	: _mesh(nullptr)
+	, _shape(shape)
+	, _algorithm(nullptr)
+	, _optimize(true)
+	, _fineness(NetgenPlugin_Parameters::GetDefaultFineness())
+	, _isViscousLayers2D(false)
+	, _ngMesh(nullptr)
+	, _occgeom(nullptr)
+	, _selfPtr(nullptr) { }
+
+//----------------------------------------------------------------------------
 NetgenPlugin_Mesher::~NetgenPlugin_Mesher() {
 	if (_selfPtr) {
 		*_selfPtr = nullptr;
@@ -207,6 +219,7 @@ void NetgenPlugin_Mesher::PrepareOCCgeometry(
 int NetgenPlugin_Mesher::ComputeMesh() {
 	NetgenPlugin_NetgenLibWrapper ngLib;
 	netgen::MeshingParameters& mParams = netgen::mparam;
+	netgen::multithread.terminate = 0;
 
 	netgen::OCCGeometry occgeo;
 	SPDLOG_INFO("Preparing geometry...");
@@ -239,6 +252,10 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	try {
 		err = NetgenPlugin_NetgenLibWrapper::GenerateMesh(
 			occgeo, startWith, endWith, _ngMesh);
+
+		if (netgen::multithread.terminate)
+			return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
+
 	} catch (Standard_Failure& ex) {
 		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
@@ -265,6 +282,10 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	SPDLOG_INFO("Starting 1D mesh generation process");
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+
+		if (netgen::multithread.terminate)
+			return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
+
 	} catch (Standard_Failure& ex) {
 		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
@@ -283,6 +304,10 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	SPDLOG_INFO("Starting surface mesh generation process");
 	try {
 		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+
+		if (netgen::multithread.terminate)
+			return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
+
 	} catch (Standard_Failure& ex) {
 		SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 	} catch (netgen::NgException& ex) {
@@ -303,6 +328,10 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 
 		try {
 			err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+
+			if (netgen::multithread.terminate)
+				return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
+
 		} catch (Standard_Failure& ex) {
 			SPDLOG_ERROR("OpenCASCADE Exception: {}", ex.GetMessageString());
 		} catch (netgen::NgException& ex) {
@@ -316,8 +345,12 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 		return err;
 
 	netgen2vtk.ConvertToInternalMesh(_mesh);
-
 	return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
+}
+
+//----------------------------------------------------------------------------
+void NetgenPlugin_Mesher::CancelMeshGeneration() {
+	netgen::multithread.terminate = 1;
 }
 
 //----------------------------------------------------------------------------

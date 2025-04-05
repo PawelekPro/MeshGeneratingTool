@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,7 @@ public:
 	//--------Meshing interface-----//
 	bool generateMesh(const MGTMesh_Algorithm* algorithm);
 	MGTMesh_ProxyMesh* getProxyMesh() const;
+	void CancelMeshGeneration();
 
 private:
 	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
@@ -60,7 +62,8 @@ private:
 private:
 	GeometryCore::PartsMap _shapesMap;
 
-	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> _meshObjectsMap;
+	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>>
+		_meshObjectsMap;
 	std::shared_ptr<MGTMesh_ProxyMesh> _proxyMesh;
 };
 

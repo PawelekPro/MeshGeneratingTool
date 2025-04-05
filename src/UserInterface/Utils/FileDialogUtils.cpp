@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +20,25 @@
 
 #include "FileDialogUtils.hpp"
 
-QString FileDialogUtils::getFileSelection(const QString &actionName,
-                                          const QString &filter,
-                                          QWidget *parent) {
-    QFileDialog dlg(parent);
-    dlg.setWindowTitle("Select file to " + actionName);
-    dlg.setNameFilter(filter);
+#include <QMessageBox>
 
-    QString fname = dlg.getOpenFileName(parent, actionName, "", filter);
-    return fname;
+QString FileDialogUtils::getFileSelection(
+	const QString& actionName, const QString& filter, QWidget* parent) {
+	QFileDialog dlg(parent);
+	dlg.setWindowTitle("Select file to " + actionName);
+	dlg.setNameFilter(filter);
+
+	QString fname = dlg.getOpenFileName(parent, actionName, "", filter);
+	return fname;
 }
 
-
 int FileDialogUtils::executeWithFileSelection(
-    std::function<void(QString)> action, const QString &actionName,
-    const QString &filter, QWidget *parent) {
-    QString fname = getFileSelection(actionName, filter, parent);
-    if (!fname.isEmpty()) {
-        action(fname);
-        return QMessageBox::Accepted;
-    }
-    return QMessageBox::Rejected;
+	const std::function<void(QString)>& action, const QString& actionName,
+	const QString& filter, QWidget* parent) {
+	const QString fname = getFileSelection(actionName, filter, parent);
+	if (!fname.isEmpty()) {
+		action(fname);
+		return QMessageBox::Accepted;
+	}
+	return QMessageBox::Rejected;
 }

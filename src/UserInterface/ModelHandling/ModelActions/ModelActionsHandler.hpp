@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,44 +33,39 @@ class TreeStructure;
 class MeshActionsHandler;
 class GeometryActionsHandler;
 
-
 /**
- * Class that serves as a centrilzed access point to interaction with Model. Each undo-able action 
- * should be added as a Command and be exectued with CommandManager execute method. Model handler
- * has sub-objects for handling mesh and geometry actions separately.
+ * Class that serves as a centrilzed access point to interaction with Model.
+ * Each undo-able action should be added as a Command and be exectued with
+ * CommandManager execute method. Model handler has sub-objects for handling
+ * mesh and geometry actions separately.
  */
 class ModelActionsHandler : public QObject {
-    Q_OBJECT
-    public:
-    
-    ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
-                       RenderSignalSender* aSignalSender,
-                       TreeStructure* aTreeStructure,
-                       ProgressBar* aProgressBar, 
-                       QObject* aParent); 
-    /**
-     * @brief Action for that deletes old model and creates a new one.
-     */
-    void createNewModel();
+	Q_OBJECT
+public:
+	ModelActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
+		RenderSignalSender* aSignalSender, TreeStructure* aTreeStructure,
+		ProgressBar* aProgressBar, QObject* aParent);
+	/**
+	 * @brief Action for that deletes old model and creates a new one.
+	 */
+	void createNewModel();
 
-    /**
-     * @brief Calls CommandManager's undo method.
-     */
-    void undo();
+	/**
+	 * @brief Calls CommandManager's undo method.
+	 */
+	void undo();
 
-    GeometryActionsHandler* _geometryHandler;
-    MeshActionsHandler* _meshHandler;
-    RenderSignalSender* _renderSignalSender;
+	GeometryActionsHandler* _geometryHandler;
+	MeshActionsHandler* _meshHandler;
+	RenderSignalSender* _renderSignalSender;
 
-    private:
+private:
+	std::shared_ptr<ModelInterface> _modelInterface;
 
-    std::shared_ptr<ModelInterface> _modelInterface;
+	CommandManager* _commandManager;
 
-    CommandManager* _commandManager;
-
-    TreeStructure* _treeStructure;
-    ProgressBar* _progressBar;
+	TreeStructure* _treeStructure;
+	ProgressBar* _progressBar;
 };
-
 
 #endif

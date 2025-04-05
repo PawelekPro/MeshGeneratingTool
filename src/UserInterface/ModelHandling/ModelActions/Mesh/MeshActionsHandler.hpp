@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,19 +37,17 @@ class ProgressBar;
 class TreeStructure;
 
 /**
- * Class that serves as a centrilzed access point to interaction with Model' mesh module
- * Each undo-able action should be added as a Command and be exectued with CommandManager
- * execute method.
+ * Class that serves as a centralized access point to interaction with Model'
+ * mesh module Each undo-able action should be added as a Command and be
+ * executed with CommandManager execute method.
  */
-class MeshActionsHandler : public QObject {
+class MeshActionsHandler final : public QObject {
 	Q_OBJECT
 
 public:
 	MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
-		CommandManager* aCommandManager,
-		RenderSignalSender* aSignalSender,
-		TreeStructure* aTreeStructure,
-		ProgressBar* aProgressBar,
+		CommandManager* aCommandManager, RenderSignalSender* aSignalSender,
+		TreeStructure* aTreeStructure, ProgressBar* aProgressBar,
 		QObject* aParent);
 
 private:
@@ -62,9 +61,10 @@ private:
 
 public slots:
 	/**
-	 * @brief Action that calls model's meshSurface. Model will generate a mesh based on settings
-	 * stored in apps QDomDocument and create a vtkActor with mesh representation. The action clears
-	 * the renderer and adds genereted mesh actor.
+	 * @brief Action that calls model's meshSurface. Model will generate a mesh
+	 * based on settings stored in apps QDomDocument and create a vtkActor with
+	 * mesh representation. The action clears the renderer and adds generated
+	 * mesh actor.
 	 */
 	void generate3DMesh();
 
@@ -77,8 +77,10 @@ public slots:
 	void addSizingToSelectedShapes();
 
 	/**
-	 * @brief Undoable action that creates creates an ElementSizing tree item adding it to TreeStructure.
-	 * @param aShapeIds - initial shapes ids added to created ElementSizing TreeITem.
+	 * @brief Undoable action that creates creates an ElementSizing tree item
+	 * adding it to TreeStructure.
+	 * @param aShapeIds - initial shapes ids added to created ElementSizing
+	 * TreeITem.
 	 */
 	void addSizingToShapes(const std::vector<int>& aShapesIds);
 };

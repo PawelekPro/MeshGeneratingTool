@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,13 @@ class ModelInterface {
 public:
 	ModelInterface(ModelManager& aModelManager);
 
-	void createNewModel(const QString& aNewModelName);
+	void createNewModel(const QString& aNewModelName) const;
 
-	int importSTEP(const QString& aFilePath, QWidget* progressBar);
-	int importSTL(const QString& aFilePath, QWidget* progressBar);
+	int importSTEP(const QString& aFilePath, QWidget* progressBar) const;
+	int importSTL(const QString& aFilePath, QWidget* progressBar) const;
 
-	bool generateMesh(bool surfaceMesh = false);
+	bool generateMesh(bool surfaceMesh = false) const;
+	void CancelMeshGeneration() const;
 
 	const ModelDataView& modelDataView() { return _modelDataView; };
 

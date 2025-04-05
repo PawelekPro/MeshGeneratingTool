@@ -43,8 +43,10 @@ class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
 	NetgenPlugin_Mesher(MGTMesh_MeshObject*, const TopoDS_Shape& shape,
 		const NetgenPlugin_Parameters* algorithm);
+	explicit NetgenPlugin_Mesher(const TopoDS_Shape& shape);
 	~NetgenPlugin_Mesher();
 	int ComputeMesh();
+	void CancelMeshGeneration();
 
 	static void PrepareOCCgeometry(
 		netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);

@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +21,25 @@
 #include "ProgressBar.hpp"
 #include "ui_ProgressBar.h"
 
+#include <spdlog/spdlog.h>
+
 //----------------------------------------------------------------------------
-ProgressBar::ProgressBar(QWidget *parent)
+ProgressBar::ProgressBar(QWidget* parent)
 	: QWidget(parent)
-	  , ui(new Ui::ProgressBar) {
+	, ui(new Ui::ProgressBar) {
 	ui->setupUi(this);
 
 	this->ui->progressBar->setMinimum(0);
 	this->ui->progressBar->setMaximum(100);
 
 	connect(this->ui->stopButton, &QPushButton::clicked, this,
-	        &ProgressBar::handleStopButtonClicked);
+		&ProgressBar::handleStopButtonClicked);
 
 	this->hide();
 }
 
 //----------------------------------------------------------------------------
-ProgressBar::~ProgressBar() {
-	delete ui;
-}
+ProgressBar::~ProgressBar() { delete ui; }
 
 void ProgressBar::initialize() {
 	this->show();
@@ -48,41 +49,37 @@ void ProgressBar::initialize() {
 }
 
 //----------------------------------------------------------------------------
-void ProgressBar::setValue(const int value) {
+void ProgressBar::setValue(const int value) const {
 	this->ui->progressBar->setValue(value);
 }
 
 //----------------------------------------------------------------------------
-void ProgressBar::setProgressMessage(const std::string text) {
+void ProgressBar::setProgressMessage(const std::string& text) const {
 	this->ui->message->setText(QString::fromStdString(text));
 }
 
 //----------------------------------------------------------------------------
-void ProgressBar::finish() {
-	this->hide();
-}
+void ProgressBar::finish() { this->hide(); }
 
 //----------------------------------------------------------------------------
-void ProgressBar::setMaximum(const int max) {
+void ProgressBar::setMaximum(const int max) const {
 	this->ui->progressBar->setMaximum(max);
 }
 
 //----------------------------------------------------------------------------
-void ProgressBar::setMinimum(const int min) {
+void ProgressBar::setMinimum(const int min) const {
 	this->ui->progressBar->setMinimum(min);
 }
 
 //----------------------------------------------------------------------------
 void ProgressBar::handleStopButtonClicked() {
-	auto message = "Process aborted by the user.";
-	vtkLogF(ERROR, message);
+	SPDLOG_WARN("Process aborted by the user");
 	this->_terminate = true;
+	emit terminateProcess();
 }
 
 //----------------------------------------------------------------------------
-bool ProgressBar::getTerminateIndicator() {
-	return this->_terminate;
-}
+bool ProgressBar::getTerminateIndicator() const { return this->_terminate; }
 
 //----------------------------------------------------------------------------
 void ProgressBar::setTerminateIndicator(const bool sigTerm) {
