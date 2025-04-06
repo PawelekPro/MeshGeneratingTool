@@ -60,14 +60,7 @@ private:
 	ProgressBar* _progressBar;
 
 public slots:
-	/**
-	 * @brief Action that calls model's meshSurface. Model will generate a mesh
-	 * based on settings stored in apps QDomDocument and create a vtkActor with
-	 * mesh representation. The action clears the renderer and adds generated
-	 * mesh actor.
-	 */
 	void generate3DMesh();
-
 	void generate2DMesh();
 
 	/**
@@ -83,6 +76,9 @@ public slots:
 	 * TreeITem.
 	 */
 	void addSizingToShapes(const std::vector<int>& aShapesIds);
+
+private:
+	void generateMesh(bool isSurfaceMesh);
 };
 
 #endif

@@ -58,14 +58,14 @@ public:
 	 *
 	 * @param  {int} max : Maximum value.
 	 */
-	void setMaximum(const int max) const;
+	void setMaximum(int max) const;
 
 	/**
 	 * @brief  Set minimum value of progress bar.
 	 *
 	 * @param  {int} min : Minimum value.
 	 */
-	void setMinimum(const int min) const;
+	void setMinimum(int min) const;
 
 	/**
 	 * @brief  Finish progress indication and hide progress bar.

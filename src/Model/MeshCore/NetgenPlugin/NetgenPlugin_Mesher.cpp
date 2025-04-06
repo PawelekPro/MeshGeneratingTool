@@ -20,9 +20,8 @@
 *=============================================================================
 * File      : NetgenPlugin_Mesher.cpp
 * Author    : Paweł Gilewicz
-* Date      : 24/11/2024
+* Date      : 06/04/2025
 */
-
 #include "NetgenPlugin_Mesher.hpp"
 #include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMeshUtils_ControlPoint.h"
@@ -62,6 +61,14 @@ namespace netgen {
 NETGENPLUGIN_DLL_HEADER
 extern MeshingParameters mparam;
 }
+
+/* clang-format off */
+#define CALL_STATUS(cb, msg) \
+do { if (cb) cb(msg); } while (0)
+
+#define CALL_PROGRESS(cb, val) \
+do { if (cb) cb(val); } while (0)
+/* clang-format on */
 
 TopTools_IndexedMapOfShape ShapesWithLocalSize;
 std::map<int, double> VertexId2LocalSize;
@@ -148,7 +155,7 @@ NetgenPlugin_Mesher::NetgenPlugin_Mesher(MGTMesh_MeshObject* mesh,
 	, _fineness(NetgenPlugin_Parameters::GetDefaultFineness())
 	, _isViscousLayers2D(false)
 	, _ngMesh(nullptr)
-	, _occgeom(nullptr)
+	, _occGeom(nullptr)
 	, _selfPtr(nullptr) {
 
 	SPDLOG_INFO("Initializing NetgenPlugin_Mesher object");
@@ -172,7 +179,7 @@ NetgenPlugin_Mesher::NetgenPlugin_Mesher(const TopoDS_Shape& shape)
 	, _fineness(NetgenPlugin_Parameters::GetDefaultFineness())
 	, _isViscousLayers2D(false)
 	, _ngMesh(nullptr)
-	, _occgeom(nullptr)
+	, _occGeom(nullptr)
 	, _selfPtr(nullptr) { }
 
 //----------------------------------------------------------------------------
@@ -205,34 +212,35 @@ void NetgenPlugin_Mesher::SetMeshParameters() {
 }
 
 //----------------------------------------------------------------------------
-void NetgenPlugin_Mesher::PrepareOCCgeometry(
-	netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape) {
-	occgeom.shape = shape;
-	occgeom.changed = 1;
-	occgeom.BuildFMap();
-	occgeom.BuildVisualizationMesh(0.01);
-	occgeom.CalcBoundingBox();
+void NetgenPlugin_Mesher::PrepareOCCGeometry(
+	netgen::OCCGeometry& occGeom, const TopoDS_Shape& shape) {
+	occGeom.shape = shape;
+	occGeom.changed = 1;
+	occGeom.BuildFMap();
+	occGeom.BuildVisualizationMesh(0.01);
+	occGeom.CalcBoundingBox();
 	// occgeom.PrintNrShapes();
 }
 
 //----------------------------------------------------------------------------
-int NetgenPlugin_Mesher::ComputeMesh() {
+int NetgenPlugin_Mesher::ComputeMesh(std::function<void(int)> progressCallback,
+	std::function<void(const std::string&)> statusCallback) {
 	NetgenPlugin_NetgenLibWrapper ngLib;
 	netgen::MeshingParameters& mParams = netgen::mparam;
 	netgen::multithread.terminate = 0;
 
-	netgen::OCCGeometry occgeo;
+	CALL_STATUS(statusCallback, "Preparing geometry...");
+	netgen::OCCGeometry occGeom;
 	SPDLOG_INFO("Preparing geometry...");
-	std::cout << "ALG MAX SIZE: " << _algorithm->maxSize << std::endl;
-	NetgenPlugin_Mesher::PrepareOCCgeometry(occgeo, _shape);
-	_occgeom = &occgeo;
+	this->PrepareOCCGeometry(occGeom, _shape);
+	_occGeom = &occGeom;
 
 	_ngMesh = nullptr;
 	NetgenPlugin_MeshInfo initState;
 	int err = MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 
 	if (mParams.maxh == 0.0)
-		mParams.maxh = occgeo.boundingbox.Diam();
+		mParams.maxh = occGeom.boundingbox.Diam();
 
 	if (mParams.minh == 0.0
 		&& _fineness != NetgenPlugin_Parameters::UserDefined)
@@ -242,16 +250,16 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	SPDLOG_INFO("Mesh input parameters:");
 	std::cout << mParams << std::endl;
 
-	occgeo.face_maxh = mParams.maxh;
+	occGeom.face_maxh = mParams.maxh;
 
 	int startWith = netgen::MESHCONST_ANALYSE;
 	int endWith = netgen::MESHCONST_ANALYSE;
 
 	SPDLOG_INFO("Starting mesh generation process");
-
 	try {
+		CALL_STATUS(statusCallback, "Analyse mesh...");
 		err = NetgenPlugin_NetgenLibWrapper::GenerateMesh(
-			occgeo, startWith, endWith, _ngMesh);
+			occGeom, startWith, endWith, _ngMesh);
 
 		if (netgen::multithread.terminate)
 			return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
@@ -275,13 +283,14 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	// const TopoDS_Shape& shape = occgeo.fmap.FindKey(1);
 	// setLocalSize(shape, 2);
 
-	SetLocalSize(occgeo, *_ngMesh);
+	SetLocalSize(occGeom, *_ngMesh);
 
 	// Compute 1D mesh
 	startWith = endWith = netgen::MESHCONST_MESHEDGES;
 	SPDLOG_INFO("Starting 1D mesh generation process");
 	try {
-		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+		CALL_STATUS(statusCallback, "Computing 1D mesh...");
+		err = ngLib.GenerateMesh(occGeom, startWith, endWith);
 
 		if (netgen::multithread.terminate)
 			return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
@@ -303,7 +312,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 
 	SPDLOG_INFO("Starting surface mesh generation process");
 	try {
-		err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+		CALL_STATUS(statusCallback, "Computing surface mesh...");
+		err = ngLib.GenerateMesh(occGeom, startWith, endWith);
 
 		if (netgen::multithread.terminate)
 			return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
@@ -317,6 +327,7 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	if (err)
 		return err;
 
+	CALL_STATUS(statusCallback, "Processing surface mesh...");
 	const NetgenPlugin_Netgen2VTK netgen2vtk(*_ngMesh);
 	netgen2vtk.ConvertToBoundaryMesh(_mesh);
 
@@ -327,7 +338,8 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 		SPDLOG_INFO("Starting volume mesh generation process");
 
 		try {
-			err = ngLib.GenerateMesh(occgeo, startWith, endWith);
+			CALL_STATUS(statusCallback, "Computing volume mesh...");
+			err = ngLib.GenerateMesh(occGeom, startWith, endWith);
 
 			if (netgen::multithread.terminate)
 				return MGTMeshUtils_ComputeErrorName::COMPERR_CANCELED;
@@ -344,6 +356,7 @@ int NetgenPlugin_Mesher::ComputeMesh() {
 	if (err)
 		return err;
 
+	CALL_STATUS(statusCallback, "Processing volume mesh...");
 	netgen2vtk.ConvertToInternalMesh(_mesh);
 	return MGTMeshUtils_ComputeErrorName::COMPERR_OK;
 }
@@ -367,41 +380,41 @@ void NetgenPlugin_Mesher::RestrictLocalSize(netgen::Mesh& ngMesh,
 			size = netgen::mparam.minh;
 		}
 	}
-	netgen::Point3d pi(p.X(), p.Y(), p.Z());
+	const netgen::Point3d pi(p.X(), p.Y(), p.Z());
 	ngMesh.RestrictLocalH(pi, size);
 }
 
 //----------------------------------------------------------------------------
 void NetgenPlugin_Mesher::SetLocalSize(
-	netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh) {
+	netgen::OCCGeometry& occGeom, netgen::Mesh& ngMesh) {
 	// edges
 	std::map<int, double>::const_iterator it;
-	for (it = EdgeId2LocalSize.begin(); it != EdgeId2LocalSize.end(); it++) {
-		int key = (*it).first;
-		double hi = (*it).second;
+	for (it = EdgeId2LocalSize.begin(); it != EdgeId2LocalSize.end(); ++it) {
+		const int key = it->first;
+		const double hi = it->second;
 		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
 		setLocalSize(TopoDS::Edge(shape), hi, ngMesh);
 	}
 
 	// vertices
 	for (it = VertexId2LocalSize.begin(); it != VertexId2LocalSize.end();
-		it++) {
-		int key = (*it).first;
-		double hi = (*it).second;
+		++it) {
+		const int key = it->first;
+		const double hi = it->second;
 		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
 		gp_Pnt p = BRep_Tool::Pnt(TopoDS::Vertex(shape));
 		NetgenPlugin_Mesher::RestrictLocalSize(ngMesh, p.XYZ(), hi);
 	}
 
 	// faces
-	for (it = FaceId2LocalSize.begin(); it != FaceId2LocalSize.end(); it++) {
-		int key = (*it).first;
-		double val = (*it).second;
+	for (it = FaceId2LocalSize.begin(); it != FaceId2LocalSize.end(); ++it) {
+		int key = it->first;
+		double val = it->second;
 		const TopoDS_Shape& shape = ShapesWithLocalSize.FindKey(key);
-		int faceNgID = occgeo.fmap.FindIndex(shape);
+		const int faceNgID = occGeom.fmap.FindIndex(shape);
 
 		if (faceNgID >= 1) {
-			occgeo.SetFaceMaxH(faceNgID, val, netgen::mparam);
+			occGeom.SetFaceMaxH(faceNgID, val, netgen::mparam);
 			for (TopExp_Explorer edgeExp(shape, TopAbs_EDGE); edgeExp.More();
 				edgeExp.Next()) {
 				setLocalSize(TopoDS::Edge(edgeExp.Current()), val, ngMesh);

@@ -48,20 +48,24 @@ MeshActionsHandler::MeshActionsHandler(
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate3DMesh() {
 	SPDLOG_INFO("Generating volume mesh triggered");
-	if (_modelInterface->generateMesh()) {
-		SPDLOG_INFO("Adding proxy mesh object to render view");
-		emit _signalSender->meshSignals->meshGenerated();
-	}
+	this->generateMesh(false);
 }
 
 //----------------------------------------------------------------------------
 void MeshActionsHandler::generate2DMesh() {
+	SPDLOG_INFO("Generating surface mesh triggered");
+	this->generateMesh(true);
+}
+
+//----------------------------------------------------------------------------
+void MeshActionsHandler::generateMesh(bool isSurfaceMesh) {
 	SPDLOG_INFO("Generating surface mesh triggered");
 	_progressBar->show();
 
 	QPointer runner = new ProcessRunner(this);
 	disconnect(_progressBar, &ProgressBar::terminateProcess, nullptr, nullptr);
 
+	// Connect stop button from progress bar
 	connect(
 		_progressBar, &ProgressBar::terminateProcess, this, [runner, this]() {
 			if (!runner)
@@ -71,6 +75,7 @@ void MeshActionsHandler::generate2DMesh() {
 			runner->exit();
 		});
 
+	// Connect successful finish event
 	connect(
 		runner, &ProcessRunner::finishedSuccessfully, this, [this, runner]() {
 			SPDLOG_INFO("Mesh generation completed successfully.");
@@ -79,17 +84,33 @@ void MeshActionsHandler::generate2DMesh() {
 			_progressBar->hide();
 		});
 
+	// Connect failed finish event
 	connect(runner, &ProcessRunner::failed, this,
-		[this, runner](const QString& error) {
-			SPDLOG_ERROR("Mesh generation failed: {}", error.toStdString());
+		[this, runner](const std::string& error) {
+			SPDLOG_ERROR("Mesh generation failed: {}", error);
 			runner->deleteLater();
 			_progressBar->hide();
 		});
 
-	runner->runAsync([this, runner]() {
-		if (_modelInterface->generateMesh(true)) {
-			SPDLOG_INFO("Mesh generation completed.");
-		} else {
+	// Connect progress callback
+	connect(runner, &ProcessRunner::progressUpdated, _progressBar,
+		&ProgressBar::setValue);
+
+	// Connect status message callback
+	connect(runner, &ProcessRunner::statusMessage, _progressBar,
+		&ProgressBar::setProgressMessage);
+
+	// Run process
+	runner->runAsync([this, runner, isSurfaceMesh]() {
+		const bool result = _modelInterface->generateMesh(
+			isSurfaceMesh,
+			[this, runner](
+				const int progress) { emit runner->progressUpdated(progress); },
+			[this, runner](const std::string& message) {
+				emit runner->statusMessage(message);
+			});
+
+		if (!result) {
 			throw std::runtime_error("Mesh generation failed.");
 		}
 	});

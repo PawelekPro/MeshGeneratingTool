@@ -35,41 +35,23 @@ class ProcessRunner final : public QThread {
 	Q_OBJECT
 
 public:
-	explicit ProcessRunner(QObject* parent = nullptr)
-		: QThread(parent)
-		, stopRequested(false) { }
-
+	explicit ProcessRunner(QObject* parent = nullptr);
 	template <typename Func> void runAsync(Func&& func) {
 		this->task = std::forward<Func>(func);
-		start();
+		QThread::start();
 	}
 
-	void stop() {
-		stopRequested.store(true);
-		emit statusMessage("Stopping process...");
-	}
-
-	bool isStopRequested() const { return stopRequested.load(); }
+	void stop();
+	bool isStopRequested() const;
 
 signals:
 	void progressUpdated(int);
-	void statusMessage(const QString&);
+	void statusMessage(const std::string&);
 	void finishedSuccessfully();
-	void failed(const QString& error);
+	void failed(const std::string& error);
 
 protected:
-	void run() override {
-		try {
-			if (task) {
-				task();
-				emit finishedSuccessfully();
-			}
-		} catch (const std::exception& e) {
-			emit failed(QString("Error: %1").arg(e.what()));
-		} catch (...) {
-			emit failed("Unknown error occurred.");
-		}
-	}
+	void run() override;
 
 private:
 	std::function<void()> task;

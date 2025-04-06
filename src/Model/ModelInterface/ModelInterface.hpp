@@ -35,17 +35,20 @@ class vtkActor;
 class ModelInterface {
 
 public:
-	ModelInterface(ModelManager& aModelManager);
+	explicit ModelInterface(ModelManager& aModelManager);
 
 	void createNewModel(const QString& aNewModelName) const;
 
 	int importSTEP(const QString& aFilePath, QWidget* progressBar) const;
 	int importSTL(const QString& aFilePath, QWidget* progressBar) const;
 
-	bool generateMesh(bool surfaceMesh = false) const;
+	bool generateMesh(bool surfaceMesh = false,
+		const std::function<void(int)>& progressCallback = {},
+		const std::function<void(const std::string&)>& statusCallback
+		= {}) const;
 	void CancelMeshGeneration() const;
 
-	const ModelDataView& modelDataView() { return _modelDataView; };
+	const ModelDataView& modelDataView() const { return _modelDataView; };
 
 private:
 	ModelManager& _modelManager;

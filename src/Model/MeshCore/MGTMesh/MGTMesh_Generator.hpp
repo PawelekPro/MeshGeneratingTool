@@ -37,7 +37,10 @@ public:
 	MGTMesh_Generator();
 	~MGTMesh_Generator();
 
-	[[nodiscard]] int Compute() const;
+	[[nodiscard]] int Compute(
+		const std::function<void(int)>& progressCallback = {},
+		const std::function<void(const std::string&)>& statusCallback
+		= {}) const;
 	[[nodiscard]] MGTMesh_MeshObject* GetOutputMesh() const;
 	void CancelMeshGeneration() const;
 

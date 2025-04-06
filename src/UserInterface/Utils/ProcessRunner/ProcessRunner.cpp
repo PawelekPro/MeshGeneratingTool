@@ -20,6 +20,34 @@
 *=============================================================================
 * File      : ProcessRunner.cpp
 * Author    : Paweł Gilewicz
-* Date      : 25/03/2025
+* Date      : 06/04/2025
 */
 #include "ProcessRunner.hpp"
+
+//----------------------------------------------------------------------------
+ProcessRunner::ProcessRunner(QObject* parent)
+	: QThread(parent)
+	, stopRequested(false) { }
+
+//----------------------------------------------------------------------------
+void ProcessRunner::stop() {
+	stopRequested.store(true);
+	emit statusMessage("Stopping process...");
+}
+
+//----------------------------------------------------------------------------
+bool ProcessRunner::isStopRequested() const { return stopRequested.load(); }
+
+//----------------------------------------------------------------------------
+void ProcessRunner::run() {
+	try {
+		if (task) {
+			task();
+			emit finishedSuccessfully();
+		}
+	} catch (const std::exception& e) {
+		emit failed("Error: " + std::string(e.what()));
+	} catch (...) {
+		emit failed("Unknown error occurred.");
+	}
+}

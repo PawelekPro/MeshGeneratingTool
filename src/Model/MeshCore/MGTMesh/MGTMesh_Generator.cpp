@@ -52,13 +52,14 @@ MGTMesh_MeshObject* MGTMesh_Generator::GetOutputMesh() const {
 }
 
 //----------------------------------------------------------------------------
-int MGTMesh_Generator::Compute() const {
+int MGTMesh_Generator::Compute(const std::function<void(int)>& progressCallback,
+	const std::function<void(const std::string&)>& statusCallback) const {
 	if (_algorithm->GetEngineLib() == MGTMesh_Scheme::Engine::NETGEN) {
 		const auto netgenAlg
 			= std::make_unique<NetgenPlugin_Parameters>(*_algorithm);
 
 		NetgenPlugin_Mesher netgenMesher(_meshObject, *_shape, netgenAlg.get());
-		return netgenMesher.ComputeMesh();
+		return netgenMesher.ComputeMesh(progressCallback, statusCallback);
 	}
 	return COMPERR_BAD_PARMETERS;
 }

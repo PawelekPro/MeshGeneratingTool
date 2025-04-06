@@ -20,12 +20,15 @@
 *=============================================================================
 * File      : NetgenPlugin_Mesher.hpp
 * Author    : Paweł Gilewicz
-* Date      : 21/11/2024
+* Date      : 06/04/2025
 */
 #ifndef NETGENPLUGIN_MESHER_H
 #define NETGENPLUGIN_MESHER_H
 
 #include "NetgenPlugin_Defs.hpp"
+
+#include <functional>
+#include <string>
 
 namespace netgen {
 class OCCGeometry;
@@ -45,15 +48,18 @@ public:
 		const NetgenPlugin_Parameters* algorithm);
 	explicit NetgenPlugin_Mesher(const TopoDS_Shape& shape);
 	~NetgenPlugin_Mesher();
-	int ComputeMesh();
+
+	int ComputeMesh(std::function<void(int)> progressCallback = {},
+		std::function<void(const std::string&)> statusCallback = {});
 	void CancelMeshGeneration();
 
-	static void PrepareOCCgeometry(
-		netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
+	static void PrepareOCCGeometry(
+		netgen::OCCGeometry& occGeom, const TopoDS_Shape& shape);
 
 	static void RestrictLocalSize(netgen::Mesh& ngMesh, const gp_XYZ& p,
 		double size, const bool overrideMinH = true);
-	static void SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh);
+	static void SetLocalSize(
+		netgen::OCCGeometry& occGeom, netgen::Mesh& ngMesh);
 
 	void SetMeshParameters();
 	void SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme);
@@ -68,7 +74,7 @@ private:
 	bool _isViscousLayers2D;
 
 	netgen::Mesh* _ngMesh;
-	netgen::OCCGeometry* _occgeom;
+	netgen::OCCGeometry* _occGeom;
 
 	const MGTMeshUtils_ViscousLayers* _viscousLayers;
 

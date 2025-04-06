@@ -52,7 +52,10 @@ public:
 	void importSTL(const std::string& filePath, QWidget* progressBar);
 
 	//--------Meshing interface-----//
-	bool generateMesh(const MGTMesh_Algorithm* algorithm);
+	bool generateMesh(const MGTMesh_Algorithm* algorithm,
+		const std::function<void(int)>& progressCallback = {},
+		const std::function<void(const std::string&)>& statusCallback = {});
+
 	MGTMesh_ProxyMesh* getProxyMesh() const;
 	void CancelMeshGeneration();
 

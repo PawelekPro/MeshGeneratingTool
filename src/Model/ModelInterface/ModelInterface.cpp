@@ -57,7 +57,9 @@ void ModelInterface::createNewModel(const QString& aNewModelName) const {
 }
 
 //----------------------------------------------------------------------------
-bool ModelInterface::generateMesh(bool surfaceMesh) const {
+bool ModelInterface::generateMesh(bool surfaceMesh,
+	const std::function<void(int)>& progressCallback,
+	const std::function<void(const std::string&)>& statusCallback) const {
 	spdlog::debug(
 		std::format("Mesh generation process started with surfaceMesh arg: {}",
 			surfaceMesh));
@@ -67,7 +69,8 @@ bool ModelInterface::generateMesh(bool surfaceMesh) const {
 	const std::unique_ptr<MGTMesh_Algorithm> algorithm
 		= modelDocument.generateMeshAlgorithm(surfaceMesh);
 
-	return model.generateMesh(algorithm.get());
+	return model.generateMesh(
+		algorithm.get(), progressCallback, statusCallback);
 }
 //----------------------------------------------------------------------------
 void ModelInterface::CancelMeshGeneration() const {

@@ -77,7 +77,9 @@ void Model::importSTEP(const std::string& filePath, QWidget* progressBar) {
 }
 
 //----------------------------------------------------------------------------
-bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
+bool Model::generateMesh(const MGTMesh_Algorithm* algorithm,
+	const std::function<void(int)>& progressCallback,
+	const std::function<void(const std::string&)>& statusCallback) {
 	if (!algorithm)
 		return false;
 
@@ -93,7 +95,8 @@ bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
 		vtkSmartPointer<MGTMesh_MeshObject> meshObject
 			= vtkSmartPointer<MGTMesh_MeshObject>::New();
 		MGTMesh_Generator meshGenerator(snd, *algorithm, meshObject);
-		if (const int result = meshGenerator.Compute();
+		if (const int result
+			= meshGenerator.Compute(progressCallback, statusCallback);
 			result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
 			SPDLOG_ERROR("Error while generating mesh for shape: {}", fst);
 			return false;
