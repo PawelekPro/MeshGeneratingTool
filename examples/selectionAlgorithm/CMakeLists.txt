@@ -1,6 +1,6 @@
 project(selectionAlgorithm)
 
-add_executable(selectionAlgorithm 
+add_executable(selectionAlgorithm
     IVtk_SelectionAlgorithm.cxx
     IVtk_CustomSelectionPipeline.cxx
     IVtk_CustomInteractorStyle.cxx
@@ -8,14 +8,14 @@ add_executable(selectionAlgorithm
 
 if(WIN32)
     find_package(OpenCASCADE REQUIRED)
-    if(OpenCASCADE_INCLUDE_DIR) 
+    if(OpenCASCADE_INCLUDE_DIR)
         include_directories(SYSTEM ${OpenCASCADE_INCLUDE_DIR})
         link_directories(${OpenCASCADE_LIBRARY_DIR})
     endif()
 else()
     find_package(OCC REQUIRED)
     set(OCC_INCLUDE_DIR "/opt/opencascade/include/opencascade")
-    if(OCC_INCLUDE_DIR) 
+    if(OCC_INCLUDE_DIR)
         include_directories(SYSTEM ${OCC_INCLUDE_DIR})
         link_directories(${OCC_LIBRARY_DIR})
     endif()

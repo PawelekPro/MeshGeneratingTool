@@ -26,6 +26,7 @@
 #include "MGTMeshUtils_ComputeError.hpp"
 #include "MGTMeshUtils_ControlPoint.h"
 #include "MGTMeshUtils_DefaultParameters.hpp"
+#include "MGTMeshUtils_ProgressReporter.hpp"
 #include "MGTMesh_Algorithm.hpp"
 #include "MGTMesh_MeshObject.hpp"
 #include "NetgenPlugin_MeshInfo.h"
@@ -61,14 +62,6 @@ namespace netgen {
 NETGENPLUGIN_DLL_HEADER
 extern MeshingParameters mparam;
 }
-
-/* clang-format off */
-#define CALL_STATUS(cb, msg) \
-do { if (cb) cb(msg); } while (0)
-
-#define CALL_PROGRESS(cb, val) \
-do { if (cb) cb(val); } while (0)
-/* clang-format on */
 
 TopTools_IndexedMapOfShape ShapesWithLocalSize;
 std::map<int, double> VertexId2LocalSize;
@@ -222,9 +215,15 @@ void NetgenPlugin_Mesher::PrepareOCCGeometry(
 	// occgeom.PrintNrShapes();
 }
 
+int computeProgress() { return 0; };
+
 //----------------------------------------------------------------------------
-int NetgenPlugin_Mesher::ComputeMesh(std::function<void(int)> progressCallback,
-	std::function<void(const std::string&)> statusCallback) {
+int NetgenPlugin_Mesher::ComputeMesh(
+	const std::function<void(int)>& progressCallback,
+	const std::function<void(const std::string&)>& statusCallback) {
+	MGTMeshUtils_ProgressReporter progressReporter(
+		200, computeProgress, progressCallback);
+
 	NetgenPlugin_NetgenLibWrapper ngLib;
 	netgen::MeshingParameters& mParams = netgen::mparam;
 	netgen::multithread.terminate = 0;
@@ -232,7 +231,7 @@ int NetgenPlugin_Mesher::ComputeMesh(std::function<void(int)> progressCallback,
 	CALL_STATUS(statusCallback, "Preparing geometry...");
 	netgen::OCCGeometry occGeom;
 	SPDLOG_INFO("Preparing geometry...");
-	this->PrepareOCCGeometry(occGeom, _shape);
+	NetgenPlugin_Mesher::PrepareOCCGeometry(occGeom, _shape);
 	_occGeom = &occGeom;
 
 	_ngMesh = nullptr;

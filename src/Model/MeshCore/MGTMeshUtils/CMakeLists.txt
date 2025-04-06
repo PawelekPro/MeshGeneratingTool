@@ -3,6 +3,7 @@ ADD_LIBRARY(MGTMeshUtils
         MGTMeshUtils_ViscousLayers.cpp
         MGTMeshUtils_ComputeError.hpp
         MGTMeshUtils_DefaultParameters.cpp
+        MGTMeshUtils_ProgressReporter.cpp
 )
 
 if (WIN32)

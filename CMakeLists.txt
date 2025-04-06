@@ -236,6 +236,19 @@ INCLUDE_DIRECTORIES(${SARIBBON_PATH})
 set(STYLES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/ThirdParty/QtAdvancedStyleSheets/styles")
 add_subdirectory(src/ThirdParty/QtAdvancedStyleSheets)
 
+# BOOST:
+#cmake_policy(SET CMP0167 NEW)
+#find_package(Boost REQUIRED COMPONENTS system thread)
+#if (Boost_FOUND)
+#    message(STATUS "Boost FOUND")
+#    message(STATUS "Boost VERSION: ${Boost_VERSION}")
+#    message(STATUS "Boost INCLUDE DIRS: ${Boost_INCLUDE_DIRS}")
+#    message(STATUS "Boost LIBRARIES: ${Boost_LIBRARIES}")
+#    MESSAGE(STATUS "-------------------------------------------------------------------------------")
+#else ()
+#    message(FATAL_ERROR "Boost not found!")
+#endif ()
+
 # Include the src directory
 add_subdirectory(src)
 

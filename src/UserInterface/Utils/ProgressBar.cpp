@@ -31,6 +31,7 @@ ProgressBar::ProgressBar(QWidget* parent)
 
 	this->ui->progressBar->setMinimum(0);
 	this->ui->progressBar->setMaximum(100);
+	this->ui->progressBar->setTextVisible(true);
 
 	connect(this->ui->stopButton, &QPushButton::clicked, this,
 		&ProgressBar::handleStopButtonClicked);

@@ -49,15 +49,15 @@ public:
 	explicit NetgenPlugin_Mesher(const TopoDS_Shape& shape);
 	~NetgenPlugin_Mesher();
 
-	int ComputeMesh(std::function<void(int)> progressCallback = {},
-		std::function<void(const std::string&)> statusCallback = {});
+	int ComputeMesh(const std::function<void(int)>& progressCallback = {},
+		const std::function<void(const std::string&)>& statusCallback = {});
 	void CancelMeshGeneration();
 
 	static void PrepareOCCGeometry(
 		netgen::OCCGeometry& occGeom, const TopoDS_Shape& shape);
 
 	static void RestrictLocalSize(netgen::Mesh& ngMesh, const gp_XYZ& p,
-		double size, const bool overrideMinH = true);
+		double size, bool overrideMinH = true);
 	static void SetLocalSize(
 		netgen::OCCGeometry& occGeom, netgen::Mesh& ngMesh);
 
