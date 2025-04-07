@@ -105,7 +105,7 @@
         "name": "optimizeMesh",
         "label": "Optimize mesh quality",
         "widget": "CheckBoxWidget",
-        "value": 0
+        "value": 2
       }
     ]
   },

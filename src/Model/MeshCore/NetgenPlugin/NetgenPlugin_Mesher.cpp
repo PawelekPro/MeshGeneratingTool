@@ -202,6 +202,8 @@ void NetgenPlugin_Mesher::SetMeshParameters() {
 
 	_fineness = -_algorithm->fineness;
 	mParams.uselocalh = _algorithm->surfaceCurvature;
+
+	_optimize = _algorithm->optimize;
 }
 
 //----------------------------------------------------------------------------
@@ -215,14 +217,36 @@ void NetgenPlugin_Mesher::PrepareOCCGeometry(
 	// occgeom.PrintNrShapes();
 }
 
-int computeProgress() { return 0; };
+int NetgenPlugin_Mesher::ComputeProgress() const {
+	std::cout << netgen::multithread.task << std::endl;
+	if (!_occGeom)
+		return 0;
+
+	if (netgen::multithread.task == MGTMeshUtils_NetgenTasks::SurfaceMeshing) {
+		int numFacesMeshed = 0;
+		const int totalFaces = _occGeom->fmap.Extent();
+
+		for (auto it = _occGeom->fmap.cbegin(); it != _occGeom->fmap.cend();
+			++it) {
+			const int faceId = _occGeom->fmap.FindIndex(*it);
+			if (_occGeom->facemeshstatus[faceId] >= 1)
+				++numFacesMeshed;
+		}
+
+		if (totalFaces == 0)
+			return 0;
+
+		return static_cast<int>(100.0 * numFacesMeshed / totalFaces);
+	}
+	return 0;
+};
 
 //----------------------------------------------------------------------------
 int NetgenPlugin_Mesher::ComputeMesh(
 	const std::function<void(int)>& progressCallback,
 	const std::function<void(const std::string&)>& statusCallback) {
 	MGTMeshUtils_ProgressReporter progressReporter(
-		200, computeProgress, progressCallback);
+		500, [this]() { return this->ComputeProgress(); }, progressCallback);
 
 	NetgenPlugin_NetgenLibWrapper ngLib;
 	netgen::MeshingParameters& mParams = netgen::mparam;
