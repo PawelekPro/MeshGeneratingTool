@@ -17,22 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #include "ImportSTEPCommand.hpp"
-#include "Geometry.hpp"
+#include "ShapeService.hpp"
 
 ImportSTEPCommand::ImportSTEPCommand(
-    GeoService& aGeoService, 
+    ShapeCore& aShapeCore,
     const std::string& aFilePath
     ) : 
-    _geoService(aGeoService),
+    ShapeLibCommand(aShapeCore),
     _filePath(aFilePath){}
 
-bool ImportSTEPCommand::execute(){
-    _importedShapes = _geoService.importSTEP(_filePath);
-    return true;
-}
+bool ImportSTEPCommand::executeAction(){
 
-bool ImportSTEPCommand::undo(){
-    // _geoService.removeShapes(_importedShapes);
+
     return true;
 }

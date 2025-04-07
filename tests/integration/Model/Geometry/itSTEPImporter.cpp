@@ -30,10 +30,23 @@ protected:
     STEPImporter importer;
 };
 
-TEST_F(STEPImporterTest, TestImportingCubeSTEPFile){
-    std::string coloredPartPath = std::string(TESTS_DATA_PATH) + "/flange.stp";
+TEST_F(STEPImporterTest, TestImportingThreePartFlangeFile){
+    std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
     IdleProgressIndicator indicator;
     std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-        importer.importFile(coloredPartPath, indicator);
+        importer.importFile(filePath, indicator);
     EXPECT_EQ(shapes.size(), 3);
+    EXPECT_EQ(shapes[0].second.color.r, 1);
+    EXPECT_EQ(shapes[0].second.color.g, 1);
+    EXPECT_EQ(shapes[0].second.color.b, 0);
+
+
+}
+
+TEST_F(STEPImporterTest, TestImportingOnePartCubeFile){
+    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+    IdleProgressIndicator indicator;
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
+        importer.importFile(filePath, indicator);
+    EXPECT_EQ(shapes.size(), 1);
 }

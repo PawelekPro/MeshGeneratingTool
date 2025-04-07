@@ -17,35 +17,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSERVICE_HPP
-#define GEOSERVICE_HPP
+#ifndef SHAPEATTRS_HPP 
+#define SHAPEATTRS_HPP
 
-#include "ModelSubject.hpp"
-#include "GeoState.hpp"
-#include "TagMap.hpp"
-#include <map>
 
-class GeoService {
 
-    public:
-    GeoService(
-        const ModelSubject& aModelSubject,
-        GeoState& aGeoState
-    );
-
-    std::map<std::string, TopoDS_Shape> importSTEP(
-        const std::string& aFilePath
-    );
-   
-    std::map<std::string, TopoDS_Shape> importSTL(
-        const std::string& aFilePath
-    );
-
-    void removeShapes(const std::vector<TopoDS_Shape>& aShapes);
-        
-    private:
-    GeoState& _geoState;
-    const ModelSubject& _modelSubject;
-};
 
 #endif

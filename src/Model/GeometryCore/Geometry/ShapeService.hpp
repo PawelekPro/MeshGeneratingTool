@@ -17,36 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OCAFSTATEMANAGER_HPP
-#define OCAFSTATEMANAGER_HPP
+#ifndef SHAPESERVICE_HPP
+#define SHAPESERVICE_HPP
 
-#include "ShapeStateManager.hpp"
+#include "ModelSubject.hpp"
+#include <string>
+#include "ShapeCore.hpp"
+#include "ShapeTools.hpp"
 
-class OcafStateManager : public ShapeStateManager {
+class ShapeService {
 
     public:
-    OcafStateManager(
-        std::shared_ptr<ShapeMap> aShapeMap, 
-        std::shared_ptr<OcafDoc> aOcafDoc
-    );
-    
-    virtual std::pair<bool, std::vector<ShapeId>> commitRegisterNew(
-        const std::vector<GeoShape>& aGeoShapes
-    ) override;
+    ShapeService(const ModelSubject& aModelSubject, ShapeCore& aShapeCore);
 
-    virtual bool commitRemove(
-        const std::vector<ShapeId>& aShapeIds
-    ) override;
+    bool importSTEP(const std::string& aFilePath);
+    bool importSTL(const std::string& aFilePath);
+    bool scaleShape(const ShapeId& aShapeId, double aScaleFactor);
 
-    virtual bool commitEdit(
-        const std::vector<std::pair<ShapeId, GeoShape>>& aNewShapes
-    ) override;
-   
-    virtual bool undoLastCommit() override;
+    private:
 
-    protected:
-    std::shared_ptr<OcafDoc> _ocafDoc;
-
+    ShapeCore& _shapeCore;
+    const ModelSubject& _modelSubject;
 };
+
 
 #endif

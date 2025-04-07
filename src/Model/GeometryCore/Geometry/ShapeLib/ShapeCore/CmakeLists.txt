@@ -1,0 +1,14 @@
+add_library(ShapeCore
+    OcafShapeCore.cpp
+)
+
+target_link_libraries(ShapeCore PUBLIC
+    ${OCC_LIBRARIES}
+    Shapes
+    ShapeMap
+)
+
+target_include_directories(ShapeCore PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${BOOST_DIR}
+)

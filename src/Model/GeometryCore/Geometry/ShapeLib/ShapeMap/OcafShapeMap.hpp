@@ -21,19 +21,15 @@
 #define OCAFSHAPEMAP_HPP
 
 #include "ShapeMap.hpp"
-#include "OcafDoc.hpp"
 
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
 
 #include <map>
 
-class OcafDoc;
-
 class OcafShapeMap : public ShapeMap {
     
     public:
-    OcafShapeMap(const OcafDoc& aOcafDoc);
     virtual ~OcafShapeMap() = default;
  
     virtual bool containsId(const ShapeId& id) const override;
@@ -42,6 +38,9 @@ class OcafShapeMap : public ShapeMap {
     virtual const TopoDS_Shape atId(const ShapeId& id) const override;
     virtual const ShapeId getId(const TopoDS_Shape& shape) const override;
 
+    virtual TDF_Label getLabel(const ShapeId& id) const;
+    virtual ShapeId atLabel(const TDF_Label& id) const;
+    
     protected:
     
     virtual const ShapeId registerShape(const TopoDS_Shape& shape) override;
@@ -52,8 +51,6 @@ class OcafShapeMap : public ShapeMap {
     ) override;
     
     private:
-
-    const OcafDoc& _ocafDoc;
 
     std::map<const ShapeId, TDF_Label> _idLabelMap;
     std::map<TDF_Label, const ShapeId> _labelIdMap;

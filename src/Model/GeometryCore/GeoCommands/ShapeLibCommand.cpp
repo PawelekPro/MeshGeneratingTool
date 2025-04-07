@@ -17,19 +17,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "OcafAttrManager.hpp"
+#include "ShapeLibCommand.hpp"
+#include <iostream>
+#include "ShapeCore.hpp"
 
+ShapeLibCommand::ShapeLibCommand(ShapeCore& aShapeCore)
+ : _shapeCore(aShapeCore){};
 
-OcafAttrManager::OcafAttrManager(
-    std::shared_ptr<ShapeMap> aShapeMap, 
-    std::shared_ptr<OcafDoc> aOcafDoc
-) : ShapeAttrManager(aShapeMap),
-    _ocafDoc(aOcafDoc) {}
+bool ShapeLibCommand::execute() {
+    if (!_shapeCore.openCommand()) {
+        return false;
+    }
 
-bool OcafAttrManager::commitRename(const ShapeId&, const std::string&){
-    return true;
+    if (executeAction()) {
+        _commandId = _shapeCore.commitCommand();
+        return true;
+    }
+
+    _shapeCore.abortCommand();
+    return false;
 }
 
-bool OcafAttrManager::undoLastCommit(){
-    return true;
+bool ShapeLibCommand::undo() {
+    if (_commandId == _shapeCore.nextUndoId()){
+        return _shapeCore.undo();
+    } else {
+        std::cerr << "Undo command id is out of sync with ShapeCore.";
+        return false;
+    }
 }

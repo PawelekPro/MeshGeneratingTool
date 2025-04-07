@@ -1,3 +1,22 @@
+/*
+* Copyright (C) 2024 Krystian Fudali
+*
+* This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
@@ -5,50 +24,24 @@
 #include <vector>
 #include <array>
 
-#include "TagMap.hpp"
 #include "ModelSubject.hpp"
 #include "CommandStack.hpp"
-#include "GeoService.hpp"
+#include "ShapeService.hpp"
 #include "GeoCommandsFactory.hpp"
-namespace GeometryCore {
 
-    using namespace std::string_literals;
-    using PartsMap = std::map<std::string, TopoDS_Shape>;
+class Geometry {
 
-    class Geometry {
     public:
-        Geometry(const ModelSubject&, CommandStack&);
-        ~Geometry();
 
-        void importSTEP(const std::string& filePath);
-        
-        void importSTL(const std::string& filePath);
-        
-        const TagMap& getTagMap() const {return this->_tagMap;};
-        
-        PartsMap getShapes() const;
 
-        std::vector<int> getShapeVerticesTags(const TopoDS_Shape& shape);
-
-        std::vector<int> getShapesVerticesTags(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec);
-
-        std::string getShapeName(const TopoDS_Shape& shape);
-
-        std::vector<std::string> getShapesNames(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec);
 
     private:
-        
-        GeoState _geoState;
-        GeoService _geoService;
-        GeoCommandsFactory _commandFactory;
-        TagMap _tagMap;
+    GeoCommandsFactory _commandFactory;
+    CommandStack& _commandStack; 
+    
+    ShapeService _shapeService;
 
-        const ModelSubject& _subject;
-        CommandStack& _commandStack; 
-    };
-
-    // Geometry utils 
+    const ModelSubject& _subject;
 };
-
 
 #endif

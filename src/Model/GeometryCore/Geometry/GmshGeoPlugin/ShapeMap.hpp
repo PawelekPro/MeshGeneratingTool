@@ -16,36 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OCAFDOC_HPP
-#define OCAFDOC_HPP
+ 
+#ifndef SHAPEMAP_HPP
+#define SHAPEMAP_HPP
 
-#include <string>
-#include <optional>
-
-#include <TDocStd_Document.hxx>
-#include <TDF_Label.hxx>
-#include <XCAFDoc_ShapeTool.hxx>
-#include <XCAFDoc_ColorTool.hxx>
-#include <TopExp_Explorer.hxx>
+#include "ShapeId.hpp"
 #include <TopoDS_Shape.hxx>
-#include <gp_Trsf.hxx>
+#include <memory>
+class ShapeCore;
+class ShapeMap {
+    
+    public:
+    virtual ~ShapeMap() = default;
+ 
+    virtual bool containsId(const ShapeId& id) const = 0;
+    virtual bool containsShape(const TopoDS_Shape& id) const = 0;
+    
+    virtual const TopoDS_Shape atId(const ShapeId& id) const = 0;
+    virtual const ShapeId getId(const TopoDS_Shape& shape) const = 0;
 
-
-class OcafImporter;
-
-class OcafDoc{
-
-    public: 
-        virtual ~OcafDoc() = default;     
-  
-        virtual std::optional<TopoDS_Shape> getShape(const TDF_Label& aLabel) const = 0;
-        virtual std::optional<TDF_Label> getLabel(const TopoDS_Shape& aShape) const = 0;
-        
-        virtual std::vector<TDF_Label> importShapes(const OcafImporter& aImporter) = 0;
-        
-
-        virtual void undo() = 0;
-        virtual bool save(const std::string& filePath) const = 0;
-    };
+    protected:
+    friend class ShapeCore;    
+    virtual const ShapeId registerShape(const TopoDS_Shape& shape) = 0;
+    virtual bool removeShape(const ShapeId& id) = 0;
+    virtual bool updateShape(
+        const ShapeId& id,
+        const TopoDS_Shape& shape
+    ) = 0;
+};
 
 #endif

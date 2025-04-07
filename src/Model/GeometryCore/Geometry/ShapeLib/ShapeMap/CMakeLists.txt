@@ -1,11 +1,9 @@
 add_library(ShapeMap
     OcafShapeMap.cpp
-    TagMap.cpp
 )
 
 target_link_libraries(ShapeMap PUBLIC
     ${OCC_LIBRARIES}
-    GeoDoc
     Shapes
 )
 

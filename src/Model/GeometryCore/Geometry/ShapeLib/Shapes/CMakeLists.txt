@@ -1,5 +1,4 @@
 add_library(Shapes
-    GeoShape.cpp
     ShapeId.cpp
 )
 

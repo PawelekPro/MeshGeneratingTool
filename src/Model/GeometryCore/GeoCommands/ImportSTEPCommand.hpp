@@ -20,30 +20,24 @@
 #ifndef IMPORTSTEPCOMMAND_HPP
 #define IMPORTSTEPCOMMAND_HPP
 
-#include "Command.hpp"
 #include <string>
-#include <vector>
-#include <map>
 #include <TopoDS_Shape.hxx>
-#include "Geometry.hpp"
-#include "GeoService.hpp"
 
-class ImportSTEPCommand : public Command {
+#include "ShapeLibCommand.hpp"
+class GeoService;
+class ImportSTEPCommand : public ShapeLibCommand {
 
     public:
 
     ImportSTEPCommand(
-        GeoService& aGeoService,
+        ShapeCore& aShapeCore,
         const std::string& aFilePath
     );
     
-    bool execute() override;
-    bool undo() override;
+    bool executeAction() override;
 
     private:
-    GeoService& _geoService;
     const std::string _filePath;
-    std::map<std::string, TopoDS_Shape> _importedShapes;
 };
 
 #endif

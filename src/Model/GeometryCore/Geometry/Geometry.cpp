@@ -1,70 +1,24 @@
+/*
+* Copyright (C) 2024 Krystian Fudali
+*
+* This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "Geometry.hpp"
 #include "ShapeEvents.hpp"
 #include "ImportSTEPCommand.hpp"
 
 
-GeometryCore::Geometry::Geometry(
-    const ModelSubject& aModelSubject, 
-    CommandStack& aCommandStack
-    ) : 
-    _subject(aModelSubject),
-    _commandStack(aCommandStack),
-    _geoState(),
-    _geoService(aModelSubject, _geoState),
-    _commandFactory(aModelSubject, _geoService){}
-
-GeometryCore::Geometry::~Geometry(){};
-
-void GeometryCore::Geometry::importSTEP(const std::string& aFilePath){
-    std::unique_ptr<ImportSTEPCommand> command =
-        _commandFactory.importSTEP(aFilePath);
-    _commandStack.execute(std::move(command));
-};
-
-GeometryCore::PartsMap GeometryCore::Geometry::getShapes() const {
-    return _geoState.shapes();
-}
-
-
-void GeometryCore::Geometry::importSTL(const std::string& filePath){
-    return;
-};
-
-std::vector<int> GeometryCore::Geometry::getShapeVerticesTags(const TopoDS_Shape& shape){
-    std::vector<int> vertexTags;
-    // int vertex_tag;
-    // TopExp_Explorer shapeExplorer(shape, TopAbs_VERTEX);
-    // for(; shapeExplorer.More(); shapeExplorer.Next()) {
-    //     const TopoDS_Vertex& vertex = TopoDS::Vertex(shapeExplorer.Current());
-    //     vertex_tag = _tagMap.getTag(vertex);
-    //     vertexTags.push_back(vertex_tag);
-    // }
-    // std::sort(vertexTags.begin(), vertexTags.end());
-    // vertexTags.erase(std::unique(vertexTags.begin(), vertexTags.end()), vertexTags.end());
-    return vertexTags;
-}
-
-std::vector<int> GeometryCore::Geometry::getShapesVerticesTags(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec) {
-    std::vector<int> verticesTags;
-    // for (const auto& shape : shapesVec) {
-    //     std::vector<int> shapeVerticesTags = getShapeVerticesTags(shape);
-    //     verticesTags.insert(verticesTags.end(), shapeVerticesTags.begin(), shapeVerticesTags.end());
-    // }
-    // std::sort(verticesTags.begin(), verticesTags.end());
-    // verticesTags.erase(std::unique(verticesTags.begin(), verticesTags.end()), verticesTags.end());
-
-    return verticesTags;
-}
-
-std::vector<std::string> GeometryCore::Geometry::getShapesNames(std::vector<std::reference_wrapper<const TopoDS_Shape>> shapesVec){
-    std::vector<std::string> shapesNames;
-    for(const TopoDS_Shape& shapeRef : shapesVec){
-        shapesNames.push_back("shape");
-    }
-    return shapesNames;
-}
-
-std::string GeometryCore::Geometry::getShapeName(const TopoDS_Shape& shape){
-    std::string name = "shape";
-    return name;
-}

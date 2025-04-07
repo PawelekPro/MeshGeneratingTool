@@ -1,15 +1,15 @@
 add_subdirectory(Shapes)
 add_subdirectory(ShapeMap)
-add_subdirectory(ShapeManager)
-add_subdirectory(ShapeImport)
+add_subdirectory(ShapeTools)
+add_subdirectory(ShapeCore)
 
 add_library(ShapeLib INTERFACE)
 
 target_link_libraries(ShapeLib INTERFACE
     Shapes
     ShapeMap
-    ShapeManager
-    ShapeImport
+    ShapeTools
+    ShapeCore
 )
 
 target_include_directories(ShapeLib INTERFACE

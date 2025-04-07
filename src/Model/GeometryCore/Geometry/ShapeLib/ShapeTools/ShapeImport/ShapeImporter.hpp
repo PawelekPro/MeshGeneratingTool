@@ -17,11 +17,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOSHAPE_HPP
-#define GEOSHAPE_HPP
+#ifndef SHAPEIMPORTER_HPP
+#define SHAPEIMPORTER_HPP
+
+#include "ProgressIndicator.hpp"
 
 #include <TopoDS_Shape.hxx>
-#include "ShapeId.hpp"
+
+#include <vector>
+#include <string>
+#include <fstream>
 
 struct ShapeColor{
     int r;
@@ -34,23 +39,23 @@ struct ShapeAttr{
     ShapeColor color;
 };
 
-class GeoShape {
-
-    public:
-    GeoShape(
-        const TopoDS_Shape& aShape,
-        const ShapeId& aShapeId,
-        const ShapeAttr& aAttr
-    );
+class ShapeImporter {
     
-    const TopoDS_Shape shape() const;
+    public:
+    virtual ~ShapeImporter() = default;
 
-    const std::string name() const;
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> importFile(
+        const std::string& aFilePath, 
+        const ProgressIndicator& aProgressIndicator
+    ) const;
 
-    private:
-    const TopoDS_Shape& _shape;
-    ShapeAttr _attr;
-    ShapeId _id;
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> 
+        importFile(const std::string& aFilePath) const;
+    
+    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> import(
+        std::istream& aFileStream, 
+        const ProgressIndicator& aProgressIndicator
+    ) const = 0;
 };
 
 #endif

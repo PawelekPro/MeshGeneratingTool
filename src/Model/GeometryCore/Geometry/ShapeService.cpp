@@ -17,32 +17,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEIMPORTER_HPP
-#define SHAPEIMPORTER_HPP
+#include "ShapeService.hpp"
+#include "STEPImporter.hpp"
 
-#include "GeoShape.hpp"
-#include "ProgressIndicator.hpp"
-#include <vector>
-#include <string>
-#include <fstream>
+ShapeService::ShapeService(
+    const ModelSubject& aModelSubject, 
+    ShapeCore& aShapeCore
+) : _modelSubject(aModelSubject),
+    _shapeCore(aShapeCore){}
 
-class ShapeImporter {
-    
-    public:
-    virtual ~ShapeImporter() = default;
+bool ShapeService::importSTEP(const std::string& aFilePath) {
+    return true;
+}
 
-    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> importFile(
-        const std::string& aFilePath, 
-        const ProgressIndicator& aProgressIndicator
-    ) const;
+bool ShapeService::importSTL(const std::string& aFilePath) {
+    return true;
+}
 
-    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> 
-        importFile(const std::string& aFilePath) const;
-    
-    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> import(
-        std::istream& aFileStream, 
-        const ProgressIndicator& aProgressIndicator
-    ) const = 0;
-};
-
-#endif
+bool ShapeService::scaleShape(const ShapeId& aShapeId, double aScaleFactor) {
+    return true;
+}

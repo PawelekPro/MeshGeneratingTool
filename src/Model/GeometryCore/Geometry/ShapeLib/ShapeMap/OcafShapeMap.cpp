@@ -19,8 +19,6 @@
 
 #include "OcafShapeMap.hpp"
 
-OcafShapeMap::OcafShapeMap(const OcafDoc& aOcafDoc) : _ocafDoc(aOcafDoc){};
-
 bool OcafShapeMap::containsId(const ShapeId& aId) const {
     const auto it = _idLabelMap.find(aId);
     if(it == _idLabelMap.end()){

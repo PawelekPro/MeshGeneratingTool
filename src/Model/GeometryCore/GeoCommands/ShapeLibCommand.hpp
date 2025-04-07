@@ -17,30 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEATTRMANAGER_HPP
-#define SHAPEATTRMANAGER_HPP
+#ifndef SHAPELIBCOMMAND_HPP
+#define SHAPELIBCOMMAND_HPP
 
-#include "ShapeId.hpp"
-#include "ShapeMap.hpp"
-#include "OcafDoc.hpp"
+#include "Command.hpp"
 
-class ShapeAttrManager {
+class ShapeCore;
+class ShapeLibCommand : public Command {
 
     public:
+    ShapeLibCommand(ShapeCore& aShapeCore);
+    virtual ~ShapeLibCommand() = default;
 
-    ShapeAttrManager(
-        std::shared_ptr<ShapeMap> aShapeMap, 
-    ) : _shapeMap(aShapeMap){}
+    bool execute() override;
+    bool undo() override;
 
-    virtual ~ShapeAttrManager() = default;
+    private: 
+    virtual bool executeAction() = 0;
 
-    virtual bool commitRename(const ShapeId&, const std::string& aNewName) = 0;
-   
-    virtual bool undoLastCommit() = 0; 
-    
     protected:
-    std::shared_ptr<ShapeMap> _shapeMap;
 
+    ShapeCore& _shapeCore;
+    int _commandId;
 };
 
 #endif

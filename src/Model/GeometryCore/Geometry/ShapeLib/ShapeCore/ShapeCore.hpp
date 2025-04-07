@@ -17,32 +17,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OCAFATTRMANAGER_HPP 
-#define OCAFATTRMANAGER_HPP 
+#ifndef SHAPECORE_HPP
+#define SHAPECORE_HPP
 
-#include "ShapeAttrManager.hpp"
+#include <memory>
+#include <vector>
 
-class OcafAttrManager : public ShapeAttrManager {
-    
-    OcafAttrManager(
-        std::shared_ptr<ShapeMap> aShapeMap, 
-        std::shared_ptr<OcafDoc> aOcafDoc
-    );
+#include "ShapeMap.hpp"
+#include "ShapeId.hpp"
 
-    virtual ~OcafAttrManager() = default;
+class ShapeCore {
 
-    virtual bool commitRename(const ShapeId&, const std::string&) override;
+    public:
+    virtual ~ShapeCore() = default;
+
+    virtual const ShapeId registerNewShape(
+        const TopoDS_Shape& Shape
+    ) = 0;
+
+    virtual bool removeShape(
+        const ShapeId& aShapeId
+    ) = 0;
+
+    virtual bool updateShape(
+        const std::pair<ShapeId, TopoDS_Shape>& aUpdatedShape
+    ) = 0;
    
-    virtual bool undoLastCommit() override; 
-    
-    protected:
-    std::shared_ptr<OcafDoc> _ocafDoc;
-    std::shared_ptr<ShapeMap> _shapeMap;
+    virtual bool openCommand() = 0;
+    virtual bool commitCommand() = 0;
+    virtual bool abortCommand() = 0;
+    virtual bool undo() = 0;
 
-};
-
-#endif
-
+    virtual std::shared_ptr<const ShapeMap> shapeMap() const = 0;
 };
 
 #endif
