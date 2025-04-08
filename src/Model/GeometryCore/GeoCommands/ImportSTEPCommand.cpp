@@ -23,13 +23,14 @@
 
 ImportSTEPCommand::ImportSTEPCommand(
     ShapeCore& aShapeCore,
+    ShapeService& aShapeService,
     const std::string& aFilePath
     ) : 
     ShapeLibCommand(aShapeCore),
-    _filePath(aFilePath){}
+    _shapeService(aShapeService),
+    _filePath(aFilePath) {}
 
 bool ImportSTEPCommand::executeAction(){
-
-
-    return true;
+    bool imported = _shapeService.importSTEP(_filePath);
+    return imported;
 }

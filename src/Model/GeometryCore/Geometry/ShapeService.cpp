@@ -19,14 +19,34 @@
 
 #include "ShapeService.hpp"
 #include "STEPImporter.hpp"
+#include "ShapeEvents.hpp"
+#include "EventProgressIndicator.hpp"
 
 ShapeService::ShapeService(
     const ModelSubject& aModelSubject, 
     ShapeCore& aShapeCore
 ) : _modelSubject(aModelSubject),
-    _shapeCore(aShapeCore){}
+    _shapeCore(aShapeCore){
+    
+    _shapeCore.connectShapeAdded( [this](const ShapeId& aId) {
+        publishNewShape(aId);});
+    
+    _shapeCore.connectShapeModified( [this](const ShapeId& aId) {
+        publishShapeModified(aId);});
+
+    _shapeCore.connectShapeRemoved( [this](const ShapeId& aId) {
+        publishShapeRemoved(aId);});
+}
 
 bool ShapeService::importSTEP(const std::string& aFilePath) {
+    STEPImporter importer;
+    EventProgressIndicator indicator(_modelSubject);
+    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
+        importer.importFile(aFilePath, indicator);
+    
+    for (const auto shapePair : shapes){
+        _shapeCore.registerNewShape(shapePair.first);
+    }
     return true;
 }
 
@@ -36,4 +56,19 @@ bool ShapeService::importSTL(const std::string& aFilePath) {
 
 bool ShapeService::scaleShape(const ShapeId& aShapeId, double aScaleFactor) {
     return true;
+}
+
+void ShapeService::publishNewShape(const ShapeId& aId){
+    ShapeAddedEvent event(aId);
+    _modelSubject.publishEvent(event);
+}
+
+void ShapeService::publishShapeModified(const ShapeId& aId){
+    ShapeModifiedEvent event(aId);
+    _modelSubject.publishEvent(event);
+}
+
+void ShapeService::publishShapeRemoved(const ShapeId& aId){
+    ShapeRemovedEvent event(aId);
+    _modelSubject.publishEvent(event);
 }

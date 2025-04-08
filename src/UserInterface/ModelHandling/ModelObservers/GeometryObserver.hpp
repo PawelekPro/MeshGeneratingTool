@@ -25,8 +25,9 @@ class GeometryObserver : public BaseGeometryObserver {
 
     public:
 
-    void visit(const NewShapesEvent&) const override;
-    void visit(const ShapesRemovedEvent&) const override;
+    void visit(const ShapeAddedEvent&) const override;
+    void visit(const ShapeModifiedEvent&) const override;
+    void visit(const ShapeRemovedEvent&) const override;
 
 };
 

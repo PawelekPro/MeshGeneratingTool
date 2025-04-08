@@ -25,14 +25,14 @@
 #include <string>
 
 class ImportSTEPCommand;
-class GeoService;
+class ShapeService;
 
 class GeoCommandsFactory {
 
     public:    
     GeoCommandsFactory(
         const ModelSubject& aModelSubject,
-        GeoService& aGeoService
+        ShapeService& aShapeService
     );
 
     std::unique_ptr<ImportSTEPCommand> importSTEP(
@@ -40,7 +40,7 @@ class GeoCommandsFactory {
     ) const;
 
     private:
-    const GeoService& _geoService;
+    const ShapeService& _shapeService;
     const ModelSubject& _modelSubject;
 };
 

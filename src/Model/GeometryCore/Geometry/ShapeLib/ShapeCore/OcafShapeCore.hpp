@@ -25,7 +25,6 @@
 #include "ShapeEventsPublisher.hpp"
 
 #include <string>
-#include <boost/signals2.hpp>
 #include <TDocStd_Document.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
@@ -59,20 +58,9 @@ class OcafShapeCore : public ShapeCore {
 
     std::shared_ptr<const ShapeMap> shapeMap() const override;
    
-    boost::signals2::connection connectShapeAdded(
-        const std::function<void(const ShapeId&)>& slot
-    );
-    boost::signals2::connection connectShapeRemoved(
-        const std::function<void(const ShapeId&)>& slot
-    );
-    boost::signals2::connection connectShapeModified(
-        const std::function<void(const ShapeId&)>& slot
-    );
-    
     private:
 
     std::shared_ptr<OcafShapeMap> _shapeMap;
-    ShapeEventsPublisher _publisher;
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;

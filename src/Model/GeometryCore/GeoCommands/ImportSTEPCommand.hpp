@@ -24,19 +24,21 @@
 #include <TopoDS_Shape.hxx>
 
 #include "ShapeLibCommand.hpp"
-class GeoService;
+class ShapeService;
 class ImportSTEPCommand : public ShapeLibCommand {
 
     public:
 
     ImportSTEPCommand(
         ShapeCore& aShapeCore,
+        ShapeService& aShapeService,
         const std::string& aFilePath
     );
     
     bool executeAction() override;
 
     private:
+    ShapeService& _shapeService;
     const std::string _filePath;
 };
 

@@ -44,6 +44,4 @@ class ModelSubject : public EventPublisher {
 
 };
 
-
-
 #endif

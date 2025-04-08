@@ -21,4 +21,21 @@
 #include "ShapeEvents.hpp"
 #include "ImportSTEPCommand.hpp"
 
+Geometry::Geometry(
+    CommandStack& aCommandStack, 
+    const ModelSubject& aModelSubject
+) : 
+_commandStack(aCommandStack),
+_subject(aModelSubject),
+_shapeCore(OcafShapeCore()),
+_shapeService(aModelSubject, _shapeCore),
+_commandFactory(_subject, _shapeService){}
 
+
+void Geometry::importSTEP(const std::string& aFilePath){
+    std::unique_ptr<ImportSTEPCommand> importCommand = 
+        _commandFactory.importSTEP(aFilePath);
+    if (importCommand) {
+        _commandStack.execute(std::move(importCommand));
+    }
+}

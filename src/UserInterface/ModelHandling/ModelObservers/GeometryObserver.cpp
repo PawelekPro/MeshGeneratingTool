@@ -22,11 +22,15 @@
 #include <TopoDS_Shape.hxx>
 #include <iostream>
 
-void GeometryObserver::visit(const NewShapesEvent& aEvent) const {
+void GeometryObserver::visit(const ShapeAddedEventaEvent) const {
     const std::map<std::string, TopoDS_Shape>& shapes = aEvent.newShapes;
     std::cout << "Imported: " << shapes.size() << " shapes!" << std::endl;
 };
 
-void GeometryObserver::visit(const ShapesRemovedEvent&) const {
+void GeometryObserver::visit(const ShapeModifiedEvent&) const {
+
+};
+
+void GeometryObserver::visit(const ShapeRemovedEvent&) const {
 
 };

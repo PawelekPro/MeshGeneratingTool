@@ -26,22 +26,26 @@
 
 #include "ModelSubject.hpp"
 #include "CommandStack.hpp"
+#include "OcafShapeCore.hpp"
 #include "ShapeService.hpp"
 #include "GeoCommandsFactory.hpp"
 
 class Geometry {
 
     public:
+    Geometry(CommandStack& aCommandStack, const ModelSubject& aModelSubject);
+    ~Geometry() = default;
 
-
-
+    void importSTEP(const std::string& aFilePath);
+    
     private:
-    GeoCommandsFactory _commandFactory;
     CommandStack& _commandStack; 
+    const ModelSubject& _subject;
+   
+    OcafShapeCore _shapeCore;
     
     ShapeService _shapeService;
-
-    const ModelSubject& _subject;
+    GeoCommandsFactory _commandFactory;
 };
 
 #endif

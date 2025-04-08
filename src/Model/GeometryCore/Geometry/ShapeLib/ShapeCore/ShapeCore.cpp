@@ -17,32 +17,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ShapeLibCommand.hpp"
-#include <iostream>
-#include "ShapeService.hpp"
+#include "ShapeCore.hpp"
 
-ShapeLibCommand::ShapeLibCommand(ShapeCore& aShapeCore)
- : _shapeCore(aShapeCore){};
-
-bool ShapeLibCommand::execute() {
-    if (!_shapeCore.openCommand()) {
-        return false;
-    }
-
-    if (executeAction()) {
-        _commandId = _shapeCore.commitCommand();
-        return true;
-    }
-
-    _shapeCore.abortCommand();
-    return false;
+boost::signals2::connection ShapeCore::connectShapeAdded(
+    const std::function<void(const ShapeId&)>& slot
+) {
+    return _publisher.shapeAddedSignal().connect(slot); 
 }
 
-bool ShapeLibCommand::undo() {
-    if (_commandId == _shapeCore.nextUndoId()){
-        return _shapeCore.undo();
-    } else {
-        std::cerr << "Undo command id is out of sync with ShapeCore.";
-        return false;
-    }
+boost::signals2::connection ShapeCore::connectShapeRemoved(
+    const std::function<void(const ShapeId&)>& slot
+) {
+    return _publisher.shapeRemovedSignal().connect(slot);
+}
+
+boost::signals2::connection ShapeCore::connectShapeModified(
+    const std::function<void(const ShapeId&)>& slot
+) {
+    return _publisher.shapeModifiedSignal().connect(slot);
 }

@@ -22,7 +22,9 @@
 
 #include <memory>
 #include <vector>
+#include <boost/signals2.hpp>
 
+#include "ShapeEventsPublisher.hpp"
 #include "ShapeMap.hpp"
 #include "ShapeId.hpp"
 
@@ -49,6 +51,20 @@ class ShapeCore {
     virtual bool undo() = 0;
 
     virtual std::shared_ptr<const ShapeMap> shapeMap() const = 0;
+
+    boost::signals2::connection connectShapeAdded(
+        const std::function<void(const ShapeId&)>& slot
+    );
+    boost::signals2::connection connectShapeRemoved(
+        const std::function<void(const ShapeId&)>& slot
+    );
+    boost::signals2::connection connectShapeModified(
+        const std::function<void(const ShapeId&)>& slot
+    );
+
+    protected:
+    ShapeEventsPublisher _publisher;
+
 };
 
 #endif

@@ -36,6 +36,10 @@ class ShapeService {
 
     private:
 
+    void publishNewShape(const ShapeId& aId);
+    void publishShapeModified(const ShapeId& aId);
+    void publishShapeRemoved(const ShapeId& aId);
+    
     ShapeCore& _shapeCore;
     const ModelSubject& _modelSubject;
 };

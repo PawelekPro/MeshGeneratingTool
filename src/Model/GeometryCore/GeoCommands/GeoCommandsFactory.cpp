@@ -22,10 +22,10 @@
 
 GeoCommandsFactory::GeoCommandsFactory(
     const ModelSubject& aModelSubject,
-    GeoService& aGeoService
+    ShapeService& aShapeService
     ) : 
     _modelSubject(aModelSubject),
-    _geoService(aGeoService){}
+    _shapeService(aShapeService){}
 
 std::unique_ptr<ImportSTEPCommand> GeoCommandsFactory::importSTEP(
     const std::string& aFilePath
@@ -33,7 +33,7 @@ std::unique_ptr<ImportSTEPCommand> GeoCommandsFactory::importSTEP(
     std::unique_ptr<ImportSTEPCommand> command = 
         std::make_unique<ImportSTEPCommand>(
             _modelSubject,
-            _geoService,
+            _shapeService,
             aFilePath
         );
     return command;

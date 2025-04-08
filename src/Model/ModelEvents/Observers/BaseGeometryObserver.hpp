@@ -24,9 +24,9 @@
 #include <string>
 #include "EventObserver.hpp"
 
-class NewShapesEvent;
-class ShapesRemovedEvent;
-
+class ShapeAddedEvent;
+class ShapeModifiedEvent;
+class ShapeRemovedEvent;
 class BaseGeometryObserver : public EventObserver {
     
     public:
@@ -35,8 +35,9 @@ class BaseGeometryObserver : public EventObserver {
     void notify(const Event& aEvent) override {
         aEvent.accept(*this);
     }
-    virtual void visit(const NewShapesEvent&) const = 0;
-    virtual void visit(const ShapesRemovedEvent&) const = 0;
+    virtual void visit(const ShapeAddedEvent&) const = 0;
+    virtual void visit(const ShapeModifiedEvent&) const = 0;
+    virtual void visit(const ShapeRemovedEvent&) const = 0;
 
 };
 

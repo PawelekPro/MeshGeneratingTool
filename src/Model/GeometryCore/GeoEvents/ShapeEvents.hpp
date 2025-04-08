@@ -23,24 +23,48 @@
 #include "GeoEvent.hpp"
 #include <TopoDS_Shape.hxx>
 #include <map>
-class NewShapesEvent : public GeoEvent {
+class ShapeAddedEvent : public GeoEvent {
     public:
-    NewShapesEvent(const std::map<std::string, TopoDS_Shape>& aShapes) : newShapes(aShapes){};
+    ShapeAddedEvent(const ShapeId aNewShapeId) : _newShapeId(aNewShapeId){};
 
     void accept(BaseGeometryObserver& aEventObserver) const override {
        aEventObserver.visit(*this);
     }
-    const std::map<std::string, TopoDS_Shape> newShapes;
+    const ShapeId id(){return _newShapeId;}
+
+    private:
+    const ShapeId _newShapeId;
 
 };
 
-class ShapesRemovedEvent : public GeoEvent {
+class ShapeModifiedEvent : public GeoEvent {
     public:
-    ShapesRemovedEvent() = default;
+    ShapeModifiedEvent(const ShapeId aModifiedShapeId) 
+    : _modifiedShapeId(aModifiedShapeId){};
 
     void accept(BaseGeometryObserver& aEventObserver) const override {
        aEventObserver.visit(*this);
     }
+    const ShapeId id(){return _modifiedShapeId;}
+
+    private:
+    const ShapeId _modifiedShapeId;
+
+};
+
+class ShapeRemovedEvent : public GeoEvent {
+    public:
+    ShapeRemovedEvent(const ShapeId aRemovedShapeId)
+    : _removedShapeId(aRemovedShapeId){};
+
+    void accept(BaseGeometryObserver& aEventObserver) const override {
+       aEventObserver.visit(*this);
+    }
+    const ShapeId id(){return _removedShapeId;}
+
+    private:
+    const ShapeId _removedShapeId;
+
 };
 
 #endif

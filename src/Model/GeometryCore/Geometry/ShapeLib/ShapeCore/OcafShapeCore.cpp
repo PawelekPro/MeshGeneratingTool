@@ -76,22 +76,3 @@ bool OcafShapeCore::undo(){
 std::shared_ptr<const ShapeMap> OcafShapeCore::shapeMap() const {
     return _shapeMap;
 };
-
-
-boost::signals2::connection OcafShapeCore::connectShapeAdded(
-    const std::function<void(const ShapeId&)>& slot
-) {
-    return _publisher.shapeAddedSignal().connect(slot); // ✅ Correct!
-}
-
-boost::signals2::connection OcafShapeCore::connectShapeRemoved(
-    const std::function<void(const ShapeId&)>& slot
-) {
-    return _publisher.shapeRemovedSignal().connect(slot); // ✅ Consistent!
-}
-
-boost::signals2::connection OcafShapeCore::connectShapeModified(
-    const std::function<void(const ShapeId&)>& slot
-) {
-    return _publisher.shapeModifiedSignal().connect(slot); // ✅ Good!
-}
