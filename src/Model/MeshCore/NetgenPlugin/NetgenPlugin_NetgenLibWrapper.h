@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +39,21 @@ class OCCGeometry;
 class Mesh;
 }
 
+namespace MGTMeshUtils_NetgenTasks {
+inline constexpr std::string_view SurfaceMeshing = "Surface meshing";
+inline constexpr std::string_view SurfaceOptimizing = "Optimizing surface";
+inline constexpr std::string_view VolumeMeshing = "Volume meshing";
+inline constexpr std::string_view VolumeOptimizing = "Optimize Volume";
+}
+
 struct NETGENPLUGIN_EXPORT NetgenPlugin_NetgenLibWrapper {
 	NetgenPlugin_NetgenLibWrapper();
 	~NetgenPlugin_NetgenLibWrapper();
 	void setMesh(nglib::Ng_Mesh* mesh);
 	nglib::Ng_Mesh* ngMesh() { return (nglib::Ng_Mesh*)(void*)_ngMesh; }
 
-	static int GenerateMesh(netgen::OCCGeometry& occgeo, int startWith, int endWith, netgen::Mesh*& ngMesh);
+	static int GenerateMesh(netgen::OCCGeometry& occgeo, int startWith,
+		int endWith, netgen::Mesh*& ngMesh);
 	int GenerateMesh(netgen::OCCGeometry& occgeo, int startWith, int endWith) {
 		return GenerateMesh(occgeo, startWith, endWith, _ngMesh);
 	}

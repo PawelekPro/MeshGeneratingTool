@@ -29,14 +29,13 @@
 //----------------------------------------------------------------------------
 MGTMeshUtils_ProgressReporter::MGTMeshUtils_ProgressReporter(int intervalMs,
 	std::function<int()> computeProgress, std::function<void(int)> sendProgress)
-	: _callback(std::move(sendProgress))
+	: _progressCallback(std::move(sendProgress))
 	, _computeProgress(std::move(computeProgress))
 	, _stopFlag(false) {
+
 	_thread = std::thread([this, intervalMs]() {
 		while (!_stopFlag.load()) {
-			const int progress = _computeProgress();
-			CALL_PROGRESS(_callback, progress);
-			std::cout << "blabla" << std::endl;
+			CALL_PROGRESS(_progressCallback, _computeProgress());
 			std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
 		}
 	});
@@ -47,5 +46,4 @@ MGTMeshUtils_ProgressReporter::~MGTMeshUtils_ProgressReporter() {
 	_stopFlag.store(true);
 	if (_thread.joinable())
 		_thread.join();
-	std::cout << "mehmehmeh" << std::endl;
 }

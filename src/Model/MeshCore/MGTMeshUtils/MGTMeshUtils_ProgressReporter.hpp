@@ -46,7 +46,7 @@ public:
 
 private:
 	std::thread _thread;
-	std::function<void(int)> _callback;
+	std::function<void(int)> _progressCallback;
 	std::function<int()> _computeProgress;
 	std::atomic<bool> _stopFlag;
 };

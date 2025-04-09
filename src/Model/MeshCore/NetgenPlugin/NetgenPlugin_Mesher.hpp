@@ -52,6 +52,8 @@ public:
 	int ComputeMesh(const std::function<void(int)>& progressCallback = {},
 		const std::function<void(const std::string&)>& statusCallback = {});
 	void CancelMeshGeneration();
+	int ComputeProgress();
+	std::string GetProgressMessage();
 
 	static void PrepareOCCGeometry(
 		netgen::OCCGeometry& occGeom, const TopoDS_Shape& shape);
@@ -75,6 +77,9 @@ private:
 
 	netgen::Mesh* _ngMesh;
 	netgen::OCCGeometry* _occGeom;
+
+	int _surfaceMeshProgress = 0;
+	int _volumeMeshProgress = 75;
 
 	const MGTMeshUtils_ViscousLayers* _viscousLayers;
 

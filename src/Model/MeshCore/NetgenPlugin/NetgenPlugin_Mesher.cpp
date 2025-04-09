@@ -217,12 +217,14 @@ void NetgenPlugin_Mesher::PrepareOCCGeometry(
 	// occgeom.PrintNrShapes();
 }
 
-int NetgenPlugin_Mesher::ComputeProgress() const {
-	std::cout << netgen::multithread.task << std::endl;
-	if (!_occGeom)
+int NetgenPlugin_Mesher::ComputeProgress() {
+	const std::string task = netgen::multithread.task;
+	// spdlog::debug("Current task: {}", task);
+
+	if (!_occGeom || !_algorithm)
 		return 0;
 
-	if (netgen::multithread.task == MGTMeshUtils_NetgenTasks::SurfaceMeshing) {
+	if (!_algorithm->Is3DAlgortihm()) {
 		int numFacesMeshed = 0;
 		const int totalFaces = _occGeom->fmap.Extent();
 
@@ -236,9 +238,46 @@ int NetgenPlugin_Mesher::ComputeProgress() const {
 		if (totalFaces == 0)
 			return 0;
 
-		return static_cast<int>(100.0 * numFacesMeshed / totalFaces);
+		_surfaceMeshProgress
+			= static_cast<int>(100.0 * numFacesMeshed / totalFaces);
+		return Min(_surfaceMeshProgress, 99);
 	}
-	return 0;
+
+	if (task == MGTMeshUtils_NetgenTasks::SurfaceMeshing) {
+		int numFacesMeshed = 0;
+		const int totalFaces = _occGeom->fmap.Extent();
+
+		for (auto it = _occGeom->fmap.cbegin(); it != _occGeom->fmap.cend();
+			++it) {
+			const int faceId = _occGeom->fmap.FindIndex(*it);
+			if (_occGeom->facemeshstatus[faceId] >= 1)
+				++numFacesMeshed;
+		}
+
+		if (totalFaces == 0)
+			return 0;
+
+		_surfaceMeshProgress
+			= static_cast<int>(50.0 * numFacesMeshed / totalFaces);
+
+		return Min(_surfaceMeshProgress, 49);
+	}
+
+	if (task == MGTMeshUtils_NetgenTasks::SurfaceOptimizing) {
+		return 49;
+	}
+
+	if (task == MGTMeshUtils_NetgenTasks::VolumeMeshing) {
+		return _volumeMeshProgress;
+	}
+
+	if (task.find(MGTMeshUtils_NetgenTasks::VolumeOptimizing)
+		!= std::string::npos) {
+		_volumeMeshProgress = 99;
+		return _volumeMeshProgress;
+	}
+
+	return 50;
 };
 
 //----------------------------------------------------------------------------
