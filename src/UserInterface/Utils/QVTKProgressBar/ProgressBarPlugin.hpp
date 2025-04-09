@@ -4,7 +4,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,8 @@ public:
 	/**
 	 * @brief  Construct class instance.
 	 *
-	 * @param  {QWidget*} parent  : The parent widget from which it should inherit attributes.
+	 * @param  {QWidget*} parent  : The parent widget from which it should
+	 * inherit attributes.
 	 */
 	Standard_EXPORT Progress(QWidget* parent, const std::string& fileName) {
 		myProgress = qobject_cast<ProgressBar*>(parent);
@@ -66,20 +68,24 @@ public:
 	/**
 	 * @brief  Reset progress indicator. Overrides virtual base class method.
 	 *
-	 * @return {Standard_EXPORT}  : Defines platform-specific pre-processor macros necessary for
-	 * correct compilation.
+	 * @return {Standard_EXPORT}  : Defines platform-specific pre-processor
+	 * macros necessary for correct compilation.
 	 */
-	Standard_EXPORT virtual void Reset() Standard_OVERRIDE { Message_ProgressIndicator::Reset(); }
+	Standard_EXPORT virtual void Reset() Standard_OVERRIDE {
+		Message_ProgressIndicator::Reset();
+	}
 
 	/**
-	 * @brief  Show progress indicator and display progress message. Update presentation of the
-	 * progress indicator.
+	 * @brief  Show progress indicator and display progress message. Update
+	 * presentation of the progress indicator.
 	 *
-	 * @param  {Message_ProgressScope} theScope : The current scope being advanced.
-	 * @param  {Standard_Boolean} force         : Flag isForce is intended for forcing update in
-	 * case if it is required at particular step of the algorithm.
-	 * @return {Standard_EXPORT}                : Defines platform-specific pre-processor macros
-	 * necessary for correct compilation.
+	 * @param  {Message_ProgressScope} theScope : The current scope being
+	 * advanced.
+	 * @param  {Standard_Boolean} force         : Flag isForce is intended for
+	 * forcing update in case if it is required at particular step of the
+	 * algorithm.
+	 * @return {Standard_EXPORT}                : Defines platform-specific
+	 * pre-processor macros necessary for correct compilation.
 	 */
 	Standard_EXPORT void Show(const Message_ProgressScope& theScope,
 		const Standard_Boolean force = Standard_True) Standard_OVERRIDE {
@@ -92,12 +98,14 @@ public:
 		myProgress->setValue(progress);
 
 		NCollection_List<const Message_ProgressScope*> aScopes;
-		for (const Message_ProgressScope* aPS = &theScope; aPS; aPS = aPS->Parent()) {
+		for (const Message_ProgressScope* aPS = &theScope; aPS;
+			aPS = aPS->Parent()) {
 			aScopes.Prepend(aPS);
 		}
 
-		for (NCollection_List<const Message_ProgressScope*>::Iterator it(aScopes); it.More();
-			it.Next()) {
+		for (NCollection_List<const Message_ProgressScope*>::Iterator it(
+				 aScopes);
+			it.More(); it.Next()) {
 			const Message_ProgressScope* aPS = it.Value();
 			if (!aPS->Name())
 				continue; // skip unnamed scopes
@@ -120,11 +128,11 @@ public:
 	}
 
 	/**
-	 * @brief  Should return True if user has sent a break signal. This method can be called
-	 * concurrently, thus implementation should be thread-safe.
+	 * @brief  Should return True if user has sent a break signal. This method
+	 * can be called concurrently, thus implementation should be thread-safe.
 	 *
-	 * @return {Standard_EXPORT}  : Defines platform-specific pre-processor macros necessary for
-	 * correct compilation.
+	 * @return {Standard_EXPORT}  : Defines platform-specific pre-processor
+	 * macros necessary for correct compilation.
 	 */
 	Standard_EXPORT virtual Standard_Boolean UserBreak() Standard_OVERRIDE {
 		return myProgress->getTerminateIndicator();

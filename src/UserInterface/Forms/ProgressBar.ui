@@ -58,7 +58,7 @@
       <number>4</number>
      </property>
      <property name="leftMargin">
-      <number>2</number>
+      <number>4</number>
      </property>
      <item>
       <widget class="QProgressBar" name="progressBar">
