@@ -22,6 +22,7 @@
 
 #include <QString>
 #include <variant>
+#include <stdexcept>
 
 namespace ItemTypes {
 
