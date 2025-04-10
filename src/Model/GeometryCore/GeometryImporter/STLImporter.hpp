@@ -2,7 +2,6 @@
 #define STLImporter_HPP
 
 #include "GeometryImporter.hpp"
-#include "ProgressBar.hpp"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
@@ -22,7 +21,7 @@
 namespace GeometryCore {
     class STLImporter : public GeometryImporter{
         public:
-            void import(const std::string& filename, QWidget* parent) override;
+            void import(const std::string& filename, const ModelSubject& aModelSubject) override;
         private:
     };
 }

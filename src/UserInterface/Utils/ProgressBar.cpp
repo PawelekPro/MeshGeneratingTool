@@ -42,7 +42,6 @@ ProgressBar::~ProgressBar() {
 
 void ProgressBar::initialize() {
 	this->show();
-	// fix for button not being displayed
 	this->ui->stopButton->show();
 	setValue(0);
 }
@@ -50,11 +49,13 @@ void ProgressBar::initialize() {
 //----------------------------------------------------------------------------
 void ProgressBar::setValue(const int value) {
 	this->ui->progressBar->setValue(value);
+	this->ui->progressBar->repaint();
 }
 
 //----------------------------------------------------------------------------
 void ProgressBar::setProgressMessage(const std::string text) {
 	this->ui->message->setText(QString::fromStdString(text));
+	this->ui->message->repaint();
 }
 
 //----------------------------------------------------------------------------

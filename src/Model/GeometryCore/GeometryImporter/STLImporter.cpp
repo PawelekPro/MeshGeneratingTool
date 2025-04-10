@@ -1,11 +1,13 @@
 #include "STLImporter.hpp"
+#include "ProgressEvent.hpp"
+#include "ModelSubject.hpp"
 
-void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* parent){
-	ProgressBar* progressBar = qobject_cast<ProgressBar*>(parent);
-	progressBar->initialize();
-	progressBar->setProgressMessage("Converting to faces...");
+void GeometryCore::STLImporter::import(const std::string& aFileName, const ModelSubject& aModelSubject){
+	std::string actionLabel = "Importing STL from file: " + aFileName;
+	ProgressEvent progressEvent("Importing STL geometry: " + aFileName, 0);
+	aModelSubject.publishEvent(progressEvent);
 
-	TCollection_AsciiString aName((Standard_CString)fileName.data());
+	TCollection_AsciiString aName((Standard_CString)aFileName.data());
 	OSD_Path aFile(aName);
 
 	BRepBuilderAPI_Sewing shapeSewer;
@@ -21,7 +23,8 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 
 	for (Standard_Integer i = 1; i <= numberOfTriangles; i++) {
 		int progress = static_cast<int>(100.0 * i / numberOfTriangles);
-		progressBar->setValue(progress);
+		progressEvent.value = progress;
+		aModelSubject.publishEvent(progressEvent);
 
 		Poly_Triangle triangle = aSTLMesh->Triangle(i);
 
@@ -50,13 +53,15 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 		}
 	}
 
-	// progressBar->setValue(0);
-	// progressBar->setProgressMessage("Sewing faces...");
+	progressEvent.label = "Sewing faces...";
+	progressEvent.value = 0;
+	aModelSubject.publishEvent(progressEvent);
 
 	shapeSewer.Perform();
 	shape = shapeSewer.SewedShape();
 
-	// progressBar->setProgressMessage("Extracting shells...");
+	progressEvent.label = "Extracting shells...";
+	aModelSubject.publishEvent(progressEvent);
 
 	BRepBuilderAPI_MakeSolid solidmaker;
 	TopTools_IndexedMapOfShape shellMap;
@@ -64,8 +69,10 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 
 	unsigned int counter = 0;
 	for (int ishell = 1; ishell <= shellMap.Extent(); ++ishell) {
-		// int progress = static_cast<int>(100.0 * ishell / shellMap.Extent());
-		// progressBar->setValue(progress);
+		
+		int progress = static_cast<int>(100.0 * ishell / shellMap.Extent());
+		progressEvent.value = progress;
+		aModelSubject.publishEvent(progressEvent);
 
 		const TopoDS_Shell& shell = TopoDS::Shell(shellMap(ishell));
 		solidmaker.Add(shell);
@@ -77,11 +84,14 @@ void GeometryCore::STLImporter::import(const std::string& fileName, QWidget* par
 
 	std::cout << " -> shells found: " << counter << std::endl;
 
-	// progressBar->setProgressMessage("Converting to solid...");
+	progressEvent.label = "Converting to solid...";
+	aModelSubject.publishEvent(progressEvent);
 
 	TopoDS_Shape solid = solidmaker.Solid();
 
 	std::cout << " -> done." << std::endl;
 
-	progressBar->finish();
+	progressEvent.value = 100;
+	progressEvent.label = "Done.";
+	aModelSubject.publishEvent(progressEvent);
 }

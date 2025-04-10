@@ -44,12 +44,12 @@ class MeshActionsHandler : public QObject {
 	Q_OBJECT
 
 public:
-	MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface,
-		CommandManager* aCommandManager,
-		RenderSignalSender* aSignalSender,
-		TreeStructure* aTreeStructure,
-		ProgressBar* aProgressBar,
-		QObject* aParent);
+
+    MeshActionsHandler(std::shared_ptr<ModelInterface> aModelInterface, 
+                       CommandManager* aCommandManager,
+                       RenderSignalSender* aSignalSender,
+                       TreeStructure* aTreeStructure,
+                       QObject* aParent);
 
 private:
 	std::shared_ptr<ModelInterface> _modelInterface;
@@ -57,8 +57,7 @@ private:
 	CommandManager* _commandManager;
 	RenderSignalSender* _signalSender;
 
-	TreeStructure* _treeStructure;
-	ProgressBar* _progressBar;
+    TreeStructure* _treeStructure;
 
 public slots:
 	/**

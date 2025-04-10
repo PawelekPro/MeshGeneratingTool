@@ -1,6 +1,7 @@
 add_subdirectory(GeometryCore)
 add_subdirectory(MeshCore)
 add_subdirectory(ModelInterface)
+add_subdirectory(ModelEvents)
 
 ADD_LIBRARY(Model
         Model.cpp
