@@ -23,12 +23,10 @@
 #include "GeometrySignalSender.hpp"
 
 ImportGeometryCommand::ImportGeometryCommand(std::shared_ptr<ModelInterface> aModelInterface,
-    ProgressBar* aProgressBar,
     GeometrySignalSender* aSignalSender,
     TreeStructure* aTreeStructure,
     const QString& aFilePath) :
     Command(),
-    _progressBar(aProgressBar),
     _signalSender(aSignalSender),
     _importedFilePath(aFilePath),
     _treeStructure(aTreeStructure),
@@ -36,7 +34,7 @@ ImportGeometryCommand::ImportGeometryCommand(std::shared_ptr<ModelInterface> aMo
     _treeItem(nullptr){}
 
 void ImportGeometryCommand::execute(){
-    _modelInterface->importSTEP(_importedFilePath, _progressBar);
+    _modelInterface->importSTEP(_importedFilePath);
     if(!_treeItem){
         _treeItem = _treeStructure->addImportSTEPItem(_importedFilePath);
     } else {

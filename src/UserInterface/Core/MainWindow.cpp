@@ -23,7 +23,8 @@
 #include "GeometryActionsHandler.hpp"
 #include "MeshActionsHandler.hpp"
 
-#include "ProgressBarPlugin.hpp"
+#include "ProgressObserver.hpp"
+// #include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
 MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
@@ -48,7 +49,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	_renderSignalHandler
 		= new Rendering::RenderSignalHandler(QVTKRender, _modelInterface->modelDataView(), this);
 	_modelHandler = new ModelActionsHandler(
-		_modelInterface, _renderSignalSender, ui->treeWidget, progressBar, this);
+		_modelInterface, _renderSignalSender, ui->treeWidget, this);
 
 	this->ui->statusBar->addWidget(progressBar);
 
@@ -61,6 +62,7 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 	this->connectActionsToModel();
 	this->connectModelToRenderWindow(_renderSignalSender, _renderSignalHandler);
 
+	this->setupModelObservers();
 	AppTheme& appTheme = AppTheme::getInstance();
 	appTheme.initializeAppStylesheet();
 }
@@ -74,6 +76,22 @@ MainWindow::~MainWindow() {
 	delete progressBar;
 	delete ui;
 }
+
+void MainWindow::setupModelObservers(){
+	std::shared_ptr<ProgressObserver> modelObserver = std::make_shared<ProgressObserver>();
+	modelObserver->setProgressCallback([this](const std::string& aLabel, int progress){
+		if(progress == 0){
+			this->progressBar->initialize();
+		}
+		this->progressBar->setValue(progress);
+		this->progressBar->setProgressMessage(aLabel);
+		if (progress == 100){
+			this->progressBar->finish();
+		}
+	});
+	_modelInterface->addObserver(modelObserver);
+}
+
 
 //----------------------------------------------------------------------------
 void MainWindow::connectActionsToModel() {

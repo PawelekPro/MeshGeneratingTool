@@ -25,7 +25,20 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+
 #include "DocumentHandler.hpp"
+#include "ModelSubject.hpp"
+#include <memory>
+#include <vector>
+
+#ifdef _WIN32
+#include <gmsh.h_cwrap>
+#endif
+
+#ifdef linux
+#include <gmsh.h>
+#endif
+class EventObserver;
 #include "Geometry.hpp"
 
 #include <unordered_map>
@@ -37,6 +50,7 @@ class MGTMesh_ProxyMesh;
 class Model {
 public:
 	std::string _modelName;
+	ModelSubject subject;
 	GeometryCore::Geometry geometry;
 	// MeshCore::Mesh mesh;
 
@@ -46,9 +60,11 @@ public:
 	Model(const Model& aOther) = delete;
 	Model& operator=(const Model& aOther) = delete;
 
-	//--------Geometry interface-----//
-	void importSTEP(const std::string& filePath, QWidget* progressBar);
-	void importSTL(const std::string& filePath, QWidget* progressBar);
+	void addObserver(std::shared_ptr<EventObserver> aObserver);
+
+	//--------Geometry interface-----// 
+    void importSTEP(const std::string& filePath);
+    void importSTL(const std::string& filePath);
 
 	//--------Meshing interface-----//
 	bool generateMesh(const MGTMesh_Algorithm* algorithm);
