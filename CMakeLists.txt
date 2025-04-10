@@ -16,6 +16,18 @@ option(ENABLE_GMSH "Enable GMSH" OFF)
 # Set CMake to build in Debug mode
 set(CMAKE_BUILD_TYPE Debug)
 
+if(WIN32)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /Od /DDEBUG")
+        message(STATUS "Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+    endif()
+else()
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -DDEBUG")
+        message(STATUS "Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+    endif()
+endif()
+
 set(FORMS_PATH ${CMAKE_SOURCE_DIR}/src/UserInterface/Forms)
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_PATH})
@@ -55,11 +67,11 @@ MESSAGE(STATUS "----------------------------------------------------------------
 ######################################################################
 if (WIN32)
     find_package(VTK QUIET REQUIRED CommonCore CommonDataModel
-            CommonColor FiltersCore FiltersSources InteractionStyle
-            RenderingContextOpenGL2 RenderingCore RenderingFreeType
-            RenderingGL2PSOpenGL2 RenderingOpenGL2 IOGeometry
-            InfovisLayout ViewsInfovis GUISupportQt RenderingQt RenderingAnnotation)
-else ()
+    CommonColor FiltersCore FiltersSources InteractionStyle
+    RenderingContextOpenGL2 RenderingCore RenderingFreeType
+    RenderingGL2PSOpenGL2 RenderingOpenGL2 IOGeometry
+    InfovisLayout ViewsInfovis GUISupportQt RenderingQt RenderingAnnotation FiltersGeometry)
+else()
     find_package(VTK QUIET REQUIRED vtkCommonCore vtkCommonDataModel
             vtkCommonColor vtkFiltersCore vtkFiltersSources vtkInteractionStyle
             vtkInteractionWidgets vtkRenderingAnnotation vtkRenderingContextOpenGL2
@@ -91,8 +103,9 @@ if (WIN32)
     if (OpenCASCADE_INCLUDE_DIR)
         include_directories(SYSTEM ${OpenCASCADE_INCLUDE_DIR})
         link_directories(${OpenCASCADE_LIBRARY_DIR})
-    endif ()
-else ()
+        set(OCC_LIBRARIES ${OpenCASCADE_LIBRARIES})
+    endif()
+else()
     find_package(OCC REQUIRED)
     set(OCC_INCLUDE_DIR "/opt/opencascade/include/opencascade")
     if (OCC_INCLUDE_DIR)
