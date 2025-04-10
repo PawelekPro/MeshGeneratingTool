@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,19 +26,11 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-
 #include "DocumentHandler.hpp"
 #include "ModelSubject.hpp"
 #include <memory>
 #include <vector>
 
-#ifdef _WIN32
-#include <gmsh.h_cwrap>
-#endif
-
-#ifdef linux
-#include <gmsh.h>
-#endif
 class EventObserver;
 #include "Geometry.hpp"
 
@@ -62,9 +55,9 @@ public:
 
 	void addObserver(std::shared_ptr<EventObserver> aObserver);
 
-	//--------Geometry interface-----// 
-    void importSTEP(const std::string& filePath);
-    void importSTL(const std::string& filePath);
+	//--------Geometry interface-----//
+	void importSTEP(const std::string& filePath);
+	void importSTL(const std::string& filePath);
 
 	//--------Meshing interface-----//
 	bool generateMesh(const MGTMesh_Algorithm* algorithm);
@@ -76,7 +69,8 @@ private:
 private:
 	GeometryCore::PartsMap _shapesMap;
 
-	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> _meshObjectsMap;
+	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>>
+		_meshObjectsMap;
 	std::shared_ptr<MGTMesh_ProxyMesh> _proxyMesh;
 };
 
