@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,13 @@
 #include <TopoDS_Edge.hxx>
 
 //----------------------------------------------------------------------------
-MGTMesh_Algorithm::MGTMesh_Algorithm(int schemeId)
+MGTMesh_Algorithm::MGTMesh_Algorithm(const int schemeId)
 	: MGTMesh_Scheme(schemeId) {
 	_error = COMPERR_OK;
 }
 
 //----------------------------------------------------------------------------
-MGTMesh_Algorithm::~MGTMesh_Algorithm() { }
+MGTMesh_Algorithm::~MGTMesh_Algorithm() = default;
 
 //----------------------------------------------------------------------------
 double MGTMesh_Algorithm::EdgeLength(const TopoDS_Edge& E) {
@@ -50,7 +51,8 @@ double MGTMesh_Algorithm::EdgeLength(const TopoDS_Edge& E) {
 	if (curve.IsNull())
 		return 0.;
 
-	GeomAdaptor_Curve AdaptCurve(curve, UMin, UMax); // range is important for periodic curves
+	GeomAdaptor_Curve AdaptCurve(
+		curve, UMin, UMax); // range is important for periodic curves
 	double length = GCPnts_AbscissaPoint::Length(AdaptCurve, UMin, UMax);
 	return length;
 }

@@ -21,15 +21,16 @@
 #include "ui_ProgressBar.h"
 
 //----------------------------------------------------------------------------
-ProgressBar::ProgressBar(QWidget* parent)
+ProgressBar::ProgressBar(QWidget *parent)
 	: QWidget(parent)
-	, ui(new Ui::ProgressBar) {
+	  , ui(new Ui::ProgressBar) {
 	ui->setupUi(this);
 
 	this->ui->progressBar->setMinimum(0);
 	this->ui->progressBar->setMaximum(100);
 
-	connect(this->ui->stopButton, &QPushButton::clicked, this, &ProgressBar::handleStopButtonClicked);
+	connect(this->ui->stopButton, &QPushButton::clicked, this,
+	        &ProgressBar::handleStopButtonClicked);
 
 	this->hide();
 }

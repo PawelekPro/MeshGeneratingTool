@@ -20,7 +20,7 @@
 #ifndef FILEDIALOGUTILS_HPP
 #define FILEDIALOGUTILS_HPP
 
-#include <functional>         
+#include <functional>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QWidget>
@@ -30,10 +30,9 @@
  * @brief namespace for functions that create filedialog window
  */
 namespace FileDialogUtils {
-
     constexpr auto FilterSTEP = "STEP Files (*.step *.stp)";
-    constexpr auto FilterSTL  = "STL Files (*.stl)";
-    constexpr auto FilterAll  = "All Files (*)";
+    constexpr auto FilterSTL = "STL Files (*.stl)";
+    constexpr auto FilterAll = "All Files (*)";
 
     /**
      * @brief Creates a filedialog window and retruns path to file selected by the user.
@@ -41,7 +40,8 @@ namespace FileDialogUtils {
      * @param filter - file extension filter - use FileDialogUtils::filterName.
      * @param parent - parent that will be assigned to filedialog window.
      */
-    QString getFileSelection(const QString& actionName, const QString& filter, QWidget* parent = nullptr);
+    QString getFileSelection(const QString &actionName, const QString &filter,
+                             QWidget *parent = nullptr);
 
     /**
      * @brief Creates a filedialog window and calls action with the selected file path as an argument
@@ -51,9 +51,8 @@ namespace FileDialogUtils {
      * @param parent - parent that will be assigned to filedialog window.
      */
     int executeWithFileSelection(std::function<void(QString)> action,
-                                 const QString& actionName,
-                                 const QString& filter,
-                                 QWidget* parent = nullptr);
-
+                                 const QString &actionName,
+                                 const QString &filter,
+                                 QWidget *parent = nullptr);
 }
 #endif

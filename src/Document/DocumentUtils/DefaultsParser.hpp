@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
 #ifndef DEFAULTSPARSER_HPP
 #define DEFAULTSPARSER_HPP
 
-#include "DocItemTypes.hpp"
 #include "ComboBoxTypes.hpp"
+#include "DocItemTypes.hpp"
 #include "document.h"
 
 #include <QDomElement>
@@ -29,15 +30,24 @@
 
 namespace DefaultsParser {
 
-    QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Root& aItemType);
-    QDomElement getItemProperties(QDomDocument& aDomDoc, const ItemTypes::Sub& aItemType);
+QDomElement getItemProperties(
+	QDomDocument& aDomDoc, const ItemTypes::Root& aItemType);
+QDomElement getItemProperties(
+	QDomDocument& aDomDoc, const ItemTypes::Sub& aItemType);
+QDomElement getItemProperties(
+	const QDomDocument& dom_document, ItemTypes::Root aItemType);
 
-    QStringList getComboBoxList(const QString& aComboBoxName); 
-    QStringList getComboBoxList(const ComboBoxTypes& aComboBoxType); //TODO: delete this and comboBoxTypes?
+QStringList getComboBoxList(const QString& aComboBoxName);
+QStringList getComboBoxList(
+	const ComboBoxTypes& aComboBoxType); // TODO: delete this and comboBoxTypes?
 
-    QDomElement getPropertiesFromJson(QDomDocument& aDomDoc, const rapidjson::Document& aDoc, const QString& aParentEntry);
-    QDomElement jsonValueToProperty(QDomDocument& aDomDoc, const rapidjson::Value& aJsonPropValue);
-    QStringList getComboBoxListFromJson(const rapidjson::Document& aJsonDoc, const QString& aComboBoxEntry);
+QDomElement getPropertiesFromJson(QDomDocument& aDomDoc,
+	const rapidjson::Document& aDoc, const QString& aParentEntry);
+QDomElement jsonValueToProperty(
+	QDomDocument& aDomDoc, const rapidjson::Value& aJsonPropValue);
+QStringList getComboBoxListFromJson(
+	const rapidjson::Document& aJsonDoc, const QString& aComboBoxEntry);
+
 };
 
 #endif

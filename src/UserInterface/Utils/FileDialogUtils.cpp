@@ -19,21 +19,25 @@
 
 #include "FileDialogUtils.hpp"
 
-QString FileDialogUtils::getFileSelection(const QString& actionName, const QString& filter, QWidget* parent) {
-        QFileDialog dlg(parent);
-        dlg.setWindowTitle("Select file to " + actionName);
-        dlg.setNameFilter(filter);
+QString FileDialogUtils::getFileSelection(const QString &actionName,
+                                          const QString &filter,
+                                          QWidget *parent) {
+    QFileDialog dlg(parent);
+    dlg.setWindowTitle("Select file to " + actionName);
+    dlg.setNameFilter(filter);
 
-        QString fname = dlg.getOpenFileName(parent, actionName, "", filter);
-        return fname;    
+    QString fname = dlg.getOpenFileName(parent, actionName, "", filter);
+    return fname;
 }
 
 
-int FileDialogUtils::executeWithFileSelection(std::function<void(QString)> action, const QString& actionName, const QString& filter, QWidget* parent) {
-        QString fname = getFileSelection(actionName, filter, parent);
-        if (!fname.isEmpty()) {
-            action(fname);
-            return QMessageBox::Accepted;
-        }
-        return QMessageBox::Rejected;
+int FileDialogUtils::executeWithFileSelection(
+    std::function<void(QString)> action, const QString &actionName,
+    const QString &filter, QWidget *parent) {
+    QString fname = getFileSelection(actionName, filter, parent);
+    if (!fname.isEmpty()) {
+        action(fname);
+        return QMessageBox::Accepted;
+    }
+    return QMessageBox::Rejected;
 }

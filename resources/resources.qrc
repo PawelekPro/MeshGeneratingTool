@@ -1,6 +1,9 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/Solution.svg</file>
+    <file>icons/Mesh.svg</file>
     <file>icons/Volume_mesh.svg</file>
+    <file>icons/Geometry.svg</file>
     <file>icons/Surface_mesh.svg</file>
     <file>icons/Points_representation.svg</file>
     <file>icons/Shaded_representation.svg</file>
@@ -48,6 +51,7 @@
     <file>themes/default-theme.qss</file>
   </qresource>
   <qresource prefix="templates">
+    <file>templates/DisplayRules.xml</file>
     <file>templates/ComboboxModels.json</file>
     <file>templates/RootItemsSetup.json</file>
     <file>templates/SubItemsSetup.json</file>

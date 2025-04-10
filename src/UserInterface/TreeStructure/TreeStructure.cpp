@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +29,7 @@ TreeStructure::TreeStructure(QWidget* parent)
 	: QTreeWidget(parent)
 	, _treeItemFactory(new TreeItemFactory(this))
 	, _modelHandler(nullptr)
-	, _rootItems({ { ItemTypes::Root::Geometry,
-					   _treeItemFactory->createRootItem(ItemTypes::Root::Geometry) },
-		  { ItemTypes::Root::Mesh, _treeItemFactory->createRootItem(ItemTypes::Root::Mesh) },
-		  { ItemTypes::Root::Solution,
-			  _treeItemFactory->createRootItem(ItemTypes::Root::Solution) },
-		  { ItemTypes::Root::Results,
-			  _treeItemFactory->createRootItem(ItemTypes::Root::Results) } }) {
+	, _rootItems({}) {
 	QHeaderView* header = this->header();
 	header->setSectionResizeMode(QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(QHeaderView::Interactive);
@@ -44,8 +39,21 @@ TreeStructure::TreeStructure(QWidget* parent)
 	this->setColumnWidth(static_cast<int>(Column::Label), 10);
 	this->setColumnWidth(static_cast<int>(Column::Visible), 10);
 	this->setColumnWidth(static_cast<int>(Column::Actor), 10);
+
 	this->header()->setVisible(true); // Ensure headers are visible
 	this->header()->setSectionResizeMode(QHeaderView::Stretch);
+}
+
+void TreeStructure::Initialize() {
+
+	_rootItems[ItemTypes::Root::Geometry]
+		= _treeItemFactory->createRootItem(ItemTypes::Root::Geometry);
+	_rootItems[ItemTypes::Root::Mesh]
+		= _treeItemFactory->createRootItem(ItemTypes::Root::Mesh);
+	_rootItems[ItemTypes::Root::Solution]
+		= _treeItemFactory->createRootItem(ItemTypes::Root::Solution);
+	_rootItems[ItemTypes::Root::Results]
+		= _treeItemFactory->createRootItem(ItemTypes::Root::Results);
 
 	std::for_each(_rootItems.begin(), _rootItems.end(),
 		[this](auto item) { this->addTopLevelItem(item.second); });
@@ -68,7 +76,8 @@ TreeStructure::~TreeStructure() {
 }
 
 //--------------------------------------------------------------------------------------
-TreeItem* TreeStructure::addSubItem(TreeItem* aParentItem, const ItemTypes::Sub& aSubType) {
+TreeItem* TreeStructure::addSubItem(
+	TreeItem* aParentItem, const ItemTypes::Sub& aSubType) {
 	TreeItem* newItem = _treeItemFactory->createSubItem(aParentItem, aSubType);
 	_subItems[aSubType].append(newItem);
 	return newItem;
@@ -81,8 +90,10 @@ TreeItem* TreeStructure::addImportSTEPItem(const QString& aFilePath) {
 }
 
 TreeItem* TreeStructure::addElementSizingItem(
-	const std::vector<int>& aShapesTags, const IVtk_SelectionMode& aSelectionType) {
-	TreeItem* newItem = _treeItemFactory->createItemElementSizing(aShapesTags, aSelectionType);
+	const std::vector<int>& aShapesTags,
+	const IVtk_SelectionMode& aSelectionType) {
+	TreeItem* newItem = _treeItemFactory->createItemElementSizing(
+		aShapesTags, aSelectionType);
 	_subItems[ItemTypes::Mesh::ElementSizing].append(newItem);
 	return newItem;
 }
@@ -100,7 +111,9 @@ QList<TreeItem*> TreeStructure::getSubItems(const ItemTypes::Sub& aSubType) {
 	return {};
 }
 
-void TreeStructure::renameItem(QTreeWidgetItem* item) { this->editItem(item, 0); }
+void TreeStructure::renameItem(QTreeWidgetItem* item) {
+	this->editItem(item, 0);
+}
 
 void TreeStructure::removeSubItem(TreeItem* item) {
 	if (item->isRoot()) {
@@ -130,7 +143,8 @@ void TreeStructure::deleteSubItem(TreeItem* aItemToDelete) {
 	delete aItemToDelete;
 }
 
-void TreeStructure::addExistingItem(TreeItem* itemToAdd, TreeItem* aParentItem) {
+void TreeStructure::addExistingItem(
+	TreeItem* itemToAdd, TreeItem* aParentItem) {
 	if (!itemToAdd || !aParentItem) {
 		qWarning("Invalid item or parent item passed to addExistingItem!");
 		return;

@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,10 @@ public:
 	void applyMeshSettings();
 	void applyElementSizings();
 
-	std::pair<std::vector<int>, double> parseElementSizing(const QDomElement& aSizingElement);
-	std::unique_ptr<MGTMesh_Algorithm> generateMeshAlgorithm(bool surfaceMesh = false) const;
+	std::pair<std::vector<int>, double> parseElementSizing(
+		const QDomElement& aSizingElement);
+	std::unique_ptr<MGTMesh_Algorithm> generateMeshAlgorithm(
+		bool surfaceMesh = false) const;
 
 private:
 	Model& _model;

@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,32 +19,36 @@
  */
 
 #include "WidgetFactory.hpp"
+#include "CheckBoxWidget.hpp"
 #include "ColorPickerWidget.hpp"
 #include "ComboBoxWidget.hpp"
 #include "DoubleLineWidget.hpp"
 #include "EntityPickWidget.hpp"
 #include "IntLineWidget.hpp"
-#include "LabelWidget.hpp"
 #include "RibbonBarWidget.hpp"
+#include "TextLineWidget.hpp"
 
 namespace WidgetFactory {
 
-BaseWidget* createWidget(const QString& widgetType, QWidget* parent) {
-	if (widgetType == "ColorPickerWidget") {
+BaseWidget* createWidget(const QString& widgetName, QWidget* parent) {
+	if (widgetName == "ColorPickerWidget") {
 		return new ColorPickerWidget(parent);
-	} else if (widgetType == "ComboBoxWidget") {
+	} else if (widgetName == "ComboBoxWidget") {
 		return new ComboBoxWidget(parent);
-	} else if (widgetType == "DoubleLineWidget") {
+	} else if (widgetName == "DoubleLineWidget") {
 		return new DoubleLineWidget(parent);
-	} else if (widgetType == "EntityPickWidget") {
+	} else if (widgetName == "EntityPickWidget") {
 		return new EntityPickWidget(parent);
-	} else if (widgetType == "IntLineWidget") {
+	} else if (widgetName == "IntLineWidget") {
 		return new IntLineWidget(parent);
-	} else if (widgetType == "LabelWidget") {
-		return new LabelWidget(parent);
+	} else if (widgetName == "TextLineWidget") {
+		return new TextLineWidget(parent);
+	} else if (widgetName == "CheckBoxWidget") {
+		return new CheckBoxWidget(parent);
 	}
 
-	std::cerr << widgetType.toStdString() << " could not be found in WidgetFactory" << std::endl;
+	std::cerr << widgetName.toStdString()
+			  << " could not be found in WidgetFactory" << std::endl;
 	return nullptr; // Return nullptr if widget type not found
 }
 }

@@ -24,7 +24,6 @@
 
 #include <QDoubleValidator>
 #include <QModelIndex>
-#include <QObject>
 #include <QWidget>
 
 /**
@@ -52,7 +51,7 @@ public:
 	/**
 	 * @brief Destroys the DoubleLineWidget object.
 	 */
-	~DoubleLineWidget() {};
+	~DoubleLineWidget() override = default;
 
 	/**
 	 * @brief Sets the QModelIndex associated with the DoubleLineWidget and initializes its data.
@@ -73,7 +72,7 @@ private:
 	QModelIndex _index; /**< The QModelIndex associated with the DoubleLineWidget. */
 
 public slots:
-	/**
+	 /*
 	 * @brief Slot function invoked when the value of the DoubleLineWidget changes.
 	 *
 	 * This function is called when the value of the DoubleLineWidget changes.

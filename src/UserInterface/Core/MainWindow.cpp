@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,15 @@
 // #include "ProgressBarPlugin.hpp"
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
+MainWindow::MainWindow(
+	std::shared_ptr<ModelInterface> aModelInterface, QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 	, _modelInterface(aModelInterface) {
 
 	ui->setupUi(this);
+	ui->treeWidget->Initialize();
+
 	// Set initial sizes of the splitter sections
 	QList<int> sizes;
 	sizes << 100 << 400;
@@ -55,7 +59,8 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 
 	this->ui->treeWidget->setModelHandler(_modelHandler);
 
-	// Note: ribbonBar needs _modelHandler during initializing to connect signals
+	// Note: ribbonBar needs _modelHandler during initializing to connect
+	// signals
 	this->ui->ribbonBar->setModelHandler(_modelHandler);
 	this->ui->ribbonBar->initialize();
 
@@ -68,7 +73,8 @@ MainWindow::MainWindow(std::shared_ptr<ModelInterface> aModelInterface, QWidget*
 }
 //----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
-	QObject::disconnect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged, this,
+	QObject::disconnect(this->ui->treeWidget,
+		&QTreeWidget::itemSelectionChanged, this,
 		&MainWindow::onItemSelectionChanged);
 
 	delete _modelHandler;
@@ -96,15 +102,17 @@ void MainWindow::setupModelObservers(){
 //----------------------------------------------------------------------------
 void MainWindow::connectActionsToModel() {
 
-	connect(ui->actionUndo, &QAction::triggered, _modelHandler, &ModelActionsHandler::undo);
+	connect(ui->actionUndo, &QAction::triggered, _modelHandler,
+		&ModelActionsHandler::undo);
 
-	connect(ui->actionImportSTEP, &QAction::triggered, _modelHandler->_geometryHandler,
-		&GeometryActionsHandler::importSTEP);
+	connect(ui->actionImportSTEP, &QAction::triggered,
+		_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTEP);
 
-	connect(ui->actionImportSTL, &QAction::triggered, _modelHandler->_geometryHandler,
-		&GeometryActionsHandler::importSTL);
+	connect(ui->actionImportSTL, &QAction::triggered,
+		_modelHandler->_geometryHandler, &GeometryActionsHandler::importSTL);
 
-	connect(&this->buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this,
+	connect(&this->buttonGroup,
+		QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this,
 		&MainWindow::handleSelectorButtonClicked);
 
 	connect(this->ui->treeWidget, &QTreeWidget::itemSelectionChanged, this,
@@ -112,42 +120,48 @@ void MainWindow::connectActionsToModel() {
 }
 
 //----------------------------------------------------------------------------
-void MainWindow::connectModelToRenderWindow(
-	RenderSignalSender* aSignalSender, Rendering::RenderSignalHandler* aSignalHandler) {
-	// TODO: unify the handler so that both are set in the same way (now one is a field, the other
-	// via method)
-	// TODO: Fun task - encapsulate the connections in a helper map/class/namespace
+void MainWindow::connectModelToRenderWindow(RenderSignalSender* aSignalSender,
+	Rendering::RenderSignalHandler* aSignalHandler) {
+	// TODO: unify the handler so that both are set in the same way (now one is
+	// a field, the other via method)
+	// TODO: Fun task - encapsulate the connections in a helper
+	// map/class/namespace
 	GeometrySignalSender* geometrySignals = aSignalSender->geometrySignals;
 	Rendering::GeometryRenderHandler* geoRender = aSignalHandler->geometry();
 
 	MeshSignalSender* meshSignals = aSignalSender->meshSignals;
 	Rendering::MeshRenderHandler* meshRender = aSignalHandler->mesh();
 
-	QObject::connect(geometrySignals, &GeometrySignalSender::geometryImported, geoRender,
-		&Rendering::GeometryRenderHandler::addAllShapesToRenderer);
+	QObject::connect(geometrySignals, &GeometrySignalSender::geometryImported,
+		geoRender, &Rendering::GeometryRenderHandler::addAllShapesToRenderer);
 
 	QObject::connect(meshSignals, &MeshSignalSender::meshGenerated, meshRender,
 		&Rendering::MeshRenderHandler::showMeshActor);
 
-	QObject::connect(ui->actionShowMesh, &QAction::toggled, [geoRender, meshRender](bool checked) {
-		if (checked) {
-			meshRender->showMeshActor();
-		} else {
-			geoRender->showExistingShapes();
-		}
-	});
+	QObject::connect(ui->actionShowMesh, &QAction::toggled,
+		[geoRender, meshRender](bool checked) {
+			if (checked) {
+				meshRender->showMeshActor();
+			} else {
+				geoRender->showExistingShapes();
+			}
+		});
 
-	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectedShapes, geoRender,
+	QObject::connect(geometrySignals,
+		&GeometrySignalSender::requestSelectedShapes, geoRender,
 		&Rendering::GeometryRenderHandler::selectedShapesRequested);
 
-	QObject::connect(geoRender, &Rendering::GeometryRenderHandler::sendSelectedShapes,
-		geometrySignals, &GeometrySignalSender::receiveSelectedShapes);
+	QObject::connect(geoRender,
+		&Rendering::GeometryRenderHandler::sendSelectedShapes, geometrySignals,
+		&GeometrySignalSender::receiveSelectedShapes);
 
-	QObject::connect(geometrySignals, &GeometrySignalSender::requestSelectionType, geoRender,
+	QObject::connect(geometrySignals,
+		&GeometrySignalSender::requestSelectionType, geoRender,
 		&Rendering::GeometryRenderHandler::selectionTypeRequested);
 
-	QObject::connect(geoRender, &Rendering::GeometryRenderHandler::sendSelctionType,
-		geometrySignals, &GeometrySignalSender::receiveSelectionType);
+	QObject::connect(geoRender,
+		&Rendering::GeometryRenderHandler::sendSelctionType, geometrySignals,
+		&GeometrySignalSender::receiveSelectionType);
 }
 
 //----------------------------------------------------------------------------
@@ -162,6 +176,7 @@ void MainWindow::handleSelectorButtonClicked(QAbstractButton* button) {
 	// this->QVTKRender->setActiveRenderer(static_cast<Rendering::Renderers>(
 	// 	buttonGroup.id(button)));
 }
+
 //----------------------------------------------------------------------------
 void MainWindow::onItemSelectionChanged() {
 	QList<QTreeWidgetItem*> itemsList = this->ui->treeWidget->selectedItems();
@@ -184,7 +199,8 @@ void MainWindow::onItemSelectionChanged() {
 			header->setStretchLastSection(true);
 			header->setSectionResizeMode(QHeaderView::Interactive);
 		} else {
-			qDebug() << "Selected item is not a TreeItem or has a null PropertiesModel pointer.";
+			qDebug() << "Selected item is not a TreeItem or has a null "
+						"PropertiesModel pointer.";
 		}
 	}
 }

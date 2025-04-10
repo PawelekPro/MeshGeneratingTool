@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,30 +21,40 @@
 #ifndef BASEWIDGET_HPP
 #define BASEWIDGET_HPP
 
-class PropertiesModel;
-
-#include <QWidget>
 #include <QModelIndex>
+#include <QWidget>
+
+class PropertiesModel;
+class PropertyVisibilityManager;
+
 /**
  * @brief A base class for custom QWidget-based widgets.
  *
- * The BaseWidget class serves as a base class for custom widgets and defines a common interface
- * for setting the QModelIndex associated with the widget.
+ * The BaseWidget class serves as a base class for custom widgets and defines a
+ * common interface for setting the QModelIndex associated with the widget.
  *
- * This class is intended to be subclassed to create specialized widgets with specific functionality.
+ * This class is intended to be subclassed to create specialized widgets with
+ * specific functionality.
  *
- * @note This class inherits from QWidget and defines a pure virtual function setIndex(),
- *       which must be implemented by subclasses to set the QModelIndex associated with the widget.
+ * @note This class inherits from QWidget and defines a pure virtual function
+ * setIndex(), which must be implemented by subclasses to set the QModelIndex
+ * associated with the widget.
  */
 class BaseWidget : public QWidget {
 	Q_OBJECT
 public:
-	BaseWidget(QWidget* parent = nullptr)
-		: QWidget(parent) {};
-	virtual ~BaseWidget() {};
+	explicit BaseWidget(QWidget* parent = nullptr)
+		: QWidget(parent) { };
+	~BaseWidget() override = default;
+
 	virtual void setIndex(const QModelIndex& index) = 0;
 
+	void registerWithManager(PropertyVisibilityManager* manager) {
+		_visibilityManager = manager;
+	}
 
+protected:
+	PropertyVisibilityManager* _visibilityManager = nullptr;
 };
 
 #endif

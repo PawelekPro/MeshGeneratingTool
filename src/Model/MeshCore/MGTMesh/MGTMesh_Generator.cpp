@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +31,8 @@
 #include <memory>
 
 //----------------------------------------------------------------------------
-MGTMesh_Generator::MGTMesh_Generator(
-	const TopoDS_Shape& shape, const MGTMesh_Algorithm& algorithm,
-	MGTMesh_MeshObject* meshObject)
+MGTMesh_Generator::MGTMesh_Generator(const TopoDS_Shape& shape,
+	const MGTMesh_Algorithm& algorithm, MGTMesh_MeshObject* meshObject)
 	: _meshObject(meshObject)
 	, _shape(&shape)
 	, _algorithm(&algorithm) { }
@@ -48,7 +48,8 @@ MGTMesh_MeshObject* MGTMesh_Generator::GetOutputMesh() const {
 //----------------------------------------------------------------------------
 int MGTMesh_Generator::Compute() const {
 	if (_algorithm->GetEngineLib() == MGTMesh_Scheme::Engine::NETGEN) {
-		const auto netgenAlg = std::make_unique<NetgenPlugin_Parameters>(_algorithm->GetID());
+		const auto netgenAlg
+			= std::make_unique<NetgenPlugin_Parameters>(*_algorithm);
 
 		NetgenPlugin_Mesher netgenMesher(_meshObject, *_shape, netgenAlg.get());
 		return netgenMesher.ComputeMesh();

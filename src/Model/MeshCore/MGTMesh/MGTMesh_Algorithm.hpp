@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,6 @@
 #ifndef MGTMESH_ALGORITHM_H
 #define MGTMESH_ALGORITHM_H
 
-
 #include "MGTMesh_Scheme.hpp"
 
 #include <TopoDS_Edge.hxx>
@@ -32,7 +32,8 @@
 class MGTMesh_Algorithm : public MGTMesh_Scheme {
 public:
 	explicit MGTMesh_Algorithm(int schemeId);
-	~MGTMesh_Algorithm() override;
+	MGTMesh_Algorithm(const MGTMesh_Algorithm&) = default;
+	~MGTMesh_Algorithm();
 
 	static double EdgeLength(const TopoDS_Edge& E);
 

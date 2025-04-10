@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,19 +41,19 @@ class NetgenPlugin_Parameters;
 
 class NETGENPLUGIN_EXPORT NetgenPlugin_Mesher {
 public:
-	NetgenPlugin_Mesher(
-		MGTMesh_MeshObject*, const TopoDS_Shape& shape, const NetgenPlugin_Parameters* algorithm);
+	NetgenPlugin_Mesher(MGTMesh_MeshObject*, const TopoDS_Shape& shape,
+		const NetgenPlugin_Parameters* algorithm);
 	~NetgenPlugin_Mesher();
 	int ComputeMesh();
 
-	static void PrepareOCCgeometry(netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
-	double GetDefaultMinSize(const TopoDS_Shape& geom, const double maxSize);
+	static void PrepareOCCgeometry(
+		netgen::OCCGeometry& occgeom, const TopoDS_Shape& shape);
 
-	static void RestrictLocalSize(
-		netgen::Mesh& ngMesh, const gp_XYZ& p, double size, const bool overrideMinH = true);
+	static void RestrictLocalSize(netgen::Mesh& ngMesh, const gp_XYZ& p,
+		double size, const bool overrideMinH = true);
 	static void SetLocalSize(netgen::OCCGeometry& occgeo, netgen::Mesh& ngMesh);
 
-	void SetDefaultParameters();
+	void SetMeshParameters();
 	void SetParameters(const MGTMeshUtils_ViscousLayers* layersScheme);
 
 private:

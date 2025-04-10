@@ -1308,3 +1308,13 @@ QActionGroup {
   background-color: transparent;
   border-radius: 5px;
 }
+
+
+CheckBoxWidget QWidget{
+  background-color: {{secondaryDarkColor}};
+}
+
+CheckBoxWidget QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2024 Krystian Fudali
+* Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+	(https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,121 +16,155 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
+*=============================================================================
+* File      : DocUtils.cpp
+* Author    : Paweł Gilewicz
+* Date      : 23/03/2025
+*/
+
 #include "DocUtils.hpp"
 
 #include <QDebug>
 
-namespace DocUtils{
+namespace DocUtils {
 
-    QDomElement getSubElement(const QDomElement& aParentElement, const QString& aSearchedElementText) {
-        if (aParentElement.isNull()) {
-            qWarning("Invalid element passed to getSubElement. Returning empty QDomElement.");
-            return QDomElement();
-        }
-        return aParentElement.firstChildElement(aSearchedElementText);
-    }
-
-    QString intsToString(const std::vector<int>& aIntsVec){
-        if (aIntsVec.empty()) {
-            return QString();
-        }
-        std::vector<QString> stringVec(aIntsVec.size());
-        std::transform(aIntsVec.begin(), aIntsVec.end(), stringVec.begin(),
-                    [](int value) { return QString::number(value); });
-
-        QString result = std::accumulate(stringVec.begin() + 1, stringVec.end(), stringVec[0],
-                        [](const QString& a, const QString& b) { return a + ", " + b; });
-
-        return result;
-    }
+QDomElement getSubElement(
+	const QDomElement& aParentElement, const QString& aSearchedElementText) {
+	if (aParentElement.isNull()) {
+		qWarning("Invalid element passed to getSubElement. Returning empty "
+				 "QDomElement.");
+		return QDomElement();
+	}
+	return aParentElement.firstChildElement(aSearchedElementText);
 }
 
-namespace Properties{
+QString intsToString(const std::vector<int>& aIntsVec) {
+	if (aIntsVec.empty()) {
+		return QString();
+	}
+	std::vector<QString> stringVec(aIntsVec.size());
+	std::transform(aIntsVec.begin(), aIntsVec.end(), stringVec.begin(),
+		[](int value) { return QString::number(value); });
 
-    QDomElement getProperty(const QDomElement& aParentElement, const QString& aPropertyName) {
-        if (aParentElement.isNull()) {
-            qWarning() << "Invalid element passed to getProperty. Returning empty QDomElement.";
-            return QDomElement();
-        }
+	QString result
+		= std::accumulate(stringVec.begin() + 1, stringVec.end(), stringVec[0],
+			[](const QString& a, const QString& b) { return a + ", " + b; });
 
-        QDomElement propertiesElement;
-        if (aParentElement.tagName() == "Properties") {
-            propertiesElement = aParentElement;
-        } else {
-            propertiesElement = DocUtils::getSubElement(aParentElement, QString("Properties"));
-        }
+	return result;
+}
+}
 
-        if (propertiesElement.isNull()) {
-            qWarning() << "No <Properties> element found under parent element" 
-                    << aParentElement.tagName() << ". Returning empty QDomElement.";
-            return QDomElement();
-        }
+namespace Properties {
 
-        QDomNodeList propertyNodes = propertiesElement.elementsByTagName("Property");
-        for (int i = 0; i < propertyNodes.count(); ++i) {
-            QDomElement propertyElement = propertyNodes.at(i).toElement();
-            if (
-                propertyElement.hasAttribute("name") &&
-                propertyElement.attribute("name") == aPropertyName) {
-                return propertyElement;
-            }
-        }
+QDomElement getProperty(
+	const QDomElement& aParentElement, const QString& aPropertyName) {
+	if (aParentElement.isNull()) {
+		qWarning() << "Invalid element passed to getProperty. Returning empty "
+					  "QDomElement.";
+		return QDomElement();
+	}
 
-        qWarning() << "No <Property> element with name" << aPropertyName 
-                << "found in <Properties> element under parent element" 
-                << aParentElement.tagName() << ". Returning empty QDomElement.";
-        return QDomElement();
-    }
+	QDomElement propertiesElement;
+	if (aParentElement.tagName() == "Properties") {
+		propertiesElement = aParentElement;
+	} else {
+		propertiesElement
+			= DocUtils::getSubElement(aParentElement, QString("Properties"));
+	}
 
-    bool isProperty(const QDomElement& aElement) {
-        if(aElement.isNull()){
-            qWarning() << "element is null.";
-            return false;
-        }
-        if (aElement.tagName() != "Property") {
-            qWarning() << "Property should have tagName 'Property'.";
-            return false;
-        }
-        if (!aElement.hasAttribute("name")) {
-            qWarning() << "Property is missing required 'name' attribute";
-            return false;
-        }
-        return true;
-    }
-    
-    QString getPropertyValue(const QDomElement& aProperty){
-        if(isProperty(aProperty)){
-            return aProperty.text();
-        } else {
-            qWarning() << "Element is not a property, returning empty QString";
-            return QString();
-        }
-    }
+	if (propertiesElement.isNull()) {
+		qWarning() << "No <Properties> element found under parent element"
+				   << aParentElement.tagName()
+				   << ". Returning empty QDomElement.";
+		return QDomElement();
+	}
 
-    void setPropertyValue(QDomElement& aProperty, const QString& newValue) {
-        while (!aProperty.firstChild().isNull()) {
-            aProperty.removeChild(aProperty.firstChild());
-        }
-        QDomText textNode = aProperty.ownerDocument().createTextNode(newValue);
-        aProperty.appendChild(textNode);
-    }
+	QDomNodeList propertyNodes
+		= propertiesElement.elementsByTagName("Property");
+	for (int i = 0; i < propertyNodes.count(); ++i) {
+		QDomElement propertyElement = propertyNodes.at(i).toElement();
+		if (propertyElement.hasAttribute("name")
+			&& propertyElement.attribute("name") == aPropertyName) {
+			return propertyElement;
+		}
+	}
 
-    QString getPropertyAttribute(const QDomElement& aProperty, const QString& aAttribute) {
-        if (isProperty(aProperty)) {
-            if (aProperty.hasAttribute(aAttribute)) {
-                return aProperty.attribute(aAttribute);
-            } else {
-                qWarning() << "Property does not have the requested attribute:" << aAttribute;
-                return QString();
-            }
-        } else {
-            qWarning() << "Element is not a property, returning empty QString";
-            return QString();
-        }
-    }
+	qWarning() << "No <Property> element with name" << aPropertyName
+			   << "found in <Properties> element under parent element"
+			   << aParentElement.tagName() << ". Returning empty QDomElement.";
+	return QDomElement();
+}
 
-    void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute, const QString& aNewValue) {
-        aProperty.setAttribute(aAttribute, aNewValue);
-    }
-} 
+bool isProperty(const QDomElement& aElement) {
+	if (aElement.isNull()) {
+		qWarning() << "element is null.";
+		return false;
+	}
+	if (aElement.tagName() != "Property") {
+		qWarning() << "Property should have tagName 'Property'.";
+		return false;
+	}
+	if (!aElement.hasAttribute("name")) {
+		qWarning() << "Property is missing required 'name' attribute";
+		return false;
+	}
+	return true;
+}
+
+QString getPropertyValue(const QDomElement& aProperty) {
+	if (isProperty(aProperty)) {
+		return aProperty.text();
+	} else {
+		qWarning() << "Element is not a property, returning empty QString";
+		return QString();
+	}
+}
+
+void setPropertyValue(QDomElement& aProperty, const QString& newValue) {
+	while (!aProperty.firstChild().isNull()) {
+		aProperty.removeChild(aProperty.firstChild());
+	}
+	QDomText textNode = aProperty.ownerDocument().createTextNode(newValue);
+	aProperty.appendChild(textNode);
+}
+
+QString getPropertyAttribute(
+	const QDomElement& aProperty, const QString& aAttribute) {
+	if (isProperty(aProperty)) {
+		if (aProperty.hasAttribute(aAttribute)) {
+			return aProperty.attribute(aAttribute);
+		} else {
+			qWarning() << "Property does not have the requested attribute:"
+					   << aAttribute;
+			return QString();
+		}
+	} else {
+		qWarning() << "Element is not a property, returning empty QString";
+		return QString();
+	}
+}
+
+void setPropertyAttribute(QDomElement& aProperty, const QString& aAttribute,
+	const QString& aNewValue) {
+	aProperty.setAttribute(aAttribute, aNewValue);
+}
+
+//----------------------------------------------------------------------------
+QMap<QString, QString> getPropertyNodeMap(const QDomElement& aDomElement) {
+	QMap<QString, QString> propertiesMap;
+
+	const QDomNodeList nodeList = aDomElement.elementsByTagName("Property");
+
+	for (int i = 0; i < nodeList.count(); ++i) {
+		QDomElement property = nodeList.at(i).toElement();
+		QString propertyName = property.attribute("name");
+		const QString propertyValue = property.text().trimmed();
+
+		propertiesMap[propertyName] = propertyValue;
+	}
+
+	return propertiesMap;
+}
+
+}

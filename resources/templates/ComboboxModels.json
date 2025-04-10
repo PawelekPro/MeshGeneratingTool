@@ -1,40 +1,67 @@
 {
-    "SizeModelSelection": {
-        "0": {
-            "name": "geometrySelection",
-            "label": "Geometry selection"
-        },
-        "1": {
-            "name": "namedSelection",
-            "label": "Named selection"
-        }
+  "SizeModelSelection": {
+    "0": {
+      "name": "geometrySelection",
+      "label": "Geometry selection"
     },
-    "EntitySelection": {
-        "0": {
-            "name": "edgeSelection",
-            "label": "Vertex"
-        },
-        "1": {
-            "name": "faceSelection",
-            "label": "Edge"
-        },
-        "2": {
-            "name": "edgeSelection",
-            "label": "Face"
-        },
-        "3": {
-            "name": "faceSelection",
-            "label": "Shape"
-        }
-    },
-    "CosJeszczeInnego": {
-        "0": {
-            "name": "test",
-            "label": "test"
-        },
-        "1": {
-            "name": "test",
-            "label": "test"
-        }
+    "1": {
+      "name": "namedSelection",
+      "label": "Named selection"
     }
+  },
+  "EntitySelection": {
+    "0": {
+      "name": "edgeSelection",
+      "label": "Vertex"
+    },
+    "1": {
+      "name": "faceSelection",
+      "label": "Edge"
+    },
+    "2": {
+      "name": "edgeSelection",
+      "label": "Face"
+    },
+    "3": {
+      "name": "faceSelection",
+      "label": "Shape"
+    }
+  },
+  "GlobalFinenessModel": {
+    "0": {
+      "name": "veryCoarse",
+      "label": "Very Coarse"
+    },
+    "1": {
+      "name": "coarse",
+      "label": "Coarse"
+    },
+    "2": {
+      "name": "moderate",
+      "label": "Moderate"
+    },
+    "3": {
+      "name": "fine",
+      "label": "Fine"
+    },
+    "4": {
+      "name": "veryFine",
+      "label": "Very Fine"
+    },
+    "5": {
+      "name": "userDefined",
+      "label": "User Defined"
+    }
+  },
+  "MeshElementsOrder": {
+    "0": {
+      "name": "firstOrder",
+      "label": "First order"
+    },
+    "1": {
+      "name": "secondOrder",
+      "label": " Second order"
+    }
+  }
 }
+

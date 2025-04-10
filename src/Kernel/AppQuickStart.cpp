@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,6 @@
 #include <memory>
 
 // logging
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 int main(int argc, char* argv[]) {
@@ -54,8 +54,10 @@ int main(int argc, char* argv[]) {
 
 	ModelManager modelManager;
 	modelManager.createNewModel("NewModel");
-	std::shared_ptr<ModelInterface> modelInterface = std::make_shared<ModelInterface>(modelManager);
+	std::shared_ptr<ModelInterface> modelInterface
+		= std::make_shared<ModelInterface>(modelManager);
 	MainWindow window(modelInterface);
 	window.showMaximized();
+
 	return application.exec();
 }

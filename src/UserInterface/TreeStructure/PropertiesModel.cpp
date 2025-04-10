@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,77 +19,93 @@
  */
 
 #include "PropertiesModel.hpp"
+
+#include "CheckBoxWidget.hpp"
 #include "DocUtils.hpp"
 
-//--------------------------------------------------------------------------------------
-bool ModelFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
-	Q_UNUSED(sourceParent);
+#include <QAbstractItemModel>
 
-	QAbstractItemModel* model = this->sourceModel();
-	model->data(model->index(sourceRow, 0), Qt::DisplayRole);
+#include <spdlog/spdlog.h>
 
-	PropertiesModel* propsModel = dynamic_cast<PropertiesModel*>(model);
+//-----------------------------------------------------------------------------
+PropertiesModel::PropertiesModel(const QDomElement& element, QWidget* parent)
+	: QAbstractTableModel(parent)
+	, _element(element)
+	, _visibilityManager(new PropertyVisibilityManager(parent)) {
+	this->_header << "Property" << "Value";
 
-	QDomElement propsNode = propsModel->getProperty(sourceRow);
-	QString hidden = propsNode.attributes().namedItem("hidden").toAttr().value();
+	const QDomNodeList properties = element.childNodes();
+	for (int row = 0; row < properties.length(); ++row) {
+		if (!properties.at(row).isComment()) {
+			QDomElement propertyElement = properties.at(row).toElement();
+			this->_properties.insert(row, propertyElement);
+		}
+	}
 
-	return hidden == "no" || hidden.isEmpty();
+	QMap<QString, int> nameToIndex;
+	for (int row = 0; row < _properties.size(); ++row) {
+		QString propertyName = _properties.value(row).attribute("name");
+		nameToIndex[propertyName] = row;
+	}
+
+	for (int row = 0; row < _properties.size(); ++row) {
+		QDomElement propertyElement = _properties.value(row);
+
+		QDomElement displayRules
+			= propertyElement.firstChildElement("DisplayRules");
+		if (!displayRules.isNull()) {
+			QDomNodeList rules = displayRules.elementsByTagName("Hide");
+			QList<QModelIndex> toBeAffected;
+
+			for (int i = 0; i < rules.count(); ++i) {
+				QDomElement rule = rules.at(i).toElement();
+				QString affectedName = rule.attribute("name");
+
+				if (!nameToIndex.contains(affectedName)) {
+					continue;
+				}
+
+				const int affectedIndex = nameToIndex[affectedName];
+				QModelIndex affectedWidgetIndex
+					= QAbstractTableModel::index(affectedIndex, 1);
+				toBeAffected.append(affectedWidgetIndex);
+			}
+
+			if (!toBeAffected.isEmpty()) {
+				_displayRules[row] = toBeAffected;
+			}
+		}
+	}
 }
 
-//--------------------------------------------------------------------------------------
-PropertiesModel::PropertiesModel(const QDomElement& aPropertiesElement, QWidget* aParent)
-    : QAbstractTableModel(aParent)
-    , _element(aPropertiesElement){
+//-----------------------------------------------------------------------------
+PropertiesModel::~PropertiesModel() = default;
 
-    this->_header << "Property"
-                  << "Value";
-
-	QDomNodeList properties = aPropertiesElement.childNodes();
-    for (int row = 0; row < properties.length(); ++row) {
-        if (!properties.at(row).isComment()) {
-            QDomElement propertyElement = properties.at(row).toElement();
-            this->_properties.insert(row, propertyElement);
-        }
-    }
-	// connect(this, &PropertiesModel::dataChanged, this, [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
-    //         QDomNodeList list = this->_element.childNodes();
-    //         for (int i = 0; i < list.length(); ++i) {
-    //             QDomNode node = list.at(i);
-    //             if (node.isElement()) {
-    //                 QDomElement elem = node.toElement();
-    //                 std::cout << "Element: " << elem.tagName().toStdString() << ", Value: " << elem.text().toStdString() << std::endl;
-    //             }
-    //         }
-    //     });
-}
-
-//--------------------------------------------------------------------------------------
-PropertiesModel::~PropertiesModel() { }
-
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 int PropertiesModel::rowCount(const QModelIndex& parent) const {
 	Q_UNUSED(parent);
-	return this->_properties.count();
+	return static_cast<int>(this->_properties.count());
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 int PropertiesModel::columnCount(const QModelIndex& parent) const {
 	Q_UNUSED(parent);
 	return 2;
 }
 
-//--------------------------------------------------------------------------------------
-QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
+//-----------------------------------------------------------------------------
+QVariant PropertiesModel::data(const QModelIndex& index, const int role) const {
 	if (!index.isValid())
-		return QVariant();
+		return {};
 
 	if (role != Qt::DisplayRole && role != Qt::EditRole)
-		return QVariant();
+		return {};
 
-	QDomElement propNode = this->_properties[index.row()];
+	const QDomElement propNode = this->_properties[index.row()];
 	QVariant dataVariant;
 	if (index.column() == PropertiesModel::Col::Label) {
-		dataVariant = QVariant(Properties::getPropertyAttribute(propNode, QString("label")));
+		dataVariant = QVariant(
+			Properties::getPropertyAttribute(propNode, QString("label")));
 	} else if (index.column() == PropertiesModel::Col::Data) {
 		dataVariant = propNode.firstChild().toText().data();
 	}
@@ -96,8 +113,9 @@ QVariant PropertiesModel::data(const QModelIndex& index, int role) const {
 	return dataVariant;
 }
 
-//--------------------------------------------------------------------------------------
-bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) {
+//-----------------------------------------------------------------------------
+bool PropertiesModel::setData(
+	const QModelIndex& index, const QVariant& value, const int role) {
 	if (!index.isValid() || role != Qt::DisplayRole && role != Qt::EditRole) {
 		return false;
 	}
@@ -116,18 +134,18 @@ bool PropertiesModel::setData( const QModelIndex& index, const QVariant& value, 
 	return false;
 }
 
-//--------------------------------------------------------------------------------------
-QVariant PropertiesModel::headerData(
-	int section, Qt::Orientation orientation, int role) const {
+//-----------------------------------------------------------------------------
+QVariant PropertiesModel::headerData(const int section,
+	const Qt::Orientation orientation, const int role) const {
 	if (role == Qt::DisplayRole) {
 		if (orientation == Qt::Horizontal) {
 			return this->_header.value(section);
 		}
 	}
-	return QVariant();
+	return {};
 }
 
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 	Qt::ItemFlags _flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 	if (index.column() == 1) {
@@ -136,44 +154,56 @@ Qt::ItemFlags PropertiesModel::flags(const QModelIndex& index) const {
 	return _flags;
 }
 
-//--------------------------------------------------------------------------------------
-const QDomElement PropertiesModel::getProperty(int row) {
+//-----------------------------------------------------------------------------
+QDomElement PropertiesModel::getProperty(const int row) const {
 	if (row < 0 || row >= _properties.size()) {
 		throw std::out_of_range("Invalid row index");
 	}
 	return this->_properties.value(row);
 }
 
-void PropertiesModel::setElementProperty(const QModelIndex& index, const QString& name, const QVariant& value) {
-	QDomNodeList propertyNodes = _element.childNodes();
-    for (int i = 0; i < propertyNodes.count(); ++i) {
-        QDomElement propertyElement = propertyNodes.at(i).toElement();
-        if (!propertyElement.isNull() && propertyElement.attribute("name") == name) {
-            propertyElement.firstChild().setNodeValue(value.toString());
-            break;
-        }
-    }
+void PropertiesModel::setElementProperty(
+	const QModelIndex& index, const QString& name, const QVariant& value) {
+	const QDomNodeList propertyNodes = _element.childNodes();
+	for (int i = 0; i < propertyNodes.count(); ++i) {
+		if (QDomElement propertyElement = propertyNodes.at(i).toElement();
+			!propertyElement.isNull()
+			&& propertyElement.attribute("name") == name) {
+			propertyElement.firstChild().setNodeValue(value.toString());
+			break;
+		}
+	}
 	emit dataChanged(index, index);
 }
 
-//--------------------------------------------------------------------------------------
-QWidget* PropertiesModel::getWidget( const QModelIndex& aIndex, QWidget* aWidgetParent ) {
+//-----------------------------------------------------------------------------
+QWidget* PropertiesModel::getWidget(
+	const QModelIndex& aIndex, QWidget* aWidgetParent) {
 	if (!aIndex.isValid()) {
-		qWarning("Widget index invalid!");
+		SPDLOG_WARN("Widget index invalid!");
 	}
-	if(aIndex.column() != PropertiesModel::Col::Data){
-		qWarning("Widget index should have column == 1");
+	if (aIndex.column() != PropertiesModel::Col::Data) {
+		SPDLOG_WARN("Widget index should have column == 1");
 	}
 
-	QDomElement property = _properties[aIndex.row()];
-	QString widgetName = Properties::getPropertyAttribute(property, "widget");
+	const QDomElement property = _properties[aIndex.row()];
+	const QString widgetClass
+		= Properties::getPropertyAttribute(property, "widget");
+
 	BaseWidget* newWidget = nullptr;
-	newWidget = WidgetFactory::createWidget(widgetName, aWidgetParent);
-	if(newWidget){
+	newWidget = WidgetFactory::createWidget(widgetClass, aWidgetParent);
+	if (newWidget) {
 		newWidget->setIndex(aIndex);
 	} else {
-		qWarning() << widgetName << " widget could not be added to PropertiesWidget";
+		SPDLOG_WARN("Widget {} could not be added to PropertiesWidget",
+			widgetClass.toStdString().data());
 	}
-	
+
+	if (!_displayRules[aIndex.row()].isEmpty()) {
+		newWidget->registerWithManager(_visibilityManager);
+		_visibilityManager->registerVisibilityRule(
+			aIndex, _displayRules[aIndex.row()], this);
+	}
+
 	return newWidget;
 }

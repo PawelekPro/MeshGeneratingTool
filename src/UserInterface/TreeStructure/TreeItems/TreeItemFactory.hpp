@@ -62,7 +62,7 @@ public:
      * @param aRootItemType The type of root item to create, defined in ItemTypes::Root.
      * @return Pointer to the newly created root TreeItem.
      */
-    TreeItem* createRootItem(const ItemTypes::Root & aRootItemType);
+    TreeItem* createRootItem(const ItemTypes::Root & aRootItemType) const;
 
     /**
      * @brief Creates a sub-item under a specified parent item. 

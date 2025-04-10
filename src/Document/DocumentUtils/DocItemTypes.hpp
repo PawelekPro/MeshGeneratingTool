@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Krystian Fudali
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,48 +20,31 @@
 #ifndef DOCITEMTYPES_HPP
 #define DOCITEMTYPES_HPP
 
-#include <variant>
 #include <QString>
+#include <variant>
 #include <stdexcept>
 
-namespace ItemTypes{
+namespace ItemTypes {
 
-    enum class Root{
-        Geometry,
-        Mesh,
-        Solution,
-        Results
-    };
+enum class Root { Geometry, Mesh, Solution, Results };
 
-    enum class Geometry{
-        ImportSTEP,
-        ExtrudeFace,
-    };
+enum class Geometry {
+	ImportSTEP,
+	ExtrudeFace,
+};
 
-    enum class Mesh{
-        ElementSizing
-    };
+enum class Mesh { ElementSizing };
 
-    enum class Solution{
-        BoundaryConditions,
-        SourceTerms,
-        Metrics
-    };
+enum class Solution { BoundaryConditions, SourceTerms, Metrics };
 
-    enum class Results{
-        ContourMap,
-        Residuals
-    };
+enum class Results { ContourMap, Residuals };
 
-    using Sub = std::variant<Geometry, Mesh, Solution, Results>;
+using Sub = std::variant<Geometry, Mesh, Solution, Results>;
 
-    QString label(const Sub& aSubItem) noexcept;
-    QString label(const Root& aRootItem) noexcept;
+QString label(const Sub& aSubItem) noexcept;
+QString label(const Root& aRootItem) noexcept;
 
-    Root rootType(const Sub& aSubType) noexcept;
+Root rootType(const Sub& aSubType) noexcept;
 }
-
-
-
 
 #endif
