@@ -20,10 +20,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "OccProgressIndicator.hpp"
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include "ProgressIndicator.hpp" 
 #include "OccProgressIndicator.hpp" 
 

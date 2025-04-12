@@ -9,10 +9,10 @@ target_link_libraries(utModel PUBLIC
     GTest::gmock_main
 )
 
-target_link_libraries(utModel PRIVATE utModelLib)
+# target_link_libraries(utModel PRIVATE utModelLib)
 
-target_link_options(utModel PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utModelLib> 
-                                     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--whole-archive>)
+# target_link_options(utModel PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utModelLib> 
+#                                      $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--whole-archive>)
 
 target_link_options(utModel PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utGeometry> 
                                      $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--whole-archive>)

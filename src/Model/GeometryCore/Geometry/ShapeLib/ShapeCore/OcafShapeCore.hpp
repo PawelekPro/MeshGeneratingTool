@@ -29,9 +29,10 @@
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <gp_Trsf.hxx>
+#include <TDF_Label.hxx>
+#include <spdlog/spdlog.h>
 
-
-class OcafShapeMap;
+class StdShapeMap;
 class OcafShapeCore : public ShapeCore {
     
     public:
@@ -57,13 +58,16 @@ class OcafShapeCore : public ShapeCore {
     bool undo() override;
 
     std::shared_ptr<const ShapeMap> shapeMap() const override;
-   
+  
+    bool write(const std::string& aSavePath);
+    
     private:
-
-    std::shared_ptr<OcafShapeMap> _shapeMap;
+    std::shared_ptr<StdShapeMap> _shapeMap;
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;
+
+    TDF_Label _shapeLabel; 
 
 };
 

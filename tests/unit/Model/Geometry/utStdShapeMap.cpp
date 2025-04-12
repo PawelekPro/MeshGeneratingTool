@@ -17,11 +17,5 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPETYPES_HPP
-#define SHAPETYPES_HPP
-
-#include <TopAbs_ShapeEnum.hxx>
-
-using ShapeType = TopAbs_ShapeEnum;
-
-#endif
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>

@@ -24,8 +24,9 @@
 #include <TopoDS_Shape.hxx>
 #include <memory>
 
+class OcafShapeCore;
 class ShapeMap {
-    
+    friend OcafShapeCore;
     public:
     virtual ~ShapeMap() = default;
  
@@ -37,7 +38,12 @@ class ShapeMap {
 
     protected:
     
-    virtual const ShapeId registerShape(const TopoDS_Shape& shape) = 0;
+    virtual const ShapeId registerTopLevelShape(const TopoDS_Shape& shape) = 0;
+    virtual const ShapeId registerSubShape(
+        const TopoDS_Shape& shape, 
+        const ShapeId& aParentId,
+        int subShapeId
+    ) = 0;
     virtual bool removeShape(const ShapeId& id) = 0;    
     virtual bool updateShape(
         const ShapeId& id,

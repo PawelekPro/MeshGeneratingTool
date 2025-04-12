@@ -18,13 +18,16 @@
 */
 
 #include "OcafShapeCore.hpp"
-#include "OcafShapeMap.hpp"
+#include "StdShapeMap.hpp"
 
+#include <TopExp_Explorer.hxx>
+#include <TopExp.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDF_Label.hxx>
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XmlXCAFDrivers.hxx>
+#include <NCollection_IndexedMap.hxx>
 
 OcafShapeCore::OcafShapeCore() {
     
@@ -35,42 +38,118 @@ OcafShapeCore::OcafShapeCore() {
     this->_colorTool = XCAFDoc_DocumentTool::ColorTool(this->_document->Main());
     XmlXCAFDrivers::DefineFormat(app);
     
-    auto mainLabel = _document->Main();
-    TDF_Label shapeLabel = mainLabel.NewChild();
-    TDataStd_Name::Set(shapeLabel, "Shapes");
-
-    _shapeMap = std::make_shared<OcafShapeMap>();
+    _shapeMap = std::make_shared<StdShapeMap>();
 
 }
 
+bool OcafShapeCore::write(const std::string& aSavePath){
+    if (_document.IsNull()) {
+        std::cerr << "Error: Document is null. Cannot save.\n";
+        return false;
+    }
+
+    TCollection_ExtendedString xmlPath(aSavePath.c_str());
+    XmlXCAFDrivers::DefineFormat(XCAFApp_Application::GetApplication());
+
+    if (!XCAFApp_Application::GetApplication()->SaveAs(_document, xmlPath)) {
+        std::cerr << "Error: Failed to save document to " << aSavePath << std::endl;
+        return false;
+    }
+
+    return true;
+}
 const ShapeId OcafShapeCore::registerNewShape(const TopoDS_Shape& aShape){
-    return ShapeId(0, ShapeType::Invalid);
+    TDF_Label newShapeLabel = _shapeTool->AddShape(aShape);
+
+    TopTools_IndexedMapOfShape subShapeIds;
+    TopExp::MapShapes(aShape, subShapeIds);
+
+    ShapeId topLevelId = _shapeMap->registerTopLevelShape(aShape);
+    for(int i = 0; i < subShapeIds.Extent(); i++){
+        const TopoDS_Shape subShape = subShapeIds(i);
+        ShapeId subId = _shapeMap->registerSubShape(subShape, topLevelId, i);
+    }
+    return topLevelId;
 }
 
-bool OcafShapeCore::removeShape(const ShapeId& aShapeId){
+bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
+    if (!_shapeMap->containsId(aShapeId)) {
+        std::cerr << "Error: ShapeId not found in map.\n";
+        return false;
+    }
+
+    TopoDS_Shape shapeToRemove = _shapeMap->atId(aShapeId);
+    TDF_Label labelToRemove = _shapeTool->FindShape(shapeToRemove);
+
+    if (!_shapeTool->RemoveShape(labelToRemove)) {
+        std::cerr << "Warning: Could not remove shape from document.\n";
+    }
+
+    if (!_shapeMap->removeShape(aShapeId)) {
+        std::cerr << "Error: Failed to remove shape from map.\n";
+        return false;
+    }
+
     return true;
 }
 
-bool  OcafShapeCore::updateShape(
-    const std::pair<ShapeId, TopoDS_Shape>& aShapeId
-){
-    return true; 
+
+bool OcafShapeCore::updateShape(
+    const std::pair<ShapeId, TopoDS_Shape>& aShapeIdPair
+) {
+    const ShapeId& id = aShapeIdPair.first;
+    const TopoDS_Shape& newShape = aShapeIdPair.second;
+
+    if (!_shapeMap->containsId(id)) {
+        std::cerr << "Error: ShapeId not found in map.\n";
+        return false;
+    }
+
+    TopoDS_Shape oldShape = _shapeMap->atId(id);
+    TDF_Label labelToRemove = _shapeTool->FindShape(oldShape);
+    if (!_shapeTool->RemoveShape(labelToRemove)) {
+        std::cerr << "Warning: Could not remove old shape from document.\n";
+    }
+
+    TDF_Label newLabel = _shapeTool->AddShape(newShape);
+
+    if (!_shapeMap->updateShape(id, newShape)) {
+        std::cerr << "Error: Failed to update shape in shape map.\n";
+        return false;
+    }
+
+    return true;
 }
+
 
 bool OcafShapeCore::openCommand(){
-    return true;
+    if (_document->HasOpenCommand()){
+        spdlog::warn("A command is already open on the document.");
+        return false;
+    }
+    _document->OpenCommand();
+    return _document->HasOpenCommand();
 }
 
 bool OcafShapeCore::commitCommand(){
-    return true;
+    if (!_document->HasOpenCommand()){
+        spdlog::warn("No command has been opened, cannot commit.");
+        return false;
+    }
+    return _document->CommitCommand();
 }
 
 bool OcafShapeCore::abortCommand(){
+    if (!_document->HasOpenCommand()){
+        spdlog::warn("No command to abort.");
+        return false;
+    }
+    _document->AbortCommand();
     return true;
 }
 
 bool OcafShapeCore::undo(){
-    return true;
+    return _document->Undo();
 }
 
 std::shared_ptr<const ShapeMap> OcafShapeCore::shapeMap() const {

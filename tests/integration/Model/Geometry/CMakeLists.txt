@@ -1,5 +1,6 @@
 add_library(itGeometry
     itSTEPImporter.cpp
+    itOcafShapeCore.cpp
 )
 
 find_package(GTest REQUIRED)

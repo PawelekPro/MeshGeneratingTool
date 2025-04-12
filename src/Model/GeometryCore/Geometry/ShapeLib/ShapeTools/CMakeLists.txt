@@ -1,17 +1,17 @@
 add_subdirectory(ShapeImport)
 
-add_library(ShapeTools 
-    ShapeTools.cpp
-    ShapeView.cpp
-    ShapeAttrView.cpp
+add_library(ShapeTools INTERFACE
+    # ShapeTools.cpp
+    # ShapeView.cpp
+    # ShapeAttrView.cpp
 )
 
-target_link_libraries(ShapeTools PUBLIC
-    ShapeMap
-    Shapes
+target_link_libraries(ShapeTools INTERFACE
+    # ShapeMap
+    # Shapes
     ShapeImport
 )
 
-target_include_directories(ShapeTools PUBLIC
+target_include_directories(ShapeTools INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

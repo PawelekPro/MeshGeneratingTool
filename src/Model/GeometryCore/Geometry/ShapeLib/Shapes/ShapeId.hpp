@@ -25,14 +25,18 @@
 #include <cstdint>
 #include <memory>
 
+class IdRegistry;
 class ShapeId {
 
-    public:
+    private:
+    friend IdRegistry;
     ShapeId(
         uint64_t id,
         const ShapeType& type,
         std::shared_ptr<const ShapeId> parentId = nullptr
     );
+    
+    public:
     virtual ~ShapeId() = default;
 
     virtual bool operator==(const ShapeId& other) const;
@@ -47,6 +51,21 @@ class ShapeId {
     const uint64_t _id;
     const ShapeType _shapeType;
     std::shared_ptr<const ShapeId> _parentId;
+};
+
+
+struct ShapeIdHasher {
+    std::size_t operator()(const ShapeId& s) const {
+        std::size_t h1 = std::hash<uint64_t>()(s.toInt());
+        std::size_t h2 = std::hash<ShapeType>()(s.shapeType());
+
+        std::size_t h3 = 0;
+        if (auto parent = s.parentId()) {
+            h3 = std::hash<uint64_t>()(parent->toInt());
+        }
+
+        return h1 ^ (h2 << 1) ^ (h3 << 2);
+    }
 };
 
 #endif
