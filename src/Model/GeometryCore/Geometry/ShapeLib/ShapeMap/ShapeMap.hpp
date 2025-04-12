@@ -35,8 +35,6 @@ class ShapeMap {
     
     virtual const TopoDS_Shape atId(const ShapeId& id) const = 0;
     virtual const ShapeId getId(const TopoDS_Shape& shape) const = 0;
-
-    protected:
     
     virtual const ShapeId registerTopLevelShape(const TopoDS_Shape& shape) = 0;
     virtual const ShapeId registerSubShape(
@@ -49,7 +47,6 @@ class ShapeMap {
         const ShapeId& id,
         const TopoDS_Shape& shape
     ) = 0;
-
 };
 
 #endif

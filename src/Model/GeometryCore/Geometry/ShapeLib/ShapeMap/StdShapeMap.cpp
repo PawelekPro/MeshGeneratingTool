@@ -20,11 +20,47 @@
 #include "StdShapeMap.hpp"
 
 bool StdShapeMap::containsId(const ShapeId& aId) const {
-    return _idShapeMap.contains(aId);
-};
+    bool isInIdShapeMap = _idShapeMap.contains(aId);
+    if (!isInIdShapeMap){
+        return false;
+    }
+    
+    TopoDS_Shape shape = _idShapeMap.at(aId);
+    bool isInShapeIdMap = _shapeIdMap.contains(shape);
+
+    if (!isInShapeIdMap){
+        throw InvalidMapState("Invalid Map state.");
+    }
+    
+    ShapeId fetchedId = _shapeIdMap.at(shape);
+    
+    if (fetchedId != aId){
+        throw InvalidMapState("Invalid Map state.");
+    }
+
+    return true;
+}
 
 bool StdShapeMap::containsShape(const TopoDS_Shape& aShape) const {
-    return _shapeIdMap.contains(aShape);
+    bool isInShapeIdMap = _shapeIdMap.contains(aShape);
+
+    if (!isInShapeIdMap){
+        return false;
+    }
+    
+    ShapeId id = _shapeIdMap.at(aShape);
+    
+    bool isInIdShapeMap = _idShapeMap.contains(id);
+    if (!isInIdShapeMap){
+        throw InvalidMapState("Could not find id that exists in shapeIdMap.");
+    }
+    
+    TopoDS_Shape fetchedShape = _idShapeMap.at(id);
+    
+    if (fetchedShape != aShape){
+        throw InvalidMapState("Mismatch between shapeIdMap and idShapeMap.");
+    }
+    return true;
 };
 
 const TopoDS_Shape StdShapeMap::atId(const ShapeId& aId) const {
@@ -35,84 +71,80 @@ const ShapeId StdShapeMap::getId(const TopoDS_Shape& aShape) const {
     return _shapeIdMap.at(aShape);
 }
 
-const ShapeId StdShapeMap::registerTopLevelShape(const TopoDS_Shape& aShape) {
-    const ShapeId id = _idRegistry.generateTopLevelId(aShape);
+bool StdShapeMap::insert(const std::pair<ShapeId, TopoDS_Shape>& aIdShapePair){
+    const ShapeId& id = aIdShapePair.first;
+    const TopoDS_Shape& shape = aIdShapePair.second;
 
-    bool idShapeInserted = _idShapeMap.insert({id, aShape}).second;
-    bool shapeIdInserted = _shapeIdMap.insert({aShape, id}).second;
-
-    if (!idShapeInserted || !shapeIdInserted) {
-        throw std::runtime_error("Could not insert shape into the map!");
+    if (containsId(id) || containsShape(shape)){
+        return false;
     }
 
+    bool idShapeInserted = _idShapeMap.insert({id, shape}).second;
+    bool shapeIdInserted = _shapeIdMap.insert({shape, id}).second;
+
+    if (!idShapeInserted || !shapeIdInserted) {
+        if (idShapeInserted){
+            _idShapeMap.erase(id);
+        }
+        if (shapeIdInserted){
+            _shapeIdMap.erase(shape);
+        }
+        throw InvalidMapState("Insert operation failed for one of the maps.");
+    }
     _idRegistry.bindTopLevelId(id);
-    return id;
+    return true;
+}
+
+const ShapeId StdShapeMap::registerTopLevelShape(const TopoDS_Shape& aShape) {
+    const ShapeId id = _idRegistry.generateTopLevelId(aShape);
+    if (insert({id, aShape})){
+        return id;
+    } else {
+        spdlog::warn("Shape already registered. Returning invalid id.");
+        return *ShapeId::InvalidId();
+    }
 }
 
 const ShapeId StdShapeMap::registerSubShape(
     const TopoDS_Shape& aShape, 
     const ShapeId& aParentId,
-    int aSubShapeid
+    int aSubShapeId
 ) {
-    const ShapeId id = _idRegistry.generateSubId(aShape, aParentId, aSubShapeid);
-
-    bool idShapeInserted = _idShapeMap.insert({id, aShape}).second;
-    bool shapeIdInserted = _shapeIdMap.insert({aShape, id}).second;
-
-    if (!idShapeInserted || !shapeIdInserted) {
-        throw std::runtime_error("Could not insert shape into the map!");
+    const ShapeId id = _idRegistry.generateSubId(aShape, aParentId, aSubShapeId);
+    if (insert({id, aShape})){
+        return id;
+    } else {
+        spdlog::warn("Shape already registered. Returning invalid id.");
+        return *ShapeId::InvalidId();
     }
-    
-    _idRegistry.bindTopLevelId(id);
-    return id;
 }
 
-bool StdShapeMap::removeShape(const ShapeId& id) {
-    auto idIt = _idShapeMap.find(id);
-    if (idIt == _idShapeMap.end()) {
+bool StdShapeMap::removeShape(const ShapeId& aId) {
+    if (!containsId(aId)) {
+        spdlog::warn("Shape ID not found, cannot remove shape.");
         return false;
     }
 
-    const TopoDS_Shape& shape = idIt->second;
-
-    auto shapeIt = _shapeIdMap.find(shape);
-    if (shapeIt == _shapeIdMap.end() || shapeIt->second != id) {
-        throw std::runtime_error("Inconsistent map state!");
+    TopoDS_Shape shape = _idShapeMap.at(aId);
+    if (_idShapeMap.erase(aId) == 0) {
+        spdlog::warn("Failed to remove shape ID from _idShapeMap.");
         return false;
     }
 
-    _idShapeMap.erase(idIt);
-    _shapeIdMap.erase(shapeIt);
+    if (_shapeIdMap.erase(shape) == 0) {
+        spdlog::warn("Failed to remove shape from _shapeIdMap.");
+        _idShapeMap.insert({aId, shape});
+        return false;
+    }
 
     return true;
 }
-
 bool StdShapeMap::updateShape(
     const ShapeId& aId,
     const TopoDS_Shape& aShape
 ) {
-    auto idIt = _idShapeMap.find(aId);
-    if (idIt == _idShapeMap.end()) {
+    if (!removeShape(aId)){
         return false;
     }
-
-    const TopoDS_Shape& oldShape = idIt->second;
-
-    auto shapeIt = _shapeIdMap.find(oldShape);
-    if (shapeIt == _shapeIdMap.end() || shapeIt->second != aId) {
-        throw std::runtime_error("Inconsistent map state!");
-    }
-
-    _idShapeMap.erase(idIt);
-    _shapeIdMap.erase(shapeIt);
-
-    bool idShapeInserted = _idShapeMap.insert({aId, aShape}).second;
-    bool shapeIdInserted = _shapeIdMap.insert({aShape, aId}).second;
-
-    if (!idShapeInserted || !shapeIdInserted) {
-        _idShapeMap.insert({aId, oldShape});
-        _shapeIdMap.insert({oldShape, aId});
-        return false;
-    }
-    return true;
+    return insert({aId, aShape});
 }

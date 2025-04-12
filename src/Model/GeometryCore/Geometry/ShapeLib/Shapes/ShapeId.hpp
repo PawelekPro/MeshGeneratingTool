@@ -28,7 +28,7 @@
 class IdRegistry;
 class ShapeId {
 
-    private:
+    public:
     friend IdRegistry;
     ShapeId(
         uint64_t id,
@@ -36,9 +36,11 @@ class ShapeId {
         std::shared_ptr<const ShapeId> parentId = nullptr
     );
     
-    public:
     virtual ~ShapeId() = default;
-
+    
+    static const std::shared_ptr<const ShapeId>& InvalidId();
+    bool isValid() const;
+    
     virtual bool operator==(const ShapeId& other) const;
     virtual bool operator<(const ShapeId& other) const;
 

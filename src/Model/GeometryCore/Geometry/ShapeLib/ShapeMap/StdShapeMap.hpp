@@ -26,9 +26,22 @@
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
 
-#include <map>
 #include <unordered_map>
 #include <TopTools_ShapeMapHasher.hxx>
+#include <exception>
+#include <string>
+#include <spdlog/spdlog.h>
+
+class InvalidMapState : public std::exception {
+private:
+    std::string message;
+
+public:
+    explicit InvalidMapState(const std::string& msg) : message(msg) {}
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
 
 class StdShapeMap : public ShapeMap {
 
@@ -59,6 +72,7 @@ class StdShapeMap : public ShapeMap {
     ) override;
     
     private:
+    bool insert(const std::pair<ShapeId, TopoDS_Shape>& aIdShapePair);
 
     IdRegistry _idRegistry;
     std::unordered_map<ShapeId, TopoDS_Shape, ShapeIdHasher> _idShapeMap;

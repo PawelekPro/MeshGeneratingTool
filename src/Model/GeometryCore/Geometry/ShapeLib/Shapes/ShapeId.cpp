@@ -28,6 +28,17 @@ ShapeId::ShapeId(
     _shapeType(type),
     _parentId(parentId){}
 
+const std::shared_ptr<const ShapeId>& ShapeId::InvalidId() {
+    static const std::shared_ptr<const ShapeId> invalid = 
+        std::make_shared<ShapeId>(0, ShapeType::TopAbs_VERTEX, nullptr);
+    return invalid;
+}
+
+bool ShapeId::isValid() const {
+    return _id != 0;
+}
+
+
 bool ShapeId::operator==(const ShapeId& other) const {
     if (other.shapeType() != this->shapeType()) {
         return false;
