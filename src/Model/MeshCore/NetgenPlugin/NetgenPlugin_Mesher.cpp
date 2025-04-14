@@ -214,7 +214,6 @@ void NetgenPlugin_Mesher::PrepareOCCGeometry(
 	occGeom.BuildFMap();
 	occGeom.BuildVisualizationMesh(0.01);
 	occGeom.CalcBoundingBox();
-	// occgeom.PrintNrShapes();
 }
 
 int NetgenPlugin_Mesher::ComputeProgress() {

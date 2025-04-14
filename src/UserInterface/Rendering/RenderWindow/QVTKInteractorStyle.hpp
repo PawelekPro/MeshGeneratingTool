@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2024 Paweł Gilewicz
  *
- * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+ * This file is part of the Mesh Generating Tool.
+ * (https://github.com/PawelekPro/MeshGeneratingTool)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,7 @@ class QVTKRenderWindow;
 #include "QVTKRenderWindow.hpp"
 
 // VTK includes
-#include <vtkCellPicker.h>
-#include <vtkHardwarePicker.h>
 #include <vtkInteractorStyleTrackballCamera.h>
-#include <vtkNamedColors.h>
-#include <vtkPropPicker.h>
-#include <vtkProperty.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
@@ -47,26 +42,26 @@ class QVTKRenderWindow;
 #include <IVtkTools_ShapeDataSource.hxx>
 #include <IVtkTools_ShapeObject.hxx>
 #include <IVtkTools_ShapePicker.hxx>
-#include <IVtkTools_SubPolyDataFilter.hxx>
 
 // Qt includes
 #include <QAction>
-#include <QFont>
 #include <QMenu>
 #include <QPointer>
 
-typedef NCollection_DataMap<IVtk_IdType, Handle(QIVtkSelectionPipeline)> ShapePipelinesMap;
-typedef NCollection_DataMap<IVtk_IdType, IVtk_ShapeIdList*> SelectedSubShapeIdsMap;
+typedef NCollection_DataMap<IVtk_IdType, Handle(QIVtkSelectionPipeline)>
+	ShapePipelinesMap;
+typedef NCollection_DataMap<IVtk_IdType, IVtk_ShapeIdList*>
+	SelectedSubShapeIdsMap;
 
 /**
  * @class QVTKInteractorStyle
  * @brief Provides custom interactions with a VTK render window.
  *
- * The QVTKInteractorStyle class defines custom interactions for a VTK render window,
- * including handling mouse and keyboard events, managing selection and highlight pipelines,
- * and integrating with Qt menus.
+ * The QVTKInteractorStyle class defines custom interactions for a VTK render
+ * window, including handling mouse and keyboard events, managing selection and
+ * highlight pipelines, and integrating with Qt menus.
  */
-class QVTKInteractorStyle : public vtkInteractorStyleTrackballCamera {
+class QVTKInteractorStyle final : public vtkInteractorStyleTrackballCamera {
 public:
 	/**
 	 * @brief Creates a new instance of the QVTKInteractorStyle class.
@@ -111,7 +106,7 @@ public:
 	 * @param pipeline A handle to the QIVtkSelectionPipeline.
 	 * @param id The ID associated with the pipeline.
 	 */
-	void addPipeline(const Handle(QIVtkSelectionPipeline), IVtk_IdType);
+	void addPipeline(const Handle(QIVtkSelectionPipeline) &, IVtk_IdType);
 
 	/**
 	 * @brief Sets the selection mode for the interactor style.
@@ -122,24 +117,25 @@ public:
 	/**
 	 * @brief Returns the selection mode for the interactor style.
 	 */
-	IVtk_SelectionMode getSelectionMode();
+	IVtk_SelectionMode getSelectionMode() const;
 
 	/**
 	 * @brief Gets the size of the pipelines map.
 	 * @return The number of pipelines in the map.
 	 */
-	Standard_Integer getPipelinesMapSize();
+	Standard_Integer getPipelinesMapSize() const;
 	/**
 	 * @brief Returns vector of referenc wrappers to selected TopoDS_Shapes.
-	 * 
+	 *
 	 */
-	const std::vector<std::reference_wrapper<const TopoDS_Shape>>& getSelectedShapes();
+	const std::vector<std::reference_wrapper<const TopoDS_Shape>>&
+	getSelectedShapes();
 
 	/**
 	 * @brief Gets the list of pipelines.
 	 * @return A list of handles to the QIVtkSelectionPipelines.
 	 */
-	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines();
+	NCollection_List<Handle(QIVtkSelectionPipeline)> getPipelines() const;
 	void removePipelines();
 
 	// Overriding
@@ -157,17 +153,17 @@ public:
 	/**
 	 * @brief  Method for handling mouse moving event.
 	 */
-	virtual void OnMouseMove() override;
+	void OnMouseMove() override;
 
 	/**
 	 * @brief Handles the key press event.
 	 */
-	virtual void OnKeyPress() override;
+	void OnKeyPress() override;
 
 	/**
 	 * @brief Handles the key release event.
 	 */
-	virtual void OnKeyRelease() override;
+	void OnKeyRelease() override;
 
 protected:
 	/**
@@ -180,7 +176,7 @@ protected:
 	 * @brief Destructor for QVTKInteractorStyle.
 	 * Cleans up any resources used by the instance.
 	 */
-	~QVTKInteractorStyle();
+	~QVTKInteractorStyle() override;
 
 private:
 	QVTKInteractorStyle(const QVTKInteractorStyle&);
@@ -188,7 +184,8 @@ private:
 
 private:
 	/**
-	 * @brief Create context menu on position where mouse right button has been pressed.
+	 * @brief Create context menu on position where mouse right button has been
+	 * pressed.
 	 *
 	 */
 	void createContextMenu();
@@ -198,15 +195,13 @@ private:
 	 * @param x The X-coordinate.
 	 * @param y The Y-coordinate.
 	 */
-	void MoveTo(Standard_Integer, Standard_Integer);
+	void MoveTo(Standard_Integer, Standard_Integer) const;
 
 	/**
 	 * @brief Handles the selection process.
 	 * @param select Whether to perform multiple selection (default is false).
 	 */
 	void OnSelection(const Standard_Boolean = Standard_False);
-
-
 
 private:
 	// ! Pointer to the context menu
@@ -217,7 +212,6 @@ private:
 	QPointer<QAction> _addSizingAction;
 	// QPointer<QAction> _edgeSizingAction;
 
-
 	// ! Smart pointer to the VTK renderer.
 	vtkSmartPointer<vtkRenderer> _renderer;
 
@@ -225,7 +219,7 @@ private:
 	vtkSmartPointer<IVtkTools_ShapePicker> _picker;
 
 	// ! Pointer to the QVTK render window.
-	const Rendering::QVTKRenderWindow* _qvtkRenderWindow;
+	const Rendering::QVTKRenderWindow* _qvtkRenderWindow {};
 
 	// ! Map of shape pipelines
 	ShapePipelinesMap _shapePipelinesMap;
