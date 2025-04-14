@@ -23,6 +23,8 @@
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 
+#include <spdlog/spdlog.h>
+
 //----------------------------------------------------------------------------
 static void ClearHighlightAndSelection(const ShapePipelinesMap& theMap,
 	const Standard_Boolean doHighlighting, const Standard_Boolean doSelection) {
@@ -289,12 +291,9 @@ void QVTKInteractorStyle::MoveTo(
 
 			IVtk_IdType aShapeID = anOccShape->GetId();
 
-			const Handle(Message_Messenger) anOutput
-				= Message::DefaultMessenger();
 			if (!_shapePipelinesMap.IsBound(aShapeID)) {
-				anOutput->SendWarning() << "Warning: there is no VTK pipeline "
-										   "registered for picked shape"
-										<< std::endl;
+				SPDLOG_ERROR(
+					"there is no VTK pipeline registered for picked shape");
 				continue;
 			}
 
@@ -324,14 +323,15 @@ void QVTKInteractorStyle::MoveTo(
 				IVtk_ShapeIdList aSubSubIds
 					= anOccShape->GetSubIds(aMetaIds.Value());
 				aSubIds.Append(aSubSubIds);
-				const TopoDS_Shape& aSubShape
-					= anOccShape->GetSubShape(aMetaIds.Value());
-				cout << "------------------------------------------------------"
-						"--------"
-					 << endl;
-				cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
-				cout << "Sub-shape type: "
-					 << aSubShape.TShape()->DynamicType()->Name() << endl;
+				// const TopoDS_Shape& aSubShape
+				// 	= anOccShape->GetSubShape(aMetaIds.Value());
+				// cout <<
+				// "------------------------------------------------------"
+				// 		"--------"
+				// 	 << endl;
+				// cout << "Sub-shape ID: " << aMetaIds.Value() << endl;
+				// cout << "Sub-shape type: "
+				// 	 << aSubShape.TShape()->DynamicType()->Name() << endl;
 			}
 			aFilter->SetDoFiltering(!aSubIds.IsEmpty());
 			aFilter->SetData(aSubIds);
@@ -372,12 +372,9 @@ void QVTKInteractorStyle::OnSelection(const Standard_Boolean appendId) {
 
 			IVtk_IdType aShapeID = anOccShape->GetId();
 
-			const Handle(Message_Messenger) anOutput
-				= Message::DefaultMessenger();
 			if (!_shapePipelinesMap.IsBound(aShapeID)) {
-				anOutput->SendWarning() << "Warning: there is no VTK pipeline "
-										   "registered for picked shape"
-										<< std::endl;
+				SPDLOG_ERROR(
+					"There is no VTK pipeline registered for picked shape");
 				continue;
 			}
 
