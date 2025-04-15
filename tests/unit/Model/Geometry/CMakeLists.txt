@@ -1,4 +1,5 @@
 add_library(utGeometry
+    utOcafShapeCore.cpp
     utStdShapeMap.cpp
     utOccProgressIndicator.cpp
 )

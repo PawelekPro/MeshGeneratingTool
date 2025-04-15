@@ -33,7 +33,7 @@ class ShapeCore {
     public:
     virtual ~ShapeCore() = default;
 
-    virtual const ShapeId registerNewShape(
+    virtual bool registerNewShape(
         const TopoDS_Shape& Shape
     ) = 0;
 

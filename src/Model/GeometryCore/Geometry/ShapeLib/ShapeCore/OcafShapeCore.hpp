@@ -26,11 +26,27 @@
 
 #include <string>
 #include <TDocStd_Document.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <gp_Trsf.hxx>
 #include <TDF_Label.hxx>
+#include <set>
 #include <spdlog/spdlog.h>
+
+#include <TDF_DeltaOnAddition.hxx>
+#include <TDF_DeltaOnForget.hxx>
+#include <TDF_DeltaOnModification.hxx>
+#include <TDF_DeltaOnRemoval.hxx>
+#include <TDF_DeltaOnResume.hxx>
+
+enum class DeltaType{
+    Removal,
+    Addition,
+    Modification,
+    Forget,
+    Resume
+};
 
 class StdShapeMap;
 class OcafShapeCore : public ShapeCore {
@@ -40,7 +56,7 @@ class OcafShapeCore : public ShapeCore {
     
     virtual ~OcafShapeCore() = default;
 
-    const ShapeId registerNewShape(
+    bool registerNewShape(
         const TopoDS_Shape& Shape
     ) override;
 
@@ -62,12 +78,17 @@ class OcafShapeCore : public ShapeCore {
     bool write(const std::string& aSavePath);
     
     private:
+
+    int reviewDelta(Handle(TDF_Delta) aDeltaList) const;
+    void publishShapeEvents(DeltaType aDeltaType) const;
+
     std::shared_ptr<StdShapeMap> _shapeMap;
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;
 
-    TDF_Label _shapeLabel; 
+    TDF_Label _shapeLabel;
+    std::set<TDF_Label> _shapeLabels;
 
 };
 

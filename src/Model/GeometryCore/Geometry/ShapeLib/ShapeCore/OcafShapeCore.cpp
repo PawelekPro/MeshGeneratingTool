@@ -28,16 +28,19 @@
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XmlXCAFDrivers.hxx>
 #include <NCollection_IndexedMap.hxx>
+#include <TNaming_NamedShape.hxx>
+#include <TDocStd_Modified.hxx>
 
 OcafShapeCore::OcafShapeCore() {
     
     auto app = XCAFApp_Application::GetApplication();
     app->NewDocument("XmlXCAF", this->_document);
-    _document->SetUndoLimit(3);
+    app->InitDocument(_document);
+    _document->SetUndoLimit(5);
     this->_shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_document->Main());
     this->_colorTool = XCAFDoc_DocumentTool::ColorTool(this->_document->Main());
     XmlXCAFDrivers::DefineFormat(app);
-    
+    _shapeLabel = _shapeTool->Label();  
     _shapeMap = std::make_shared<StdShapeMap>();
 
 }
@@ -58,18 +61,20 @@ bool OcafShapeCore::write(const std::string& aSavePath){
 
     return true;
 }
-const ShapeId OcafShapeCore::registerNewShape(const TopoDS_Shape& aShape){
+
+bool OcafShapeCore::registerNewShape(const TopoDS_Shape& aShape){
     TDF_Label newShapeLabel = _shapeTool->AddShape(aShape);
+    _document->SetModified(newShapeLabel);
 
     TopTools_IndexedMapOfShape subShapeIds;
     TopExp::MapShapes(aShape, subShapeIds);
 
     ShapeId topLevelId = _shapeMap->registerTopLevelShape(aShape);
-    for(int i = 0; i < subShapeIds.Extent(); i++){
+    for(int i = 1; i <= subShapeIds.Extent(); i++){
         const TopoDS_Shape subShape = subShapeIds(i);
         ShapeId subId = _shapeMap->registerSubShape(subShape, topLevelId, i);
     }
-    return topLevelId;
+    return true;
 }
 
 bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
@@ -79,20 +84,19 @@ bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
     }
 
     TopoDS_Shape shapeToRemove = _shapeMap->atId(aShapeId);
-    TDF_Label labelToRemove = _shapeTool->FindShape(shapeToRemove);
-
-    if (!_shapeTool->RemoveShape(labelToRemove)) {
-        std::cerr << "Warning: Could not remove shape from document.\n";
-    }
-
-    if (!_shapeMap->removeShape(aShapeId)) {
-        std::cerr << "Error: Failed to remove shape from map.\n";
+    bool shapeRemoved = _shapeMap->removeShape(aShapeId);
+    if(!shapeRemoved){
         return false;
     }
-
+    
+    TDF_Label labelToRemove = _shapeTool->FindShape(shapeToRemove);
+    if (!labelToRemove.IsNull()){
+        _shapeTool->RemoveShape(labelToRemove);
+        return true;
+    }
+    
     return true;
 }
-
 
 bool OcafShapeCore::updateShape(
     const std::pair<ShapeId, TopoDS_Shape>& aShapeIdPair
@@ -100,27 +104,18 @@ bool OcafShapeCore::updateShape(
     const ShapeId& id = aShapeIdPair.first;
     const TopoDS_Shape& newShape = aShapeIdPair.second;
 
-    if (!_shapeMap->containsId(id)) {
-        std::cerr << "Error: ShapeId not found in map.\n";
+    if(!_shapeMap->containsId(id)){
         return false;
     }
-
-    TopoDS_Shape oldShape = _shapeMap->atId(id);
-    TDF_Label labelToRemove = _shapeTool->FindShape(oldShape);
-    if (!_shapeTool->RemoveShape(labelToRemove)) {
-        std::cerr << "Warning: Could not remove old shape from document.\n";
+    TopoDS_Shape shape = _shapeMap->atId(id);
+    TDF_Label label = _shapeTool->FindShape(shape);
+    if (!label.IsNull()){
+        _shapeTool->SetShape(label, newShape);
+        _document->SetModified(label);
     }
-
-    TDF_Label newLabel = _shapeTool->AddShape(newShape);
-
-    if (!_shapeMap->updateShape(id, newShape)) {
-        std::cerr << "Error: Failed to update shape in shape map.\n";
-        return false;
-    }
-
+    return _shapeMap->updateShape(id, newShape);
     return true;
 }
-
 
 bool OcafShapeCore::openCommand(){
     if (_document->HasOpenCommand()){
@@ -136,7 +131,9 @@ bool OcafShapeCore::commitCommand(){
         spdlog::warn("No command has been opened, cannot commit.");
         return false;
     }
-    return _document->CommitCommand();
+    _document->CommitCommand();
+    reviewDelta(_document->GetUndos().Last());
+    return true;
 }
 
 bool OcafShapeCore::abortCommand(){
@@ -148,9 +145,78 @@ bool OcafShapeCore::abortCommand(){
     return true;
 }
 
-bool OcafShapeCore::undo(){
-    return _document->Undo();
+bool OcafShapeCore::undo() {
+    _document->Undo();
+    reviewDelta(_document->GetRedos().Last());
+    return true;
 }
+
+DeltaType attrDeltaType(Handle(TDF_AttributeDelta) aAttrDelta) {
+    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnRemoval))) {
+        return DeltaType::Removal;
+    }
+    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnAddition))) {
+        return DeltaType::Addition;
+    }
+    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnModification))) {
+        return DeltaType::Modification;
+    }
+    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnForget))) {
+        return DeltaType::Forget;
+    }
+    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnResume))) {
+        return DeltaType::Resume;
+    }
+    throw std::runtime_error("Unknown delta type");
+}
+
+void OcafShapeCore::publishShapeEvents(
+    DeltaType aDeltaType
+) const {
+    switch (aDeltaType) {
+        case DeltaType::Addition:
+            std::cout << "Shape Added: " << std::endl;
+            break;
+        case DeltaType::Removal:
+            std::cout << "Shape Removed: " << std::endl;
+            break;
+        case DeltaType::Modification:
+            std::cout << "Shape Modified: " << std::endl;
+            break;
+        case DeltaType::Forget:
+            std::cout << "Shape Forgotten: " << std::endl;
+            break;
+        case DeltaType::Resume:
+            std::cout << "Shape Resumed: " << std::endl;
+            break;
+        default:
+            std::cout << "Unknown DeltaType" << std::endl;
+            break;
+    }
+}
+
+int OcafShapeCore::reviewDelta(Handle(TDF_Delta) aDelta) const {
+    TDF_AttributeDeltaList attrDeltaList = aDelta->AttributeDeltas();
+
+    for (auto attrDelta : attrDeltaList) {
+        Handle(TDF_Attribute) attr = attrDelta->Attribute();
+
+        if (!attr->IsKind(STANDARD_TYPE(TNaming_NamedShape)))
+            continue;
+
+        DeltaType deltaType = attrDeltaType(attrDelta);
+        Handle(TNaming_NamedShape) namedShape = 
+            Handle(TNaming_NamedShape)::DownCast(attr);
+
+        if (!namedShape.IsNull()) {
+            TopoDS_Shape shape = namedShape->Get();
+            // ShapeId id = _shapeMap->getId(shape);
+            publishShapeEvents(deltaType);
+        }
+    }
+    return attrDeltaList.Extent();
+}
+
 
 std::shared_ptr<const ShapeMap> OcafShapeCore::shapeMap() const {
     return _shapeMap;
