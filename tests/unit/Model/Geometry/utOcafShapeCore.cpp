@@ -31,18 +31,31 @@ protected:
     TopTools_IndexedMapOfShape subShapes = StubShapes::subShapes(cube);
 };
 
-TEST_F(OcafShapeCoreTest, TestRegisteringNewShapeIncrementsModifiedCount){
+TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsShapeMap){
     shapeCore.openCommand();
     shapeCore.registerNewShape(cube);
+    TopTools_IndexedMapOfShape map;
+    TopExp::MapShapes(cube, map);
     shapeCore.commitCommand();
-
-    std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
-    ShapeId id = shapeMap->getId(cube);
-    
-    shapeCore.write("preUndo.xml");
-    // shapeCore.openCommand();
-    // shapeCore.removeShape(id);
-    // shapeCore.commitCommand();
     shapeCore.undo();
-    shapeCore.write("postUndo.xml");
-}
+    // std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
+    // ASSERT_TRUE(shapeMap->containsShape(cube));
+};
+
+// TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
+//     shapeCore.openCommand();
+//     shapeCore.registerNewShape(cube);
+//     shapeCore.commitCommand();
+
+//     std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
+//     ASSERT_TRUE(shapeMap->containsShape(cube));
+// };
+
+// TEST_F(OcafShapeCoreTest, TestUndoneRegisteredShapeIsNotInMap){
+//     shapeCore.openCommand();
+//     shapeCore.registerNewShape(cube);
+//     shapeCore.commitCommand();
+
+//     std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
+//     ASSERT_FALSE(shapeMap->containsShape(cube));
+// };

@@ -59,10 +59,10 @@ TEST_F(StdShapeMapTest, TestRegisteringRegisteredSubShapeReturnsInvalidId){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     ShapeId subId = shapeMap.registerSubShape(
-        subShape, parentId, subShapeIntId
+        subShape, parentId
     );
     ShapeId anotherSubId = shapeMap.registerSubShape(
-        subShape, parentId, subShapeIntId
+        subShape, parentId
     );
     ASSERT_FALSE(anotherSubId.isValid());
 }
@@ -72,7 +72,7 @@ TEST_F(StdShapeMapTest, TestRegisteredSubShapeCanBeFetched){
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);
-    ShapeId subId = shapeMap.registerSubShape(subShape, parentId, subShapeIntId);
+    ShapeId subId = shapeMap.registerSubShape(subShape, parentId);
 
     TopoDS_Shape fetchedSubShape = shapeMap.atId(subId);
     ASSERT_EQ(subShape, fetchedSubShape);
@@ -106,7 +106,7 @@ TEST_F(StdShapeMapTest, TestRemoveShapeRemovesSubIdAndShape){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);
-    ShapeId subId = shapeMap.registerSubShape(subShape, parentId, subShapeIntId);
+    ShapeId subId = shapeMap.registerSubShape(subShape, parentId);
 
     bool removed = shapeMap.removeShape(subId);
     ASSERT_TRUE(removed);
@@ -118,7 +118,7 @@ TEST_F(StdShapeMapTest, TestRemovingNonExistingSubIdReturnsFalse){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);
-    ShapeId subId = shapeMap.registerSubShape(subShape, parentId, subShapeIntId);
+    ShapeId subId = shapeMap.registerSubShape(subShape, parentId);
 
     bool removed = shapeMap.removeShape(subId);
     bool anotherRemoved = shapeMap.removeShape(subId);
@@ -137,7 +137,7 @@ TEST_F(StdShapeMapTest, TestUpdateShapeChangesStoredSubShape){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);
-    ShapeId subId = shapeMap.registerSubShape(subShape, parentId, subShapeIntId);
+    ShapeId subId = shapeMap.registerSubShape(subShape, parentId);
     
     shapeMap.updateShape(subId, sphere);
     // TODO: I do not think this should be possible. We should validate ShapeId,

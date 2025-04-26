@@ -91,7 +91,7 @@ bool StdShapeMap::insert(const std::pair<ShapeId, TopoDS_Shape>& aIdShapePair){
         }
         throw InvalidMapState("Insert operation failed for one of the maps.");
     }
-    _idRegistry.bindTopLevelId(id);
+    _idRegistry.bindId(id);
     return true;
 }
 
@@ -107,10 +107,9 @@ const ShapeId StdShapeMap::registerTopLevelShape(const TopoDS_Shape& aShape) {
 
 const ShapeId StdShapeMap::registerSubShape(
     const TopoDS_Shape& aShape, 
-    const ShapeId& aParentId,
-    int aSubShapeId
+    const ShapeId& aParentId
 ) {
-    const ShapeId id = _idRegistry.generateSubId(aShape, aParentId, aSubShapeId);
+    const ShapeId id = _idRegistry.generateSubId(aShape, aParentId);
     if (insert({id, aShape})){
         return id;
     } else {

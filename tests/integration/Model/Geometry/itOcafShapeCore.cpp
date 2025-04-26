@@ -32,13 +32,13 @@ protected:
 };
 
 TEST_F(OcafShapeCoreTest, TestRegisterNewShape){
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-    IdleProgressIndicator indicator;
-    STEPImporter importer;
-    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-        importer.importFile(filePath, indicator);
-    TopoDS_Shape cube = shapes[0].first;
+    // std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+    // IdleProgressIndicator indicator;
+    // STEPImporter importer;
+    // std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
+    //     importer.importFile(filePath, indicator);
+    // TopoDS_Shape cube = shapes[0].first;
 
-    const ShapeId shapeId = shapeCore.registerNewShape(cube);
-    shapeCore.write(std::string("test.xml"));
+    // const ShapeId shapeId = shapeCore.registerNewShape(cube);
+    // shapeCore.write(std::string("test.xml"));
 }

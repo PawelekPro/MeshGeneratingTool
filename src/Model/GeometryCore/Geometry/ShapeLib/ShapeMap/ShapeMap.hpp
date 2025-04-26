@@ -39,8 +39,7 @@ class ShapeMap {
     virtual const ShapeId registerTopLevelShape(const TopoDS_Shape& shape) = 0;
     virtual const ShapeId registerSubShape(
         const TopoDS_Shape& shape, 
-        const ShapeId& aParentId,
-        int subShapeId
+        const ShapeId& aParentId
     ) = 0;
     virtual bool removeShape(const ShapeId& id) = 0;    
     virtual bool updateShape(

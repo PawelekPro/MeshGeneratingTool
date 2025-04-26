@@ -39,6 +39,7 @@
 #include <TDF_DeltaOnModification.hxx>
 #include <TDF_DeltaOnRemoval.hxx>
 #include <TDF_DeltaOnResume.hxx>
+#include <XCAFDoc_ShapeMapTool.hxx>
 
 enum class DeltaType{
     Removal,
@@ -47,7 +48,7 @@ enum class DeltaType{
     Forget,
     Resume
 };
-
+// TODO: Remake the shape core so that each shape has its own label
 class StdShapeMap;
 class OcafShapeCore : public ShapeCore {
     
@@ -72,15 +73,20 @@ class OcafShapeCore : public ShapeCore {
     bool commitCommand() override;
     bool abortCommand() override;
     bool undo() override;
-
+   
+    int reviewDelta(Handle(TDF_Delta) aDelta);
+    
     std::shared_ptr<const ShapeMap> shapeMap() const override;
   
     bool write(const std::string& aSavePath);
     
     private:
 
-    int reviewDelta(Handle(TDF_Delta) aDeltaList) const;
-    void publishShapeEvents(DeltaType aDeltaType) const;
+    void processShapeDelta(
+        DeltaType aDeltaType,
+        const TopoDS_Shape& aShape
+    );
+    
 
     std::shared_ptr<StdShapeMap> _shapeMap;
     Handle(TDocStd_Document) _document;

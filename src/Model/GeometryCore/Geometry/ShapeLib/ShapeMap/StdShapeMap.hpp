@@ -60,8 +60,7 @@ class StdShapeMap : public ShapeMap {
 
     virtual const ShapeId registerSubShape(
         const TopoDS_Shape& shape, 
-        const ShapeId& aParentId,
-        int subShapeId
+        const ShapeId& aParentId
     ) override;
 
     virtual bool removeShape(const ShapeId& id) override;    

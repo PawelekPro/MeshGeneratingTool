@@ -35,9 +35,9 @@ class IdRegistry{
         return ShapeId(_nextId, aShape.ShapeType());
     };
 
-    ShapeId generateSubId(const TopoDS_Shape& aShape, const ShapeId& aParentId, int aSubShapeId){
+    ShapeId generateSubId(const TopoDS_Shape& aShape, const ShapeId& aParentId){
         std::shared_ptr<const ShapeId> parentId = std::make_shared<ShapeId>(aParentId);
-        return ShapeId(aSubShapeId, aShape.ShapeType(), parentId);
+        return ShapeId(_nextId, aShape.ShapeType(), parentId);
     };
 
     bool isBound(const ShapeId& aShapeId){
@@ -47,7 +47,7 @@ class IdRegistry{
             return true;
         }
     }
-    bool bindTopLevelId(const ShapeId& aShapeId){
+    bool bindId(const ShapeId& aShapeId){
         if (_idSet.insert(aShapeId._id).second){
             _nextId++;
             return true;
