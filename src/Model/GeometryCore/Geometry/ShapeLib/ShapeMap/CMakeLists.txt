@@ -1,5 +1,5 @@
 add_library(ShapeMap
-    StdShapeMap.cpp
+    LabelShapeMap.cpp
 )
 
 target_link_libraries(ShapeMap PUBLIC

@@ -1,4 +1,5 @@
 add_library(ShapeCore
+    ShapeCore.cpp
     OcafShapeCore.cpp
 )
 

@@ -20,54 +20,57 @@
 #ifndef SHAPEID_HPP
 #define SHAPEID_HPP
 
-#include "ShapeTypes.hpp"
 #include <string>
-#include <cstdint>
 #include <memory>
+#include "ShapeKey.hpp"
 
-class IdRegistry;
+class ShapeIdFactory;
+class ShapeIdHasher;
+
 class ShapeId {
 
     public:
-    friend IdRegistry;
-    ShapeId(
-        uint64_t id,
-        const ShapeType& type,
-        std::shared_ptr<const ShapeId> parentId = nullptr
-    );
-    
     virtual ~ShapeId() = default;
-    
-    static const std::shared_ptr<const ShapeId>& InvalidId();
-    bool isValid() const;
+
+    ShapeId(const ShapeId& other) noexcept;
+    ShapeId(ShapeId&& other) noexcept;
+    ShapeId& operator=(const ShapeId& other) noexcept;
+    ShapeId& operator=(ShapeId&& other) noexcept;
     
     virtual bool operator==(const ShapeId& other) const;
     virtual bool operator<(const ShapeId& other) const;
 
-    virtual const ShapeType shapeType() const;
     virtual std::shared_ptr<const ShapeId> parentId() const;
     virtual std::string toString() const;
-    virtual const uint64_t toInt() const;
+
+    virtual bool isValid() const;
+    static ShapeId invalidId();
 
     protected:
-    const uint64_t _id;
-    const ShapeType _shapeType;
+    
+    ShapeId(
+        std::unique_ptr<ShapeKey> aKey,
+        std::shared_ptr<const ShapeId> aParentId = nullptr
+    );
+    
+    template<typename KeyType>
+    KeyType const& key() const {
+        auto* p = dynamic_cast<KeyType const*>(_key.get());
+        if (!p) throw std::bad_cast();
+        return *p;
+    }
+    
+    private:
+
+    std::unique_ptr<ShapeKey> _key;
     std::shared_ptr<const ShapeId> _parentId;
+
+    friend class ShapeIdFactory;
+    friend class ShapeIdHasher;
 };
 
-
 struct ShapeIdHasher {
-    std::size_t operator()(const ShapeId& s) const {
-        std::size_t h1 = std::hash<uint64_t>()(s.toInt());
-        std::size_t h2 = std::hash<ShapeType>()(s.shapeType());
-
-        std::size_t h3 = 0;
-        if (auto parent = s.parentId()) {
-            h3 = std::hash<uint64_t>()(parent->toInt());
-        }
-
-        return h1 ^ (h2 << 1) ^ (h3 << 2);
-    }
+  std::size_t operator()(ShapeId const& id) const noexcept; 
 };
 
 #endif

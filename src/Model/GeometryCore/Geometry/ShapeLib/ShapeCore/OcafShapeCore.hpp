@@ -48,8 +48,7 @@ enum class DeltaType{
     Forget,
     Resume
 };
-// TODO: Remake the shape core so that each shape has its own label
-class StdShapeMap;
+
 class OcafShapeCore : public ShapeCore {
     
     public:
@@ -76,8 +75,6 @@ class OcafShapeCore : public ShapeCore {
    
     int reviewDelta(Handle(TDF_Delta) aDelta);
     
-    std::shared_ptr<const ShapeMap> shapeMap() const override;
-  
     bool write(const std::string& aSavePath);
     
     private:
@@ -86,9 +83,7 @@ class OcafShapeCore : public ShapeCore {
         DeltaType aDeltaType,
         const TopoDS_Shape& aShape
     );
-    
 
-    std::shared_ptr<StdShapeMap> _shapeMap;
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;

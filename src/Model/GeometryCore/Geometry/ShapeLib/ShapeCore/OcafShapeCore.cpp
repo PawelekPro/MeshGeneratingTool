@@ -18,7 +18,7 @@
 */
 
 #include "OcafShapeCore.hpp"
-#include "StdShapeMap.hpp"
+#include "LabelShapeMap.hpp"
 
 #include <TopExp_Explorer.hxx>
 #include <TopExp.hxx>
@@ -41,8 +41,7 @@ OcafShapeCore::OcafShapeCore() {
     this->_colorTool = XCAFDoc_DocumentTool::ColorTool(this->_document->Main());
     XmlXCAFDrivers::DefineFormat(app);
     _shapeLabel = _shapeTool->Label();  
-    _shapeMap = std::make_shared<StdShapeMap>();
-
+    _shapeMap = std::make_shared<LabelShapeMap>(_shapeTool);
 }
 
 bool OcafShapeCore::write(const std::string& aSavePath){
@@ -88,18 +87,7 @@ bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
 bool OcafShapeCore::updateShape(
     const std::pair<ShapeId, TopoDS_Shape>& aShapeIdPair
 ) {
-    const ShapeId& id = aShapeIdPair.first;
-    const TopoDS_Shape& newShape = aShapeIdPair.second;
-    if(!_shapeMap->containsId(id)){
-        return false;
-    }
-    TopoDS_Shape shape = _shapeMap->atId(id);
-    TDF_Label label = _shapeTool->FindShape(shape);
-    if (!label.IsNull()){
-        _shapeTool->SetShape(label, newShape);
-        _document->SetModified(label);
-    }
-    return _shapeMap->updateShape(id, newShape);
+    return false;
 }
 
 bool OcafShapeCore::openCommand(){
@@ -159,36 +147,36 @@ void OcafShapeCore::processShapeDelta(
     DeltaType aDeltaType,
     const TopoDS_Shape& aShape
 ){
-    switch (aDeltaType) {
-        case DeltaType::Addition:{
-            TopTools_IndexedMapOfShape subShapeIds;
-            TopExp::MapShapes(aShape, subShapeIds);
-            ShapeId topLevelId = _shapeMap->registerTopLevelShape(aShape);
-            for(int i = 1; i <= subShapeIds.Extent(); i++){
-                const TopoDS_Shape subShape = subShapeIds(i);
-                ShapeId subId = _shapeMap->registerSubShape(subShape, topLevelId);
-            }
-            _publisher.shapeAdded(topLevelId);
-        }
-            break;
-        case DeltaType::Removal:{
-            ShapeId id = _shapeMap->getId(aShape);
-            bool shapeRemoved = _shapeMap->removeShape(id);
-            _publisher.shapeRemoved(id);
-        }
-        break;
-        case DeltaType::Modification:{
-            ShapeId id = _shapeMap->getId(aShape);
-            _publisher.shapeModified(id);
-            break;
-        }
-        case DeltaType::Forget:
-            break;
-        case DeltaType::Resume:
-            break;
-        default:
-            break;
-    }
+    // switch (aDeltaType) {
+    //     case DeltaType::Addition:{
+    //         TopTools_IndexedMapOfShape subShapeIds;
+    //         TopExp::MapShapes(aShape, subShapeIds);
+    //         ShapeId topLevelId = _shapeMap->registerTopLevelShape(aShape);
+    //         for(int i = 1; i <= subShapeIds.Extent(); i++){
+    //             const TopoDS_Shape subShape = subShapeIds(i);
+    //             ShapeId subId = _shapeMap->registerSubShape(subShape, topLevelId);
+    //         }
+    //         _publisher.shapeAdded(topLevelId);
+    //     }
+    //         break;
+    //     case DeltaType::Removal:{
+    //         ShapeId id = _shapeMap->getId(aShape);
+    //         bool shapeRemoved = _shapeMap->removeShape(id);
+    //         _publisher.shapeRemoved(id);
+    //     }
+    //     break;
+    //     case DeltaType::Modification:{
+    //         ShapeId id = _shapeMap->getId(aShape);
+    //         _publisher.shapeModified(id);
+    //         break;
+    //     }
+    //     case DeltaType::Forget:
+    //         break;
+    //     case DeltaType::Resume:
+    //         break;
+    //     default:
+    //         break;
+    // }
 }
 
 int OcafShapeCore::reviewDelta(Handle(TDF_Delta) aDelta) {
@@ -221,7 +209,3 @@ int OcafShapeCore::reviewDelta(Handle(TDF_Delta) aDelta) {
     }
     return attrDeltaList.Extent();
 }
-
-std::shared_ptr<const ShapeMap> OcafShapeCore::shapeMap() const {
-    return _shapeMap;
-};

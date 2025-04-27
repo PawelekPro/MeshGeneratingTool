@@ -50,7 +50,7 @@ class ShapeCore {
     virtual bool abortCommand() = 0;
     virtual bool undo() = 0;
 
-    virtual std::shared_ptr<const ShapeMap> shapeMap() const = 0;
+    virtual std::shared_ptr<const ShapeMap> shapeMap() const;
 
     boost::signals2::connection connectShapeAdded(
         const std::function<void(const ShapeId&)>& slot
@@ -63,8 +63,20 @@ class ShapeCore {
     );
 
     protected:
-    ShapeEventsPublisher _publisher;
+    
+    const ShapeId registerTopLevelShapeToShapeMap(const TopoDS_Shape& aShape);
+    const ShapeId registerSubShapeToShapeMap(
+        const TopoDS_Shape& aShape, 
+        const ShapeId& aParentId
+    );
+    bool removeShapeFromShapeMap(const ShapeId& aId);
+    bool updateShapeInShapeMap(
+        const ShapeId& aId,
+        const TopoDS_Shape& aShape
+    );
 
+    ShapeEventsPublisher _publisher;
+    std::shared_ptr<ShapeMap> _shapeMap;
 };
 
 #endif

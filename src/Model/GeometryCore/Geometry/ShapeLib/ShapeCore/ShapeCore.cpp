@@ -36,3 +36,31 @@ boost::signals2::connection ShapeCore::connectShapeModified(
 ) {
     return _publisher.shapeModifiedSignal().connect(slot);
 }
+
+const ShapeId ShapeCore::registerTopLevelShapeToShapeMap(
+    const TopoDS_Shape& aShape
+) {
+    return _shapeMap->registerTopLevelShape(aShape);
+}
+
+const ShapeId ShapeCore::registerSubShapeToShapeMap(
+    const TopoDS_Shape& aShape, 
+    const ShapeId& aParentId
+) {
+    return _shapeMap->registerSubShape(aShape, aParentId);
+}
+
+bool ShapeCore::removeShapeFromShapeMap(const ShapeId& id) {
+    return _shapeMap->removeShape(id);
+}
+
+bool ShapeCore::updateShapeInShapeMap(
+    const ShapeId& id,
+    const TopoDS_Shape& aShape
+) {
+    return _shapeMap->updateShape(id, aShape);
+}
+
+std::shared_ptr<const ShapeMap> ShapeCore::shapeMap() const {
+    return _shapeMap;
+}

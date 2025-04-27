@@ -21,12 +21,13 @@
 #define SHAPEMAP_HPP
 
 #include "ShapeId.hpp"
+#include "ShapeIdFactory.hpp"
 #include <TopoDS_Shape.hxx>
 #include <memory>
 
-class OcafShapeCore;
+class ShapeCore;
 class ShapeMap {
-    friend OcafShapeCore;
+    
     public:
     virtual ~ShapeMap() = default;
  
@@ -35,17 +36,22 @@ class ShapeMap {
     
     virtual const TopoDS_Shape atId(const ShapeId& id) const = 0;
     virtual const ShapeId getId(const TopoDS_Shape& shape) const = 0;
-    
+
+    protected:    
+
     virtual const ShapeId registerTopLevelShape(const TopoDS_Shape& shape) = 0;
     virtual const ShapeId registerSubShape(
         const TopoDS_Shape& shape, 
-        const ShapeId& aParentId
+        const ShapeId& parentId
     ) = 0;
+    
     virtual bool removeShape(const ShapeId& id) = 0;    
     virtual bool updateShape(
         const ShapeId& id,
         const TopoDS_Shape& shape
     ) = 0;
+
+    friend class ShapeCore;
 };
 
 #endif

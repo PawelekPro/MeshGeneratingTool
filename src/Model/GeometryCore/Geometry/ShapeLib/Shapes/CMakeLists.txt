@@ -1,5 +1,6 @@
 add_library(Shapes
     ShapeId.cpp
+    LabelShapeKey.cpp
 )
 
 target_link_libraries(Shapes PUBLIC
@@ -8,4 +9,5 @@ target_link_libraries(Shapes PUBLIC
 
 target_include_directories(Shapes PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${BOOST_DIR}
 )

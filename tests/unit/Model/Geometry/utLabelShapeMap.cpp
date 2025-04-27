@@ -21,17 +21,43 @@
 #include <gmock/gmock.h>
 
 #include "StubShapes.hpp"
-#include "StdShapeMap.hpp"
+#include "LabelShapeMap.hpp"
 
-class StdShapeMapTest : public ::testing::Test {
-protected:
-    StdShapeMap shapeMap;
+#include <TDocStd_Document.hxx>
+#include <XCAFApp_Application.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+
+class TestableLabelShapeMap : public LabelShapeMap {
+public:
+    TestableLabelShapeMap()
+    : LabelShapeMap(initShapeTool())  // call base constructor with shapeTool
+    {}
+    using LabelShapeMap::registerTopLevelShape;
+    using LabelShapeMap::registerSubShape;
+    using LabelShapeMap::removeShape;
+    using LabelShapeMap::updateShape;
+
+private:
+    static Handle(XCAFDoc_ShapeTool) initShapeTool() {
+        Handle(XCAFApp_Application) app = XCAFApp_Application::GetApplication();
+        Handle(TDocStd_Document) document;
+        app->NewDocument("XmlXCAF", document);
+        app->InitDocument(document); // not strictly needed after NewDocument, but safe
+        document->SetUndoLimit(5);
+        return XCAFDoc_DocumentTool::ShapeTool(document->Main());
+    }
+};
+
+class LabelShapeMapTest : public ::testing::Test {
+    protected:
+    TestableLabelShapeMap shapeMap;
     TopoDS_Shape cube = StubShapes::cube();
     TopoDS_Shape sphere = StubShapes::sphere();
     TopTools_IndexedMapOfShape subShapes = StubShapes::subShapes(cube);
 };
 
-TEST_F(StdShapeMapTest, TestRegisteredTopLevelShapesCanBeFetched){
+TEST_F(LabelShapeMapTest, TestRegisteredTopLevelShapesCanBeFetched){
     ShapeId cubeId = shapeMap.registerTopLevelShape(cube);
     ShapeId sphereId = shapeMap.registerTopLevelShape(sphere);
     
@@ -48,13 +74,13 @@ TEST_F(StdShapeMapTest, TestRegisteredTopLevelShapesCanBeFetched){
     ASSERT_EQ(sphereId, fetchedSphereId);
 }
 
-TEST_F(StdShapeMapTest, TestRegisteringRegisteredTopShapeReturnsInvalidId){
+TEST_F(LabelShapeMapTest, TestRegisteringRegisteredTopShapeReturnsExistingId){
     ShapeId id = shapeMap.registerTopLevelShape(cube);
     ShapeId anotherId = shapeMap.registerTopLevelShape(cube);
-    ASSERT_FALSE(anotherId.isValid());
+    ASSERT_EQ(id, anotherId);
 }
 
-TEST_F(StdShapeMapTest, TestRegisteringRegisteredSubShapeReturnsInvalidId){
+TEST_F(LabelShapeMapTest, TestRegisteringRegisteredSubShapeReturnsExistingId){
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
@@ -64,10 +90,10 @@ TEST_F(StdShapeMapTest, TestRegisteringRegisteredSubShapeReturnsInvalidId){
     ShapeId anotherSubId = shapeMap.registerSubShape(
         subShape, parentId
     );
-    ASSERT_FALSE(anotherSubId.isValid());
+    ASSERT_EQ(subId, anotherSubId);
 }
 
-TEST_F(StdShapeMapTest, TestRegisteredSubShapeCanBeFetched){
+TEST_F(LabelShapeMapTest, TestRegisteredSubShapeCanBeFetched){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     
@@ -80,13 +106,13 @@ TEST_F(StdShapeMapTest, TestRegisteredSubShapeCanBeFetched){
     ASSERT_EQ(subId, fetchedSubId);
 }
 
-TEST_F(StdShapeMapTest, TestContainsMethodsReturnsTrueForInsertedShape){
+TEST_F(LabelShapeMapTest, TestContainsMethodsReturnsTrueForInsertedShape){
     ShapeId id = shapeMap.registerTopLevelShape(cube);
     ASSERT_TRUE(shapeMap.containsId(id));
     ASSERT_TRUE(shapeMap.containsShape(cube));
 }
 
-TEST_F(StdShapeMapTest, TestRemoveShapeRemovesTopIdAndShape){
+TEST_F(LabelShapeMapTest, TestRemoveShapeRemovesTopIdAndShape){
     ShapeId id = shapeMap.registerTopLevelShape(cube);
     bool removed = shapeMap.removeShape(id);
     ASSERT_TRUE(removed);
@@ -94,7 +120,7 @@ TEST_F(StdShapeMapTest, TestRemoveShapeRemovesTopIdAndShape){
     ASSERT_FALSE(shapeMap.containsShape(cube));
 }
 
-TEST_F(StdShapeMapTest, TestRemovingNonExistingTopIdReturnsFalse){
+TEST_F(LabelShapeMapTest, TestRemovingNonExistingTopIdReturnsFalse){
     ShapeId id = shapeMap.registerTopLevelShape(cube);
     bool removed = shapeMap.removeShape(id);
     bool anotherRemoved = shapeMap.removeShape(id);
@@ -102,38 +128,26 @@ TEST_F(StdShapeMapTest, TestRemovingNonExistingTopIdReturnsFalse){
     ASSERT_FALSE(anotherRemoved);
 }
 
-TEST_F(StdShapeMapTest, TestRemoveShapeRemovesSubIdAndShape){
+TEST_F(LabelShapeMapTest, TestRemoveShapeReturnsFalseOnSubShape){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);
     ShapeId subId = shapeMap.registerSubShape(subShape, parentId);
-
+    
     bool removed = shapeMap.removeShape(subId);
-    ASSERT_TRUE(removed);
-    ASSERT_FALSE(shapeMap.containsId(subId));
-    ASSERT_FALSE(shapeMap.containsShape(subShape));
+    ASSERT_FALSE(removed);
+    ASSERT_TRUE(shapeMap.containsId(subId));
+    ASSERT_TRUE(shapeMap.containsShape(subShape));
 }
 
-TEST_F(StdShapeMapTest, TestRemovingNonExistingSubIdReturnsFalse){
-    int subShapeIntId = 2;
-    TopoDS_Shape subShape = subShapes(subShapeIntId);
-    ShapeId parentId = shapeMap.registerTopLevelShape(cube);
-    ShapeId subId = shapeMap.registerSubShape(subShape, parentId);
-
-    bool removed = shapeMap.removeShape(subId);
-    bool anotherRemoved = shapeMap.removeShape(subId);
-    ASSERT_TRUE(removed);
-    ASSERT_FALSE(anotherRemoved);
-}
-
-TEST_F(StdShapeMapTest, TestUpdateShapeChangesStoredTopShape){
+TEST_F(LabelShapeMapTest, TestUpdateShapeChangesStoredTopShape){
     ShapeId id = shapeMap.registerTopLevelShape(cube);
     shapeMap.updateShape(id, sphere);
     TopoDS_Shape fetchedShape = shapeMap.atId(id);
     ASSERT_EQ(fetchedShape, sphere);
 }
 
-TEST_F(StdShapeMapTest, TestUpdateShapeChangesStoredSubShape){
+TEST_F(LabelShapeMapTest, TestUpdateShapeChangesStoredSubShape){
     int subShapeIntId = 2;
     TopoDS_Shape subShape = subShapes(subShapeIntId);
     ShapeId parentId = shapeMap.registerTopLevelShape(cube);

@@ -19,89 +19,60 @@
 
 #include "ShapeId.hpp"
 
-
 ShapeId::ShapeId(
-    uint64_t id,
-    const ShapeType& type,
-    std::shared_ptr<const ShapeId> parentId) : 
-    _id(id),
-    _shapeType(type),
-    _parentId(parentId){}
+    std::unique_ptr<ShapeKey> aKey,
+    std::shared_ptr<const ShapeId> aParentId
+) : _key(std::move(aKey)),
+    _parentId(std::move(aParentId)){}
 
-const std::shared_ptr<const ShapeId>& ShapeId::InvalidId() {
-    static const std::shared_ptr<const ShapeId> invalid = 
-        std::make_shared<ShapeId>(0, ShapeType::TopAbs_VERTEX, nullptr);
-    return invalid;
+ShapeId::ShapeId(const ShapeId& aOther) noexcept
+    : _key       ( aOther._key->clone() )
+    , _parentId  ( aOther._parentId ) {}
+
+ShapeId::ShapeId(ShapeId&& aOther) noexcept
+    : _key       ( std::move(aOther._key) )
+    , _parentId  ( std::move(aOther._parentId) ) {}
+
+ShapeId& ShapeId::operator=(const ShapeId& aOther) noexcept{
+    if (this != &aOther) {
+      _key      = aOther._key->clone();
+      _parentId = aOther._parentId;
+    }
+    return *this;
+}   
+
+ShapeId& ShapeId::operator=(ShapeId&& aOther) noexcept {
+    if (this != &aOther) {
+      _key      = aOther._key->clone();
+      _parentId = aOther._parentId;
+    }
+    return *this;
 }
-
-bool ShapeId::isValid() const {
-    return _id != 0;
-}
-
 
 bool ShapeId::operator==(const ShapeId& other) const {
-    if (other.shapeType() != this->shapeType()) {
-        return false;
-    }
-
-    auto thisParent = this->parentId();
-    auto otherParent = other.parentId();
-
-    if (thisParent && otherParent) { 
-        if (thisParent->toInt() != otherParent->toInt()) {
-            return false;
-        }
-    } else if (thisParent || otherParent) { 
-        return false; 
-    }
-
-    return this->toInt() == other.toInt();
+    return _key->equals(*other._key);
 }
 
 bool ShapeId::operator<(const ShapeId& other) const {
-    if (this->shapeType() > other.shapeType()) {
-        return true;
-    } else if (this->shapeType() < other.shapeType()) {
-        return false;
-    }
-
-    auto thisParent = this->parentId();
-    auto otherParent = other.parentId();
-
-    if (thisParent && otherParent) {  
-        if (thisParent->toInt() > otherParent->toInt()) {
-            return true;
-        } else if (thisParent->toInt() < otherParent->toInt()) {
-            return false;
-        }
-    } else if (!thisParent && otherParent) { 
-        return false;
-    } else if (thisParent && !otherParent) { 
-        return true;
-    }
-
-    return this->toInt() > other.toInt();
-}
-
-const ShapeType ShapeId::shapeType() const {
-    return _shapeType;
+    return _key->less(*other._key);
 }
 
 std::shared_ptr<const ShapeId> ShapeId::parentId() const {
     return _parentId;
-};
+}
 
 std::string ShapeId::toString() const {
-    std::string shapeId = std::to_string(static_cast<int>(_shapeType));
-    std::string parentId;
-    if(_parentId){
-        parentId = std::to_string(_parentId->toInt());
-    }
-    std::string id = std::to_string(_id);
-    return shapeId + "-" + parentId + "-" + id;
+    return _key->toString();
+}
+
+bool ShapeId::isValid() const {
+    return _key != nullptr;
 };
 
-const uint64_t ShapeId::toInt() const { 
-    return _id; 
+ShapeId ShapeId::invalidId(){
+    return ShapeId(nullptr, nullptr);
 };
 
+std::size_t ShapeIdHasher::operator()(ShapeId const& id) const noexcept {
+    return id._key->hash();
+}; 
