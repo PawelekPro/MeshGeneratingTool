@@ -17,47 +17,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LABELSHAPEMAP_HPP
-#define LABELSHAPEMAP_HPP
+#ifndef AttrShapeMap_HPP 
+#define AttrShapeMap_HPP 
 
 #include <XCAFDoc_ShapeTool.hxx>
+#include <unordered_map>
 #include "ShapeMap.hpp"
+#include "TagIdKey.hpp"
 
-class LabelShapeMap : public ShapeMap {
+class AttrShapeMap : public ShapeMap {
 
     public:
-    LabelShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool);
-    ~LabelShapeMap() = default;
+    AttrShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool);
+    ~AttrShapeMap() = default;
  
     bool containsId(const ShapeId& id) const override;
     bool containsShape(const TopoDS_Shape& id) const override;
     
     const TopoDS_Shape atId(const ShapeId& id) const override;
-    const ShapeId getId(const TopoDS_Shape& shape) const override;
+    const ShapeId atShape(const TopoDS_Shape& shape) const override;
 
-    protected:    
+    std::vector<ShapeIdPair> freeShapes() const override;
+    std::vector<ShapeIdPair> subShapes(const ShapeId& id) const override; 
 
-    const ShapeId registerTopLevelShape(
-        const TopoDS_Shape& shape
-    ) override;
+    protected:
+    const ShapeId fromKey(const ShapeKey& aKey) const override; 
 
-    const ShapeId registerSubShape(
-        const TopoDS_Shape& shape, 
-        const ShapeId& parentId
-    ) override;
-    
-    bool removeShape(const ShapeId& id) override;
-
-    bool updateShape(
-        const ShapeId& id,
-        const TopoDS_Shape& shape
-    ) override;
-    
     private:
-    static TDF_Label idLabel(const ShapeId& id);
-    ShapeId shapeId(const TDF_Label& label) const;
-    
     Handle(XCAFDoc_ShapeTool) _shapeTool;
-
+    TDF_Label findLabel(const TagIdKey& aKey) const;
+    
 };
+
 #endif

@@ -27,24 +27,25 @@ TEST(test,test){
     EXPECT_TRUE(true);
 }
 
-// class OcafShapeCoreTest : public ::testing::Test {
-// protected:
-//     OcafShapeCore shapeCore;
-//     TopoDS_Shape cube = StubShapes::cube();
-//     TopoDS_Shape sphere = StubShapes::sphere();
-//     TopTools_IndexedMapOfShape subShapes = StubShapes::subShapes(cube);
-// };
+class OcafShapeCoreTest : public ::testing::Test {
+protected:
+    OcafShapeCore shapeCore;
+    TopoDS_Shape cube = StubShapes::cube();
+    TopoDS_Shape sphere = StubShapes::sphere();
+    TopTools_IndexedMapOfShape subShapes = StubShapes::subShapes(cube);
+};
 
-// TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsShapeMap){
-    // shapeCore.openCommand();
-    // shapeCore.registerNewShape(cube);
+TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsShapeMap){
+    shapeCore.openCommand();
+    shapeCore.registerNewFreeShape(cube);
+    shapeCore.registerNewFreeShape(sphere);
     // TopTools_IndexedMapOfShape map;
-    // TopExp::MapShapes(cube, map);
-    // shapeCore.commitCommand();
-    // shapeCore.undo();
-    // std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
-    // ASSERT_TRUE(shapeMap->containsShape(cube));
-// };
+    shapeCore.commitCommand();
+    shapeCore.write("CubeAndSphere.xml");
+    shapeCore.undo();
+    std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
+    ASSERT_TRUE(shapeMap->containsShape(cube));
+};
 
 // TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
 //     shapeCore.openCommand();

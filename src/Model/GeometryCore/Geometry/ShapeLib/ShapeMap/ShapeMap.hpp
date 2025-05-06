@@ -29,29 +29,23 @@ class ShapeCore;
 class ShapeMap {
     
     public:
+    using ShapeIdPair = std::pair<ShapeId, TopoDS_Shape>;
+
     virtual ~ShapeMap() = default;
  
     virtual bool containsId(const ShapeId& id) const = 0;
     virtual bool containsShape(const TopoDS_Shape& id) const = 0;
     
     virtual const TopoDS_Shape atId(const ShapeId& id) const = 0;
-    virtual const ShapeId getId(const TopoDS_Shape& shape) const = 0;
+    virtual const ShapeId atShape(const TopoDS_Shape& shape) const = 0;
 
-    protected:    
+    virtual std::vector<ShapeIdPair> freeShapes() const = 0;
+    virtual std::vector<ShapeIdPair> subShapes(const ShapeId& id) const = 0;
 
-    virtual const ShapeId registerTopLevelShape(const TopoDS_Shape& shape) = 0;
-    virtual const ShapeId registerSubShape(
-        const TopoDS_Shape& shape, 
-        const ShapeId& parentId
-    ) = 0;
-    
-    virtual bool removeShape(const ShapeId& id) = 0;    
-    virtual bool updateShape(
-        const ShapeId& id,
-        const TopoDS_Shape& shape
-    ) = 0;
-
+    protected:
+    virtual const ShapeId fromKey(const ShapeKey& aKey) const = 0;
     friend class ShapeCore;
+
 };
 
 #endif

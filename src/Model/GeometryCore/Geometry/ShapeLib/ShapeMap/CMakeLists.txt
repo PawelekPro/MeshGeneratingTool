@@ -1,6 +1,6 @@
 add_library(ShapeMap
-    LabelShapeMap.cpp
-)
+    AttrShapeMap.cpp
+    )
 
 target_link_libraries(ShapeMap PUBLIC
     ${OCC_LIBRARIES}

@@ -17,31 +17,33 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LabelShapeKey_HPP
-#define LabelShapeKey_HPP
+#ifndef TAGIDKEY_HPP 
+#define TAGIDKEY_HPP 
 
+#include <string>
+#include <memory>
 #include "ShapeKey.hpp"
-#include <TDF_Label.hxx>
-#include <TCollection_AsciiString.hxx>
 
-class LabelShapeKey : public ShapeKey {
-
+class TagIdKey : public ShapeKey {
     public:
-    LabelShapeKey(const TDF_Label& aShapeLabel);
-    virtual ~LabelShapeKey() = default;
-
-    std::unique_ptr<ShapeKey> clone() const override; 
-    bool equals(const ShapeKey& other) const override; 
-    bool less  (const ShapeKey& other) const override; 
+    virtual ~TagIdKey() = default;
+    TagIdKey(size_t aLabelTag, size_t aTnamingId);
     
-    std::size_t hash() const override;
-    std::string toString() const override; 
+    virtual std::unique_ptr<ShapeKey> clone() const override;
 
-    TDF_Label label() const;
+    virtual bool equals(const ShapeKey& other) const override;
+    virtual bool less  (const ShapeKey& ther) const override;
+    
+    virtual std::size_t hash() const override;
+    virtual std::string toString() const override;
+
+    size_t labelTag() const {return _labelTag;}
+    size_t tNamingId() const {return _tNamingId;}
 
     private:
-    TDF_Label _label;
-    
+    const size_t _labelTag;
+    const size_t _tNamingId;
+    std::string _cachedString;
 };
 
 #endif

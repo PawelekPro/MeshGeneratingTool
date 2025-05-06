@@ -1,7 +1,7 @@
 add_library(Shapes
     ShapeId.cpp
-    LabelShapeKey.cpp
-)
+    TagIdKey.cpp
+    )
 
 target_link_libraries(Shapes PUBLIC
     ${OCC_LIBRARIES}

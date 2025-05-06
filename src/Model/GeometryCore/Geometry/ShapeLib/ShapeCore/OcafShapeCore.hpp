@@ -23,6 +23,7 @@
 #include "ShapeCore.hpp"
 #include "ShapeEventsPublisher.hpp"
 #include "ShapeEventsPublisher.hpp"
+#include "ShapeIdAttribute.hpp"
 
 #include <string>
 #include <TDocStd_Document.hxx>
@@ -56,7 +57,7 @@ class OcafShapeCore : public ShapeCore {
     
     virtual ~OcafShapeCore() = default;
 
-    bool registerNewShape(
+    bool registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) override;
 
@@ -72,17 +73,16 @@ class OcafShapeCore : public ShapeCore {
     bool commitCommand() override;
     bool abortCommand() override;
     bool undo() override;
+    bool redo() override;
    
     int reviewDelta(Handle(TDF_Delta) aDelta);
+   
+    void reviewRemoval(Handle(TDF_Attribute) aRemovedAttr);
+
     
     bool write(const std::string& aSavePath);
     
     private:
-
-    void processShapeDelta(
-        DeltaType aDeltaType,
-        const TopoDS_Shape& aShape
-    );
 
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;

@@ -31,6 +31,7 @@ class ShapeId {
 
     public:
     virtual ~ShapeId() = default;
+    ShapeId() : ShapeId(invalidId()){}
 
     ShapeId(const ShapeId& other) noexcept;
     ShapeId(ShapeId&& other) noexcept;

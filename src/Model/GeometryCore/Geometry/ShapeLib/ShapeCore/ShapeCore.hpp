@@ -33,7 +33,7 @@ class ShapeCore {
     public:
     virtual ~ShapeCore() = default;
 
-    virtual bool registerNewShape(
+    virtual bool registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) = 0;
 
@@ -49,6 +49,7 @@ class ShapeCore {
     virtual bool commitCommand() = 0;
     virtual bool abortCommand() = 0;
     virtual bool undo() = 0;
+    virtual bool redo() = 0;
 
     virtual std::shared_ptr<const ShapeMap> shapeMap() const;
 
@@ -63,17 +64,6 @@ class ShapeCore {
     );
 
     protected:
-    
-    const ShapeId registerTopLevelShapeToShapeMap(const TopoDS_Shape& aShape);
-    const ShapeId registerSubShapeToShapeMap(
-        const TopoDS_Shape& aShape, 
-        const ShapeId& aParentId
-    );
-    bool removeShapeFromShapeMap(const ShapeId& aId);
-    bool updateShapeInShapeMap(
-        const ShapeId& aId,
-        const TopoDS_Shape& aShape
-    );
 
     ShapeEventsPublisher _publisher;
     std::shared_ptr<ShapeMap> _shapeMap;

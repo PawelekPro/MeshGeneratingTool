@@ -45,7 +45,7 @@ bool ShapeService::importSTEP(const std::string& aFilePath) {
         importer.importFile(aFilePath, indicator);
     
     for (const auto shapePair : shapes){
-        _shapeCore.registerNewShape(shapePair.first);
+        _shapeCore.registerNewFreeShape(shapePair.first);
     }
     return true;
 }

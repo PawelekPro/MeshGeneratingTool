@@ -17,34 +17,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "LabelShapeKey.hpp"
-#include <TDF_Tool.hxx>
+#include "TagIdKey.hpp"
 
-LabelShapeKey::LabelShapeKey(const TDF_Label& aShapeLabel)
-    : ShapeKey(), _label(aShapeLabel){}
+TagIdKey::TagIdKey(size_t aLabelTag, size_t aTNamingId)
+    : ShapeKey(), _labelTag(aLabelTag), _tNamingId(aTNamingId){}
 
-std::unique_ptr<ShapeKey> LabelShapeKey::clone() const {
-    return std::make_unique<LabelShapeKey>(_label);
+std::unique_ptr<ShapeKey> TagIdKey::clone() const {
+    return std::make_unique<TagIdKey>(_labelTag, _tNamingId);
 } 
 
-bool LabelShapeKey::equals(const ShapeKey& other) const {
-    if (auto* p = dynamic_cast<LabelShapeKey const*>(&other))
-      return p->_label == _label;
-    return false;
+bool TagIdKey::equals(const ShapeKey& other) const {
+    return this->toString() == other.toString();
 }
 
-bool LabelShapeKey::less(const ShapeKey& other) const {
+bool TagIdKey::less(const ShapeKey& other) const {
     return this->toString() < other.toString();
 }
 
-std::size_t LabelShapeKey::hash() const {
-    return std::hash<TDF_Label>{}(_label);
+std::size_t TagIdKey::hash() const {
+    return 1;
+    //    return std::hash<const size_t>(_tNamingId);
 }
 
-std::string LabelShapeKey::toString() const {
-    TCollection_AsciiString entry;
-    TDF_Tool::Entry(_label, entry);
-    return entry.ToCString();
+std::string TagIdKey::toString() const {
+    return "a";
+    // if (_cachedString.empty()){
+    //     _cachedString = std::to_string(_labelTag) + "-" + 
+    //                     std::to_string(_tNamingId);
+    // } else {
+    //     return _cachedString;
+    // }
 }
-
-TDF_Label LabelShapeKey::label() const { return _label; }

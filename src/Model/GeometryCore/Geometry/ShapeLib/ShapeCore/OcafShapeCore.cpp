@@ -18,7 +18,6 @@
 */
 
 #include "OcafShapeCore.hpp"
-#include "LabelShapeMap.hpp"
 
 #include <TopExp_Explorer.hxx>
 #include <TopExp.hxx>
@@ -27,22 +26,36 @@
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XmlXCAFDrivers.hxx>
+#include <XmlDrivers.hxx>
 #include <NCollection_IndexedMap.hxx>
 #include <TNaming_NamedShape.hxx>
 #include <TDocStd_Modified.hxx>
 
-OcafShapeCore::OcafShapeCore() {
-    
+
+#include "XmlShapeLibDrivers.hpp"
+#include "AttrShapeMap.hpp"
+
+OcafShapeCore::OcafShapeCore()
+{
     auto app = XCAFApp_Application::GetApplication();
-    app->NewDocument("XmlXCAF", this->_document);
+    app->NewDocument("XmlXCAF", _document);
     app->InitDocument(_document);
     _document->SetUndoLimit(5);
-    this->_shapeTool = XCAFDoc_DocumentTool::ShapeTool(this->_document->Main());
-    this->_colorTool = XCAFDoc_DocumentTool::ColorTool(this->_document->Main());
+
+    _shapeTool = XCAFDoc_DocumentTool::ShapeTool(_document->Main());
+    _colorTool = XCAFDoc_DocumentTool::ColorTool(_document->Main());
+
+    Handle(XmlMDF_ADriverTable) table = XmlDrivers::AttributeDrivers(app->MessageDriver());
+    XmlShapeLibDrivers::AttributeDrivers(table, app->MessageDriver());   
+    
+    XmlDrivers::DefineFormat(app);
     XmlXCAFDrivers::DefineFormat(app);
-    _shapeLabel = _shapeTool->Label();  
-    _shapeMap = std::make_shared<LabelShapeMap>(_shapeTool);
+
+    _shapeLabel = _shapeTool->Label();
+    _shapeMap   = std::make_shared<AttrShapeMap>(_shapeTool);
 }
+
+
 
 bool OcafShapeCore::write(const std::string& aSavePath){
     if (_document.IsNull()) {
@@ -60,34 +73,23 @@ bool OcafShapeCore::write(const std::string& aSavePath){
     return true;
 }
 
-bool OcafShapeCore::registerNewShape(const TopoDS_Shape& aShape){
-    TDF_Label newShapeLabel = _shapeTool->AddShape(aShape);
-    _document->SetModified(newShapeLabel);
-
+bool OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape){
+    TDF_Label label = _shapeTool->AddShape(aShape);
+    Standard_Integer labelTag = label.Tag();
+    Handle(ShapeIdAttribute) idAttr = new ShapeIdAttribute(labelTag, 0);
+    label.AddAttribute(idAttr);
     return true;
 }
 
 bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
-    if (!_shapeMap->containsId(aShapeId)) {
-        std::cerr << "Error: ShapeId not found in map.\n";
-        return false;
-    }
 
-    TopoDS_Shape shapeToRemove = _shapeMap->atId(aShapeId);
-    
-    TDF_Label labelToRemove = _shapeTool->FindShape(shapeToRemove);
-    if (!labelToRemove.IsNull()){
-        _shapeTool->RemoveShape(labelToRemove);
-        return true;
-    }
-    
     return true;
 }
 
 bool OcafShapeCore::updateShape(
     const std::pair<ShapeId, TopoDS_Shape>& aShapeIdPair
 ) {
-    return false;
+    return true;
 }
 
 bool OcafShapeCore::openCommand(){
@@ -124,6 +126,13 @@ bool OcafShapeCore::undo() {
     return true;
 }
 
+bool OcafShapeCore::redo() {
+    _document->Redo();
+    reviewDelta(_document->GetUndos().Last());
+    return true;
+}
+
+
 DeltaType attrDeltaType(Handle(TDF_AttributeDelta) aAttrDelta) {
     if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnRemoval))) {
         return DeltaType::Removal;
@@ -143,40 +152,12 @@ DeltaType attrDeltaType(Handle(TDF_AttributeDelta) aAttrDelta) {
     throw std::runtime_error("Unknown delta type");
 }
 
-void OcafShapeCore::processShapeDelta(
-    DeltaType aDeltaType,
-    const TopoDS_Shape& aShape
-){
-    // switch (aDeltaType) {
-    //     case DeltaType::Addition:{
-    //         TopTools_IndexedMapOfShape subShapeIds;
-    //         TopExp::MapShapes(aShape, subShapeIds);
-    //         ShapeId topLevelId = _shapeMap->registerTopLevelShape(aShape);
-    //         for(int i = 1; i <= subShapeIds.Extent(); i++){
-    //             const TopoDS_Shape subShape = subShapeIds(i);
-    //             ShapeId subId = _shapeMap->registerSubShape(subShape, topLevelId);
-    //         }
-    //         _publisher.shapeAdded(topLevelId);
+void OcafShapeCore::reviewRemoval(Handle(TDF_Attribute) aRemovedAttr){
+    // if (attr->IsKind(STANDARD_TYPE(TNaming_NamedShape))){
+    //     Handle(TNaming_NamedShape) removedTNaming = 
+    //         Handle(TNaming_NamedShape)::DownCast(aRemovedAttr);
+    //     removedTNaming->Label()
     //     }
-    //         break;
-    //     case DeltaType::Removal:{
-    //         ShapeId id = _shapeMap->getId(aShape);
-    //         bool shapeRemoved = _shapeMap->removeShape(id);
-    //         _publisher.shapeRemoved(id);
-    //     }
-    //     break;
-    //     case DeltaType::Modification:{
-    //         ShapeId id = _shapeMap->getId(aShape);
-    //         _publisher.shapeModified(id);
-    //         break;
-    //     }
-    //     case DeltaType::Forget:
-    //         break;
-    //     case DeltaType::Resume:
-    //         break;
-    //     default:
-    //         break;
-    // }
 }
 
 int OcafShapeCore::reviewDelta(Handle(TDF_Delta) aDelta) {
@@ -185,27 +166,9 @@ int OcafShapeCore::reviewDelta(Handle(TDF_Delta) aDelta) {
     for (auto attrDelta : attrDeltaList) {
         DeltaType deltaType = attrDeltaType(attrDelta);
         Handle(TDF_Attribute) attr = attrDelta->Attribute();
-        TopoDS_Shape parentShape;
         if (deltaType == DeltaType::Removal){
-            if (attr->IsKind(STANDARD_TYPE(XCAFDoc_ShapeMapTool))){
-                Handle(XCAFDoc_ShapeMapTool) shapeMap = 
-                    Handle(XCAFDoc_ShapeMapTool)::DownCast(attr);
-                TopTools_IndexedMapOfShape removedSubShapes = shapeMap->GetMap();
-                TopoDS_Shape subShape = removedSubShapes(1);
-                ShapeId id = _shapeMap->getId(subShape);
-                std::shared_ptr<const ShapeId> parentId = id.parentId();
-                parentShape = _shapeMap->atId(*parentId);
-            }
-        } else {
-            if (attr->IsKind(STANDARD_TYPE(TNaming_NamedShape))){
-                Handle(TNaming_NamedShape) namedShape = 
-                    Handle(TNaming_NamedShape)::DownCast(attr);
-                parentShape = namedShape->Get();
-            }
-        }
-        if (!parentShape.IsNull()){
-            processShapeDelta(deltaType, parentShape);
+            reviewRemoval(attr);
         }
     }
-    return attrDeltaList.Extent();
+    return 1;
 }
