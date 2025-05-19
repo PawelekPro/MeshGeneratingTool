@@ -24,6 +24,8 @@
 #include "ShapeEventsPublisher.hpp"
 #include "ShapeEventsPublisher.hpp"
 #include "ShapeIdAttribute.hpp"
+#include "ShapeIdFactory.hpp"
+#include "IntPairKey.hpp"
 
 #include <string>
 #include <TDocStd_Document.hxx>
@@ -75,22 +77,23 @@ class OcafShapeCore : public ShapeCore {
     bool undo() override;
     bool redo() override;
    
-    int reviewDelta(Handle(TDF_Delta) aDelta);
-   
-    void reviewRemoval(Handle(TDF_Attribute) aRemovedAttr);
-
-    
     bool write(const std::string& aSavePath);
+   
+    std::unique_ptr<IntPairKey> keyFromLabel(TDF_Label aLabel);
+    TDF_Label labelFromKey(std::unique_ptr<IntPairKey> aKey);
     
     private:
+
+    void onShapeAttrRemoved(int labelTag, int parentLabelTag);
+    void onShapeAttrAdded(int labelTag, int parentLabelTag);
+    TDF_Label labelFromTags(int labelTag, int parentLabelTag);
+
 
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;
 
     TDF_Label _shapeLabel;
-    std::set<TDF_Label> _shapeLabels;
-
 };
 
 #endif

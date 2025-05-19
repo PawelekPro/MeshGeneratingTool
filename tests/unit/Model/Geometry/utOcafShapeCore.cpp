@@ -23,29 +23,35 @@
 #include "StubShapes.hpp"
 #include "OcafShapeCore.hpp"
 
-TEST(test,test){
-    EXPECT_TRUE(true);
-}
-
 class OcafShapeCoreTest : public ::testing::Test {
 protected:
-    OcafShapeCore shapeCore;
-    TopoDS_Shape cube = StubShapes::cube();
-    TopoDS_Shape sphere = StubShapes::sphere();
-    TopTools_IndexedMapOfShape subShapes = StubShapes::subShapes(cube);
+    std::unique_ptr<ShapeCore> shapeCore;
+    
+    void SetUp() override {
+        shapeCore = std::make_unique<OcafShapeCore>();
+        cube = StubShapes::cube();
+        sphere = StubShapes::sphere();
+        subShapes = StubShapes::subShapes(cube);
+    }
+
+    TopoDS_Shape cube;
+    TopoDS_Shape sphere;
+    TopTools_IndexedMapOfShape subShapes;
 };
 
-TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsShapeMap){
-    shapeCore.openCommand();
-    shapeCore.registerNewFreeShape(cube);
-    shapeCore.registerNewFreeShape(sphere);
-    // TopTools_IndexedMapOfShape map;
-    shapeCore.commitCommand();
-    shapeCore.write("CubeAndSphere.xml");
-    shapeCore.undo();
-    std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
-    ASSERT_TRUE(shapeMap->containsShape(cube));
+TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsInShapeMap){
+    shapeCore->registerNewFreeShape(cube);
+    ASSERT_TRUE(shapeCore->shapeMap()->containsShape(cube));
 };
+
+TEST_F(OcafShapeCoreTest, TestUndoRegisterNewShapeRemovesShapesFromMap){
+    shapeCore->openCommand();
+    shapeCore->registerNewFreeShape(cube);
+    shapeCore->commitCommand();
+    shapeCore->undo();
+    ASSERT_FALSE(shapeCore->shapeMap()->containsShape(cube));
+};
+
 
 // TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
 //     shapeCore.openCommand();

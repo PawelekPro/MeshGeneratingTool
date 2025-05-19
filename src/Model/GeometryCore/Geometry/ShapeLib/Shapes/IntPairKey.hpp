@@ -17,17 +17,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TAGIDKEY_HPP 
-#define TAGIDKEY_HPP 
+#ifndef IntPairKey_HPP 
+#define IntPairKey_HPP 
 
 #include <string>
 #include <memory>
 #include "ShapeKey.hpp"
 
-class TagIdKey : public ShapeKey {
+class IntPairKey : public ShapeKey {
     public:
-    virtual ~TagIdKey() = default;
-    TagIdKey(size_t aLabelTag, size_t aTnamingId);
+    virtual ~IntPairKey() = default;
+    IntPairKey(size_t aLabelTag, size_t aParentLabelTag);
     
     virtual std::unique_ptr<ShapeKey> clone() const override;
 
@@ -38,11 +38,11 @@ class TagIdKey : public ShapeKey {
     virtual std::string toString() const override;
 
     size_t labelTag() const {return _labelTag;}
-    size_t tNamingId() const {return _tNamingId;}
+    size_t tNamingId() const {return _parentLabelTag;}
 
     private:
     const size_t _labelTag;
-    const size_t _tNamingId;
+    const size_t _parentLabelTag;
     std::string _cachedString;
 };
 

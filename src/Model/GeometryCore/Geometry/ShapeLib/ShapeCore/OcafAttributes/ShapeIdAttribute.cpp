@@ -17,9 +17,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ShapeIdAttribute.hpp"
 #include <TDF_RelocationTable.hxx>
 #include <TCollection_AsciiString.hxx>
+#include "ShapeIdAttribute.hpp"
 
 IMPLEMENT_STANDARD_RTTIEXT(ShapeIdAttribute, Standard_Transient)
 
@@ -67,8 +67,8 @@ void ShapeIdAttribute::Paste(
 }
 
 Standard_OStream& ShapeIdAttribute::Dump(Standard_OStream& os) const {
-  os << "ShapeIdAttribute(LTag=" << _labelTag
-     << ", SId=" << _parentLabelTag << ")";
+  os << "ShapeIdAttribute(LabelTag=" << _labelTag
+     << ", parentLabelTag=" << _parentLabelTag << ")";
   return os;
 }
 
@@ -83,9 +83,9 @@ void ShapeIdAttribute::Set(
   }
 }
 
-void ShapeIdAttribute::Get(
-  Standard_Integer& labelTag,
-  Standard_Integer& shapeId
+void ShapeIdAttribute::Get( 
+	Standard_Integer& labelTag, 
+	Standard_Integer& shapeId
 ) const {
   labelTag = _labelTag;
   shapeId  = _parentLabelTag;
@@ -93,9 +93,11 @@ void ShapeIdAttribute::Get(
 
 #include <iostream>
 void ShapeIdAttribute::AfterAddition(){
+	_shapeAddedSignal(_labelTag, _parentLabelTag);
     std::cout << "Attribute added" << std::endl;
 }
 
 void ShapeIdAttribute::BeforeRemoval(){
-    std::cout << "Attribute removed" << std::endl;
+	_shapeRemovedSignal(_labelTag, _parentLabelTag);
+	std::cout << "Attribute removed" << std::endl;
 }

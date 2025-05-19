@@ -25,7 +25,7 @@ AttrShapeMap::AttrShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool)
 : ShapeMap(), _shapeTool(aShapeTool) {}
 
 bool AttrShapeMap::containsId(const ShapeId& id) const {
-    TDF_Label shapeLabel = findLabel(ShapeIdFactory::getKey<TagIdKey>(id));
+    TDF_Label shapeLabel = findLabel(ShapeIdFactory::getKey<IntPairKey>(id));
     TopoDS_Shape shape = _shapeTool->GetShape(shapeLabel);
     return !shape.IsNull();
 }
@@ -36,7 +36,7 @@ bool AttrShapeMap::containsShape(const TopoDS_Shape& shape) const {
 }
 
 const TopoDS_Shape AttrShapeMap::atId(const ShapeId& id) const {
-    TDF_Label shapeLabel = findLabel(ShapeIdFactory::getKey<TagIdKey>(id));
+    TDF_Label shapeLabel = findLabel(ShapeIdFactory::getKey<IntPairKey>(id));
     TopoDS_Shape shape = _shapeTool->GetShape(shapeLabel);
     return shape;
 }
@@ -65,7 +65,7 @@ const ShapeId AttrShapeMap::fromKey(const ShapeKey& aKey) const {
 }
 
 #include "TDF_Tool.hxx"
-TDF_Label AttrShapeMap::findLabel(const TagIdKey& aKey) const {
+TDF_Label AttrShapeMap::findLabel(const IntPairKey& aKey) const {
     size_t labelTag = aKey.labelTag();
     TDF_Label shapesLabel = _shapeTool->Label();
     return shapesLabel;

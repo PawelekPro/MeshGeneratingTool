@@ -19,6 +19,7 @@
 
 #include "OcafShapeCore.hpp"
 
+#include <TDF_Tool.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopExp.hxx>
 #include <TDataStd_Name.hxx>
@@ -30,7 +31,6 @@
 #include <NCollection_IndexedMap.hxx>
 #include <TNaming_NamedShape.hxx>
 #include <TDocStd_Modified.hxx>
-
 
 #include "XmlShapeLibDrivers.hpp"
 #include "AttrShapeMap.hpp"
@@ -55,8 +55,6 @@ OcafShapeCore::OcafShapeCore()
     _shapeMap   = std::make_shared<AttrShapeMap>(_shapeTool);
 }
 
-
-
 bool OcafShapeCore::write(const std::string& aSavePath){
     if (_document.IsNull()) {
         std::cerr << "Error: Document is null. Cannot save.\n";
@@ -77,18 +75,62 @@ bool OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape){
     TDF_Label label = _shapeTool->AddShape(aShape);
     Standard_Integer labelTag = label.Tag();
     Handle(ShapeIdAttribute) idAttr = new ShapeIdAttribute(labelTag, 0);
+    auto addedConn = idAttr->shapeAddedSignal().connect(
+        [this](int labelTag, int parentTag) {
+            this->onShapeAttrAdded(labelTag, parentTag);
+        }
+    );
+    auto removedConn = idAttr->shapeRemovedSignal().connect(
+        [this](int labelTag, int parentTag) {
+            this->onShapeAttrRemoved(labelTag, parentTag);
+        }
+    );
     label.AddAttribute(idAttr);
     return true;
 }
 
-bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
+std::unique_ptr<IntPairKey> OcafShapeCore::keyFromLabel(TDF_Label aLabel){
+    if (_shapeTool->IsTopLevel(aLabel)){
+        Standard_Integer labelTag = aLabel.Tag();
+        return std::make_unique<IntPairKey>(labelTag, 0);
+    } else {
+        Standard_Integer labelTag = aLabel.Tag();
+        TopoDS_Shape shape = _shapeTool->GetShape(aLabel);
+        TDF_Label parentLabel = _shapeTool->FindMainShape(shape);
+        if (parentLabel.IsNull()) {
+            throw std::runtime_error("Cannot find parent shape.");
+        } else {
+            Standard_Integer parentTag = parentLabel.Tag();
+            return std::make_unique<IntPairKey>(labelTag, parentTag);
+        }
+    }
+}
 
-    return true;
+
+TDF_Label OcafShapeCore::labelFromKey(std::unique_ptr<IntPairKey> aKey) {
+    int labelTag = aKey->labelTag();
+    int parentLabelTag = aKey->tNamingId();
+    return labelFromTags(labelTag, parentLabelTag);
+}
+
+bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
+    TDF_Label label = labelFromKey(
+        std::make_unique<IntPairKey>(
+            ShapeIdFactory::getKey<IntPairKey>(aShapeId)
+        )
+    );
+    return  _shapeTool->RemoveShape(label);
 }
 
 bool OcafShapeCore::updateShape(
     const std::pair<ShapeId, TopoDS_Shape>& aShapeIdPair
 ) {
+    TDF_Label label = labelFromKey(
+        std::make_unique<IntPairKey>(
+            ShapeIdFactory::getKey<IntPairKey>(aShapeIdPair.first)
+        )
+    );
+    _shapeTool->SetShape(label, aShapeIdPair.second);
     return true;
 }
 
@@ -107,7 +149,6 @@ bool OcafShapeCore::commitCommand(){
         return false;
     }
     _document->CommitCommand();
-    reviewDelta(_document->GetUndos().Last());
     return true;
 }
 
@@ -122,53 +163,33 @@ bool OcafShapeCore::abortCommand(){
 
 bool OcafShapeCore::undo() {
     _document->Undo();
-    reviewDelta(_document->GetRedos().Last());
     return true;
 }
 
 bool OcafShapeCore::redo() {
     _document->Redo();
-    reviewDelta(_document->GetUndos().Last());
     return true;
 }
 
+TDF_Label OcafShapeCore::labelFromTags(int aLabelTag, int aParentLabelTag){
+    TColStd_ListOfInteger tagList;
+    if (aParentLabelTag != 0) {
+        tagList.Append(aParentLabelTag);
+    }
+    tagList.Append(aLabelTag);
+    TDF_Label foundLabel;
+    TDF_Tool::Label(_shapeTool->Label().Data(), tagList, foundLabel, false);
+    return foundLabel;
+} 
 
-DeltaType attrDeltaType(Handle(TDF_AttributeDelta) aAttrDelta) {
-    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnRemoval))) {
-        return DeltaType::Removal;
-    }
-    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnAddition))) {
-        return DeltaType::Addition;
-    }
-    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnModification))) {
-        return DeltaType::Modification;
-    }
-    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnForget))) {
-        return DeltaType::Forget;
-    }
-    if (aAttrDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnResume))) {
-        return DeltaType::Resume;
-    }
-    throw std::runtime_error("Unknown delta type");
+void OcafShapeCore::onShapeAttrAdded(int aLabelTag, int aParentLabelTag){
+    auto key = std::make_unique<IntPairKey>(aLabelTag, aParentLabelTag);
+    ShapeId id = ShapeIdFactory::create(std::move(key));
+    this->_publisher.shapeAdded(id);
 }
 
-void OcafShapeCore::reviewRemoval(Handle(TDF_Attribute) aRemovedAttr){
-    // if (attr->IsKind(STANDARD_TYPE(TNaming_NamedShape))){
-    //     Handle(TNaming_NamedShape) removedTNaming = 
-    //         Handle(TNaming_NamedShape)::DownCast(aRemovedAttr);
-    //     removedTNaming->Label()
-    //     }
-}
-
-int OcafShapeCore::reviewDelta(Handle(TDF_Delta) aDelta) {
-    TDF_AttributeDeltaList attrDeltaList = aDelta->AttributeDeltas();
-    bool hasTnaming = false;
-    for (auto attrDelta : attrDeltaList) {
-        DeltaType deltaType = attrDeltaType(attrDelta);
-        Handle(TDF_Attribute) attr = attrDelta->Attribute();
-        if (deltaType == DeltaType::Removal){
-            reviewRemoval(attr);
-        }
-    }
-    return 1;
+void OcafShapeCore::onShapeAttrRemoved(int aLabelTag, int aParentLabelTag){
+    auto key = std::make_unique<IntPairKey>(aLabelTag, aParentLabelTag);
+    ShapeId id = ShapeIdFactory::create(std::move(key));
+    this->_publisher.shapeRemoved(id);
 }

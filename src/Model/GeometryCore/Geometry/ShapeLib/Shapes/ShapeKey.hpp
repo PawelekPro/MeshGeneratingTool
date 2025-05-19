@@ -28,11 +28,6 @@ class ShapeKey {
     virtual ~ShapeKey() = default;
     ShapeKey() = default;
     
-    ShapeKey(ShapeKey const&)            = delete;
-    ShapeKey& operator=(ShapeKey const&) = delete;
-    ShapeKey(ShapeKey&&)                 = delete;
-    ShapeKey& operator=(ShapeKey&&)      = delete;
-
     virtual std::unique_ptr<ShapeKey> clone() const = 0;
 
     virtual bool equals(const ShapeKey& other) const = 0;

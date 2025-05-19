@@ -1,6 +1,6 @@
 add_library(Shapes
     ShapeId.cpp
-    TagIdKey.cpp
+    IntPairKey.cpp
     )
 
 target_link_libraries(Shapes PUBLIC

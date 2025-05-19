@@ -17,33 +17,33 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "TagIdKey.hpp"
+#include "IntPairKey.hpp"
 
-TagIdKey::TagIdKey(size_t aLabelTag, size_t aTNamingId)
-    : ShapeKey(), _labelTag(aLabelTag), _tNamingId(aTNamingId){}
+IntPairKey::IntPairKey(size_t aLabelTag, size_t aParentLabelTag)
+    : ShapeKey(), _labelTag(aLabelTag), _parentLabelTag(aParentLabelTag){}
 
-std::unique_ptr<ShapeKey> TagIdKey::clone() const {
-    return std::make_unique<TagIdKey>(_labelTag, _tNamingId);
+std::unique_ptr<ShapeKey> IntPairKey::clone() const {
+    return std::make_unique<IntPairKey>(_labelTag, _parentLabelTag);
 } 
 
-bool TagIdKey::equals(const ShapeKey& other) const {
+bool IntPairKey::equals(const ShapeKey& other) const {
     return this->toString() == other.toString();
 }
 
-bool TagIdKey::less(const ShapeKey& other) const {
+bool IntPairKey::less(const ShapeKey& other) const {
     return this->toString() < other.toString();
 }
 
-std::size_t TagIdKey::hash() const {
+std::size_t IntPairKey::hash() const {
     return 1;
-    //    return std::hash<const size_t>(_tNamingId);
+    //    return std::hash<const size_t>(_parentLabelTag);
 }
 
-std::string TagIdKey::toString() const {
+std::string IntPairKey::toString() const {
     return "a";
     // if (_cachedString.empty()){
     //     _cachedString = std::to_string(_labelTag) + "-" + 
-    //                     std::to_string(_tNamingId);
+    //                     std::to_string(_parentLabelTag);
     // } else {
     //     return _cachedString;
     // }

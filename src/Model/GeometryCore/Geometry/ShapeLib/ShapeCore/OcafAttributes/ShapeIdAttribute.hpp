@@ -24,47 +24,56 @@
 #include <Standard_GUID.hxx>
 #include <Standard_OStream.hxx>
 
+#include <ShapeId.hpp>
+#include <ShapeIdFactory.hpp>
+#include <boost/signals2.hpp>
+
 class ShapeIdAttribute;
 
 // Define a handle to our attribute
 DEFINE_STANDARD_HANDLE(ShapeIdAttribute, TDF_Attribute)
 
 class ShapeIdAttribute : public TDF_Attribute {
+
 public:
-    
-DEFINE_STANDARD_RTTIEXT(ShapeIdAttribute, TDF_Attribute)
+	using ShapeSignal = boost::signals2::signal<void(Standard_Integer, Standard_Integer)>;
+	DEFINE_STANDARD_RTTIEXT(ShapeIdAttribute, TDF_Attribute)
 
-    static const Standard_GUID& GetID();
-    const Standard_GUID& ID() const override;
+    ShapeSignal& shapeAddedSignal() { return _shapeAddedSignal; }
+    ShapeSignal& shapeRemovedSignal() { return _shapeRemovedSignal; }
 
-    Handle(TDF_Attribute) NewEmpty() const override;
+	static const Standard_GUID& GetID();
+	const Standard_GUID& ID() const override;
 
-    void Restore(const Handle(TDF_Attribute)& from) override;
+	Handle(TDF_Attribute) NewEmpty() const override;
 
-    void Paste(
-        const Handle(TDF_Attribute)&  into,
-        const Handle(TDF_RelocationTable)&  table
-    ) const override;
+	void Restore(const Handle(TDF_Attribute)& from) override;
 
-    Standard_OStream& Dump(Standard_OStream& os) const override;
+	void Paste(
+		const Handle(TDF_Attribute)&  into,
+		const Handle(TDF_RelocationTable)&  table
+	) const override;
 
-    ShapeIdAttribute();
-    ShapeIdAttribute(Standard_Integer labelTag,
-                    Standard_Integer parentLabelTag);
+	Standard_OStream& Dump(Standard_OStream& os) const override;
 
-    void Set(Standard_Integer labelTag,
-            Standard_Integer parentLabelTag);
+	ShapeIdAttribute();
+	ShapeIdAttribute(Standard_Integer labelTag, Standard_Integer parentLabelTag);
 
-    void Get(Standard_Integer& labelTag,
-            Standard_Integer& parentLabelTag) const;
+	void Set(Standard_Integer labelTag, Standard_Integer parentLabelTag);
 
-    void AfterAddition() override;
-    
-    void BeforeRemoval() override;
+	void Get(Standard_Integer& labelTag, Standard_Integer& parentLabelTag) const;
+
+	void AfterAddition() override;
+	
+	void BeforeRemoval() override;
 
 private:
-  Standard_Integer _labelTag;
-  Standard_Integer _parentLabelTag;
+	ShapeSignal _shapeAddedSignal;
+	ShapeSignal _shapeRemovedSignal;
+
+	Standard_Integer _labelTag;
+	Standard_Integer _parentLabelTag;
+
 };
 
 #endif

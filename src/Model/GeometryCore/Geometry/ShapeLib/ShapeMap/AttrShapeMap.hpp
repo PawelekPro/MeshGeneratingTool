@@ -23,7 +23,7 @@
 #include <XCAFDoc_ShapeTool.hxx>
 #include <unordered_map>
 #include "ShapeMap.hpp"
-#include "TagIdKey.hpp"
+#include "IntPairKey.hpp"
 
 class AttrShapeMap : public ShapeMap {
 
@@ -45,7 +45,7 @@ class AttrShapeMap : public ShapeMap {
 
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;
-    TDF_Label findLabel(const TagIdKey& aKey) const;
+    TDF_Label findLabel(const IntPairKey& aKey) const;
     
 };
 
