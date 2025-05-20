@@ -31,12 +31,12 @@ protected:
         shapeCore = std::make_unique<OcafShapeCore>();
         cube = StubShapes::cube();
         sphere = StubShapes::sphere();
-        subShapes = StubShapes::subShapes(cube);
+        cubeSubShapes = StubShapes::subShapes(cube);
     }
 
     TopoDS_Shape cube;
     TopoDS_Shape sphere;
-    TopTools_IndexedMapOfShape subShapes;
+    TopTools_IndexedMapOfShape cubeSubShapes;
 };
 
 TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsInShapeMap){
@@ -50,6 +50,16 @@ TEST_F(OcafShapeCoreTest, TestUndoRegisterNewShapeRemovesShapesFromMap){
     shapeCore->commitCommand();
     shapeCore->undo();
     ASSERT_FALSE(shapeCore->shapeMap()->containsShape(cube));
+};
+
+TEST_F(OcafShapeCoreTest, TestRegisteredShapeSubShapesAreInMap){
+    shapeCore->registerNewFreeShape(cube);
+    auto shapeMap = shapeCore->shapeMap();
+    for( size_t i = 1; i < cubeSubShapes.Extent(); i++ ){
+        TopoDS_Shape shape = cubeSubShapes(i);
+        ShapeId id = shapeMap->atShape(shape);
+        ASSERT_TRUE(id.isValid());
+    }
 };
 
 

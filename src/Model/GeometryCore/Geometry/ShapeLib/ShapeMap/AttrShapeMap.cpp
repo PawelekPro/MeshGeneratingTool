@@ -44,13 +44,29 @@ const TopoDS_Shape AttrShapeMap::atId(const ShapeId& id) const {
 const ShapeId AttrShapeMap::atShape(const TopoDS_Shape& shape) const {
     TDF_Label label;
     _shapeTool->Search(shape, label);
-    if (label.IsNull()){
+    if (label.IsNull()) {
         return ShapeId::invalidId();
     }
-    if (_shapeTool->IsTopLevel(label)){
-        size_t labelTag = label.Tag();
+
+    size_t labelTag = label.Tag();
+    size_t parentLabelTag = 0;
+
+    if (!_shapeTool->IsTopLevel(label)) {
+        TDF_Label current = label;
+        while (!current.IsRoot()) {
+            current = current.Father();
+            if (_shapeTool->IsTopLevel(current)) {
+                parentLabelTag = current.Tag();
+                break;
+            }
+        }
     }
+
+    auto key = std::make_unique<IntPairKey>(labelTag, parentLabelTag);
+    ShapeId id = ShapeIdFactory::create(std::move(key));
+    return id;
 }
+
 
 std::vector<ShapeIdPair> AttrShapeMap::freeShapes() const {
     return std::vector<ShapeIdPair>();
