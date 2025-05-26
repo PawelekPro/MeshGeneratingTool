@@ -62,15 +62,17 @@ TEST_F(OcafShapeCoreTest, TestRegisteredShapeSubShapesAreInMap){
     }
 };
 
+TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
+    ShapeId id = shapeCore->registerNewFreeShape(cube);
+    std::shared_ptr<const ShapeMap> shapeMap = shapeCore->shapeMap();
+    ASSERT_TRUE(shapeMap->containsId(id));
+};
 
-// TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
-//     shapeCore.openCommand();
-//     shapeCore.registerNewShape(cube);
-//     shapeCore.commitCommand();
-
-//     std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
-//     ASSERT_TRUE(shapeMap->containsShape(cube));
-// };
+TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
+    ShapeId id = shapeCore->registerNewFreeShape(cube);
+    std::shared_ptr<const ShapeMap> shapeMap = shapeCore->shapeMap();
+    ASSERT_TRUE(shapeMap->containsId(id));
+};
 
 // TEST_F(OcafShapeCoreTest, TestUndoneRegisteredShapeIsNotInMap){
 //     shapeCore.openCommand();

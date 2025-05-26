@@ -17,32 +17,35 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPESERVICE_HPP
-#define SHAPESERVICE_HPP
+#ifndef BASECOMMAND_HPP
+#define BASECOMMAND_HPP
 
-#include "ModelSubject.hpp"
-#include <string>
-#include "ShapeCore.hpp"
-#include "ShapeTools.hpp"
-
-class ShapeService {
+class BaseCommand {
 
     public:
-    ShapeService(const ModelSubject& aModelSubject, ShapeCore& aShapeCore);
 
-    bool importSTEP(const std::string& aFilePath);
-    bool importSTL(const std::string& aFilePath);
-    bool scaleShape(const ShapeId& aShapeId, double aScaleFactor);
+    virtual ~BaseCommand() = default;
 
-    private:
-
-    void publishNewShape(const ShapeId& aId);
-    void publishShapeModified(const ShapeId& aId);
-    void publishShapeRemoved(const ShapeId& aId);
-    
-    ShapeCore& _shapeCore;
-    const ModelSubject& _modelSubject;
+    virtual bool execute() = 0;
+    virtual bool undo() = 0;
 };
 
+class SpyCommand : public BaseCommand{
+
+    public:
+    SpyCommand() = default;
+    virtual ~SpyCommand() = default;
+    
+    virtual bool execute() override {_nExecuted +=1; return true;};
+    virtual bool undo() override {_nUndone += 1; return true;};
+
+    int nExecute(){return _nExecuted;};
+    int nUndo(){return _nUndone;};
+
+    private:
+    int _nExecuted = 0;
+    int _nUndone = 0;
+
+};
 
 #endif

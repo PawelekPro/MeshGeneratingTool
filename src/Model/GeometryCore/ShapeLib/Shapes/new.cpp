@@ -2,7 +2,7 @@
 
 shapeKey{
     int labelTag;
-    int tnamingId;
+    int parentLabelTag;
 }
 
 

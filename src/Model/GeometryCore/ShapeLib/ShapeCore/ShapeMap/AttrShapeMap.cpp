@@ -83,6 +83,17 @@ const ShapeId AttrShapeMap::fromKey(const ShapeKey& aKey) const {
 #include "TDF_Tool.hxx"
 TDF_Label AttrShapeMap::findLabel(const IntPairKey& aKey) const {
     size_t labelTag = aKey.labelTag();
+    size_t parentLabelTag = aKey.parentLabelTag();
+
     TDF_Label shapesLabel = _shapeTool->Label();
-    return shapesLabel;
+
+    if (parentLabelTag == 0) {
+        return shapesLabel.FindChild(static_cast<Standard_Integer>(labelTag));
+    } else {
+        TDF_Label parentLabel = shapesLabel.FindChild(static_cast<Standard_Integer>(parentLabelTag));
+        if (parentLabel.IsNull()) {
+            return TDF_Label();
+        }
+        return parentLabel.FindChild(static_cast<Standard_Integer>(labelTag));
+    }
 }

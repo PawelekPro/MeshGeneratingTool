@@ -38,7 +38,7 @@ class IntPairKey : public ShapeKey {
     virtual std::string toString() const override;
 
     size_t labelTag() const {return _labelTag;}
-    size_t tNamingId() const {return _parentLabelTag;}
+    size_t parentLabelTag() const {return _parentLabelTag;}
 
     private:
     const size_t _labelTag;

@@ -71,10 +71,12 @@ bool OcafShapeCore::write(const std::string& aSavePath){
     return true;
 }
 
-bool OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
+ShapeId OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
     TDF_Label mainLabel = _shapeTool->AddShape(aShape);
     Standard_Integer mainLabelTag = mainLabel.Tag();
     Handle(ShapeIdAttribute) mainIdAttr = new ShapeIdAttribute(mainLabelTag, 0);
+     
+
     auto mainAddedConn = mainIdAttr->shapeAddedSignal().connect(
         [this](int labelTag, int parentTag) {
             this->onShapeAttrAdded(labelTag, parentTag);
@@ -86,7 +88,7 @@ bool OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
         }
     );
     mainLabel.AddAttribute(mainIdAttr);
-
+    std::unique_ptr<IntPairKey> key = std::make_unique<IntPairKey>(mainLabelTag, 0); 
     for (TopExp_Explorer exp(aShape, TopAbs_SHAPE); exp.More(); exp.Next()) {
         const TopoDS_Shape& subShape = exp.Current();
         if (subShape.IsEqual(aShape))
@@ -101,7 +103,7 @@ bool OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
         subLabel.AddAttribute(subIdAttr);
     }
 
-    return true;
+    return ShapeIdFactory::create(std::move(key));
 }
 
 
@@ -126,7 +128,7 @@ std::unique_ptr<IntPairKey> OcafShapeCore::keyFromLabel(TDF_Label aLabel){
 
 TDF_Label OcafShapeCore::labelFromKey(std::unique_ptr<IntPairKey> aKey) {
     int labelTag = aKey->labelTag();
-    int parentLabelTag = aKey->tNamingId();
+    int parentLabelTag = aKey->parentLabelTag();
     return labelFromTags(labelTag, parentLabelTag);
 }
 

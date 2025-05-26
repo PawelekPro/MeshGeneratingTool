@@ -59,7 +59,7 @@ class OcafShapeCore : public ShapeCore {
     
     virtual ~OcafShapeCore() = default;
 
-    bool registerNewFreeShape(
+    ShapeId registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) override;
 
