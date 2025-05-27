@@ -53,7 +53,7 @@ class Model {
 public:
 	CommandStack _commandStack;
 	ModelSubject subject;
-	GeometryCore::Geometry geometry;
+	Geometry geometry;
 	// MeshCore::Mesh mesh;
 
 	explicit Model(std::string modelName);
@@ -73,7 +73,7 @@ public:
 	MGTMesh_ProxyMesh* getProxyMesh() const;
 
 private:
-	void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
+	// void addShapesToModel(const GeometryCore::PartsMap& shapesMap);
 
 private:
 	std::unordered_map<int, vtkSmartPointer<MGTMesh_MeshObject>> _meshObjectsMap;

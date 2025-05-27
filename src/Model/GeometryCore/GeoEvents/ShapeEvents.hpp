@@ -21,6 +21,7 @@
 #define SHAPEEVENT_HPP
 
 #include "GeoEvent.hpp"
+#include "ShapeId.hpp"
 #include <TopoDS_Shape.hxx>
 #include <map>
 class ShapeAddedEvent : public GeoEvent {

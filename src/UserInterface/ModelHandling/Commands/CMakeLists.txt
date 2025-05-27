@@ -1,7 +1,7 @@
 ADD_SUBDIRECTORY(Geometry)
 ADD_SUBDIRECTORY(Mesh)
 
-ADD_LIBRARY(Commands 
+ADD_LIBRARY(Commands
   CommandManager.cpp
 )
 

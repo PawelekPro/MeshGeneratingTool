@@ -17,20 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef SHAPELIBCOMMAND_HPP
+#define SHAPELIBCOMMAND_HPP
 
-#include "ImportSTEPCommand.hpp"
-#include "ShapeService.hpp"
+#include "BaseCommand.hpp"
 
-ImportSTEPCommand::ImportSTEPCommand(
-    ShapeCore& aShapeCore,
-    ShapeService& aShapeService,
-    const std::string& aFilePath
-    ) : 
-    ShapeLibCommand(aShapeCore),
-    _shapeService(aShapeService),
-    _filePath(aFilePath) {}
+class ShapeCore;
+class ShapeLibCommand : public BaseCommand {
 
-bool ImportSTEPCommand::executeAction(){
-    bool imported = _shapeService.importSTEP(_filePath);
-    return imported;
-}
+    public:
+    ShapeLibCommand(ShapeCore& aShapeCore);
+    virtual ~ShapeLibCommand() = default;
+
+    bool execute() override;
+    bool undo() override;
+
+    private: 
+    virtual bool executeAction() = 0;
+
+    protected:
+
+    ShapeCore& _shapeCore;
+    int _commandId;
+};
+
+#endif

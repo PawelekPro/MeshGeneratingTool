@@ -2,6 +2,7 @@ add_library(GeoEvents INTERFACE)
 
 target_link_libraries(GeoEvents INTERFACE
     ModelEvents
+    Shapes
     ${OCC_LIBRARIES}
 )
 

@@ -18,9 +18,8 @@
 */
 
 #include "CommandStack.hpp"
-#include "Command.hpp"
 
-void CommandStack::execute(std::unique_ptr<Command> aCommand) {
+void CommandStack::execute(std::unique_ptr<BaseCommand> aCommand) {
     if (!aCommand) return;
     
     bool executed = aCommand->execute();
@@ -35,7 +34,7 @@ void CommandStack::execute(std::unique_ptr<Command> aCommand) {
 void CommandStack::undo() {
     if (_undoStack.empty()) return;
     
-    std::unique_ptr<Command> command = std::move(_undoStack.top());
+    std::unique_ptr<BaseCommand> command = std::move(_undoStack.top());
     _undoStack.pop();
     
     bool undone = command->undo();
@@ -47,7 +46,7 @@ void CommandStack::undo() {
 void CommandStack::redo() {
     if (_redoStack.empty()) return;
     
-    std::unique_ptr<Command> command = std::move(_redoStack.top());
+    std::unique_ptr<BaseCommand> command = std::move(_redoStack.top());
     _redoStack.pop();
     
     bool executed = command->execute();

@@ -43,60 +43,60 @@ Model::Model(std::string modelName)
 Model::~Model() { _meshObjectsMap.clear(); }
 
 //----------------------------------------------------------------------------
-void Model::addShapesToModel(const GeometryCore::PartsMap& shapesMap) {
-	for (const auto& it : shapesMap) {
-		const std::string& key = it.first;
-		const TopoDS_Shape& shape = it.second;
-		GeometryCore::PartsMap geoShapesMap = geometry.getShapes();
-		if (geoShapesMap.find(key) == geoShapesMap.end()) {
-			geoShapesMap[key] = shape;
-			spdlog::debug("Shape added to model: {}", key);
-		}
-		// std::vector<std::pair<int, int>> outDimTags;
-		// gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
-	}
-	// gmsh::model::occ::synchronize();
-}
+// void Model::addShapesToModel(const PartsMap& shapesMap) {
+	// for (const auto& it : shapesMap) {
+	// 	const std::string& key = it.first;
+	// 	const TopoDS_Shape& shape = it.second;
+	// 	PartsMap geoShapesMap = geometry.getShapes();
+	// 	if (geoShapesMap.find(key) == geoShapesMap.end()) {
+	// 		geoShapesMap[key] = shape;
+	// 		spdlog::debug("Shape added to model: {}", key);
+	// 	}
+	// 	// std::vector<std::pair<int, int>> outDimTags;
+	// 	// gmsh::model::occ::importShapesNativePointer(shape_ptr, outDimTags);
+	// }
+	// // gmsh::model::occ::synchronize();
+// }
 
 //----------------------------------------------------------------------------
 void Model::importSTL(const std::string& filePath) {
-	geometry.importSTL(filePath);
-	const GeometryCore::PartsMap& shapesMap = geometry.getShapes();
-	addShapesToModel(shapesMap);
+	// geometry.importSTL(filePath);
+	// const PartsMap& shapesMap = geometry.getShapes();
+	// addShapesToModel(shapesMap);
 }
 
 void Model::importSTEP(const std::string& filePath) {
-	geometry.importSTEP(filePath);
-	const GeometryCore::PartsMap& shapesMap = geometry.getShapes();
-	addShapesToModel(shapesMap);
+	// geometry.importSTEP(filePath);
+	// const PartsMap& shapesMap = geometry.getShapes();
+	// addShapesToModel(shapesMap);
 }
 
 //----------------------------------------------------------------------------
 bool Model::generateMesh(const MGTMesh_Algorithm* algorithm) {
-	if (!algorithm)
-		return false;
+	// if (!algorithm)
+	// 	return false;
 
-	_meshObjectsMap.clear();
+	// _meshObjectsMap.clear();
 
-	spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
-		algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
+	// spdlog::debug(std::format("Mesh algorithm parameters - Engine: {}, type: {}, id: {}",
+	// 	algorithm->GetEngineLib(), algorithm->GetType(), algorithm->GetID()));
 
-	GeometryCore::PartsMap shapesMap = geometry.getShapes();
-	for (const auto& [fst, snd] : shapesMap) {
-		spdlog::debug("Creating mesh generator for shape: {}", fst);
+	// PartsMap shapesMap = geometry.getShapes();
+	// for (const auto& [fst, snd] : shapesMap) {
+	// 	spdlog::debug("Creating mesh generator for shape: {}", fst);
 
-		vtkSmartPointer<MGTMesh_MeshObject> meshObject = vtkSmartPointer<MGTMesh_MeshObject>::New();
-		MGTMesh_Generator meshGenerator(snd, *algorithm, meshObject);
-		if (const int result = meshGenerator.Compute();
-			result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
-			SPDLOG_ERROR("Error while generating mesh for shape: {}", fst);
-			return false;
-		}
+	// 	vtkSmartPointer<MGTMesh_MeshObject> meshObject = vtkSmartPointer<MGTMesh_MeshObject>::New();
+	// 	MGTMesh_Generator meshGenerator(snd, *algorithm, meshObject);
+	// 	if (const int result = meshGenerator.Compute();
+	// 		result != MGTMeshUtils_ComputeErrorName::COMPERR_OK) {
+	// 		SPDLOG_ERROR("Error while generating mesh for shape: {}", fst);
+	// 		return false;
+	// 	}
 
-		_meshObjectsMap[algorithm->GetID()] = meshGenerator.GetOutputMesh();
-	}
-	_proxyMesh = std::make_shared<MGTMesh_ProxyMesh>(_meshObjectsMap);
-	return true;
+	// 	_meshObjectsMap[algorithm->GetID()] = meshGenerator.GetOutputMesh();
+	// }
+	// _proxyMesh = std::make_shared<MGTMesh_ProxyMesh>(_meshObjectsMap);
+	// return true;
 }
 
 //----------------------------------------------------------------------------

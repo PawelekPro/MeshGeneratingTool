@@ -28,7 +28,7 @@ Geometry::Geometry(
 _commandStack(aCommandStack),
 _subject(aModelSubject),
 _shapeCore(OcafShapeCore()),
-_shapeService(aModelSubject, _shapeCore),
+_shapeService(),
 _commandFactory(_subject, _shapeService){}
 
 

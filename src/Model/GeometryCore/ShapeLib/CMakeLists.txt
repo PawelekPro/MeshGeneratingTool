@@ -2,6 +2,7 @@ add_subdirectory(Shapes)
 add_subdirectory(ShapeMap)
 add_subdirectory(ShapeTools)
 add_subdirectory(ShapeCore)
+add_subdirectory(OccUtils)
 
 add_library(ShapeLib INTERFACE)
 

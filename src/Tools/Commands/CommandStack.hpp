@@ -22,14 +22,15 @@
 
 #include <memory>
 #include <stack>
-#include "Command.hpp"
+#include "BaseCommand.hpp"
+
 class CommandStack {
 
     public:
     CommandStack() = default;
     ~CommandStack() = default;
 
-    void execute(std::unique_ptr<Command> aCommand);
+    void execute(std::unique_ptr<BaseCommand> aCommand);
     void undo();
     void redo();
    
@@ -38,8 +39,8 @@ class CommandStack {
     
     private:
     
-    std::stack<std::unique_ptr<Command>> _undoStack;
-    std::stack<std::unique_ptr<Command>> _redoStack;
+    std::stack<std::unique_ptr<BaseCommand>> _undoStack;
+    std::stack<std::unique_ptr<BaseCommand>> _redoStack;
 };
 
 #endif

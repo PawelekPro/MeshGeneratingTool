@@ -1,20 +1,20 @@
-add_subdirectory(OccUtils)
+add_subdirectory(GeoCommands)
+add_subdirectory(GeoEvents)
 add_subdirectory(ShapeLib)
 
-add_library(Geometry
+add_library(GeometryCore
     Geometry.cpp
 )
 
-target_link_libraries(Geometry PUBLIC
+target_link_libraries(GeometryCore PUBLIC
     ${OCC_LIBRARIES}
-    OccUtils
     ShapeLib
     GeoEvents
     GeoCommands
-    ModelEvents
+    BaseCommands
 )
 
-target_include_directories(Geometry PUBLIC 
+target_include_directories(GeometryCore PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${BOOST_DIR}
 )

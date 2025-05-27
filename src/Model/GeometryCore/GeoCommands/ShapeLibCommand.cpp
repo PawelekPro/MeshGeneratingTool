@@ -20,6 +20,7 @@
 #include "ShapeLibCommand.hpp"
 #include <iostream>
 #include "ShapeService.hpp"
+#include "ShapeCore.hpp"
 
 ShapeLibCommand::ShapeLibCommand(ShapeCore& aShapeCore)
  : _shapeCore(aShapeCore){};

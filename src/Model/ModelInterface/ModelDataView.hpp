@@ -25,39 +25,39 @@
 class ModelDataView {
 
 public:
-	using EntityType = GeometryCore::EntityType;
+	// using EntityType = GeometryCore::EntityType;
 	using ShapesTags = std::vector<int>;
 	using ShapeRef = std::reference_wrapper<const TopoDS_Shape>;
 
 	explicit ModelDataView(const ModelManager& aModelManger);
 	~ModelDataView() = default;
 
-	const GeometryCore::PartsMap& getPartsMap() const;
+	// const GeometryCore::PartsMap& getPartsMap() const;
 
-	const TopoDS_Shape& getShape(
-		const EntityType& aEntityType, 
-		int aShapeTag
-	) const;
+	// const TopoDS_Shape& getShape(
+	// 	const EntityType& aEntityType, 
+	// 	int aShapeTag
+	// ) const;
 	
-	const TopoDS_Shape& getShape(
-		const EntityType& aEntityType, 
-		const std::string& aShapeName
-	) const;
+	// const TopoDS_Shape& getShape(
+	// 	const EntityType& aEntityType, 
+	// 	const std::string& aShapeName
+	// ) const;
 
-	const std::vector<ShapeRef> getShapes(
-		const EntityType& aEntityType, 
-		const std::vector<int>& aShapesTags
-	) const;
+	// const std::vector<ShapeRef> getShapes(
+	// 	const EntityType& aEntityType, 
+	// 	const std::vector<int>& aShapesTags
+	// ) const;
 	
-	const std::vector<ShapeRef> getShapes(
-		const EntityType& aEntityType, 
-		const std::vector<std::string>& aShapesNames
-	) const;
+	// const std::vector<ShapeRef> getShapes(
+	// 	const EntityType& aEntityType, 
+	// 	const std::vector<std::string>& aShapesNames
+	// ) const;
 
-	int getShapeTag(const TopoDS_Shape&) const;
-	std::string getShapeName(const TopoDS_Shape&) const;
+	// int getShapeTag(const TopoDS_Shape&) const;
+	// std::string getShapeName(const TopoDS_Shape&) const;
 
-	[[nodiscard]] vtkSmartPointer<vtkActor> getMeshActor() const;
+	// [[nodiscard]] vtkSmartPointer<vtkActor> getMeshActor() const;
 
 private:
 	const ModelManager& _modelManager;

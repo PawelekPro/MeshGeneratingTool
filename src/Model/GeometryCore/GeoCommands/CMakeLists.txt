@@ -3,8 +3,7 @@ add_library(GeoCommands
 )
 
 target_link_libraries(GeoCommands
-    Geometry
-    ModelCommands
+    BaseCommands 
     ShapeLib 
     ${OCC_LIBRARIES}
 )

@@ -27,8 +27,8 @@
 #include "ModelSubject.hpp"
 #include "CommandStack.hpp"
 #include "OcafShapeCore.hpp"
-#include "ShapeService.hpp"
 #include "GeoCommandsFactory.hpp"
+#include "ShapeService.hpp"
 
 class Geometry {
 
