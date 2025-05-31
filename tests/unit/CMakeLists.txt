@@ -1,2 +1,3 @@
 add_subdirectory(Model)
 add_subdirectory(UserInterface)
+add_subdirectory(Tools)

@@ -20,5 +20,47 @@
 #ifndef MESSAGEBUS_HPP 
 #define MESSAGEBUS_HPP 
 
+#include <unordered_map>
+#include <vector>
+#include <memory>
+#include <typeindex>
+#include <typeinfo>
+#include <functional>
+#include "HandlerList.hpp"
+#include "BaseMessage.hpp"
 
-#endif
+class MessageBus {
+public:
+    template<typename MessageType>
+    void subscribe(std::function<void(const MessageType&)> handler) {
+        static_assert(std::is_base_of<BaseMessage, MessageType>::value,
+                      "MessageType must derive from BaseMessage");
+        auto messageTypeId = std::type_index(typeid(MessageType));
+        
+        if (_handlers.find(messageTypeId) == _handlers.end()){
+            _handlers[messageTypeId] = std::make_shared<HandlerList<MessageType>>();
+        }
+        
+        auto list = std::static_pointer_cast<HandlerList<MessageType>>(
+            _handlers[messageTypeId]
+        );
+        
+        list->push_back(std::move(handler));
+    }
+
+    template<typename MessageType>
+    void publish(const MessageType& message) const {
+        static_assert(std::is_base_of<BaseMessage, MessageType>::value,
+                      "MessageType must derive from BaseMessage");
+        auto it = _handlers.find(std::type_index(typeid(MessageType)));
+        if (it != _handlers.end()) {
+            auto list = std::static_pointer_cast<HandlerList<MessageType>>(it->second);
+            list->invokeAll(message);
+        }
+    }
+private:
+    std::unordered_map<std::type_index, std::shared_ptr<HandlerListBase>> _handlers;
+};
+
+
+#endif // MESSAGEBUS_HPP

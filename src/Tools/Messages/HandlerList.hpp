@@ -17,13 +17,31 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BASEMESSAGE_HPP
-#define BASEMESSAGE_HPP
+#ifndef HANDLERLIST_HPP 
+#define HANDLERLIST_HPP 
 
-class BaseMessage {
-    // Placeholder if we ever plan to assign some metadata like id, timestamp etc.
-    public:
-    virtual ~BaseMessage() = default;
+#include <unordered_map>
+#include <vector>
+#include <memory>
+#include <functional>
+
+struct HandlerListBase {
+        virtual ~HandlerListBase() = default;
+};
+
+template<typename MessageType>
+struct HandlerList : HandlerListBase {
+    std::vector<std::function<void(const MessageType&)>> handlers;
+
+    void push_back(std::function<void(const MessageType&)> h) {
+        handlers.push_back(std::move(h));
+    }
+
+    void invokeAll(const MessageType& msg) const {
+        for (const auto& h : handlers) {
+            h(msg);
+        }
+    }
 };
 
 #endif

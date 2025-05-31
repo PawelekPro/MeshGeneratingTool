@@ -1,5 +1,6 @@
-add_library(Messages MessageBus.cpp)
+add_library(Messages INTERFACE)
 
-target_include_directories(Messages PUBLIC
+target_include_directories(Messages INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${BOOST_DIR}
 )

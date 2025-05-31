@@ -1,5 +1,4 @@
 add_library(utModelLib
-    utCommands.cpp
     utProgressIndicator.cpp
 )
 

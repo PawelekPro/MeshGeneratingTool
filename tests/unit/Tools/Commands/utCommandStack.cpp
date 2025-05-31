@@ -18,7 +18,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "Command.hpp"
+#include "BaseCommand.hpp"
 #include "CommandStack.hpp"
 
 class CommandStackTest : public ::testing::Test {
