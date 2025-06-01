@@ -17,20 +17,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ShapeSignalWrapper.hpp"
+#include "GeometryEvents.hpp"
+#include <memory>
 
-#include "ImportSTEPCommand.hpp"
-#include "ShapeService.hpp"
+ShapeSignalWrapper::ShapeSignalWrapper(
+    MessageBus& aMessageBus
+) : _eventBus(aMessageBus){}
 
-ImportSTEPCommand::ImportSTEPCommand(
-    ShapeCore& aShapeCore,
-    ShapeService& aShapeService,
-    const std::string& aFilePath
-    ) : 
-    ShapeLibCommand(aShapeCore),
-    _shapeService(aShapeService),
-    _filePath(aFilePath) {}
+void ShapeSignalWrapper::publishShapeAddedEvent(const ShapeId& aShapeId){
+    _eventBus.publish(ShapeAddedEvent(aShapeId));
+}
 
-bool ImportSTEPCommand::executeAction(){
-    // bool imported = _shapeService.importSTEP(_filePath);
-    return true;
+void ShapeSignalWrapper::publishShapeRemovedEvent(const ShapeId& aShapeId){
+    _eventBus.publish(ShapeRemovedEvent(aShapeId));
 }

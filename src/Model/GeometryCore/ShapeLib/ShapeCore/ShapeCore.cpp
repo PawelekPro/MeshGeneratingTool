@@ -18,25 +18,10 @@
 */
 
 #include "ShapeCore.hpp"
-
-boost::signals2::connection ShapeCore::connectShapeAdded(
-    const std::function<void(const ShapeId&)>& slot
-) {
-    return _publisher.shapeAddedSignal().connect(slot); 
-}
-
-boost::signals2::connection ShapeCore::connectShapeRemoved(
-    const std::function<void(const ShapeId&)>& slot
-) {
-    return _publisher.shapeRemovedSignal().connect(slot);
-}
-
-boost::signals2::connection ShapeCore::connectShapeModified(
-    const std::function<void(const ShapeId&)>& slot
-) {
-    return _publisher.shapeModifiedSignal().connect(slot);
-}
-
 std::shared_ptr<const ShapeMap> ShapeCore::shapeMap() const {
     return _shapeMap;
+}
+
+void ShapeCore::attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) const {
+    _publisher.attachObserver(aObserver);
 }

@@ -24,26 +24,36 @@
 #include <vector>
 #include <array>
 
-#include "ModelSubject.hpp"
+#include "MessageBus.hpp"
 #include "CommandStack.hpp"
 #include "OcafShapeCore.hpp"
 #include "GeoCommandsFactory.hpp"
 #include "ShapeService.hpp"
+#include "ShapeView.hpp"
+#include "ShapeId.hpp"
 
 class Geometry {
 
     public:
-    Geometry(CommandStack& aCommandStack, const ModelSubject& aModelSubject);
+    Geometry(
+        CommandStack& aCommandStack, 
+        MessageBus& aMessageBus,
+        std::shared_ptr<ShapeCore> aShapeCore
+    );
     ~Geometry() = default;
 
     void importSTEP(const std::string& aFilePath);
+    void importSTL(const std::string& aFilePath);
+   
+    void removeShape(const ShapeId& aId);
+    void scaleShape(const ShapeId& aId, double aScaleFactor); 
     
     private:
     CommandStack& _commandStack; 
-    const ModelSubject& _subject;
-   
-    OcafShapeCore _shapeCore;
-    
+    MessageBus& _eventBus;
+
+    std::shared_ptr<ShapeCore> _shapeCore;
+    std::shared_ptr<ShapeView> _shapeView;
     ShapeService _shapeService;
     GeoCommandsFactory _commandFactory;
 };

@@ -1,5 +1,5 @@
-add_subdirectory(GeoCommands)
-add_subdirectory(GeoEvents)
+add_subdirectory(Commands)
+add_subdirectory(Events)
 add_subdirectory(ShapeLib)
 
 add_library(GeometryCore
@@ -9,9 +9,10 @@ add_library(GeometryCore
 target_link_libraries(GeometryCore PUBLIC
     ${OCC_LIBRARIES}
     ShapeLib
-    GeoEvents
-    GeoCommands
+    Geometry_Events
+    Geometry_Commands
     BaseCommands
+    Messages
 )
 
 target_include_directories(GeometryCore PUBLIC 

@@ -17,48 +17,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPECORE_HPP
-#define SHAPECORE_HPP
-
 #include <memory>
-#include <vector>
-#include <boost/signals2.hpp>
-
-#include "ShapeSignalsPublisher.hpp"
 #include "ShapeMap.hpp"
 #include "ShapeId.hpp"
 
-class ShapeCoreObserver;
-class ShapeCore {
-
+class ShapeView {
     public:
-    virtual ~ShapeCore() = default;
+    ShapeView(std::shared_ptr<ShapeMap> aShapeMap);
+    ~ShapeView() = default;
 
-    virtual ShapeId registerNewFreeShape(
-        const TopoDS_Shape& Shape
-    ) = 0;
-
-    virtual bool removeShape(
-        const ShapeId& aShapeId
-    ) = 0;
-
-    virtual bool updateShape(
-        const std::pair<ShapeId, TopoDS_Shape>& aUpdatedShape
-    ) = 0;
-   
-    virtual bool openCommand() = 0;
-    virtual bool commitCommand() = 0;
-    virtual bool abortCommand() = 0;
-    virtual bool undo() = 0;
-    virtual bool redo() = 0;
-
-    virtual std::shared_ptr<const ShapeMap> shapeMap() const;
-    virtual void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) const;
-
-    protected:
-
-    ShapeSignalsPublisher _publisher;
+    private:
     std::shared_ptr<ShapeMap> _shapeMap;
 };
-
-#endif

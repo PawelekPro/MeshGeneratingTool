@@ -17,23 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEIDFACTORY_HPP
-#define SHAPEIDFACTORY_HPP
+#ifndef SHAPESIGNALSOBSERVER_HPP
+#define SHAPESIGNALSOBSERVER_HPP
 
-#include "ShapeId.hpp"
-#include <memory>
+class ShapeId;
+class ShapeCoreObserver {
 
-class ShapeIdFactory {
-public:
-    static ShapeId create(
-        std::unique_ptr<ShapeKey> key) {
-    return ShapeId(std::move(key));
-    }
+    public:
+    ShapeCoreObserver() = default;
+    virtual ~ShapeCoreObserver() = default;    
 
-    template<typename KeyType>
-    static KeyType const& getKey(ShapeId const& id) {
-        return id.key<KeyType>();
-    }
+    virtual void onShapeAdded(const ShapeId& aShapeId) = 0;
+    virtual void onShapeRemoved(const ShapeId& aShapeId) = 0;
+
 };
 
-#endif
+#endif 

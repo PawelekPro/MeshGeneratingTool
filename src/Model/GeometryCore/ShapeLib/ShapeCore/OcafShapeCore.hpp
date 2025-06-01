@@ -21,11 +21,11 @@
 #define OCAFSHAPECORE_HPP
 
 #include "ShapeCore.hpp"
-#include "ShapeEventsPublisher.hpp"
-#include "ShapeEventsPublisher.hpp"
+#include "ShapeSignalsPublisher.hpp"
+#include "ShapeSignalsPublisher.hpp"
 #include "ShapeIdAttribute.hpp"
 #include "ShapeIdFactory.hpp"
-#include "IntPairKey.hpp"
+#include "LabelTagKey.hpp"
 
 #include <string>
 #include <TDocStd_Document.hxx>
@@ -79,8 +79,8 @@ class OcafShapeCore : public ShapeCore {
    
     bool write(const std::string& aSavePath);
    
-    std::unique_ptr<IntPairKey> keyFromLabel(TDF_Label aLabel);
-    TDF_Label labelFromKey(std::unique_ptr<IntPairKey> aKey);
+    std::unique_ptr<LabelTagKey> keyFromLabel(TDF_Label aLabel);
+    TDF_Label labelFromKey(std::unique_ptr<LabelTagKey> aKey);
     
     private:
 

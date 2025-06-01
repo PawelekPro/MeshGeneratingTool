@@ -17,24 +17,26 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GeoCommandsFactory.hpp"
-#include "ImportSTEPCommand.hpp"
+#ifndef GEOEVENT_HPP
+#define GEOEVENT_HPP
 
-GeoCommandsFactory::GeoCommandsFactory(
-    const ModelSubject& aModelSubject,
-    ShapeService& aShapeService
-    ) : 
-    _modelSubject(aModelSubject),
-    _shapeService(aShapeService){}
+#include "Event.hpp"
+#include "BaseGeometryObserver.hpp"
+#include "BaseMessage.hpp"
+#include "ShapeId.hpp"
 
-std::unique_ptr<ImportSTEPCommand> GeoCommandsFactory::importSTEP(
-    const std::string& aFilePath
-) const {
-    std::unique_ptr<ImportSTEPCommand> command = 
-        std::make_unique<ImportSTEPCommand>(
-            _modelSubject,
-            _shapeService,
-            aFilePath
-        );
-    return command;
-}
+class GeometryEvent : public BaseMessage {};
+
+class ShapeAddedEvent : public GeometryEvent {
+    public:
+    ShapeAddedEvent(const ShapeId& aShapeId) : shapeId(aShapeId) {}
+    const ShapeId shapeId;
+};
+
+class ShapeRemovedEvent : public GeometryEvent {
+    public:
+    ShapeRemovedEvent(const ShapeId& aShapeId) : shapeId(aShapeId) {}
+    const ShapeId shapeId;
+};
+
+#endif

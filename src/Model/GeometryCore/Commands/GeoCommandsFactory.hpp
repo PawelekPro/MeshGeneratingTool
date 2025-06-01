@@ -31,7 +31,6 @@ class GeoCommandsFactory {
 
     public:    
     GeoCommandsFactory(
-        const ModelSubject& aModelSubject,
         ShapeService& aShapeService
     );
 
@@ -41,7 +40,6 @@ class GeoCommandsFactory {
 
     private:
     const ShapeService& _shapeService;
-    const ModelSubject& _modelSubject;
 };
 
 #endif

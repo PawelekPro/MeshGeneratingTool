@@ -17,10 +17,21 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEATTRS_HPP 
-#define SHAPEATTRS_HPP
+#include "GeoCommandsFactory.hpp"
+#include "ImportSTEPCommand.hpp"
 
+GeoCommandsFactory::GeoCommandsFactory(
+    ShapeService& aShapeService
+    ) : 
+    _shapeService(aShapeService){}
 
-
-
-#endif
+std::unique_ptr<ImportSTEPCommand> GeoCommandsFactory::importSTEP(
+    const std::string& aFilePath
+) const {
+    std::unique_ptr<ImportSTEPCommand> command = 
+        std::make_unique<ImportSTEPCommand>(
+            _shapeService,
+            aFilePath
+        );
+    return command;
+}

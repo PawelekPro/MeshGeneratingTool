@@ -17,22 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOEVENT_HPP
-#define GEOEVENT_HPP
 
-#include "Event.hpp"
-#include "BaseGeometryObserver.hpp"
+#include "ImportSTEPCommand.hpp"
+#include "ShapeService.hpp"
 
-class GeoEvent : public Event {
-    
-    public:
-    virtual ~GeoEvent() = default;
+ImportSTEPCommand::ImportSTEPCommand(
+    ShapeService& aShapeService,
+    const std::string& aFilePath
+    ) : 
+    ShapeLibCommand(aShapeService.shapeCore()),
+    _shapeService(aShapeService),
+    _filePath(aFilePath) {}
 
-    virtual void accept(EventObserver&) const override{};
-    virtual void accept(BaseModelObserver& aEventObserver) const {};
-    
-    virtual void accept(BaseGeometryObserver& aEventObserver) const = 0;
-    
-};
-
-#endif
+bool ImportSTEPCommand::executeAction(){
+    bool imported = _shapeService.importSTEP(_filePath);
+    return true;
+}

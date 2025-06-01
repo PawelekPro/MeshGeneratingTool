@@ -5,7 +5,7 @@ add_library(ModelObservers
 
 target_link_libraries(ModelObservers PUBLIC
     ModelEvents
-    GeoEvents
+    Geometry_Events
     Utils
 )
 

@@ -17,23 +17,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEIDFACTORY_HPP
-#define SHAPEIDFACTORY_HPP
+#ifndef SHAPEKEYCONCEPT_HPP
+#define SHAPEKEYCONCEPT_HPP
 
-#include "ShapeId.hpp"
-#include <memory>
+#include <concept>
 
-class ShapeIdFactory {
-public:
-    static ShapeId create(
-        std::unique_ptr<ShapeKey> key) {
-    return ShapeId(std::move(key));
-    }
-
-    template<typename KeyType>
-    static KeyType const& getKey(ShapeId const& id) {
-        return id.key<KeyType>();
-    }
+template<typename T>
+concept ShapeKeyConcept = requires(const T& a, const T& b) {
+    { a.equalsImpl(b) } -> std::convertible_to<bool>;
+    { a.lessImpl(b) } -> std::convertible_to<bool>;
+    { a.hash() } -> std::convertible_to<std::size_t>;
+    { a.toString() } -> std::convertible_to<std::string>;
 };
 
 #endif

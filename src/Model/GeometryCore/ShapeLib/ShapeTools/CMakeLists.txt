@@ -1,14 +1,10 @@
 add_subdirectory(ShapeImport)
+add_subdirectory(OccUtils)
 
-add_library(ShapeTools INTERFACE
-    # ShapeTools.cpp
-    # ShapeView.cpp
-    # ShapeAttrView.cpp
-)
+add_library(ShapeTools INTERFACE)
 
 target_link_libraries(ShapeTools INTERFACE
-    # ShapeMap
-    # Shapes
+    OccUtils 
     ShapeImport
 )
 

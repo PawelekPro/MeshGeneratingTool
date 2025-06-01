@@ -17,23 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEIDFACTORY_HPP
-#define SHAPEIDFACTORY_HPP
+#ifndef IMPORTSTEPCOMMAND_HPP
+#define IMPORTSTEPCOMMAND_HPP
 
-#include "ShapeId.hpp"
-#include <memory>
+#include <string>
+#include <TopoDS_Shape.hxx>
 
-class ShapeIdFactory {
-public:
-    static ShapeId create(
-        std::unique_ptr<ShapeKey> key) {
-    return ShapeId(std::move(key));
-    }
+#include "ShapeLibCommand.hpp"
+class ShapeService;
+class ImportSTEPCommand : public ShapeLibCommand {
 
-    template<typename KeyType>
-    static KeyType const& getKey(ShapeId const& id) {
-        return id.key<KeyType>();
-    }
+    public:
+
+    ImportSTEPCommand(
+        ShapeService& aShapeService,
+        const std::string& aFilePath
+    );
+    
+    bool executeAction() override;
+
+    private:
+    ShapeService& _shapeService;
+    const std::string _filePath;
 };
 
 #endif

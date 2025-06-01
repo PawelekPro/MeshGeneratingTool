@@ -17,29 +17,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IMPORTSTEPCOMMAND_HPP
-#define IMPORTSTEPCOMMAND_HPP
+#ifndef SHAPESIGNALWRAPPER_HPP
+#define SHAPESIGNALWRAPPER_HPP
 
-#include <string>
-#include <TopoDS_Shape.hxx>
+#include "MessageBus.hpp"
+#include "ShapeId.hpp"
 
-#include "ShapeLibCommand.hpp"
-class ShapeService;
-class ImportSTEPCommand : public ShapeLibCommand {
+class ShapeSignalWrapper{
 
     public:
+    ShapeSignalWrapper(MessageBus& aMessageBus);
 
-    ImportSTEPCommand(
-        ShapeCore& aShapeCore,
-        ShapeService& aShapeService,
-        const std::string& aFilePath
-    );
-    
-    bool executeAction() override;
+    void publishShapeAddedEvent(const ShapeId& aShapeId);
+    void publishShapeRemovedEvent(const ShapeId& aShapeId);
 
     private:
-    ShapeService& _shapeService;
-    const std::string _filePath;
+    MessageBus& _eventBus;
 };
 
 #endif

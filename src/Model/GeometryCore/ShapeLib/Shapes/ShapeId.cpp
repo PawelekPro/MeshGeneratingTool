@@ -20,23 +20,19 @@
 #include "ShapeId.hpp"
 
 ShapeId::ShapeId(
-    std::unique_ptr<ShapeKey> aKey,
-    std::shared_ptr<const ShapeId> aParentId
-) : _key(std::move(aKey)),
-    _parentId(std::move(aParentId)){}
+    std::unique_ptr<ShapeKey> aKey
+) : _key(std::move(aKey)){}
 
 ShapeId::ShapeId(const ShapeId& aOther) noexcept
-    : _key       ( aOther._key->clone() )
-    , _parentId  ( aOther._parentId ) {}
+    : _key(aOther._key->clone()){}
 
 ShapeId::ShapeId(ShapeId&& aOther) noexcept
-    : _key       ( std::move(aOther._key) )
-    , _parentId  ( std::move(aOther._parentId) ) {}
+    : _key(std::move(aOther._key))
+{}
 
 ShapeId& ShapeId::operator=(const ShapeId& aOther) noexcept{
     if (this != &aOther) {
       _key      = aOther._key->clone();
-      _parentId = aOther._parentId;
     }
     return *this;
 }   
@@ -44,7 +40,6 @@ ShapeId& ShapeId::operator=(const ShapeId& aOther) noexcept{
 ShapeId& ShapeId::operator=(ShapeId&& aOther) noexcept {
     if (this != &aOther) {
       _key      = aOther._key->clone();
-      _parentId = aOther._parentId;
     }
     return *this;
 }
@@ -57,10 +52,6 @@ bool ShapeId::operator<(const ShapeId& other) const {
     return _key->less(*other._key);
 }
 
-std::shared_ptr<const ShapeId> ShapeId::parentId() const {
-    return _parentId;
-}
-
 std::string ShapeId::toString() const {
     return _key->toString();
 }
@@ -70,7 +61,7 @@ bool ShapeId::isValid() const {
 };
 
 ShapeId ShapeId::invalidId(){
-    return ShapeId(nullptr, nullptr);
+    return ShapeId(nullptr);
 };
 
 std::size_t ShapeIdHasher::operator()(ShapeId const& id) const noexcept {

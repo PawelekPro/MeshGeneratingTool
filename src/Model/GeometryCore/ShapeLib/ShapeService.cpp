@@ -17,29 +17,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Geometry.hpp"
-#include "ImportSTEPCommand.hpp"
+#include "ShapeService.hpp"
+#include "ShapeCore.hpp"
 
-Geometry::Geometry(
-    CommandStack& aCommandStack, 
-    MessageBus& aMessageBus,
+ShapeService::ShapeService(
+    MessageBus& aMessageBus, 
     std::shared_ptr<ShapeCore> aShapeCore
-) : 
-_commandStack(aCommandStack),
-_eventBus(aMessageBus),
+) : _shapeCore(aShapeCore),
+    _messageBus(aMessageBus),
+    _signalWrapper(aMessageBus){
 
-_shapeCore(aShapeCore),
-_shapeView(std::make_shared<ShapeView>(aShapeCore->shapeMap())),
-_shapeService(aMessageBus, aShapeCore),
-_commandFactory(_shapeService){}
-
-void Geometry::importSTEP(const std::string& aFilePath){
-    auto importCommand = _commandFactory.importSTEP(aFilePath);
-    if (importCommand) {
-        _commandStack.execute(std::move(importCommand));
     }
-}
 
-void Geometry::importSTL(const std::string& aFilePath){}
-void Geometry::removeShape(const ShapeId& aShapeId){}
-void Geometry::scaleShape(const ShapeId& aShapeId, double aScaleFactor){}
+void ShapeService::importSTEP(){};
+void ShapeService::importSTL(){};
+void ShapeService::removeShape(){};
+void ShapeService::scaleShape(){};
+
+
+void ShapeService::connectToShapeCore() const {
+    _shapeCore->connectShapeAdded(_signalWrapper.publishShapeAddedEvent)
+};

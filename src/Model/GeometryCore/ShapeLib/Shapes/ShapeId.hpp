@@ -41,7 +41,6 @@ class ShapeId {
     virtual bool operator==(const ShapeId& other) const;
     virtual bool operator<(const ShapeId& other) const;
 
-    virtual std::shared_ptr<const ShapeId> parentId() const;
     virtual std::string toString() const;
 
     virtual bool isValid() const;
@@ -49,10 +48,7 @@ class ShapeId {
 
     protected:
     
-    ShapeId(
-        std::unique_ptr<ShapeKey> aKey,
-        std::shared_ptr<const ShapeId> aParentId = nullptr
-    );
+    ShapeId(std::unique_ptr<ShapeKey> aKey);
     
     template<typename KeyType>
     KeyType const& key() const {
@@ -64,7 +60,6 @@ class ShapeId {
     private:
 
     std::unique_ptr<ShapeKey> _key;
-    std::shared_ptr<const ShapeId> _parentId;
 
     friend class ShapeIdFactory;
     friend class ShapeIdHasher;

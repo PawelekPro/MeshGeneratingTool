@@ -17,23 +17,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEIDFACTORY_HPP
-#define SHAPEIDFACTORY_HPP
+#ifndef SHAPEKEYBASE_HPP
+#define SHAPEKEYBASE_HPP
 
-#include "ShapeId.hpp"
-#include <memory>
+#include "ShapeKeyBase.hpp"
+#include "ShapeKeyConcept.hpp"
+#include <type_traits>
 
-class ShapeIdFactory {
+template <typename Derived>
+requires ShapeKeyConcept<Derived>
+class ShapeKeyBase : public ShapeKey {
 public:
-    static ShapeId create(
-        std::unique_ptr<ShapeKey> key) {
-    return ShapeId(std::move(key));
+    bool equals(const ShapeKey& other) const final {
+        if (auto* p = dynamic_cast<const Derived*>(&other)) {
+            return static_cast<const Derived*>(this)->equalsImpl(*p);
+        }
+        return false;
     }
 
-    template<typename KeyType>
-    static KeyType const& getKey(ShapeId const& id) {
-        return id.key<KeyType>();
+    bool less(const ShapeKey& other) const final {
+        if (auto* p = dynamic_cast<const Derived*>(&other)) {
+            return static_cast<const Derived*>(this)->lessImpl(*p);
+        }
+        return false;
     }
 };
 
-#endif
+#endif // SHAPEKEYCRTP_HPP

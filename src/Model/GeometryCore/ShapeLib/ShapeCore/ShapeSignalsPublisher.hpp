@@ -17,33 +17,48 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEEVENTSPUBLISHER_HPP
-#define SHAPEEVENTSPUBLISHER_HPP
+#ifndef SHAPESIGNALSPUBLISHER_HPP
+#define SHAPESIGNALSPUBLISHER_HPP
 
 #include "ShapeId.hpp"
+#include "ShapeCoreObserver.hpp"
 #include <boost/signals2.hpp>
 
-class ShapeEventsPublisher {
+class ShapeSignalsPublisher {
 public:
     using ShapeSignal = boost::signals2::signal<void(const ShapeId&)>;
 
-    ShapeEventsPublisher() = default;
+    ShapeSignalsPublisher() = default;
 
-    void shapeAdded(const ShapeId& aShapeId) {
+    void publishShapeAdded(const ShapeId& aShapeId) {
         onShapeAdded(aShapeId);
     }
 
-    void shapeRemoved(const ShapeId& aShapeId) {
+    void publishShapeRemoved(const ShapeId& aShapeId) {
         onShapeRemoved(aShapeId);
     }
 
-    void shapeModified(const ShapeId& aShapeId) {
+    void publishShapeModified(const ShapeId& aShapeId) {
         onShapeModified(aShapeId);
     }
 
-    ShapeSignal& shapeAddedSignal() { return onShapeAdded; }
-    ShapeSignal& shapeRemovedSignal() { return onShapeRemoved; }
-    ShapeSignal& shapeModifiedSignal() { return onShapeModified; }
+    void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) const {
+        onShapeAdded.connect(
+            [weakObs = std::weak_ptr(aObserver)]( const ShapeId& id) {
+                if (auto obs = weakObs.lock()) {
+                    obs->onShapeAdded(id);
+                }
+            }
+        );
+
+        onShapeRemoved.connect(
+            [weakObs = std::weak_ptr(aObserver)](const ShapeId& id) {
+                if (auto obs = weakObs.lock()) {
+                    obs->onShapeRemoved(id);
+                }
+            }
+        );
+    }
 
 private:
     ShapeSignal onShapeAdded;

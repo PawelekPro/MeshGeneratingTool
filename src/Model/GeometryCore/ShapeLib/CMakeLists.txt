@@ -2,17 +2,20 @@ add_subdirectory(Shapes)
 add_subdirectory(ShapeMap)
 add_subdirectory(ShapeTools)
 add_subdirectory(ShapeCore)
-add_subdirectory(OccUtils)
 
-add_library(ShapeLib INTERFACE)
+add_library(ShapeLib 
+    ShapeService.cpp
+    ShapeView.cpp 
+)
 
-target_link_libraries(ShapeLib INTERFACE
+target_link_libraries(ShapeLib PUBLIC
     Shapes
     ShapeMap
     ShapeTools
     ShapeCore
+    Geometry_Events
 )
 
-target_include_directories(ShapeLib INTERFACE
+target_include_directories(ShapeLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

@@ -17,33 +17,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IntPairKey_HPP 
-#define IntPairKey_HPP 
+#ifndef LABELTAGKEY_HPP 
+#define LABELTAGKEY_HPP 
 
 #include <string>
 #include <memory>
-#include "ShapeKey.hpp"
+#include "ShapeKeyBase.hpp"
+#include <string>
+#include <tuple>
 
-class IntPairKey : public ShapeKey {
-    public:
-    virtual ~IntPairKey() = default;
-    IntPairKey(size_t aLabelTag, size_t aParentLabelTag);
-    
-    virtual std::unique_ptr<ShapeKey> clone() const override;
+class LabelTagKey : public ShapeKeyBase<LabelTagKey> {
+public:
+    LabelTagKey(size_t label, size_t parent)
+        : _labelTag(label), _parentLabelTag(parent),
+          _cachedString(std::to_string(parent) + "-" + std::to_string(label)) {}
 
-    virtual bool equals(const ShapeKey& other) const override;
-    virtual bool less  (const ShapeKey& ther) const override;
-    
-    virtual std::size_t hash() const override;
-    virtual std::string toString() const override;
+    std::size_t hash() const override {
+        std::size_t h1 = std::hash<size_t>{}(_labelTag);
+        std::size_t h2 = std::hash<size_t>{}(_parentLabelTag);
+        return h1 ^ (h2 << 1);
+    }
 
+    std::string toString() const override {
+        return _cachedString;
+    }
+
+    bool equalsImpl(const LabelTagKey& other) const;
+    bool lessImpl(const LabelTagKey& other) const;
+
+    size_t parentLabelTag() const {return _parentLabelTag;}    
     size_t labelTag() const {return _labelTag;}
-    size_t parentLabelTag() const {return _parentLabelTag;}
 
     private:
     const size_t _labelTag;
     const size_t _parentLabelTag;
-    std::string _cachedString;
+    const std::string _cachedString;
 };
 
-#endif
+#endif // LABELTAGKEY_HPP
