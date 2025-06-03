@@ -22,10 +22,8 @@
 
 #include "ShapeCore.hpp"
 #include "ShapeSignalsPublisher.hpp"
-#include "ShapeSignalsPublisher.hpp"
-#include "ShapeIdAttribute.hpp"
-#include "ShapeIdFactory.hpp"
-#include "LabelTagKey.hpp"
+#include "ShapeKeyAttr.hpp"
+#include "ShapeKey.hpp"
 
 #include <string>
 #include <TDocStd_Document.hxx>
@@ -52,6 +50,8 @@ enum class DeltaType{
     Resume
 };
 
+class AttributeFactory;
+
 class OcafShapeCore : public ShapeCore {
     
     public:
@@ -59,16 +59,16 @@ class OcafShapeCore : public ShapeCore {
     
     virtual ~OcafShapeCore() = default;
 
-    ShapeId registerNewFreeShape(
+    ShapeKey registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) override;
 
     bool removeShape(
-        const ShapeId& aShapeId
+        const ShapeKey& aShapeKey
     ) override;
 
     bool updateShape(
-        const std::pair<ShapeId, TopoDS_Shape>& aUpdatedShape
+        const std::pair<ShapeKey, TopoDS_Shape>& aUpdatedShape
     ) override;
    
     bool openCommand() override;
@@ -78,22 +78,15 @@ class OcafShapeCore : public ShapeCore {
     bool redo() override;
    
     bool write(const std::string& aSavePath);
-   
-    std::unique_ptr<LabelTagKey> keyFromLabel(TDF_Label aLabel);
-    TDF_Label labelFromKey(std::unique_ptr<LabelTagKey> aKey);
     
     private:
-
-    void onShapeAttrRemoved(int labelTag, int parentLabelTag);
-    void onShapeAttrAdded(int labelTag, int parentLabelTag);
-    TDF_Label labelFromTags(int labelTag, int parentLabelTag);
-
-
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;
 
     TDF_Label _shapeLabel;
+    std::unique_ptr<AttributeFactory> _attrFactory;
+    std::unique_ptr<LabelKeyTool> _labelKeyTool;
 };
 
 #endif

@@ -17,11 +17,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "LabelTagKey.hpp"
+#include "ShapeKey.hpp"
 
-
-
-LabelTagKey::LabelTagKey(
+ShapeKey::ShapeKey(
     size_t aLabelTag, 
     size_t aParentLabelTag
 ) : _labelTag(aLabelTag), 
@@ -29,22 +27,21 @@ LabelTagKey::LabelTagKey(
     _cachedString(std::to_string(aParentLabelTag) + "-" + std::to_string(aLabelTag))
     {}
 
-bool LabelTagKey::equalsImpl(const LabelTagKey& other) const {
+bool ShapeKey::equals(const ShapeKey& other) const {
     return  _labelTag == other._labelTag &&
             _parentLabelTag == other._parentLabelTag;
 }
 
-bool LabelTagKey::lessImpl(const LabelTagKey& other) const {
+bool ShapeKey::less(const ShapeKey& other) const {
     return std::tie(_parentLabelTag, _labelTag) < std::tie(other._parentLabelTag, other._labelTag);
 }
 
-std::size_t LabelTagKey::hash() const {
+std::size_t ShapeKey::hash() const {
         std::size_t h1 = std::hash<size_t>{}(_labelTag);
         std::size_t h2 = std::hash<size_t>{}(_parentLabelTag);
         return h1 ^ (h2 << 1);
 }
 
-
-std::string LabelTagKey::toString() const {
-    return std::to_string(parentLabelTag) + "-" + std::to_string(labelTag);
+std::string ShapeKey::toString() const {
+    return _cachedString;
 }

@@ -17,17 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEKEYCONCEPT_HPP
-#define SHAPEKEYCONCEPT_HPP
+#ifndef ATTRIBUTEFACTORY_HPP
+#define ATTRIBUTEFACTORY_HPP
 
-#include <concept>
+#include <TDF_Atribute.hxx>
+#include <Standard_Handle.hxx>
+#include <memory>
+#include "ShapeSignalsPublisher.hpp"
 
-template<typename T>
-concept ShapeKeyConcept = requires(const T& a, const T& b) {
-    { a.equalsImpl(b) } -> std::convertible_to<bool>;
-    { a.lessImpl(b) } -> std::convertible_to<bool>;
-    { a.hash() } -> std::convertible_to<std::size_t>;
-    { a.toString() } -> std::convertible_to<std::string>;
+class ShapeKeyAttr;
+class ShapeKey;
+
+
+class AttributeFactory {
+
+    public:
+    AttributeFactory(ShapeSignalsPublisher& aCore);
+    ~AttributeFactory() = default;
+
+    Handle(ShapeKeyAttr) shapeKeyAttr(std::shared_ptr<ShapeKey> aKey);
+
+    private:
+    ShapeSignalsPublisher& _publisher;
 };
 
 #endif

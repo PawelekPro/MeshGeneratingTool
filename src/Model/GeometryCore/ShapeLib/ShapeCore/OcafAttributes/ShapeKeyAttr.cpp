@@ -19,14 +19,14 @@
 
 #include <TDF_RelocationTable.hxx>
 #include <TCollection_AsciiString.hxx>
-#include "ShapeIdAttribute.hpp"
+#include "ShapeKeyAttr.hpp"
 
-IMPLEMENT_STANDARD_RTTIEXT(ShapeIdAttribute, Standard_Transient)
+IMPLEMENT_STANDARD_RTTIEXT(ShapeKeyAttr, Standard_Transient)
 
-ShapeIdAttribute::ShapeIdAttribute()
+ShapeKeyAttr::ShapeKeyAttr()
 : _labelTag(0), _parentLabelTag(0) {}
 
-ShapeIdAttribute::ShapeIdAttribute(
+ShapeKeyAttr::ShapeKeyAttr(
   Standard_Integer aLabelTag,
   Standard_Integer aParentLabelTag
 )
@@ -37,42 +37,42 @@ static const Standard_GUID GUID_ShapeIdAttr(
   "2ae4362f-ce33-4af9-909e-f009ad8516f3"
 );
 
-const Standard_GUID& ShapeIdAttribute::GetID() {
+const Standard_GUID& ShapeKeyAttr::GetID() {
   return GUID_ShapeIdAttr;
 }
 
-const Standard_GUID& ShapeIdAttribute::ID() const {
+const Standard_GUID& ShapeKeyAttr::ID() const {
   return GetID();
 }
 
-Handle(TDF_Attribute) ShapeIdAttribute::NewEmpty() const {
-  return new ShapeIdAttribute();
+Handle(TDF_Attribute) ShapeKeyAttr::NewEmpty() const {
+  return new ShapeKeyAttr();
 }
 
-void ShapeIdAttribute::Restore(const Handle(TDF_Attribute)& from) {
-  const Handle(ShapeIdAttribute) src =
-    Handle(ShapeIdAttribute)::DownCast(from);
+void ShapeKeyAttr::Restore(const Handle(TDF_Attribute)& from) {
+  const Handle(ShapeKeyAttr) src =
+    Handle(ShapeKeyAttr)::DownCast(from);
   _labelTag = src->_labelTag;
   _parentLabelTag  = src->_parentLabelTag;
 }
 
-void ShapeIdAttribute::Paste(
+void ShapeKeyAttr::Paste(
   const Handle(TDF_Attribute)& into,
   const Handle(TDF_RelocationTable)&
 ) const {
-  const Handle(ShapeIdAttribute) dst =
-    Handle(ShapeIdAttribute)::DownCast(into);
+  const Handle(ShapeKeyAttr) dst =
+    Handle(ShapeKeyAttr)::DownCast(into);
   dst->_labelTag = _labelTag;
   dst->_parentLabelTag  = _parentLabelTag;
 }
 
-Standard_OStream& ShapeIdAttribute::Dump(Standard_OStream& os) const {
-  os << "ShapeIdAttribute(LabelTag=" << _labelTag
+Standard_OStream& ShapeKeyAttr::Dump(Standard_OStream& os) const {
+  os << "ShapeKeyAttr(LabelTag=" << _labelTag
      << ", parentLabelTag=" << _parentLabelTag << ")";
   return os;
 }
 
-void ShapeIdAttribute::Set(
+void ShapeKeyAttr::Set(
   Standard_Integer aLabelTag,
   Standard_Integer aParentLabelTag
 ) {
@@ -83,7 +83,7 @@ void ShapeIdAttribute::Set(
   }
 }
 
-void ShapeIdAttribute::Get( 
+void ShapeKeyAttr::Get( 
 	Standard_Integer& labelTag, 
 	Standard_Integer& shapeId
 ) const {
@@ -92,12 +92,12 @@ void ShapeIdAttribute::Get(
 }
 
 #include <iostream>
-void ShapeIdAttribute::AfterAddition(){
+void ShapeKeyAttr::AfterAddition(){
 	_shapeAddedSignal(_labelTag, _parentLabelTag);
     std::cout << "Attribute added" << std::endl;
 }
 
-void ShapeIdAttribute::BeforeRemoval(){
+void ShapeKeyAttr::BeforeRemoval(){
 	_shapeRemovedSignal(_labelTag, _parentLabelTag);
 	std::cout << "Attribute removed" << std::endl;
 }

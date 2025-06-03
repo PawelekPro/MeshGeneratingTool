@@ -26,13 +26,12 @@
 class ShapeIdFactory {
 public:
     static ShapeId create(
-        std::unique_ptr<ShapeKey> key) {
-    return ShapeId(std::move(key));
+        std::shared_ptr<ShapeKey> key) {
+    return ShapeId(key);
     }
-
-    template<typename KeyType>
-    static KeyType const& getKey(ShapeId const& id) {
-        return id.key<KeyType>();
+    
+    static std::shared_ptr<ShapeKey> const getKey(ShapeId const& id) {
+        return id.key();
     }
 };
 

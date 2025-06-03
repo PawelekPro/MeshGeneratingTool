@@ -34,6 +34,8 @@
 
 #include "XmlShapeLibDrivers.hpp"
 #include "AttrShapeMap.hpp"
+#include "AttributeFactory.hpp"
+#include "LabelKeyTool.hpp"
 
 OcafShapeCore::OcafShapeCore()
 {
@@ -53,6 +55,8 @@ OcafShapeCore::OcafShapeCore()
 
     _shapeLabel = _shapeTool->Label();
     _shapeMap   = std::make_shared<AttrShapeMap>(_shapeTool);
+    _attrFactory = std::make_shared<AttributeFactory>(_publisher);
+    _labelKeyTool = std::make_shared<LabelKeyTool>(_shapeTool);
 }
 
 bool OcafShapeCore::write(const std::string& aSavePath){
@@ -71,81 +75,39 @@ bool OcafShapeCore::write(const std::string& aSavePath){
     return true;
 }
 
-ShapeId OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
+ShapeKey OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
     TDF_Label mainLabel = _shapeTool->AddShape(aShape);
+
     Standard_Integer mainLabelTag = mainLabel.Tag();
-    Handle(ShapeIdAttribute) mainIdAttr = new ShapeIdAttribute(mainLabelTag, 0);
-     
-    auto mainAddedConn = mainIdAttr->shapeAddedSignal().connect(
-        [this](int labelTag, int parentTag) {
-            this->onShapeAttrAdded(labelTag, parentTag);
-        }
-    );
-    auto mainRemovedConn = mainIdAttr->shapeRemovedSignal().connect(
-        [this](int labelTag, int parentTag) {
-            this->onShapeAttrRemoved(labelTag, parentTag);
-        }
-    );
-    mainLabel.AddAttribute(mainIdAttr);
-    std::unique_ptr<LabelTagKey> key = std::make_unique<LabelTagKey>(mainLabelTag, 0); 
+    Handle(ShapeKeyAttr) mainAttr = _attrFactory->shapeKeyAttr(mainLabelTag, 0);
+    
+    mainLabel.AddAttribute(mainAttr);
     for (TopExp_Explorer exp(aShape, TopAbs_SHAPE); exp.More(); exp.Next()) {
         const TopoDS_Shape& subShape = exp.Current();
         if (subShape.IsEqual(aShape))
             continue;
-
         TDF_Label subLabel = _shapeTool->AddShape(subShape);
         Standard_Integer subLabelTag = subLabel.Tag();
         
-        Handle(ShapeIdAttribute) subIdAttr = new ShapeIdAttribute(
-            subLabelTag, mainLabelTag
+        Handle(ShapeKeyAttr) subAttr = _attrFactory->shapeKeyAttr(
+            subLabelTag, mainLabelTag 
         );
         subLabel.AddAttribute(subIdAttr);
     }
-
-    return ShapeIdFactory::create(std::move(key));
+    return _labelKeyTool->keyFromLabel(mainLabel);
 }
 
-std::unique_ptr<LabelTagKey> OcafShapeCore::keyFromLabel(TDF_Label aLabel){
-    if (_shapeTool->IsTopLevel(aLabel)){
-        Standard_Integer labelTag = aLabel.Tag();
-        return std::make_unique<LabelTagKey>(labelTag, 0);
-    } else {
-        Standard_Integer labelTag = aLabel.Tag();
-        TopoDS_Shape shape = _shapeTool->GetShape(aLabel);
-        TDF_Label parentLabel = _shapeTool->FindMainShape(shape);
-        if (parentLabel.IsNull()) {
-            throw std::runtime_error("Cannot find parent shape.");
-        } else {
-            Standard_Integer parentTag = parentLabel.Tag();
-            return std::make_unique<LabelTagKey>(labelTag, parentTag);
-        }
-    }
-}
 
-TDF_Label OcafShapeCore::labelFromKey(std::unique_ptr<LabelTagKey> aKey) {
-    int labelTag = aKey->labelTag();
-    int parentLabelTag = aKey->parentLabelTag();
-    return labelFromTags(labelTag, parentLabelTag);
-}
-
-bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
-    TDF_Label label = labelFromKey(
-        std::make_unique<LabelTagKey>(
-            ShapeIdFactory::getKey<LabelTagKey>(aShapeId)
-        )
-    );
-    return  _shapeTool->RemoveShape(label);
+bool OcafShapeCore::removeShape(const ShapeKey& aShapeKey) {
+    auto label _labelKeyTool->labelFromKey(aShapeKey);
+    return _shapeTool->RemoveShape(label);
 }
 
 bool OcafShapeCore::updateShape(
-    const std::pair<ShapeId, TopoDS_Shape>& aShapeIdPair
+    const std::pair<ShapeKey, TopoDS_Shape>& aShapeKeyPair
 ) {
-    TDF_Label label = labelFromKey(
-        std::make_unique<LabelTagKey>(
-            ShapeIdFactory::getKey<LabelTagKey>(aShapeIdPair.first)
-        )
-    );
-    _shapeTool->SetShape(label, aShapeIdPair.second);
+    auto label _labelKeyTool->labelFromKey(aShapeKeyPair.first);
+    _shapeTool->SetShape(label, aShapeKeyPair.second);
     return true;
 }
 
@@ -184,27 +146,4 @@ bool OcafShapeCore::undo() {
 bool OcafShapeCore::redo() {
     _document->Redo();
     return true;
-}
-
-TDF_Label OcafShapeCore::labelFromTags(int aLabelTag, int aParentLabelTag){
-    TColStd_ListOfInteger tagList;
-    if (aParentLabelTag != 0) {
-        tagList.Append(aParentLabelTag);
-    }
-    tagList.Append(aLabelTag);
-    TDF_Label foundLabel;
-    TDF_Tool::Label(_shapeTool->Label().Data(), tagList, foundLabel, false);
-    return foundLabel;
-} 
-
-void OcafShapeCore::onShapeAttrAdded(int aLabelTag, int aParentLabelTag){
-    auto key = std::make_unique<LabelTagKey>(aLabelTag, aParentLabelTag);
-    ShapeId id = ShapeIdFactory::create(std::move(key));
-    this->_publisher.publishShapeRemoved(id);
-}
-
-void OcafShapeCore::onShapeAttrRemoved(int aLabelTag, int aParentLabelTag){
-    auto key = std::make_unique<LabelTagKey>(aLabelTag, aParentLabelTag);
-    ShapeId id = ShapeIdFactory::create(std::move(key));
-    this->_publisher.publishShapeRemoved(id);
 }

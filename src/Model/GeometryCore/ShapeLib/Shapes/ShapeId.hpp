@@ -26,6 +26,7 @@
 
 class ShapeIdFactory;
 class ShapeIdHasher;
+class ShapeKey;
 
 class ShapeId {
 
@@ -48,18 +49,11 @@ class ShapeId {
 
     protected:
     
-    ShapeId(std::unique_ptr<ShapeKey> aKey);
-    
-    template<typename KeyType>
-    KeyType const& key() const {
-        auto* p = dynamic_cast<KeyType const*>(_key.get());
-        if (!p) throw std::bad_cast();
-        return *p;
-    }
-    
+    ShapeId(std::shared_ptr<ShapeKey> aKey);
+    std::shared_ptr<ShapeKey> key() const {return _key;}
     private:
 
-    std::unique_ptr<ShapeKey> _key;
+    std::shared_ptr<ShapeKey> _key;
 
     friend class ShapeIdFactory;
     friend class ShapeIdHasher;

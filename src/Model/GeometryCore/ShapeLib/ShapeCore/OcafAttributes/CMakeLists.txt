@@ -1,5 +1,5 @@
 add_library(OcafAttributes
-    ShapeIdAttribute.cpp
+    ShapeKeyAttr.cpp
 )
 
 target_link_libraries(OcafAttributes PUBLIC

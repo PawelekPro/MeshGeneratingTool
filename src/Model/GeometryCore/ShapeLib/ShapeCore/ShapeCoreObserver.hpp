@@ -20,15 +20,15 @@
 #ifndef SHAPESIGNALSOBSERVER_HPP
 #define SHAPESIGNALSOBSERVER_HPP
 
-class ShapeId;
+class ShapeKey;
 class ShapeCoreObserver {
 
     public:
     ShapeCoreObserver() = default;
     virtual ~ShapeCoreObserver() = default;    
 
-    virtual void onShapeAdded(const ShapeId& aShapeId) = 0;
-    virtual void onShapeRemoved(const ShapeId& aShapeId) = 0;
+    virtual void onShapeAdded(std::shared_ptr<ShapeKey>) = 0;
+    virtual void onShapeRemoved(std::shared_ptr<ShapeKey>) = 0;
 
 };
 

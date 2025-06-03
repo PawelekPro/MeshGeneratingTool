@@ -22,28 +22,18 @@
 
 #include <string>
 #include <memory>
-#include "ShapeKeyBase.hpp"
 #include <string>
 #include <tuple>
 
-class LabelTagKey : public ShapeKeyBase<LabelTagKey> {
+class ShapeKey {
 public:
-    LabelTagKey(size_t label, size_t parent)
-        : _labelTag(label), _parentLabelTag(parent),
-          _cachedString(std::to_string(parent) + "-" + std::to_string(label)) {}
+    ShapeKey(size_t label, size_t parent);
 
-    std::size_t hash() const override {
-        std::size_t h1 = std::hash<size_t>{}(_labelTag);
-        std::size_t h2 = std::hash<size_t>{}(_parentLabelTag);
-        return h1 ^ (h2 << 1);
-    }
+    std::size_t hash() const;
+    std::string toString() const;
 
-    std::string toString() const override {
-        return _cachedString;
-    }
-
-    bool equalsImpl(const LabelTagKey& other) const;
-    bool lessImpl(const LabelTagKey& other) const;
+    bool equals(const ShapeKey& other) const;
+    bool less(const ShapeKey& other) const;
 
     size_t parentLabelTag() const {return _parentLabelTag;}    
     size_t labelTag() const {return _labelTag;}

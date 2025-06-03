@@ -17,27 +17,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEIDATTRIBUTE_HPP
-#define SHAPEIDATTRIBUTE_HPP
+#ifndef SHAPEKEYATTR_HPP
+#define SHAPEKEYATTR_HPP
 
 #include <TDF_Attribute.hxx>
 #include <Standard_GUID.hxx>
 #include <Standard_OStream.hxx>
 
-#include <ShapeId.hpp>
-#include <ShapeIdFactory.hpp>
 #include <boost/signals2.hpp>
 
-class ShapeIdAttribute;
+class ShapeKeyAttr;
 
 // Define a handle to our attribute
-DEFINE_STANDARD_HANDLE(ShapeIdAttribute, TDF_Attribute)
+DEFINE_STANDARD_HANDLE(ShapeKeyAttr, TDF_Attribute)
 
-class ShapeIdAttribute : public TDF_Attribute {
+class ShapeKeyAttr : public TDF_Attribute {
 
 public:
 	using ShapeSignal = boost::signals2::signal<void(Standard_Integer, Standard_Integer)>;
-	DEFINE_STANDARD_RTTIEXT(ShapeIdAttribute, TDF_Attribute)
+	DEFINE_STANDARD_RTTIEXT(ShapeKeyAttr, TDF_Attribute)
 
     ShapeSignal& shapeAddedSignal() { return _shapeAddedSignal; }
     ShapeSignal& shapeRemovedSignal() { return _shapeRemovedSignal; }
@@ -56,18 +54,20 @@ public:
 
 	Standard_OStream& Dump(Standard_OStream& os) const override;
 
-	ShapeIdAttribute();
-	ShapeIdAttribute(Standard_Integer labelTag, Standard_Integer parentLabelTag);
+	ShapeKeyAttr();
+	ShapeKeyAttr(Standard_Integer labelTag, Standard_Integer parentLabelTag);
 
 	void Set(Standard_Integer labelTag, Standard_Integer parentLabelTag);
 
 	void Get(Standard_Integer& labelTag, Standard_Integer& parentLabelTag) const;
 
 	void AfterAddition() override;
-	
 	void BeforeRemoval() override;
 
-private:
+	Standard_Integer parentLabelTag() const {return _parentLabelTag;}    
+    Standard_Integer labelTag() const {return _labelTag;}
+
+	private:
 	ShapeSignal _shapeAddedSignal;
 	ShapeSignal _shapeRemovedSignal;
 

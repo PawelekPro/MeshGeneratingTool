@@ -26,25 +26,25 @@
 
 class ShapeSignalsPublisher {
 public:
-    using ShapeSignal = boost::signals2::signal<void(const ShapeId&)>;
+    using ShapeSignal = boost::signals2::signal<void(std::shared_ptr<ShapeKey>)>;
 
     ShapeSignalsPublisher() = default;
 
-    void publishShapeAdded(const ShapeId& aShapeId) {
-        onShapeAdded(aShapeId);
+    void publishShapeAdded(std::shared_ptr<ShapeKey> aShapeKey) {
+        onShapeAdded(aShapeKey);
     }
 
-    void publishShapeRemoved(const ShapeId& aShapeId) {
-        onShapeRemoved(aShapeId);
+    void publishShapeRemoved(std::shared_ptr<ShapeKey> aShapeKey) {
+        onShapeRemoved(aShapeKey);
     }
 
-    void publishShapeModified(const ShapeId& aShapeId) {
-        onShapeModified(aShapeId);
+    void publishShapeModified(std::shared_ptr<ShapeKey> aShapeKey) {
+        onShapeModified(aShapeKey);
     }
 
-    void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) const {
+    void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver)  {
         onShapeAdded.connect(
-            [weakObs = std::weak_ptr(aObserver)]( const ShapeId& id) {
+            [weakObs = std::weak_ptr(aObserver)](std::shared_ptr<ShapeKey> id) {
                 if (auto obs = weakObs.lock()) {
                     obs->onShapeAdded(id);
                 }
@@ -52,7 +52,7 @@ public:
         );
 
         onShapeRemoved.connect(
-            [weakObs = std::weak_ptr(aObserver)](const ShapeId& id) {
+            [weakObs = std::weak_ptr(aObserver)](std::shared_ptr<ShapeKey> id) {
                 if (auto obs = weakObs.lock()) {
                     obs->onShapeRemoved(id);
                 }

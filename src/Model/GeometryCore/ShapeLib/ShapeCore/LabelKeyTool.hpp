@@ -17,24 +17,29 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEKEY_HPP
-#define SHAPEKEY_HPP
+#ifndef LABELKEYTOOL_HPP
+#define LABELKEYTOOL_HPP
 
-#include <string>
-#include <memory>
+#include <TDF_Label>
+#include <Standard_Handle.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
 
-class ShapeKey {
-    public:
-    virtual ~ShapeKey() = default;
-    ShapeKey() = default;
+#include "ShapeKey.hpp"
+#include "ShapeKeyAttr.hpp"
+
+class LabelKeyTool {
+
+    public: 
+    LabelKeyTool(Handle(XCAFDoc_ShapeTool) aShapeTool);
+    ~LabelKeyTool() = default;
     
-    virtual std::unique_ptr<ShapeKey> clone() const = 0;
+    TDF_Label labelFromKey(std::shared_ptr<ShapeKey> aKey);
 
-    virtual bool equals(const ShapeKey& other) const = 0;
-    virtual bool less  (const ShapeKey& other) const = 0;
-    
-    virtual std::size_t hash() const = 0;
-    virtual std::string toString() const = 0;
+    std::shared_ptr<ShapeKey> keyFromLabel(const TDF_Label& aLabel);
+    std::shared_ptr<ShapeKey> keyFromAttr(const ShapeKeyAttr& aAttribute);
+
+    private:
+    Handle(XCAFDoc_ShapeTool) _shapeTool;
 };
 
 #endif

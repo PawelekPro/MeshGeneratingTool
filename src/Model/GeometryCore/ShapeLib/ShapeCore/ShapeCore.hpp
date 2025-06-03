@@ -26,7 +26,7 @@
 
 #include "ShapeSignalsPublisher.hpp"
 #include "ShapeMap.hpp"
-#include "ShapeId.hpp"
+#include "ShapeKey.hpp"
 
 class ShapeCoreObserver;
 class ShapeCore {
@@ -34,16 +34,16 @@ class ShapeCore {
     public:
     virtual ~ShapeCore() = default;
 
-    virtual ShapeId registerNewFreeShape(
+    virtual ShapeKey registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) = 0;
 
     virtual bool removeShape(
-        const ShapeId& aShapeId
+        const ShapeKey& aShapeId
     ) = 0;
 
     virtual bool updateShape(
-        const std::pair<ShapeId, TopoDS_Shape>& aUpdatedShape
+        const std::pair<ShapeKey, TopoDS_Shape>& aUpdatedShape
     ) = 0;
    
     virtual bool openCommand() = 0;

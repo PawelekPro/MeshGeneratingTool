@@ -8,7 +8,7 @@
 
 #include "XmlShapeLibDrivers.hpp"
 #include "XmlShapeLibDrivers_ShapeIdDriver.hpp"
-#include "ShapeIdAttribute.hpp"                  // <— your TDF_Attribute subclass
+#include "ShapeKeyAttr.hpp"                  // <— your TDF_Attribute subclass
 #include <Message_Messenger.hxx>
 #include <Plugin_Macro.hxx>
 #include <XmlMDF_ADriverTable.hxx>
@@ -18,7 +18,7 @@ XmlShapeLibDrivers::Factory(const Standard_GUID& theGUID)
 {
   static Handle(Standard_Transient) nullDriver;
   // single source of truth: ShapeId::GetID()
-  if (theGUID == ShapeIdAttribute::GetID()) {
+  if (theGUID == ShapeKeyAttr::GetID()) {
     static Handle(Standard_Transient) driver =
       new XmlShapeLibDrivers_ShapeIdDriver(
         new Message_Messenger(),
