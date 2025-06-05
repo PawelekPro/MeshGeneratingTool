@@ -19,6 +19,7 @@
 
 #include "ShapeSignalWrapper.hpp"
 #include "GeometryEvents.hpp"
+#include "ShapeIdFactory.hpp"
 #include <memory>
 
 ShapeSignalWrapper::ShapeSignalWrapper(
@@ -31,4 +32,14 @@ void ShapeSignalWrapper::publishShapeAddedEvent(const ShapeId& aShapeId){
 
 void ShapeSignalWrapper::publishShapeRemovedEvent(const ShapeId& aShapeId){
     _eventBus.publish(ShapeRemovedEvent(aShapeId));
+}
+
+void ShapeSignalWrapper::onShapeAdded(std::shared_ptr<ShapeKey> aKey){
+    auto id = ShapeIdFactory::create(aKey);
+    publishShapeAddedEvent(id);
+}
+
+void ShapeSignalWrapper::onShapeRemoved(std::shared_ptr<ShapeKey> aKey){
+    auto id = ShapeIdFactory::create(aKey);
+    publishShapeRemovedEvent(id);
 }

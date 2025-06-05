@@ -17,31 +17,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "AttrShapeMap.hpp"
+#include "CoreShapeMap.hpp"
+#include "LabelKeyTool.hpp"
 
 using ShapeIdPair = ShapeMap::ShapeIdPair;
 
-AttrShapeMap::AttrShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool) 
-: ShapeMap(), _shapeTool(aShapeTool) {}
+CoreShapeMap::CoreShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool) 
+: ShapeMap(), _shapeTool(aShapeTool), _labelKeyTool(std::make_unique<LabelKeyTool>(aShapeTool)){}
 
-bool AttrShapeMap::containsId(const ShapeId& id) const {
-    TDF_Label shapeLabel = findLabel(ShapeIdFactory::getKey<ShapeKey>(id));
+bool CoreShapeMap::containsId(const ShapeId& id) const {
+    std::shared_ptr<ShapeKey> key = ShapeIdFactory::getKey(id);
+    TDF_Label shapeLabel = _labelKeyTool->labelFromKey(key);
     TopoDS_Shape shape = _shapeTool->GetShape(shapeLabel);
     return !shape.IsNull();
 }
 
-bool AttrShapeMap::containsShape(const TopoDS_Shape& shape) const {
+bool CoreShapeMap::containsShape(const TopoDS_Shape& shape) const {
     TDF_Label label;
     return _shapeTool->Search(shape, label);
 }
 
-const TopoDS_Shape AttrShapeMap::atId(const ShapeId& id) const {
-    TDF_Label shapeLabel = findLabel(ShapeIdFactory::getKey<ShapeKey>(id));
+const TopoDS_Shape CoreShapeMap::atId(const ShapeId& id) const {
+    std::shared_ptr<ShapeKey> key = ShapeIdFactory::getKey(id);
+    TDF_Label shapeLabel = _labelKeyTool->labelFromKey(key);
     TopoDS_Shape shape = _shapeTool->GetShape(shapeLabel);
     return shape;
 }
 
-const ShapeId AttrShapeMap::atShape(const TopoDS_Shape& shape) const {
+const ShapeId CoreShapeMap::atShape(const TopoDS_Shape& shape) const {
     TDF_Label label;
     _shapeTool->Search(shape, label);
     if (label.IsNull()) {
@@ -62,38 +65,20 @@ const ShapeId AttrShapeMap::atShape(const TopoDS_Shape& shape) const {
         }
     }
 
-    auto key = std::make_unique<ShapeKey>(labelTag, parentLabelTag);
-    ShapeId id = ShapeIdFactory::create(std::move(key));
+    auto key = std::make_shared<ShapeKey>(labelTag, parentLabelTag);
+    ShapeId id = ShapeIdFactory::create(key);
     return id;
 }
 
 
-std::vector<ShapeIdPair> AttrShapeMap::freeShapes() const {
+std::vector<ShapeIdPair> CoreShapeMap::freeShapes() const {
     return std::vector<ShapeIdPair>();
 }
 
-std::vector<ShapeIdPair> AttrShapeMap::subShapes(const ShapeId& id) const {
+std::vector<ShapeIdPair> CoreShapeMap::subShapes(const ShapeId& id) const {
     return std::vector<ShapeIdPair>();
 }
 
-const ShapeId AttrShapeMap::fromKey(const ShapeKey& aKey) const {
+const ShapeId CoreShapeMap::fromKey(const ShapeKey& aKey) const {
     return ShapeId::invalidId();
-}
-
-#include "TDF_Tool.hxx"
-TDF_Label AttrShapeMap::findLabel(const ShapeKey& aKey) const {
-    size_t labelTag = aKey.labelTag();
-    size_t parentLabelTag = aKey.parentLabelTag();
-
-    TDF_Label shapesLabel = _shapeTool->Label();
-
-    if (parentLabelTag == 0) {
-        return shapesLabel.FindChild(static_cast<Standard_Integer>(labelTag));
-    } else {
-        TDF_Label parentLabel = shapesLabel.FindChild(static_cast<Standard_Integer>(parentLabelTag));
-        if (parentLabel.IsNull()) {
-            return TDF_Label();
-        }
-        return parentLabel.FindChild(static_cast<Standard_Integer>(labelTag));
-    }
 }

@@ -30,6 +30,5 @@ ImportSTEPCommand::ImportSTEPCommand(
     _filePath(aFilePath) {}
 
 bool ImportSTEPCommand::executeAction(){
-    bool imported = _shapeService.importSTEP(_filePath);
     return true;
 }

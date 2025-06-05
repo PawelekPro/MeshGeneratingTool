@@ -25,7 +25,7 @@ ShapeService::ShapeService(
     std::shared_ptr<ShapeCore> aShapeCore
 ) : _shapeCore(aShapeCore),
     _messageBus(aMessageBus),
-    _signalWrapper(aMessageBus){
+    _signalWrapper(std::make_shared<ShapeSignalWrapper>(aMessageBus)){
 
     }
 
@@ -35,6 +35,6 @@ void ShapeService::removeShape(){};
 void ShapeService::scaleShape(){};
 
 
-void ShapeService::connectToShapeCore() const {
-    _shapeCore->connectShapeAdded(_signalWrapper.publishShapeAddedEvent)
+void ShapeService::connectToShapeCore() {
+    _shapeCore->attachObserver(_signalWrapper);
 };

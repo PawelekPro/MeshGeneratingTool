@@ -22,6 +22,6 @@ std::shared_ptr<const ShapeMap> ShapeCore::shapeMap() const {
     return _shapeMap;
 }
 
-void ShapeCore::attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) const {
+void ShapeCore::attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) {
     _publisher.attachObserver(aObserver);
 }

@@ -38,24 +38,25 @@ Handle(ShapeKeyAttr) AttributeFactory::shapeKeyAttr(
     }
 
     attr->shapeAddedSignal().connect(
-        [publisher = _publisher](
+        [publisher = std::ref(_publisher)](
             Standard_Integer labelTag, 
             Standard_Integer parentLabelTag
         ) {
             auto key = std::make_shared<ShapeKey>(labelTag, parentLabelTag);
-            publisher->publishShapeAdded(key);
+            publisher.get().publishShapeAdded(key);
         }
     );
 
     attr->shapeRemovedSignal().connect(
-        [publisher = _publisher](
+        [publisher = std::ref(_publisher)](
             Standard_Integer labelTag, 
             Standard_Integer parentLabelTag
         ) {
             auto key = std::make_shared<ShapeKey>(labelTag, parentLabelTag);
-            publisher->publishShapeRemoved(key);
+            publisher.get().publishShapeRemoved(key);
         }
-    )
+    );
+
     
     return attr;
 }

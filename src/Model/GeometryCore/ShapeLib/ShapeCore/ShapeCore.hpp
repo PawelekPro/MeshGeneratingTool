@@ -34,16 +34,16 @@ class ShapeCore {
     public:
     virtual ~ShapeCore() = default;
 
-    virtual ShapeKey registerNewFreeShape(
+    virtual std::shared_ptr<ShapeKey> registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) = 0;
 
     virtual bool removeShape(
-        const ShapeKey& aShapeId
+        std::shared_ptr<ShapeKey> aShapeId
     ) = 0;
 
     virtual bool updateShape(
-        const std::pair<ShapeKey, TopoDS_Shape>& aUpdatedShape
+        const std::pair<std::shared_ptr<ShapeKey>, TopoDS_Shape>& aUpdatedShape
     ) = 0;
    
     virtual bool openCommand() = 0;
@@ -53,7 +53,7 @@ class ShapeCore {
     virtual bool redo() = 0;
 
     virtual std::shared_ptr<const ShapeMap> shapeMap() const;
-    virtual void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver) const;
+    virtual void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver);
 
     protected:
 

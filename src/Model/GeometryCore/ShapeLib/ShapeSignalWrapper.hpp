@@ -22,12 +22,17 @@
 
 #include "MessageBus.hpp"
 #include "ShapeId.hpp"
+#include "ShapeCoreObserver.hpp"
 
-class ShapeSignalWrapper{
+
+class ShapeSignalWrapper : public ShapeCoreObserver{
 
     public:
     ShapeSignalWrapper(MessageBus& aMessageBus);
 
+    void onShapeAdded(std::shared_ptr<ShapeKey>) override;
+    void onShapeRemoved(std::shared_ptr<ShapeKey>) override;
+    
     void publishShapeAddedEvent(const ShapeId& aShapeId);
     void publishShapeRemovedEvent(const ShapeId& aShapeId);
 

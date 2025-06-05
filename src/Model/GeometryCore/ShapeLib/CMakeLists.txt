@@ -14,6 +14,7 @@ target_link_libraries(ShapeLib PUBLIC
     ShapeTools
     ShapeCore
     Geometry_Events
+    ${OCC_LIBRARIES}
 )
 
 target_include_directories(ShapeLib PUBLIC

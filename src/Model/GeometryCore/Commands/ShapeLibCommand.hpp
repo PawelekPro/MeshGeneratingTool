@@ -26,7 +26,7 @@ class ShapeCore;
 class ShapeLibCommand : public BaseCommand {
 
     public:
-    ShapeLibCommand(ShapeCore& aShapeCore);
+    ShapeLibCommand(std::shared_ptr<ShapeCore> aShapeCore);
     virtual ~ShapeLibCommand() = default;
 
     bool execute() override;
@@ -37,7 +37,7 @@ class ShapeLibCommand : public BaseCommand {
 
     protected:
 
-    ShapeCore& _shapeCore;
+    std::shared_ptr<ShapeCore> _shapeCore;
     int _commandId;
 };
 

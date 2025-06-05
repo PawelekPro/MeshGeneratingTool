@@ -20,7 +20,7 @@
 #ifndef ATTRIBUTEFACTORY_HPP
 #define ATTRIBUTEFACTORY_HPP
 
-#include <TDF_Atribute.hxx>
+#include <TDF_Attribute.hxx>
 #include <Standard_Handle.hxx>
 #include <memory>
 #include "ShapeSignalsPublisher.hpp"

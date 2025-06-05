@@ -18,6 +18,7 @@
 */
 
 #include "LabelKeyTool.hpp"
+#include <TDF_Tool.hxx>
 
 LabelKeyTool::LabelKeyTool(
     Handle(XCAFDoc_ShapeTool) aShapeTool

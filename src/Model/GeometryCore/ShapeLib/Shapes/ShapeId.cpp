@@ -20,11 +20,11 @@
 #include "ShapeId.hpp"
 
 ShapeId::ShapeId(
-    std::unique_ptr<ShapeKey> aKey
-) : _key(std::move(aKey)){}
+    std::shared_ptr<ShapeKey> aKey
+) : _key(aKey){}
 
 ShapeId::ShapeId(const ShapeId& aOther) noexcept
-    : _key(aOther._key->clone()){}
+    : _key(aOther._key){}
 
 ShapeId::ShapeId(ShapeId&& aOther) noexcept
     : _key(std::move(aOther._key))
@@ -32,14 +32,14 @@ ShapeId::ShapeId(ShapeId&& aOther) noexcept
 
 ShapeId& ShapeId::operator=(const ShapeId& aOther) noexcept{
     if (this != &aOther) {
-      _key      = aOther._key->clone();
+      _key      = aOther._key;
     }
     return *this;
 }   
 
 ShapeId& ShapeId::operator=(ShapeId&& aOther) noexcept {
     if (this != &aOther) {
-      _key      = aOther._key->clone();
+      _key      = aOther._key;
     }
     return *this;
 }

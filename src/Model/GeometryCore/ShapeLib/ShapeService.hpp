@@ -36,8 +36,8 @@ class ShapeService{
     std::shared_ptr<ShapeCore> shapeCore() const {return _shapeCore;};
     
     private:
-    void connectToShapeCore() const;
+    void connectToShapeCore();
     std::shared_ptr<ShapeCore> _shapeCore;
     MessageBus& _messageBus;
-    ShapeSignalWrapper _signalWrapper;
+    std::shared_ptr<ShapeSignalWrapper> _signalWrapper;
 };

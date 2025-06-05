@@ -22,7 +22,7 @@
 #include "ShapeService.hpp"
 #include "ShapeCore.hpp"
 
-ShapeLibCommand::ShapeLibCommand(ShapeCore& aShapeCore)
+ShapeLibCommand::ShapeLibCommand(std::shared_ptr<ShapeCore> aShapeCore)
  : _shapeCore(aShapeCore){};
 
 bool ShapeLibCommand::execute() {

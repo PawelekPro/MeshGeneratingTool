@@ -17,29 +17,40 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LABELKEYTOOL_HPP
-#define LABELKEYTOOL_HPP
+#ifndef CORESHAPEMAP_HPP 
+#define CORESHAPEMAP_HPP 
 
-#include <TDF_Label>
-#include <Standard_Handle.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
-
+#include <TDF_Label.hxx>
+#include <Standard_Handle.hxx>
+#include <unordered_map>
+#include "ShapeMap.hpp"
 #include "ShapeKey.hpp"
-#include "ShapeKeyAttr.hpp"
 
-class LabelKeyTool {
+class LabelKeyTool;
+class CoreShapeMap : public ShapeMap {
 
-    public: 
-    LabelKeyTool(Handle(XCAFDoc_ShapeTool) aShapeTool);
-    ~LabelKeyTool() = default;
+    public:
+    CoreShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool);
+    ~CoreShapeMap() = default;
+ 
+    bool containsId(const ShapeId& id) const override;
+    bool containsShape(const TopoDS_Shape& id) const override;
     
-    TDF_Label labelFromKey(std::shared_ptr<ShapeKey> aKey);
+    const TopoDS_Shape atId(const ShapeId& id) const override;
+    const ShapeId atShape(const TopoDS_Shape& shape) const override;
 
-    std::shared_ptr<ShapeKey> keyFromLabel(const TDF_Label& aLabel);
-    std::shared_ptr<ShapeKey> keyFromAttr(const ShapeKeyAttr& aAttribute);
+    std::vector<ShapeIdPair> freeShapes() const override;
+    std::vector<ShapeIdPair> subShapes(const ShapeId& id) const override; 
+
+    protected:
+    const ShapeId fromKey(const ShapeKey& aKey) const override; 
 
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;
+    std::unique_ptr<LabelKeyTool> _labelKeyTool;
+    
+    TDF_Label findLabel(const ShapeKey& aKey) const;
 };
 
 #endif

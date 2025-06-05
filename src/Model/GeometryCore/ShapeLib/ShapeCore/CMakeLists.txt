@@ -5,7 +5,6 @@ add_library(ShapeCore
     ShapeCore.cpp
     OcafShapeCore.cpp
     AttributeFactory.cpp
-    LabelKeyTool.cpp
 )
 
 target_link_libraries(ShapeCore PUBLIC

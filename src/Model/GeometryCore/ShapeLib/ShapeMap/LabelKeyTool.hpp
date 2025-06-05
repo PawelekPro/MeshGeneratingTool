@@ -17,36 +17,29 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AttrShapeMap_HPP 
-#define AttrShapeMap_HPP 
+#ifndef LABELKEYTOOL_HPP
+#define LABELKEYTOOL_HPP
 
+#include <TDF_Label.hxx>
+#include <Standard_Handle.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
-#include <unordered_map>
-#include "ShapeMap.hpp"
+
 #include "ShapeKey.hpp"
+#include "ShapeKeyAttr.hpp"
 
-class AttrShapeMap : public ShapeMap {
+class LabelKeyTool {
 
-    public:
-    AttrShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool);
-    ~AttrShapeMap() = default;
- 
-    bool containsId(const ShapeId& id) const override;
-    bool containsShape(const TopoDS_Shape& id) const override;
+    public: 
+    LabelKeyTool(Handle(XCAFDoc_ShapeTool) aShapeTool);
+    ~LabelKeyTool() = default;
     
-    const TopoDS_Shape atId(const ShapeId& id) const override;
-    const ShapeId atShape(const TopoDS_Shape& shape) const override;
+    TDF_Label labelFromKey(std::shared_ptr<ShapeKey> aKey);
 
-    std::vector<ShapeIdPair> freeShapes() const override;
-    std::vector<ShapeIdPair> subShapes(const ShapeId& id) const override; 
-
-    protected:
-    const ShapeId fromKey(const ShapeKey& aKey) const override; 
+    std::shared_ptr<ShapeKey> keyFromLabel(const TDF_Label& aLabel);
+    std::shared_ptr<ShapeKey> keyFromAttr(Handle(ShapeKeyAttr) aAttribute);
 
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;
-    TDF_Label findLabel(const ShapeKey& aKey) const;
-    
 };
 
 #endif

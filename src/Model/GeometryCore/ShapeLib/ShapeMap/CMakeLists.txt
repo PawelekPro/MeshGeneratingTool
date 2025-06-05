@@ -1,10 +1,12 @@
 add_library(ShapeMap
-    AttrShapeMap.cpp
+    CoreShapeMap.cpp
+    LabelKeyTool.cpp
     )
 
 target_link_libraries(ShapeMap PUBLIC
     ${OCC_LIBRARIES}
     Shapes
+    OcafAttributes
     spdlog::spdlog_header_only
 )
 

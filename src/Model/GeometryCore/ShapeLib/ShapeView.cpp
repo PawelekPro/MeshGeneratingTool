@@ -20,5 +20,5 @@
 #include "ShapeView.hpp"
 
 ShapeView::ShapeView(
-    std::shared_ptr<ShapeMap> aShapeMap
+    std::shared_ptr<const ShapeMap> aShapeMap
 ) : _shapeMap(aShapeMap){}

@@ -51,6 +51,7 @@ enum class DeltaType{
 };
 
 class AttributeFactory;
+class LabelKeyTool;
 
 class OcafShapeCore : public ShapeCore {
     
@@ -59,16 +60,16 @@ class OcafShapeCore : public ShapeCore {
     
     virtual ~OcafShapeCore() = default;
 
-    ShapeKey registerNewFreeShape(
+    std::shared_ptr<ShapeKey> registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) override;
 
     bool removeShape(
-        const ShapeKey& aShapeKey
+        std::shared_ptr<ShapeKey> aShapeKey
     ) override;
 
     bool updateShape(
-        const std::pair<ShapeKey, TopoDS_Shape>& aUpdatedShape
+        const std::pair<std::shared_ptr<ShapeKey>, TopoDS_Shape>& aUpdatedShape
     ) override;
    
     bool openCommand() override;

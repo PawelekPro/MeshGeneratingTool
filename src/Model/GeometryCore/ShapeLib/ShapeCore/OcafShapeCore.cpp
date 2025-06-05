@@ -33,7 +33,7 @@
 #include <TDocStd_Modified.hxx>
 
 #include "XmlShapeLibDrivers.hpp"
-#include "AttrShapeMap.hpp"
+#include "CoreShapeMap.hpp"
 #include "AttributeFactory.hpp"
 #include "LabelKeyTool.hpp"
 
@@ -54,9 +54,9 @@ OcafShapeCore::OcafShapeCore()
     XmlXCAFDrivers::DefineFormat(app);
 
     _shapeLabel = _shapeTool->Label();
-    _shapeMap   = std::make_shared<AttrShapeMap>(_shapeTool);
-    _attrFactory = std::make_shared<AttributeFactory>(_publisher);
-    _labelKeyTool = std::make_shared<LabelKeyTool>(_shapeTool);
+    _shapeMap   = std::make_shared<CoreShapeMap>(_shapeTool);
+    _attrFactory = std::move(std::make_unique<AttributeFactory>(_publisher));
+    _labelKeyTool = std::move(std::make_unique<LabelKeyTool>(_shapeTool));
 }
 
 bool OcafShapeCore::write(const std::string& aSavePath){
@@ -75,11 +75,13 @@ bool OcafShapeCore::write(const std::string& aSavePath){
     return true;
 }
 
-ShapeKey OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
+std::shared_ptr<ShapeKey> OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
     TDF_Label mainLabel = _shapeTool->AddShape(aShape);
 
     Standard_Integer mainLabelTag = mainLabel.Tag();
-    Handle(ShapeKeyAttr) mainAttr = _attrFactory->shapeKeyAttr(mainLabelTag, 0);
+    Handle(ShapeKeyAttr) mainAttr = _attrFactory->shapeKeyAttr(
+        std::make_shared<ShapeKey>(mainLabelTag, 0)
+    );
     
     mainLabel.AddAttribute(mainAttr);
     for (TopExp_Explorer exp(aShape, TopAbs_SHAPE); exp.More(); exp.Next()) {
@@ -90,23 +92,22 @@ ShapeKey OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
         Standard_Integer subLabelTag = subLabel.Tag();
         
         Handle(ShapeKeyAttr) subAttr = _attrFactory->shapeKeyAttr(
-            subLabelTag, mainLabelTag 
+            std::make_shared<ShapeKey>(subLabelTag, mainLabelTag)
         );
-        subLabel.AddAttribute(subIdAttr);
+        subLabel.AddAttribute(subAttr);
     }
     return _labelKeyTool->keyFromLabel(mainLabel);
 }
 
-
-bool OcafShapeCore::removeShape(const ShapeKey& aShapeKey) {
-    auto label _labelKeyTool->labelFromKey(aShapeKey);
+bool OcafShapeCore::removeShape(std::shared_ptr<ShapeKey> aShapeKey) {
+    auto label = _labelKeyTool->labelFromKey(aShapeKey);
     return _shapeTool->RemoveShape(label);
 }
 
 bool OcafShapeCore::updateShape(
-    const std::pair<ShapeKey, TopoDS_Shape>& aShapeKeyPair
+    const std::pair<std::shared_ptr<ShapeKey>, TopoDS_Shape>& aShapeKeyPair
 ) {
-    auto label _labelKeyTool->labelFromKey(aShapeKeyPair.first);
+    auto label = _labelKeyTool->labelFromKey(aShapeKeyPair.first);
     _shapeTool->SetShape(label, aShapeKeyPair.second);
     return true;
 }
