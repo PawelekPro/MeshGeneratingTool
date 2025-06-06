@@ -52,6 +52,8 @@ class ShapeCore {
     virtual bool undo() = 0;
     virtual bool redo() = 0;
 
+    virtual bool write(const std::string& aSavePath) const = 0;
+
     virtual std::shared_ptr<const ShapeMap> shapeMap() const;
     virtual void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver);
 

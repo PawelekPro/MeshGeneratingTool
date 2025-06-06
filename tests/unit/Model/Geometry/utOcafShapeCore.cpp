@@ -63,9 +63,11 @@ TEST_F(OcafShapeCoreTest, TestRegisteredShapeSubShapesAreInMap){
 };
 
 TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
-    ShapeId id = shapeCore->registerNewFreeShape(cube);
+    std::shared_ptr<ShapeKey> key = shapeCore->registerNewFreeShape(cube);
     std::shared_ptr<const ShapeMap> shapeMap = shapeCore->shapeMap();
-    ASSERT_TRUE(shapeMap->containsId(id));
+    ShapeId id = ShapeIdFactory::create(key);
+    bool found = shapeMap->containsId(id);
+    ASSERT_TRUE(found);
 };
 
 // TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){

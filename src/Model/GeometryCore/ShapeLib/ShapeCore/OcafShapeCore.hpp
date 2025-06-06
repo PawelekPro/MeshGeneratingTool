@@ -78,7 +78,7 @@ class OcafShapeCore : public ShapeCore {
     bool undo() override;
     bool redo() override;
    
-    bool write(const std::string& aSavePath);
+    bool write(const std::string& aSavePath) const override;
     
     private:
     Handle(TDocStd_Document) _document;

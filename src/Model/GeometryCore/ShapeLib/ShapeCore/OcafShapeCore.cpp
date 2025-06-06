@@ -59,7 +59,7 @@ OcafShapeCore::OcafShapeCore()
     _labelKeyTool = std::move(std::make_unique<LabelKeyTool>(_shapeTool));
 }
 
-bool OcafShapeCore::write(const std::string& aSavePath){
+bool OcafShapeCore::write(const std::string& aSavePath) const {
     if (_document.IsNull()) {
         std::cerr << "Error: Document is null. Cannot save.\n";
         return false;

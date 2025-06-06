@@ -33,6 +33,8 @@ TDF_Label LabelKeyTool::labelFromKey(std::shared_ptr<ShapeKey> aKey){
     if (parentLabelTag != 0) {
         tagList.Append(parentLabelTag);
     }
+
+    TDF_Tool::TagList(_shapeTool->Label(), tagList);
     tagList.Append(labelTag);
     TDF_Label foundLabel;
     TDF_Tool::Label(_shapeTool->Label().Data(), tagList, foundLabel, false);
