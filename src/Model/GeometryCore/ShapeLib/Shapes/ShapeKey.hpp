@@ -32,13 +32,13 @@ public:
     std::size_t hash() const;
     std::string toString() const;
 
-    bool equals(const ShapeKey& other) const;
-    bool less(const ShapeKey& other) const;
+    bool operator==(const ShapeKey& other) const;
+    bool operator<(const ShapeKey& other) const;
 
     size_t parentLabelTag() const {return _parentLabelTag;}    
     size_t labelTag() const {return _labelTag;}
 
-    private:
+private:
     const size_t _labelTag;
     const size_t _parentLabelTag;
     const std::string _cachedString;

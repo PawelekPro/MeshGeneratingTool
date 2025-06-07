@@ -45,11 +45,13 @@ ShapeId& ShapeId::operator=(ShapeId&& aOther) noexcept {
 }
 
 bool ShapeId::operator==(const ShapeId& other) const {
-    return _key->equals(*other._key);
+    if (!_key || !other._key) return _key == other._key;
+    return *_key == *other._key;
 }
 
 bool ShapeId::operator<(const ShapeId& other) const {
-    return _key->less(*other._key);
+    if (!_key || !other._key) return _key < other._key;
+    return *_key < *other._key;
 }
 
 std::string ShapeId::toString() const {
@@ -66,4 +68,4 @@ ShapeId ShapeId::invalidId(){
 
 std::size_t ShapeIdHasher::operator()(ShapeId const& id) const noexcept {
     return id._key->hash();
-}; 
+};

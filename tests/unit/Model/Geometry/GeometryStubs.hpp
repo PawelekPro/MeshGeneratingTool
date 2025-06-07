@@ -17,16 +17,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STUBSHAPES_HPP 
-#define STUBSHAPES_HPP
+#ifndef GEOMETRY_STUBS_HPP
+#define GEOMETRY_STUBS_HPP 
 
 #include <TopExp.hxx>
 #include <TopoDS_Shape.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
-namespace StubShapes
-{
+#include <memory>
+#include <vector>
+
+#include "ShapeKey.hpp"
+#include "ShapeCoreObserver.hpp"
+
+namespace StubShapes{
     inline TopTools_IndexedMapOfShape subShapes(const TopoDS_Shape& aShape){
         TopTools_IndexedMapOfShape subShapes;
         TopExp::MapShapes(aShape, subShapes);
@@ -41,5 +47,18 @@ namespace StubShapes
         return BRepPrimAPI_MakeSphere(1.0).Shape();
     }
 }
+
+class SpyShapeCoreObserver : public ShapeCoreObserver {
+    void onShapeAdded(std::shared_ptr<ShapeKey> key) override { 
+        shapeAddedPublished.push_back(key);
+    }
+    void onShapeRemoved(std::shared_ptr<ShapeKey> key) override { 
+        shapeRemovedPublished.push_back(key);
+    }
+    public:
+    SpyShapeCoreObserver() = default;
+    std::vector<std::shared_ptr<ShapeKey>> shapeAddedPublished;
+    std::vector<std::shared_ptr<ShapeKey>> shapeRemovedPublished;
+};
 
 #endif

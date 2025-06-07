@@ -20,36 +20,31 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "StubShapes.hpp"
+#include "GeometryStubs.hpp"
 #include "OcafShapeCore.hpp"
 
 class OcafShapeCoreTest : public ::testing::Test {
 protected:
     std::unique_ptr<ShapeCore> shapeCore;
-    
+    std::shared_ptr<SpyShapeCoreObserver> observer = std::make_shared<SpyShapeCoreObserver>();
     void SetUp() override {
         shapeCore = std::make_unique<OcafShapeCore>();
+        shapeCore->attachObserver(observer);
         cube = StubShapes::cube();
         sphere = StubShapes::sphere();
         cubeSubShapes = StubShapes::subShapes(cube);
     }
-
     TopoDS_Shape cube;
     TopoDS_Shape sphere;
     TopTools_IndexedMapOfShape cubeSubShapes;
 };
 
-TEST_F(OcafShapeCoreTest, TestRegisteredShapeIsInShapeMap){
-    shapeCore->registerNewFreeShape(cube);
-    ASSERT_TRUE(shapeCore->shapeMap()->containsShape(cube));
-};
-
-TEST_F(OcafShapeCoreTest, TestUndoRegisterNewShapeRemovesShapesFromMap){
-    shapeCore->openCommand();
-    shapeCore->registerNewFreeShape(cube);
-    shapeCore->commitCommand();
-    shapeCore->undo();
-    ASSERT_FALSE(shapeCore->shapeMap()->containsShape(cube));
+TEST_F(OcafShapeCoreTest, TestRegisterNewShapeIsInMap){
+    std::shared_ptr<ShapeKey> key = shapeCore->registerNewFreeShape(cube);
+    std::shared_ptr<const ShapeMap> shapeMap = shapeCore->shapeMap();
+    ShapeId id = ShapeIdFactory::create(key);
+    ASSERT_TRUE(shapeMap->containsId(id));
+    ASSERT_TRUE(shapeMap->containsShape(cube));
 };
 
 TEST_F(OcafShapeCoreTest, TestRegisteredShapeSubShapesAreInMap){
@@ -58,29 +53,67 @@ TEST_F(OcafShapeCoreTest, TestRegisteredShapeSubShapesAreInMap){
     for( size_t i = 1; i < cubeSubShapes.Extent(); i++ ){
         TopoDS_Shape shape = cubeSubShapes(i);
         ShapeId id = shapeMap->atShape(shape);
-        ASSERT_TRUE(id.isValid());
+        ASSERT_TRUE(shapeMap->containsId(id));
+        ASSERT_TRUE(shapeMap->containsShape(shape));
     }
 };
 
-TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
-    std::shared_ptr<ShapeKey> key = shapeCore->registerNewFreeShape(cube);
-    std::shared_ptr<const ShapeMap> shapeMap = shapeCore->shapeMap();
-    ShapeId id = ShapeIdFactory::create(key);
-    bool found = shapeMap->containsId(id);
-    ASSERT_TRUE(found);
+TEST_F(OcafShapeCoreTest, TestUndoRegisterNewShapeRemovesShapesFromMap){
+    shapeCore->openCommand();
+    shapeCore->registerNewFreeShape(cube);
+    shapeCore->commitCommand();
+    
+    auto shapeMap = shapeCore->shapeMap();
+    ShapeId id = shapeMap->atShape(cube);
+
+    shapeCore->undo();
+
+    ASSERT_FALSE(shapeMap->containsShape(cube));
+    ASSERT_FALSE(shapeMap->containsId(id));
 };
 
-// TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
-//     ShapeId id = shapeCore->registerNewFreeShape(cube);
-//     std::shared_ptr<const ShapeMap> shapeMap = shapeCore->shapeMap();
-//     ASSERT_TRUE(shapeMap->containsId(id));
-// };
+TEST_F(OcafShapeCoreTest, TestRedoRegisterNewShapeReturnsShapeToMap){
+    shapeCore->openCommand();
+    shapeCore->registerNewFreeShape(cube);
+    shapeCore->commitCommand();
+    
+    shapeCore->undo();
+    shapeCore->redo();
 
-// TEST_F(OcafShapeCoreTest, TestUndoneRegisteredShapeIsNotInMap){
-//     shapeCore.openCommand();
-//     shapeCore.registerNewShape(cube);
-//     shapeCore.commitCommand();
+    auto shapeMap = shapeCore->shapeMap();
+    
+    ShapeId id = shapeMap->atShape(cube);
+    ASSERT_TRUE(shapeMap->containsId(id));
+    ASSERT_TRUE(shapeMap->containsShape(cube));
+};
 
-//     std::shared_ptr<const ShapeMap> shapeMap = shapeCore.shapeMap();
-//     ASSERT_FALSE(shapeMap->containsShape(cube));
-// };
+TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
+    shapeCore->openCommand();
+    auto key = shapeCore->registerNewFreeShape(cube);
+    shapeCore->commitCommand();
+
+    ASSERT_EQ(observer->shapeAddedPublished.size(), 1);
+    auto publishedKey = observer->shapeAddedPublished[0];
+    ASSERT_TRUE(*key == *publishedKey);
+};
+
+TEST_F(OcafShapeCoreTest, TestUndoRegisterNewShapePublishesShapeRemovedEvent){
+    shapeCore->openCommand();
+    auto key = shapeCore->registerNewFreeShape(cube);
+    shapeCore->commitCommand();
+    shapeCore->undo();
+    ASSERT_EQ(observer->shapeRemovedPublished.size(), 1);
+    auto publishedKey = observer->shapeRemovedPublished[0]; 
+    ASSERT_TRUE(*key == *publishedKey); 
+};
+
+TEST_F(OcafShapeCoreTest, TestRedoRegisterNewShapePublishesShapeAddedEvent){
+    shapeCore->openCommand();
+    auto key = shapeCore->registerNewFreeShape(cube);
+    shapeCore->commitCommand();
+    shapeCore->undo();
+    shapeCore->redo();
+    ASSERT_EQ(observer->shapeAddedPublished.size(), 2);
+    auto publishedKey = observer->shapeAddedPublished[1]; 
+    ASSERT_TRUE(*key == *publishedKey); 
+};

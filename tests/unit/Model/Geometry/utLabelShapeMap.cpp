@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "StubShapes.hpp"
+#include "GeometryStubs.hpp"
 // #include "LabelShapeMap.hpp"
 
 // #include <TDocStd_Document.hxx>

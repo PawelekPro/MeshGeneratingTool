@@ -27,12 +27,11 @@ ShapeKey::ShapeKey(
     _cachedString(std::to_string(aParentLabelTag) + "-" + std::to_string(aLabelTag))
     {}
 
-bool ShapeKey::equals(const ShapeKey& other) const {
-    return  _labelTag == other._labelTag &&
-            _parentLabelTag == other._parentLabelTag;
+bool ShapeKey::operator==(const ShapeKey& other) const {
+    return _labelTag == other._labelTag && _parentLabelTag == other._parentLabelTag;
 }
 
-bool ShapeKey::less(const ShapeKey& other) const {
+bool ShapeKey::operator<(const ShapeKey& other) const {
     return std::tie(_parentLabelTag, _labelTag) < std::tie(other._parentLabelTag, other._labelTag);
 }
 
