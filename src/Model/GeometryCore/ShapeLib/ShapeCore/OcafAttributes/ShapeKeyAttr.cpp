@@ -21,7 +21,7 @@
 #include <TCollection_AsciiString.hxx>
 #include "ShapeKeyAttr.hpp"
 
-IMPLEMENT_STANDARD_RTTIEXT(ShapeKeyAttr, Standard_Transient)
+IMPLEMENT_STANDARD_RTTIEXT(ShapeKeyAttr, TDF_Attribute)
 
 ShapeKeyAttr::ShapeKeyAttr()
 : _labelTag(0), _parentLabelTag(0) {}
@@ -100,4 +100,22 @@ void ShapeKeyAttr::AfterAddition(){
 void ShapeKeyAttr::BeforeRemoval(){
 	_shapeRemovedSignal(_labelTag, _parentLabelTag);
 	std::cout << "Attribute removed" << std::endl;
+}
+
+
+#include <TDF_DeltaOnRemoval.hxx>
+#include <TDF_DeltaOnAddition.hxx>
+#include <TDF_DeltaOnResume.hxx>
+
+Standard_Boolean ShapeKeyAttr::AfterUndo(
+    const Handle(TDF_AttributeDelta)& anAttDelta,
+    const Standard_Boolean forceIt)
+{
+  if (!anAttDelta.IsNull()) {
+    if (anAttDelta->IsKind(STANDARD_TYPE(TDF_DeltaOnRemoval))){
+      _shapeAddedSignal(_labelTag, _parentLabelTag);
+      std::cout << "After undo: shape added" << std::endl;
+    }
+  }
+  return TDF_Attribute::AfterUndo(anAttDelta, forceIt);
 }

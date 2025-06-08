@@ -64,6 +64,7 @@ public:
 	void AfterAddition() override;
 	void BeforeRemoval() override;
 
+	Standard_Boolean AfterUndo (const Handle(TDF_AttributeDelta)& anAttDelta, const Standard_Boolean forceIt = Standard_False);
 	Standard_Integer parentLabelTag() const {return _parentLabelTag;}    
     Standard_Integer labelTag() const {return _labelTag;}
 

@@ -92,6 +92,7 @@ TEST_F(OcafShapeCoreTest, TestRegisterNewShapePublishesShapeAddedEvent){
     auto key = shapeCore->registerNewFreeShape(cube);
     shapeCore->commitCommand();
 
+    ASSERT_EQ(observer->shapeRemovedPublished.size(), 0);
     ASSERT_EQ(observer->shapeAddedPublished.size(), 1);
     auto publishedKey = observer->shapeAddedPublished[0];
     ASSERT_TRUE(*key == *publishedKey);
@@ -103,6 +104,7 @@ TEST_F(OcafShapeCoreTest, TestUndoRegisterNewShapePublishesShapeRemovedEvent){
     shapeCore->commitCommand();
     shapeCore->undo();
     ASSERT_EQ(observer->shapeRemovedPublished.size(), 1);
+    ASSERT_EQ(observer->shapeAddedPublished.size(), 1);
     auto publishedKey = observer->shapeRemovedPublished[0]; 
     ASSERT_TRUE(*key == *publishedKey); 
 };
@@ -113,6 +115,7 @@ TEST_F(OcafShapeCoreTest, TestRedoRegisterNewShapePublishesShapeAddedEvent){
     shapeCore->commitCommand();
     shapeCore->undo();
     shapeCore->redo();
+    ASSERT_EQ(observer->shapeRemovedPublished.size(), 1);
     ASSERT_EQ(observer->shapeAddedPublished.size(), 2);
     auto publishedKey = observer->shapeAddedPublished[1]; 
     ASSERT_TRUE(*key == *publishedKey); 
