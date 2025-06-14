@@ -19,11 +19,15 @@
 
 #include "CoreShapeMap.hpp"
 #include "LabelKeyTool.hpp"
+#include <TopExp_Explorer.hxx>
 
 using ShapeIdPair = ShapeMap::ShapeIdPair;
 
-CoreShapeMap::CoreShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool) 
-: ShapeMap(), _shapeTool(aShapeTool), _labelKeyTool(std::make_unique<LabelKeyTool>(aShapeTool)){}
+CoreShapeMap::CoreShapeMap(
+    Handle(XCAFDoc_ShapeTool) aShapeTool
+) : ShapeMap(), 
+    _shapeTool(aShapeTool), 
+    _labelKeyTool(std::make_unique<LabelKeyTool>(aShapeTool)){}
 
 bool CoreShapeMap::containsId(const ShapeId& id) const {
     std::shared_ptr<ShapeKey> key = ShapeIdFactory::getKey(id);
@@ -70,15 +74,38 @@ const ShapeId CoreShapeMap::atShape(const TopoDS_Shape& shape) const {
     return id;
 }
 
-
 std::vector<ShapeIdPair> CoreShapeMap::freeShapes() const {
-    return std::vector<ShapeIdPair>();
+    TDF_LabelSequence freeShapeLabels;
+    _shapeTool->GetFreeShapes(freeShapeLabels);
+    std::vector<ShapeIdPair> shapeIdPairs;
+    for (auto label : freeShapeLabels){
+        auto key = _labelKeyTool->keyFromLabel(label);
+        auto id = ShapeIdFactory::create(key);
+        auto shape = atId(id);
+        shapeIdPairs.push_back(
+            ShapeIdPair(id, shape)
+        );
+    }
+    return shapeIdPairs;
 }
+
+#include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 std::vector<ShapeIdPair> CoreShapeMap::subShapes(const ShapeId& id) const {
-    return std::vector<ShapeIdPair>();
-}
-
-const ShapeId CoreShapeMap::fromKey(const ShapeKey& aKey) const {
-    return ShapeId::invalidId();
+    std::vector<ShapeIdPair> shapeIdPairs;
+    auto parentShape = atId(id);
+    TopTools_IndexedMapOfShape subShapes;
+    TopExp::MapShapes(parentShape, subShapes);
+    for (int i = 1; i <= subShapes.Extent(); ++i) {
+        const TopoDS_Shape& shape = subShapes(i);
+        if (shape.IsSame(parentShape)) {
+            continue;
+        }   
+        ShapeId shapeId = atShape(shape);
+        if (shapeId.isValid()) {
+            shapeIdPairs.push_back(ShapeIdPair(shapeId, shape));
+        }
+    }
+    return shapeIdPairs;
 }

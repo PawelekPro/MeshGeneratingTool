@@ -43,7 +43,6 @@ class ShapeMap {
     virtual std::vector<ShapeIdPair> subShapes(const ShapeId& id) const = 0;
 
     protected:
-    virtual const ShapeId fromKey(const ShapeKey& aKey) const = 0;
     friend class ShapeCore;
 
 };

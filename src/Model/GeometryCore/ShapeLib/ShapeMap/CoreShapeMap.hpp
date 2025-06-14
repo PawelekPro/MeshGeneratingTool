@@ -43,14 +43,9 @@ class CoreShapeMap : public ShapeMap {
     std::vector<ShapeIdPair> freeShapes() const override;
     std::vector<ShapeIdPair> subShapes(const ShapeId& id) const override; 
 
-    protected:
-    const ShapeId fromKey(const ShapeKey& aKey) const override; 
-
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     std::unique_ptr<LabelKeyTool> _labelKeyTool;
-    
-    TDF_Label findLabel(const ShapeKey& aKey) const;
 };
 
 #endif
