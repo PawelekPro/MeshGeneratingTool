@@ -21,7 +21,6 @@
 #define OCCPROGRESSINDICATOR_HPP 
 
 #include <Message_ProgressIndicator.hxx>
-#include "ModelEvents.hpp"
 #include "ProgressIndicator.hpp"
 #include <sstream>
 

@@ -6,6 +6,7 @@ add_subdirectory(ShapeCore)
 add_library(ShapeLib 
     ShapeService.cpp
     ShapeView.cpp 
+    ShapeSignalWrapper.cpp
 )
 
 target_link_libraries(ShapeLib PUBLIC
@@ -15,6 +16,8 @@ target_link_libraries(ShapeLib PUBLIC
     ShapeCore
     Geometry_Events
     ${OCC_LIBRARIES}
+    Messages
+    Progress
 )
 
 target_include_directories(ShapeLib PUBLIC

@@ -5,7 +5,7 @@ add_library(OccUtils
 
 target_link_libraries(OccUtils PUBLIC
     ${OCC_LIBRARIES}
-    ModelEvents
+    Progress
 )
 
 target_include_directories(OccUtils PUBLIC

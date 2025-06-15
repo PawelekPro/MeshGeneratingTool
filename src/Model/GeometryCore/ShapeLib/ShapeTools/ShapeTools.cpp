@@ -17,26 +17,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <memory>
-#include "MessageBus.hpp"
-#include "ShapeSignalWrapper.hpp"
-class ShapeCore;
-class ShapeService{
-    public:
-    ShapeService(MessageBus& aMessageBus, std::shared_ptr<ShapeCore>);
-    ~ShapeService() = default;
+#include "ShapeTools.hpp"
+#include <BRepBuilderAPI_Transform.hxx>
+#include <gp_Trsf.hxx>
+#include <gp_Pnt.hxx>
+#include <stdexcept>    
 
-    void importSTEP(const std::string& aFilePath);
-    void importSTL(const std::string& aFilePath);
-   
-    void removeShape(const ShapeId& aShapeId);
-    void scaleShape(const ShapeId& aShapeId, float aScaleFactor);
+TopoDS_Shape ShapeTools::scaleShape(
+    const TopoDS_Shape& aShape, 
+    float aScaleFactor
+) {
+    if (aScaleFactor <= 0.0f) {
+        throw std::invalid_argument("Scale factor must be greater than zero.");
+    }
 
-    std::shared_ptr<ShapeCore> shapeCore() const {return _shapeCore;};
+    gp_Trsf scaleTransformation;
+    scaleTransformation.SetScale(gp_Pnt(0, 0, 0), aScaleFactor);
+
+    BRepBuilderAPI_Transform transformer(aShape, scaleTransformation);
     
-    private:
-    void connectToShapeCore();
-    std::shared_ptr<ShapeCore> _shapeCore;
-    MessageBus& _messageBus;
-    std::shared_ptr<ShapeSignalWrapper> _signalWrapper;
-};
+    return transformer.Shape();
+}   

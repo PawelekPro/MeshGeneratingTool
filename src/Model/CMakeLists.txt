@@ -1,7 +1,6 @@
 add_subdirectory(GeometryCore)
 add_subdirectory(MeshCore)
 add_subdirectory(ModelInterface)
-add_subdirectory(ModelEvents)
 
 ADD_LIBRARY(Model
     Model.cpp
@@ -15,7 +14,6 @@ TARGET_LINK_LIBRARIES(Model PUBLIC
     GeometryCore
     MeshCore
     Document
-    ModelEvents
 )
 
 

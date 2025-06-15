@@ -17,28 +17,26 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#ifndef PROGRESSINDICATOR_HPP
+#define PROGRESSINDICATOR_HPP
 
+#include <string>
 
-#include "STEPImporter.hpp"
-#include "OcafShapeCore.hpp"
-#include <iostream>
-#include <sstream>
+class ProgressIndicator{
 
-class OcafShapeCoreTest : public ::testing::Test {
-protected:
-    OcafShapeCore shapeCore;
+    public:
+    virtual ~ProgressIndicator() = default;
+
+    virtual void progress(const std::string& aMessage, int aProgress) const = 0;
 };
 
-TEST_F(OcafShapeCoreTest, TestRegisterNewShape){
-    // std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-    // IdleProgressIndicator indicator;
-    // STEPImporter importer;
-    // std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-    //     importer.importFile(filePath, indicator);
-    // TopoDS_Shape cube = shapes[0].first;
+class IdleProgressIndicator : public ProgressIndicator {
 
-    // const ShapeId shapeId = shapeCore.registerNewShape(cube);
-    // shapeCore.write(std::string("test.xml"));
-}
+    public:
+    IdleProgressIndicator() = default;
+    ~IdleProgressIndicator() = default;
+
+    void progress(const std::string& aMessage, int aProgress) const override {};
+};
+
+#endif

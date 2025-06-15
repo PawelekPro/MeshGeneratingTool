@@ -41,6 +41,8 @@ class MockRequest : public BaseMessage {
 
 class MessageTracker {
     public:
+    MessageTracker() = default;
+    ~MessageTracker() = default;
 
     void onMessagePublished(const MockMessage& aMessage){
         calledMessageIds.push_back(aMessage._id);

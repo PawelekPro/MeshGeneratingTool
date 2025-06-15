@@ -1,2 +1,3 @@
 add_subdirectory(Commands)
 add_subdirectory(Messages)
+add_subdirectory(Progress)

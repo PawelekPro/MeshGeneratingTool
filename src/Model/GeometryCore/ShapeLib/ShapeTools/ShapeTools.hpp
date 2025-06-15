@@ -17,25 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EVENTPROGRESSINDICATOR_HPP
-#define EVENTPROGRESSINDICATOR_HPP
+#ifndef SHAPETOOLS_HPP
+#define SHAPETOOLS_HPP 
 
-#include "ProgressIndicator.hpp"
-#include "EventPublisher.hpp"
+#include <TopoDS_Shape.hxx>
 
-class EventProgressIndicator : public ProgressIndicator {
 
-    public:
-    EventProgressIndicator(const EventPublisher& aModelSubject);
-    ~EventProgressIndicator() = default;
+namespace ShapeTools
+{
+    TopoDS_Shape scaleShape(
+        const TopoDS_Shape& aShape, 
+        float aScaleFactor
+    );  
 
-    void begin(const std::string& aMessage, int aMaxProgress) const override;
-    void progress(const std::string& aMessage, int aProgress) const override;
-    void finish(const std::string& aMessage) const override;
-    
-    private:
-    const EventPublisher& _subject;
-
-};
+}
 
 #endif

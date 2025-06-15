@@ -20,7 +20,6 @@
 #ifndef GEOCOMMANDSFACTORY_HPP
 #define GEOCOMMANDSFACTORY_HPP
 
-#include "ModelSubject.hpp"
 #include <memory>
 #include <string>
 

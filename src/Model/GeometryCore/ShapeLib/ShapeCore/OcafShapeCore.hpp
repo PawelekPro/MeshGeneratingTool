@@ -24,6 +24,8 @@
 #include "ShapeSignalsPublisher.hpp"
 #include "ShapeKeyAttr.hpp"
 #include "ShapeKey.hpp"
+#include "LabelKeyTool.hpp"
+#include "AttributeFactory.hpp"
 
 #include <string>
 #include <TDocStd_Document.hxx>
@@ -50,8 +52,6 @@ enum class DeltaType{
     Resume
 };
 
-class AttributeFactory;
-class LabelKeyTool;
 
 class OcafShapeCore : public ShapeCore {
     

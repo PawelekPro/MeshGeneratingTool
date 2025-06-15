@@ -17,30 +17,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EventProgressIndicator.hpp"
-#include "ModelEvents.hpp"
+#include "MessageProgressIndicator.hpp"
 
-EventProgressIndicator::EventProgressIndicator(
-    const EventPublisher& aModelSubject
-) : _subject(aModelSubject){}
+MessageProgressIndicator::MessageProgressIndicator(MessageBus& aMessageBus)
+    : _messageBus(aMessageBus) {}
 
-void EventProgressIndicator::begin(
-    const std::string& aMessage,
-    int aMaxProgress
-) const {
-    ProgressEvent event(aMessage, aMaxProgress, ProgressState::Begin);
-    _subject.publishEvent(event);
-}
-void EventProgressIndicator::progress(
+void MessageProgressIndicator::progress(
     const std::string& aMessage, 
-    int aProgress
+    int aProgressPercent
 ) const {
-    ProgressEvent event(aMessage, aProgress, ProgressState::Progress);
-    _subject.publishEvent(event);
-}
-
-void EventProgressIndicator::finish(
-    const std::string& aMessage) const {
-    ProgressEvent event(aMessage, 100, ProgressState::Finish);
-    _subject.publishEvent(event);
+    _messageBus.publish(
+        ProgressMessage(aMessage, aProgressPercent)
+    );
 }

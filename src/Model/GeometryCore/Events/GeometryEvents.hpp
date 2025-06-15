@@ -17,11 +17,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GEOEVENT_HPP
-#define GEOEVENT_HPP
+#ifndef GEOMETRYEVENTS_HPP
+#define GEOMETRYEVENTS_HPP
 
-#include "Event.hpp"
-#include "BaseGeometryObserver.hpp"
 #include "BaseMessage.hpp"
 #include "ShapeId.hpp"
 

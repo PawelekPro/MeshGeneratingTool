@@ -6,7 +6,6 @@ add_library(ShapeImport
 
 target_link_libraries(ShapeImport PUBLIC
     Shapes
-    ModelEvents
     OccUtils
 )
 

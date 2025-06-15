@@ -12,4 +12,5 @@ target_link_libraries(utMessages PUBLIC
 
 target_include_directories(utMessages PUBLIC
     ${CMAKE_SOURCE_DIR}
+    ${TESTS_FIXTURES_PATH}
 )

@@ -13,6 +13,7 @@ target_link_libraries(GeometryCore PUBLIC
     Geometry_Commands
     BaseCommands
     Messages
+    Progress
 )
 
 target_include_directories(GeometryCore PUBLIC 

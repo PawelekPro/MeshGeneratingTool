@@ -19,6 +19,11 @@
 
 #include "ShapeService.hpp"
 #include "ShapeCore.hpp"
+#include "STEPImporter.hpp"
+#include "STLImporter.hpp"
+#include "MessageProgressIndicator.hpp"
+#include "ShapeTools.hpp"
+
 
 ShapeService::ShapeService(
     MessageBus& aMessageBus, 
@@ -26,13 +31,48 @@ ShapeService::ShapeService(
 ) : _shapeCore(aShapeCore),
     _messageBus(aMessageBus),
     _signalWrapper(std::make_shared<ShapeSignalWrapper>(aMessageBus)){
+        connectToShapeCore();
+    }        
 
+void ShapeService::importSTEP(const std::string& aFilePath){
+    MessageProgressIndicator progressIndicator(_messageBus);
+    STEPImporter stepImporter;
+
+    std::ifstream fileStream(aFilePath);
+    if (!fileStream.is_open()) {
+        throw std::runtime_error("Failed to open STEP file: " + aFilePath);
     }
 
-void ShapeService::importSTEP(){};
-void ShapeService::importSTL(){};
-void ShapeService::removeShape(){};
-void ShapeService::scaleShape(){};
+    auto shapes = stepImporter.import(fileStream, progressIndicator);
+    for (const auto& [shape, attr] : shapes) {
+        auto shapeId = _shapeCore->registerNewFreeShape(shape);
+    }
+};
+
+void ShapeService::importSTL(const std::string& aFilePath){
+    MessageProgressIndicator progressIndicator(_messageBus);
+    STLImporter stlImporter;
+
+    std::ifstream fileStream(aFilePath);
+    if (!fileStream.is_open()) {
+        throw std::runtime_error("Failed to open STL file: " + aFilePath);
+    }
+    auto shapes = stlImporter.import(fileStream, progressIndicator);
+    for (const auto& [shape, attr] : shapes) {
+        auto shapeId = _shapeCore->registerNewFreeShape(shape);
+    }
+};
+
+void ShapeService::removeShape(const ShapeId& aShapeId){
+    _shapeCore->removeShape(ShapeIdFactory::getKey(aShapeId));
+};
+
+
+void ShapeService::scaleShape(const ShapeId& aShapeId, float aScaleFactor){
+    auto shape = _shapeCore->shapeMap()->atId(aShapeId);
+    auto scaledShape = ShapeTools::scaleShape(shape, aScaleFactor);
+    _shapeCore->updateShape({ShapeIdFactory::getKey(aShapeId), scaledShape});
+};
 
 
 void ShapeService::connectToShapeCore() {

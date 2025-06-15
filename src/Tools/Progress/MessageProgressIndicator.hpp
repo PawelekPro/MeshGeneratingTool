@@ -17,31 +17,40 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROGRESSINDICATOR_HPP
-#define PROGRESSINDICATOR_HPP
+#ifndef MESSAGE_PROGRESS_INDICATOR_HPP
+#define MESSAGE_PROGRESS_INDICATOR_HPP
 
 #include <string>
 
-class ProgressIndicator{
+#include "ProgressIndicator.hpp"
+#include "MessageBus.hpp"
+#include "BaseMessage.hpp"
+
+class MessageProgressIndicator : public ProgressIndicator{
 
     public:
-    virtual ~ProgressIndicator() = default;
+    MessageProgressIndicator(MessageBus& aMessageBus);
+    virtual ~MessageProgressIndicator() = default;
 
-    virtual void begin(const std::string& aMessage, int aMaxProgress) const = 0;
-    virtual void progress(const std::string& aMessage, int aProgress) const = 0;
-    virtual void finish(const std::string& aMessage) const = 0;
-
+    virtual void progress(const std::string& aMessage, int aProgress) const override;
+ 
+    private: 
+    MessageBus& _messageBus;
 };
 
-class IdleProgressIndicator : public ProgressIndicator {
-
+class ProgressMessage : public BaseMessage {
     public:
-    IdleProgressIndicator() = default;
-    ~IdleProgressIndicator() = default;
+    ProgressMessage(
+        const std::string& aMessage, 
+        int progressPercent
+    ) : message(aMessage), 
+        progressPercent(progressPercent) {}
 
-    void begin(const std::string& aMessage, int aMaxProgress) const override {};
-    void progress(const std::string& aMessage, int aProgress) const override {};
-    void finish(const std::string& aMessage) const override {};
+    const std::string message;
+    const int progressPercent;
 };
+
+
+
 
 #endif

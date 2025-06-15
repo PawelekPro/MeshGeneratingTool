@@ -28,7 +28,6 @@
 class ShapeKeyAttr;
 class ShapeKey;
 
-
 class AttributeFactory {
 
     public:
