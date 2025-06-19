@@ -20,29 +20,10 @@
 #include "ShapeService.hpp"
 #include "OcafShapeCore.hpp"
 #include "GeometryEvents.hpp"
-#include "MessageProgressIndicator.hpp"
+#include "ShapeEventTracker.hpp"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-
-class ShapeEventTracker {
-    public:
-    std::vector<ShapeAddedEvent> addEvents;
-    std::vector<ShapeRemovedEvent> removeEvents;
-    std::vector<ProgressMessage> progressMessages;
-
-    void onRemovedEvent(const ShapeRemovedEvent& event) {
-        removeEvents.push_back(event);
-    }
-
-    void onAddEvent(const ShapeAddedEvent& event) {
-        addEvents.push_back(event);
-    }
-
-    void onProgressMessage(const ProgressMessage& event) {
-        progressMessages.push_back(event);
-    }
-};
 
 class ShapeServiceTest : public ::testing::Test {
     protected:
@@ -93,21 +74,6 @@ TEST_F(ShapeServiceTest, ShapeServicePublishesShapeAddedEventOnSingleSTEPImport)
     ASSERT_FALSE(shapeCore->shapeMap()->atId(publishedId).IsNull());
 }
 
-TEST_F(ShapeServiceTest, ShapeServicePublishesShapeAddedEventOnMultiPartSTEPImport) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
-
-    // Act 
-    shapeService->importSTEP(filePath);
-
-    // Assert
-    ASSERT_EQ(shapeEventTracker->addEvents.size(), 3);
-    for (auto event : shapeEventTracker->addEvents){
-        ASSERT_TRUE(shapeCore->shapeMap()->containsId(event.shapeId));
-        ASSERT_FALSE(shapeCore->shapeMap()->atId(event.shapeId).IsNull());
-    }
-}
-
 TEST_F(ShapeServiceTest, ShapeServicePublishesProgressMessagesOnSETPImport) {
     // Arrange
     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
@@ -131,21 +97,4 @@ TEST_F(ShapeServiceTest, ShapeServicePublishesOnSingleRemoveShape) {
     // Assert
     ASSERT_EQ(shapeEventTracker->removeEvents.size(), 1);
     ASSERT_FALSE(shapeCore->shapeMap()->containsId(importedShapeId));
-}
-
-TEST_F(ShapeServiceTest, ShapeServicePublishesOnMultiRemoveShape) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
-    shapeService->importSTEP(filePath);
-   
-    // Act 
-    for (auto event : shapeEventTracker->addEvents){
-        shapeService->removeShape(event.shapeId);
-    }
-    
-    // Assert
-    ASSERT_EQ(shapeEventTracker->removeEvents.size(), 3);
-    for (auto event : shapeEventTracker->removeEvents){
-        ASSERT_FALSE(shapeCore->shapeMap()->containsId(event.shapeId));
-    }
 }

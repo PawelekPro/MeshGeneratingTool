@@ -25,6 +25,7 @@
 #include <XCAFApp_Application.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDF_Label.hxx>
 #include <Quantity_ColorRGBA.hxx>
@@ -52,14 +53,14 @@ std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STEPImporter::import(
     Handle(XCAFDoc_ColorTool) colorTool = 
         XCAFDoc_DocumentTool::ColorTool(document->Main());
 
-    auto shapeLabels = reader.GetShapeLabelMap();
-    XCAFDoc_DataMapIteratorOfDataMapOfShapeLabel mapIter(shapeLabels);
-
+    Handle(XCAFDoc_ShapeTool) shapeTool =
+        XCAFDoc_DocumentTool::ShapeTool(document->Main());
+  
+    TDF_LabelSequence freeShapeLabels;
+    shapeTool->GetFreeShapes(freeShapeLabels);
+        
     std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes;
-    for (auto it = mapIter; it.More(); it.Next()) {
-        const TopoDS_Shape shape = it.Key();
-        const TDF_Label label = it.Value();
-
+    for (auto label : freeShapeLabels){
         Handle(TDataStd_Name) nameAttribute;
         std::string name = "name";
         if (label.FindAttribute(TDataStd_Name::GetID(), nameAttribute)) {
@@ -81,9 +82,45 @@ std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STEPImporter::import(
         ShapeAttr shapeAttrs;
         shapeAttrs.name = name;
         shapeAttrs.color = shapeColor;
-        std::pair<TopoDS_Shape, ShapeAttr> pair(shape, shapeAttrs);
+        std::pair<TopoDS_Shape, ShapeAttr> pair(
+            shapeTool->GetShape(label), shapeAttrs
+        );
         shapes.push_back(pair);
+
     }
+    // 
+    // auto shapeLabels = reader.GetShapeLabelMap();
+    // XCAFDoc_DataMapIteratorOfDataMapOfShapeLabel mapIter(shapeLabels);
+   
+    // std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes;
+    // for (auto it = mapIter; it.More(); it.Next()) {
+    //     const TopoDS_Shape shape = it.Key();
+    //     const TDF_Label label = it.Value();
+
+    //     Handle(TDataStd_Name) nameAttribute;
+    //     std::string name = "name";
+    //     if (label.FindAttribute(TDataStd_Name::GetID(), nameAttribute)) {
+    //         auto shapeName = nameAttribute->Get();
+    //         Standard_Integer requiredLength = shapeName.Length() + 1;
+    //         Standard_PCharacter utf8CString = new char[requiredLength];
+    //         shapeName.ToUTF8CString(utf8CString);
+    //         name = utf8CString;
+    //         delete[] utf8CString;
+    //     }
+
+    //     Quantity_ColorRGBA colorRGBA;
+    //     colorTool->GetColor(label, colorRGBA);
+    //     Quantity_Color color = colorRGBA.GetRGB();
+    //     ShapeColor shapeColor;
+    //     shapeColor.r = color.Red(); 
+    //     shapeColor.g = color.Green(); 
+    //     shapeColor.b = color.Blue(); 
+    //     ShapeAttr shapeAttrs;
+    //     shapeAttrs.name = name;
+    //     shapeAttrs.color = shapeColor;
+    //     std::pair<TopoDS_Shape, ShapeAttr> pair(shape, shapeAttrs);
+    //     shapes.push_back(pair);
+    // }
 
     return shapes;
 }

@@ -64,3 +64,17 @@ TEST_F(GeometryTest, UndoImportSTEPFile) {
     auto shapeMap = geometry->shapeView()->shapeMap();
     ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
 }
+
+TEST_F(GeometryTest, RedoImportSTEPFile) {
+    // Arrange
+    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+
+    // Act
+    geometry->importSTEP(filePath);
+    commandStack.undo();
+    commandStack.redo();
+
+    // Assert
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+}

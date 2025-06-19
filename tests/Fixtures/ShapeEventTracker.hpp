@@ -17,31 +17,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LABELTAGKEY_HPP 
-#define LABELTAGKEY_HPP 
+#ifndef SHAPE_EVENT_TRACKER_HPP
+#define SHAPE_EVENT_TRACKER_HPP 
 
-#include <string>
-#include <memory>
-#include <string>
-#include <tuple>
+#include <vector>
+#include "GeometryEvents.hpp"
+#include "MessageProgressIndicator.hpp"
 
-class ShapeKey {
-public:
-    ShapeKey(size_t label, size_t parent);
+class ShapeEventTracker {
+    public:
+    std::vector<ShapeAddedEvent> addEvents;
+    std::vector<ShapeRemovedEvent> removeEvents;
+    std::vector<ProgressMessage> progressMessages;
 
-    std::size_t hash() const;
-    std::string toString() const;
+    void onRemovedEvent(const ShapeRemovedEvent& event) {
+        removeEvents.push_back(event);
+    }
 
-    bool operator==(const ShapeKey& other) const;
-    bool operator<(const ShapeKey& other) const;
+    void onAddEvent(const ShapeAddedEvent& event) {
+        addEvents.push_back(event);
+    }
 
-    size_t parentLabelTag() const {return _parentLabelTag;}    
-    size_t labelTag() const {return _labelTag;}
-
-    private:
-    const size_t _labelTag;
-    const size_t _parentLabelTag;
-    const std::string _cachedString;
+    void onProgressMessage(const ProgressMessage& event) {
+        progressMessages.push_back(event);
+    }
 };
 
-#endif // LABELTAGKEY_HPP
+#endif

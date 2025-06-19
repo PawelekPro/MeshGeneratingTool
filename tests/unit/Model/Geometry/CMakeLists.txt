@@ -15,4 +15,5 @@ target_link_libraries(utGeometry PUBLIC
 
 target_include_directories(utGeometry PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${TESTS_FIXTURES_PATH}
 )
