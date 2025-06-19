@@ -47,6 +47,10 @@ class Geometry {
    
     void removeShape(const ShapeId& aId);
     void scaleShape(const ShapeId& aId, double aScaleFactor); 
+   
+    std::shared_ptr<ShapeView> shapeView() const {
+        return _shapeView;
+    } 
     
     private:
     CommandStack& _commandStack; 
@@ -54,7 +58,7 @@ class Geometry {
 
     std::shared_ptr<ShapeCore> _shapeCore;
     std::shared_ptr<ShapeView> _shapeView;
-    ShapeService _shapeService;
+    std::shared_ptr<ShapeService> _shapeService;
     GeoCommandsFactory _commandFactory;
 };
 

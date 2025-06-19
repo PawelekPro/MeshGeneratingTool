@@ -26,24 +26,24 @@ ShapeLibCommand::ShapeLibCommand(std::shared_ptr<ShapeCore> aShapeCore)
  : _shapeCore(aShapeCore){};
 
 bool ShapeLibCommand::execute() {
-    if (!_shapeCore.openCommand()) {
+    if (!_shapeCore->openCommand()) {
         return false;
     }
 
     if (executeAction()) {
-        _commandId = _shapeCore.commitCommand();
+        _commandId = _shapeCore->commitCommand();
         return true;
     }
 
-    _shapeCore.abortCommand();
+    _shapeCore->abortCommand();
     return false;
 }
 
 bool ShapeLibCommand::undo() {
-    if (_commandId == _shapeCore.nextUndoId()){
-        return _shapeCore.undo();
-    } else {
-        std::cerr << "Undo command id is out of sync with ShapeCore.";
-        return false;
-    }
+    // if (_commandId == _shapeCore->nextUndoId()){
+        return _shapeCore->undo();
+    // } else {
+    //     std::cerr << "Undo command id is out of sync with ShapeCore.";
+    //     return false;
+    // }
 }

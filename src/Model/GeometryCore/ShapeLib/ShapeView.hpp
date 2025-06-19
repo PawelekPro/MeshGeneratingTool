@@ -26,6 +26,10 @@ class ShapeView {
     ShapeView(std::shared_ptr<const ShapeMap> aShapeMap);
     ~ShapeView() = default;
 
+    std::shared_ptr<const ShapeMap> shapeMap() const {
+        return _shapeMap;
+    }
+
     private:
     std::shared_ptr<const ShapeMap> _shapeMap;
 };

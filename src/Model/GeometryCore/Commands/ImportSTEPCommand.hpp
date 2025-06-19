@@ -30,14 +30,14 @@ class ImportSTEPCommand : public ShapeLibCommand {
     public:
 
     ImportSTEPCommand(
-        ShapeService& aShapeService,
+        std::shared_ptr<ShapeService> aShapeService,
         const std::string& aFilePath
     );
     
     bool executeAction() override;
 
     private:
-    ShapeService& _shapeService;
+    std::shared_ptr<ShapeService> _shapeService;
     const std::string _filePath;
 };
 

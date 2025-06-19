@@ -30,7 +30,7 @@ class GeoCommandsFactory {
 
     public:    
     GeoCommandsFactory(
-        ShapeService& aShapeService
+        std::shared_ptr<ShapeService> aShapeService
     );
 
     std::unique_ptr<ImportSTEPCommand> importSTEP(
@@ -38,7 +38,7 @@ class GeoCommandsFactory {
     ) const;
 
     private:
-    const ShapeService& _shapeService;
+    std::shared_ptr<ShapeService> _shapeService;
 };
 
 #endif

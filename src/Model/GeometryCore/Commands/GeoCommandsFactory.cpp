@@ -21,7 +21,7 @@
 #include "ImportSTEPCommand.hpp"
 
 GeoCommandsFactory::GeoCommandsFactory(
-    ShapeService& aShapeService
+    std::shared_ptr<ShapeService> aShapeService
     ) : 
     _shapeService(aShapeService){}
 

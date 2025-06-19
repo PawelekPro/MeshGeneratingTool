@@ -1,5 +1,7 @@
 add_library(Geometry_Commands 
     ImportSTEPCommand.cpp
+    GeoCommandsFactory.cpp
+    ShapeLibCommand.cpp
 )
 
 target_link_libraries(Geometry_Commands

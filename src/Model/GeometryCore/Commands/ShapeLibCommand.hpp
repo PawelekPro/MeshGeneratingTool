@@ -21,6 +21,7 @@
 #define SHAPELIBCOMMAND_HPP
 
 #include "BaseCommand.hpp"
+#include <memory>
 
 class ShapeCore;
 class ShapeLibCommand : public BaseCommand {

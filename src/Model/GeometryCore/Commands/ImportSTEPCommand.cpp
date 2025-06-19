@@ -22,13 +22,14 @@
 #include "ShapeService.hpp"
 
 ImportSTEPCommand::ImportSTEPCommand(
-    ShapeService& aShapeService,
+    std::shared_ptr<ShapeService> aShapeService,
     const std::string& aFilePath
     ) : 
-    ShapeLibCommand(aShapeService.shapeCore()),
+    ShapeLibCommand(aShapeService->shapeCore()),
     _shapeService(aShapeService),
     _filePath(aFilePath) {}
 
 bool ImportSTEPCommand::executeAction(){
+    _shapeService->importSTEP(_filePath);
     return true;
 }

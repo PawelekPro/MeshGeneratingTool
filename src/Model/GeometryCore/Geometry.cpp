@@ -30,7 +30,7 @@ _eventBus(aMessageBus),
 
 _shapeCore(aShapeCore),
 _shapeView(std::make_shared<ShapeView>(aShapeCore->shapeMap())),
-_shapeService(aMessageBus, aShapeCore),
+_shapeService(std::make_shared<ShapeService>(aMessageBus, aShapeCore)),
 _commandFactory(_shapeService){}
 
 void Geometry::importSTEP(const std::string& aFilePath){
