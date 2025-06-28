@@ -52,7 +52,6 @@ enum class DeltaType{
     Resume
 };
 
-
 class OcafShapeCore : public ShapeCore {
     
     public:
@@ -79,8 +78,43 @@ class OcafShapeCore : public ShapeCore {
     bool redo() override;
    
     bool write(const std::string& aSavePath) const override;
+   
+    virtual bool importDocument(Handle(TDocStd_Document) aDoc) override; 
     
     private:
+    void importAssemblyLabel(
+        Handle(XCAFDoc_ShapeTool) aShapeTool, 
+        const TDF_Label& aLabel
+    );
+
+    void importComponentLabel(
+        TDF_Label& aLocalParentAssemblyLabel,
+        Handle(XCAFDoc_ShapeTool) aShapeTool, 
+        const TDF_Label& aLabel
+    );    
+
+    TDF_Label registerAssemblyLabel(
+        Handle(XCAFDoc_ShapeTool) aShapeTool, 
+        const TDF_Label& aLabel
+    );
+
+    TDF_Label registerFreeShapeLabel(
+        Handle(XCAFDoc_ShapeTool) aShapeTool, 
+        const TDF_Label& aLabel
+    );
+
+    TDF_Label registerSubAssemblyLabel(
+        TDF_Label& aLocalParentAssemblyLabel,
+        Handle(XCAFDoc_ShapeTool) aShapeTool, 
+        const TDF_Label& aLabel
+    );
+    
+    TDF_Label registerComponentLabel(
+        TDF_Label& aLocalParentAssemblyLabel,
+        Handle(XCAFDoc_ShapeTool) aShapeTool, 
+        const TDF_Label& aLabel
+    );
+    
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;

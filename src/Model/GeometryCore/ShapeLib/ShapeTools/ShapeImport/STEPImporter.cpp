@@ -29,16 +29,47 @@
 #include <TDataStd_Name.hxx>
 #include <TDF_Label.hxx>
 #include <Quantity_ColorRGBA.hxx>
+#include <XmlXCAFDrivers.hxx>
 
-std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STEPImporter::import(
-    std::istream& aFileStream, 
+
+Handle(TDocStd_Document) STEPImporter::importFreeShapesIntoDoc(
+    const std::string& aFilePath,
     const ProgressIndicator& aProgressIndicator
 ) const {
+    OccProgressIndicator progressIndicator(aProgressIndicator);
+
+    auto fileStream  = readFile(aFilePath);
     STEPCAFControl_Reader reader;
     reader.SetColorMode(true);
     reader.SetNameMode(true);
 
-    IFSelect_ReturnStatus result = reader.ReadStream("STEPFileStream", aFileStream);
+    IFSelect_ReturnStatus result = reader.ReadStream("STEPFileStream", fileStream);
+    if (result != IFSelect_RetDone) {
+        throw std::runtime_error("Failed to read STEP file.");
+    }
+
+    auto app = XCAFApp_Application::GetApplication();
+    Handle(TDocStd_Document) document;
+    app->NewDocument("XmlXCAF", document);
+    reader.Transfer(document, progressIndicator.Start());
+    std::string savePath = "rawFromImport.xml";
+    TCollection_ExtendedString xmlPath(savePath.c_str());
+    XmlXCAFDrivers::DefineFormat(app);
+    if (!XCAFApp_Application::GetApplication()->SaveAs(document, xmlPath)) {
+    }
+    return document;
+}
+
+std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STEPImporter::importFreeShapes(
+    const std::string& aFilePath,
+    const ProgressIndicator& aProgressIndicator
+) const {
+    auto fileStream  = readFile(aFilePath);
+    STEPCAFControl_Reader reader;
+    reader.SetColorMode(true);
+    reader.SetNameMode(true);
+
+    IFSelect_ReturnStatus result = reader.ReadStream("STEPFileStream", fileStream);
     if (result != IFSelect_RetDone) {
         throw std::runtime_error("Failed to read STEP file.");
     }

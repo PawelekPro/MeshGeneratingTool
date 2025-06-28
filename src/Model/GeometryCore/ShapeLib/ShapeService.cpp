@@ -37,27 +37,18 @@ ShapeService::ShapeService(
 void ShapeService::importSTEP(const std::string& aFilePath){
     MessageProgressIndicator progressIndicator(_messageBus);
     STEPImporter stepImporter;
-
-    std::ifstream fileStream(aFilePath);
-    if (!fileStream.is_open()) {
-        throw std::runtime_error("Failed to open STEP file: " + aFilePath);
-    }
-
-    auto shapes = stepImporter.import(fileStream, progressIndicator);
-    for (const auto& [shape, attr] : shapes) {
-        auto shapeId = _shapeCore->registerNewFreeShape(shape);
-    }
+ 
+    auto doc = stepImporter.importFreeShapesIntoDoc(
+        aFilePath,
+        progressIndicator
+    );
+    _shapeCore->importDocument(doc);
 };
 
 void ShapeService::importSTL(const std::string& aFilePath){
     MessageProgressIndicator progressIndicator(_messageBus);
     STLImporter stlImporter;
-
-    std::ifstream fileStream(aFilePath);
-    if (!fileStream.is_open()) {
-        throw std::runtime_error("Failed to open STL file: " + aFilePath);
-    }
-    auto shapes = stlImporter.import(fileStream, progressIndicator);
+    auto shapes = stlImporter.importFreeShapes(aFilePath, progressIndicator);
     for (const auto& [shape, attr] : shapes) {
         auto shapeId = _shapeCore->registerNewFreeShape(shape);
     }

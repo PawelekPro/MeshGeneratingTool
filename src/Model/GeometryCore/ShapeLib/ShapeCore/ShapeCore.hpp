@@ -23,12 +23,14 @@
 #include <memory>
 #include <vector>
 #include <boost/signals2.hpp>
+#include <Standard_Handle.hxx>
 
 #include "ShapeSignalsPublisher.hpp"
 #include "ShapeMap.hpp"
 #include "ShapeKey.hpp"
 
 class ShapeCoreObserver;
+class TDocStd_Document;
 class ShapeCore {
 
     public:
@@ -56,6 +58,8 @@ class ShapeCore {
 
     virtual std::shared_ptr<const ShapeMap> shapeMap() const;
     virtual void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver);
+
+    virtual bool importDocument(Handle(TDocStd_Document) aDoc) = 0;
 
     protected:
 

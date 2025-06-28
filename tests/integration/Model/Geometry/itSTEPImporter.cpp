@@ -24,6 +24,11 @@
 #include "ShapeImporter.hpp"
 #include <iostream>
 #include <sstream>
+#include <TDF_LabelSequence.hxx>
+#include <Standard_Handle.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <TDocStd_Document.hxx>
 
 class STEPImporterTest : public ::testing::Test {
 protected:
@@ -34,17 +39,29 @@ TEST_F(STEPImporterTest, TestImportingPartFlangeFile){
     std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
     IdleProgressIndicator indicator;
     std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-        importer.importFile(filePath, indicator);
+        importer.importFreeShapes(filePath, indicator);
     EXPECT_EQ(shapes.size(), 1);
     EXPECT_EQ(shapes[0].second.color.r, 1);
     EXPECT_EQ(shapes[0].second.color.g, 1);
     EXPECT_EQ(shapes[0].second.color.b, 0);
 }
 
+TEST_F(STEPImporterTest, TestImportingPartFlangeFileIntoDoc){
+    std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
+    IdleProgressIndicator indicator;
+    auto doc = importer.importFreeShapesIntoDoc(filePath, indicator);
+    TDF_LabelSequence freeShapes;
+    Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(
+        doc->Main()
+    );
+    shapeTool->GetFreeShapes(freeShapes);
+    ASSERT_EQ(freeShapes.Size(), 1);
+}
+
 TEST_F(STEPImporterTest, TestImportingPartCubeFile){
     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
     IdleProgressIndicator indicator;
     std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-        importer.importFile(filePath, indicator);
+        importer.importFreeShapes(filePath, indicator);
     EXPECT_EQ(shapes.size(), 1);
 }

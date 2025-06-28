@@ -98,3 +98,15 @@ TEST_F(ShapeServiceTest, ShapeServicePublishesOnSingleRemoveShape) {
     ASSERT_EQ(shapeEventTracker->removeEvents.size(), 1);
     ASSERT_FALSE(shapeCore->shapeMap()->containsId(importedShapeId));
 }
+
+TEST_F(ShapeServiceTest, ShapeServiceImportSTEPWithMultipleComponents) {
+    // Arrange
+    std::string filePath = std::string(TESTS_DATA_PATH) + "/joint.stp";
+   
+    // Act 
+    shapeService->importSTEP(filePath);
+    shapeCore->write("joint.xml");
+    
+    // Assert
+    ASSERT_EQ(shapeEventTracker->addEvents.size(), 2);
+}

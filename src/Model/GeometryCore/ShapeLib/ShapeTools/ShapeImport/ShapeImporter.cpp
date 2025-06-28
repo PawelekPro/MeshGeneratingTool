@@ -20,20 +20,10 @@
 #include "ShapeImporter.hpp"
 #include <stdexcept>
 
-std::vector<std::pair<TopoDS_Shape, ShapeAttr>> ShapeImporter::importFile(
-    const std::string& aFilePath, 
-    const ProgressIndicator& aProgressIndicator
-) const {
+std::ifstream ShapeImporter::readFile(const std::string& aFilePath) const{
     std::ifstream file(aFilePath);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open file: " + aFilePath);
     }
-    return import(file, aProgressIndicator);
-}
-
-std::vector<std::pair<TopoDS_Shape, ShapeAttr>> ShapeImporter::importFile(
-    const std::string& aFilePath
-) const {
-    IdleProgressIndicator progressIndicator;
-    return importFile(aFilePath, progressIndicator);
+    return file;
 }

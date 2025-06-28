@@ -18,10 +18,18 @@
  */
 
 #include "STLImporter.hpp"
-
-std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STLImporter::import(
-        std::istream& aFileStream, 
-        const ProgressIndicator& aProgressIndicator
+#include <TDocStd_Document.hxx>
+std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STLImporter::importFreeShapes(
+	const std::string& aFilePath, 
+	const ProgressIndicator& aProgressIndicator
 ) const {
 	return std::vector<std::pair<TopoDS_Shape, ShapeAttr>>();
 };
+
+Handle(TDocStd_Document) STLImporter::importFreeShapesIntoDoc(
+	const std::string& aFilePath, 
+	const ProgressIndicator& aProgressIndicator
+) const {
+	Handle(TDocStd_Document) doc;
+	return doc;
+}

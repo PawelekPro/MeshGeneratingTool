@@ -33,10 +33,6 @@ Handle(ShapeKeyAttr) AttributeFactory::shapeKeyAttr(
         aKey->labelTag(), aKey->parentLabelTag()
     );
 
-    if (aKey->parentLabelTag() != 0){
-        return attr;
-    }
-
     attr->shapeAddedSignal().connect(
         [publisher = std::ref(_publisher)](
             Standard_Integer labelTag, 

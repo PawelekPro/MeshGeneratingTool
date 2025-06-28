@@ -20,14 +20,20 @@
 #define STEPIMPORTER_HPP
 
 #include "ShapeImporter.hpp"
+#include <Standard_Handle.hxx>
 
 class STEPImporter : public ShapeImporter {
     public:
     ~STEPImporter() = default;
 
-    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> import(
-        std::istream& aFileStream, 
-        const ProgressIndicator& aProgressIndicator
+    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> importFreeShapes(
+        const std::string& aFilePath, 
+        const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
+    ) const override;
+
+    virtual Handle(TDocStd_Document) importFreeShapesIntoDoc(
+        const std::string& aFilePath, 
+        const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
     ) const override;
 };
 
