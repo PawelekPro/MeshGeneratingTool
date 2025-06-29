@@ -22,7 +22,7 @@
 
 #include "ShapeCore.hpp"
 #include "ShapeSignalsPublisher.hpp"
-#include "ShapeKeyAttr.hpp"
+#include "LabelPathAttr.hpp"
 #include "ShapeKey.hpp"
 #include "LabelKeyTool.hpp"
 #include "AttributeFactory.hpp"

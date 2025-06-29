@@ -27,36 +27,30 @@ LabelKeyTool::LabelKeyTool(
 TDF_Label LabelKeyTool::labelFromKey(std::shared_ptr<ShapeKey> aKey){
     TColStd_ListOfInteger tagList;
 
-    Standard_Integer parentLabelTag = aKey->parentLabelTag();
-    Standard_Integer labelTag = aKey->labelTag();
-
     TDF_Tool::TagList(_shapeTool->Label(), tagList);
     
-    if (parentLabelTag != 0) {
-        tagList.Append(parentLabelTag);
+    for(auto treeNode : aKey->shapeTreePath()){
+        tagList.Append(treeNode);
     }
-    tagList.Append(labelTag);
 
     TDF_Label foundLabel;
     TDF_Tool::Label(_shapeTool->Label().Data(), tagList, foundLabel, false);
     return foundLabel;
 }
 
-std::shared_ptr<ShapeKey> LabelKeyTool::keyFromLabel(const TDF_Label& aLabel){
-    TDF_Label parentLabel = aLabel.Father();
-    TDF_Label shapesRootLabel = _shapeTool->Label();
-    if (parentLabel == shapesRootLabel){
-        return std::make_shared<ShapeKey>(aLabel.Tag(), 0);
-    } else if (_shapeTool->IsShape(parentLabel)){
-        return std::make_shared<ShapeKey>(aLabel.Tag(), parentLabel.Tag());
-    } else {
-        throw std::runtime_error("Cant generate key from label");
+std::shared_ptr<ShapeKey> LabelKeyTool::keyFromLabel(const TDF_Label& aLabel) {
+    std::vector<int> tagPath;
+    TDF_Label current = aLabel;
+
+    while (!current.IsNull() && current != _shapeTool->Label()) {
+        tagPath.push_back(current.Tag());
+        current = current.Father();
     }
+    std::reverse(tagPath.begin(), tagPath.end());
+
+    return std::make_shared<ShapeKey>(tagPath);
 }
 
-std::shared_ptr<ShapeKey> LabelKeyTool::keyFromAttr(Handle(ShapeKeyAttr) aAttr){
-    return std::make_shared<ShapeKey>(
-        aAttr->labelTag(),
-        aAttr->parentLabelTag()
-    );
+std::shared_ptr<ShapeKey> LabelKeyTool::keyFromAttr(Handle(LabelPathAttr) aAttr) {
+    return std::make_shared<ShapeKey>(aAttr->shapeTreePath());
 }

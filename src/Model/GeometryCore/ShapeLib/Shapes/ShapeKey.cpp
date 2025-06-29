@@ -18,29 +18,38 @@
 */
 
 #include "ShapeKey.hpp"
+#include <sstream>
+#include <functional>
+#include <numeric>
 
-ShapeKey::ShapeKey(
-    size_t aLabelTag, 
-    size_t aParentLabelTag
-) : _labelTag(aLabelTag), 
-    _parentLabelTag(aParentLabelTag),
-    _cachedString(std::to_string(aParentLabelTag) + "-" + std::to_string(aLabelTag))
-    {}
+ShapeKey::ShapeKey(std::vector<int> aShapeTreePath)
+: _shapeTreePath(std::move(aShapeTreePath)),
+  _cachedString([this](){
+      std::ostringstream oss;
+      for (size_t i = 0; i < _shapeTreePath.size(); ++i) {
+          oss << _shapeTreePath[i];
+          if (i + 1 < _shapeTreePath.size()) oss << ":";
+      }
+      return oss.str();
+  }()) {}
 
 bool ShapeKey::operator==(const ShapeKey& other) const {
-    return _labelTag == other._labelTag && _parentLabelTag == other._parentLabelTag;
+    return _shapeTreePath == other._shapeTreePath;
 }
 
 bool ShapeKey::operator<(const ShapeKey& other) const {
-    return std::tie(_parentLabelTag, _labelTag) < std::tie(other._parentLabelTag, other._labelTag);
+    return _shapeTreePath < other._shapeTreePath;
 }
 
 std::size_t ShapeKey::hash() const {
-        std::size_t h1 = std::hash<size_t>{}(_labelTag);
-        std::size_t h2 = std::hash<size_t>{}(_parentLabelTag);
-        return h1 ^ (h2 << 1);
+    std::size_t seed = 0;
+    for (int val : _shapeTreePath) {
+        seed ^= std::hash<int>{}(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+    return seed;
 }
 
 std::string ShapeKey::toString() const {
     return _cachedString;
 }
+

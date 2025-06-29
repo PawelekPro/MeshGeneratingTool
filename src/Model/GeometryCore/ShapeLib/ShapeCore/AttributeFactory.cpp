@@ -18,7 +18,7 @@
 */
 
 #include "AttributeFactory.hpp"
-#include "ShapeKeyAttr.hpp"
+#include "LabelPathAttr.hpp"
 #include "OcafShapeCore.hpp"
 #include "ShapeKey.hpp"
 
@@ -26,33 +26,30 @@ AttributeFactory::AttributeFactory(
     ShapeSignalsPublisher& aPublisher
 ) : _publisher(aPublisher) {}
 
-Handle(ShapeKeyAttr) AttributeFactory::shapeKeyAttr(
+Handle(LabelPathAttr) AttributeFactory::shapeKeyAttr(
     std::shared_ptr<ShapeKey> aKey
 ) {
-    Handle(ShapeKeyAttr) attr = new ShapeKeyAttr(
-        aKey->labelTag(), aKey->parentLabelTag()
+    Handle(LabelPathAttr) attr = new LabelPathAttr(
+       aKey->shapeTreePath() 
     );
 
     attr->shapeAddedSignal().connect(
         [publisher = std::ref(_publisher)](
-            Standard_Integer labelTag, 
-            Standard_Integer parentLabelTag
+            std::vector<int> aShapeTreePath
         ) {
-            auto key = std::make_shared<ShapeKey>(labelTag, parentLabelTag);
+            auto key = std::make_shared<ShapeKey>(aShapeTreePath);
             publisher.get().publishShapeAdded(key);
         }
     );
 
     attr->shapeRemovedSignal().connect(
         [publisher = std::ref(_publisher)](
-            Standard_Integer labelTag, 
-            Standard_Integer parentLabelTag
+            std::vector<int> aShapeTreePath
         ) {
-            auto key = std::make_shared<ShapeKey>(labelTag, parentLabelTag);
+            auto key = std::make_shared<ShapeKey>(aShapeTreePath);
             publisher.get().publishShapeRemoved(key);
         }
     );
-
     
     return attr;
 }

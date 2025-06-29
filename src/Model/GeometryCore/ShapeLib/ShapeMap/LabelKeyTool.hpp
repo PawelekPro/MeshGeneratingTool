@@ -25,7 +25,7 @@
 #include <XCAFDoc_ShapeTool.hxx>
 
 #include "ShapeKey.hpp"
-#include "ShapeKeyAttr.hpp"
+#include "LabelPathAttr.hpp"
 
 class LabelKeyTool {
 
@@ -36,7 +36,7 @@ class LabelKeyTool {
     TDF_Label labelFromKey(std::shared_ptr<ShapeKey> aKey);
 
     std::shared_ptr<ShapeKey> keyFromLabel(const TDF_Label& aLabel);
-    std::shared_ptr<ShapeKey> keyFromAttr(Handle(ShapeKeyAttr) aAttribute);
+    std::shared_ptr<ShapeKey> keyFromAttr(Handle(LabelPathAttr) aAttribute);
 
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;

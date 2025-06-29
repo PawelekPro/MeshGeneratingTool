@@ -1,7 +1,7 @@
 
 #include "XmlShapeLibDrivers_ShapeIdDriver.hpp"
 
-#include "ShapeKeyAttr.hpp"
+#include "LabelPathAttr.hpp"
 #include <Message_Messenger.hxx>
 #include <Standard_Type.hxx>
 #include <XCAFDoc_Note.hxx>
@@ -20,12 +20,12 @@ XmlShapeLibDrivers_ShapeIdDriver::XmlShapeLibDrivers_ShapeIdDriver(
 }
 
 Handle(TDF_Attribute) XmlShapeLibDrivers_ShapeIdDriver::NewEmpty() const {
-    return new ShapeKeyAttr();
+    return new LabelPathAttr();
 }
 
 Handle(Standard_Type) XmlShapeLibDrivers_ShapeIdDriver::SourceType() const
 {
-  return STANDARD_TYPE(ShapeKeyAttr);
+  return STANDARD_TYPE(LabelPathAttr);
 }
 
 Standard_Boolean XmlShapeLibDrivers_ShapeIdDriver::Paste(
@@ -43,7 +43,7 @@ Standard_Boolean XmlShapeLibDrivers_ShapeIdDriver::Paste(
         return Standard_False;
     }
 
-    Handle(ShapeKeyAttr) shapeIdAttr = Handle(ShapeKeyAttr)::DownCast(theTarget);
+    Handle(LabelPathAttr) shapeIdAttr = Handle(LabelPathAttr)::DownCast(theTarget);
     if (shapeIdAttr.IsNull()) {
         return Standard_False;
     }
@@ -66,7 +66,7 @@ void XmlShapeLibDrivers_ShapeIdDriver::Paste(
     XmlObjMgt_SRelocationTable&    /*theRelocTable*/
 ) const {
     
-    Handle(ShapeKeyAttr) attr = Handle(ShapeKeyAttr)::DownCast(theSource);
+    Handle(LabelPathAttr) attr = Handle(LabelPathAttr)::DownCast(theSource);
     if (attr.IsNull()) {
         return;
     }

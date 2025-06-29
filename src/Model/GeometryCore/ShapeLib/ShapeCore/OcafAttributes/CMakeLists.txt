@@ -1,5 +1,7 @@
 add_library(OcafAttributes
-    ShapeKeyAttr.cpp
+    LabelPathAttr.cpp
+    AssemblyPathAttr.cpp
+    ShapePathAttr.cpp
 )
 
 target_link_libraries(OcafAttributes PUBLIC

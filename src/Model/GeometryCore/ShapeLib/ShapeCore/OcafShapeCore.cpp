@@ -79,7 +79,7 @@ std::shared_ptr<ShapeKey> OcafShapeCore::registerNewFreeShape(const TopoDS_Shape
     TDF_Label mainLabel = _shapeTool->AddShape(aShape);
 
     Standard_Integer mainLabelTag = mainLabel.Tag();
-    Handle(ShapeKeyAttr) mainAttr = _attrFactory->shapeKeyAttr(
+    Handle(LabelPathAttr) mainAttr = _attrFactory->shapeKeyAttr(
         std::make_shared<ShapeKey>(mainLabelTag, 0)
     );
     
@@ -91,7 +91,7 @@ std::shared_ptr<ShapeKey> OcafShapeCore::registerNewFreeShape(const TopoDS_Shape
         TDF_Label subLabel = _shapeTool->AddShape(subShape);
         Standard_Integer subLabelTag = subLabel.Tag();
         
-        Handle(ShapeKeyAttr) subAttr = _attrFactory->shapeKeyAttr(
+        Handle(LabelPathAttr) subAttr = _attrFactory->shapeKeyAttr(
             std::make_shared<ShapeKey>(subLabelTag, mainLabelTag)
         );
         subLabel.AddAttribute(subAttr);
@@ -169,13 +169,6 @@ TDF_Label OcafShapeCore::registerAssemblyLabel(
     TDF_Label localAssemblyLabel = _shapeTool->NewShape();
     _shapeTool->SetShape(localAssemblyLabel, assemblyShape);
    
-    // I will think of specific assembly attr later 
-    // Standard_Integer tag = localAssemblyLabel.Tag();
-    // Handle(ShapeKeyAttr) attr = _attrFactory->shapeKeyAttr(
-    //     std::make_shared<ShapeKey>(tag, 0)
-    // );
-    // localAssemblyLabel.AddAttribute(attr);
-
     return localAssemblyLabel;
 }
 
@@ -191,12 +184,12 @@ TDF_Label OcafShapeCore::registerFreeShapeLabel(
     shape.Move(loc);
 
     TDF_Label localLabel = _shapeTool->AddShape(shape);
-    Standard_Integer tag = localLabel.Tag();
-
-    Handle(ShapeKeyAttr) attr = _attrFactory->shapeKeyAttr(
-        std::make_shared<ShapeKey>(tag, 0)
+    auto key = _labelKeyTool->keyFromLabel(localLabel);
+    Handle(LabelPathAttr) attr = _attrFactory->shapeKeyAttr(
+        key
     );
     localLabel.AddAttribute(attr);
+
     return localLabel;
 } 
 
@@ -214,14 +207,11 @@ TDF_Label OcafShapeCore::registerSubAssemblyLabel(
     _shapeTool->SetShape(localSubAssemblyLabel, subAssemblyShape);
     _shapeTool->AddComponent(aLocalParentAssemblyLabel, subAssemblyShape);
 
-    Standard_Integer tag = localSubAssemblyLabel.Tag();
-    Standard_Integer parentTag = aLocalParentAssemblyLabel.Tag();
-    // I will think of specific assembly attr later 
-    // Standard_Integer tag = localAssemblyLabel.Tag();
-    // Handle(ShapeKeyAttr) attr = _attrFactory->shapeKeyAttr(
-    //     std::make_shared<ShapeKey>(tag, 0)
-    // );
-    // localAssemblyLabel.AddAttribute(attr);
+    auto key = _labelKeyTool->keyFromLabel(localSubAssemblyLabel);
+    Handle(LabelPathAttr) attr = _attrFactory->shapeKeyAttr(
+        key
+    );
+    localSubAssemblyLabel.AddAttribute(attr);
     
     return localSubAssemblyLabel;
 }
@@ -243,13 +233,12 @@ TDF_Label OcafShapeCore::registerComponentLabel(
         aLocalParentAssemblyLabel, shape
     );
 
-    Standard_Integer tag = localComponentLabel.Tag();
-    Standard_Integer parentTag = aLocalParentAssemblyLabel.Tag();
-    Handle(ShapeKeyAttr) attr = _attrFactory->shapeKeyAttr(
-        std::make_shared<ShapeKey>(tag, parentTag)
+    auto key = _labelKeyTool->keyFromLabel(localComponentLabel);
+    Handle(LabelPathAttr) attr = _attrFactory->shapeKeyAttr(
+        key
     );
     localComponentLabel.AddAttribute(attr);
-
+    
     return localComponentLabel;
 }
 

@@ -17,30 +17,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LABELTAGKEY_HPP 
-#define LABELTAGKEY_HPP 
+#ifndef ASSEMBLYPATHTTR_HPP
+#define ASSEMBLYPATHTTR_HPP
 
-#include <string>
-#include <memory>
-#include <string>
-#include <tuple>
-#include <vector>
+#include "LabelPathAttr.hpp"
 
-class ShapeKey {
-public:
-    ShapeKey(std::vector<int> aShapeTreePath);
+class AssemblyPathAttr;
+DEFINE_STANDARD_HANDLE(AssemblyPathAttr, LabelPathAttr)
 
-    std::size_t hash() const;
-    std::string toString() const;
+class AssemblyPathAttr : public LabelPathAttr {
 
-    bool operator==(const ShapeKey& other) const;
-    bool operator<(const ShapeKey& other) const;
-    
-    std::vector<int> shapeTreePath() const {return _shapeTreePath;};
+	public:
+	DEFINE_STANDARD_RTTIEXT(AssemblyPathAttr, LabelPathAttr)
+	
+	static const Standard_GUID& GetID();
+	const Standard_GUID& ID() const override;
 
-    private:
-    const std::vector<int> _shapeTreePath;
-    const std::string _cachedString;
 };
 
-#endif // LABELTAGKEY_HPP
+#endif

@@ -17,8 +17,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEKEYATTR_HPP
-#define SHAPEKEYATTR_HPP
+#ifndef LabelPathAttr_HPP
+#define LabelPathAttr_HPP
 
 #include <TDF_Attribute.hxx>
 #include <Standard_GUID.hxx>
@@ -26,19 +26,16 @@
 
 #include <boost/signals2.hpp>
 
-class ShapeKeyAttr;
+class LabelPathAttr;
+DEFINE_STANDARD_HANDLE(LabelPathAttr, TDF_Attribute)
 
-// Define a handle to our attribute
-DEFINE_STANDARD_HANDLE(ShapeKeyAttr, TDF_Attribute)
-
-class ShapeKeyAttr : public TDF_Attribute {
+class LabelPathAttr : public TDF_Attribute {
 
 public:
-	using ShapeSignal = boost::signals2::signal<void(Standard_Integer, Standard_Integer)>;
-	DEFINE_STANDARD_RTTIEXT(ShapeKeyAttr, TDF_Attribute)
+	DEFINE_STANDARD_RTTIEXT(LabelPathAttr, TDF_Attribute)
+	
 
-    ShapeSignal& shapeAddedSignal() { return _shapeAddedSignal; }
-    ShapeSignal& shapeRemovedSignal() { return _shapeRemovedSignal; }
+
 
 	static const Standard_GUID& GetID();
 	const Standard_GUID& ID() const override;
@@ -54,27 +51,35 @@ public:
 
 	Standard_OStream& Dump(Standard_OStream& os) const override;
 
-	ShapeKeyAttr();
-	ShapeKeyAttr(Standard_Integer labelTag, Standard_Integer parentLabelTag);
+	LabelPathAttr();
+	LabelPathAttr(const std::vector<int>& labelPath);
 
-	void Set(Standard_Integer labelTag, Standard_Integer parentLabelTag);
-
-	void Get(Standard_Integer& labelTag, Standard_Integer& parentLabelTag) const;
+	void Set(const std::vector<int>& labelPath);
+	void Get(std::vector<int>& labelPath) const;
 
 	void AfterAddition() override;
 	void BeforeRemoval() override;
 
-	Standard_Boolean AfterUndo (const Handle(TDF_AttributeDelta)& anAttDelta, const Standard_Boolean forceIt = Standard_False);
-	Standard_Integer parentLabelTag() const {return _parentLabelTag;}    
-    Standard_Integer labelTag() const {return _labelTag;}
+	Standard_Boolean AfterUndo (
+		const Handle(TDF_AttributeDelta)& anAttDelta, 
+		const Standard_Boolean forceIt = Standard_False
+	) override;
 
-	private:
-	ShapeSignal _shapeAddedSignal;
-	ShapeSignal _shapeRemovedSignal;
-
-	Standard_Integer _labelTag;
-	Standard_Integer _parentLabelTag;
-
+	
+	std::vector<int> labelPath() const {return _labelPath;}    
+	
+	using LabelPathSignal = boost::signals2::signal<
+		void(std::vector<int> labelPath)
+	>;
+	
+	LabelPathSignal& shapeAddedSignal() { return _shapeAddedSignal; }
+    LabelPathSignal& shapeRemovedSignal() { return _shapeRemovedSignal; }
+	
+	protected:
+	
+	LabelPathSignal _shapeAddedSignal;
+	LabelPathSignal _shapeRemovedSignal;
+	std::vector<int> _labelPath;
 };
 
 #endif
