@@ -37,4 +37,17 @@ class ShapeRemovedEvent : public GeometryEvent {
     const ShapeId shapeId;
 };
 
+class AssemblyAddedEvent : public GeometryEvent {
+    public:
+    AssemblyAddedEvent(const ShapeId& aShapeId) : shapeId(aShapeId) {}
+    const ShapeId shapeId;
+};
+
+class AssemblyRemovedEvent: public GeometryEvent {
+    public:
+    AssemblyRemovedEvent(const ShapeId& aShapeId) : shapeId(aShapeId) {}
+    const ShapeId shapeId;
+};
+
+
 #endif

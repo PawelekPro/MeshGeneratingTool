@@ -68,8 +68,8 @@ TEST_F(ShapeServiceTest, ShapeServicePublishesShapeAddedEventOnSingleSTEPImport)
     shapeService->importSTEP(filePath);
     
     // Assert
-    auto publishedId = shapeEventTracker->addEvents[0].shapeId;
     ASSERT_EQ(shapeEventTracker->addEvents.size(), 1);
+    auto publishedId = shapeEventTracker->addEvents[0].shapeId;
     ASSERT_TRUE(shapeCore->shapeMap()->containsId(publishedId));
     ASSERT_FALSE(shapeCore->shapeMap()->atId(publishedId).IsNull());
 }

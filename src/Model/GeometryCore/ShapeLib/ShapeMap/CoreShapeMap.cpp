@@ -55,21 +55,7 @@ const ShapeId CoreShapeMap::atShape(const TopoDS_Shape& shape) const {
         return ShapeId::invalidId();
     }
 
-    size_t labelTag = label.Tag();
-    size_t parentLabelTag = 0;
-
-    if (!_shapeTool->IsTopLevel(label)) {
-        TDF_Label current = label;
-        while (!current.IsRoot()) {
-            current = current.Father();
-            if (_shapeTool->IsTopLevel(current)) {
-                parentLabelTag = current.Tag();
-                break;
-            }
-        }
-    }
-
-    auto key = std::make_shared<ShapeKey>(labelTag, parentLabelTag);
+    auto key = _labelKeyTool->keyFromLabel(label);
     ShapeId id = ShapeIdFactory::create(key);
     return id;
 }

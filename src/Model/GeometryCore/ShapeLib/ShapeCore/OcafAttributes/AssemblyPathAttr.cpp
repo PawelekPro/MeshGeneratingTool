@@ -29,7 +29,7 @@ AssemblyPathAttr::AssemblyPathAttr()
 : LabelPathAttr() {}
 
 AssemblyPathAttr::AssemblyPathAttr(const std::vector<int>& labelPath)
-: LabelPathAttr(LabelPath) {}
+: LabelPathAttr(labelPath) {}
 
 const Standard_GUID& AssemblyPathAttr::GetID() {
   return GUID_ShapeIdAttr;

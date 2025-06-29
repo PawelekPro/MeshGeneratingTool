@@ -34,6 +34,14 @@ void ShapeSignalWrapper::publishShapeRemovedEvent(const ShapeId& aShapeId){
     _eventBus.publish(ShapeRemovedEvent(aShapeId));
 }
 
+void ShapeSignalWrapper::publishAssemblyAddedEvent(const ShapeId& aShapeId){
+    _eventBus.publish(AssemblyAddedEvent(aShapeId));
+}
+
+void ShapeSignalWrapper::publishAssemblyRemovedEvent(const ShapeId& aShapeId){
+    _eventBus.publish(AssemblyRemovedEvent(aShapeId));
+}
+
 void ShapeSignalWrapper::onShapeAdded(std::shared_ptr<ShapeKey> aKey){
     auto id = ShapeIdFactory::create(aKey);
     publishShapeAddedEvent(id);
@@ -42,4 +50,14 @@ void ShapeSignalWrapper::onShapeAdded(std::shared_ptr<ShapeKey> aKey){
 void ShapeSignalWrapper::onShapeRemoved(std::shared_ptr<ShapeKey> aKey){
     auto id = ShapeIdFactory::create(aKey);
     publishShapeRemovedEvent(id);
+}
+
+void ShapeSignalWrapper::onAssemblyAdded(std::shared_ptr<ShapeKey> aKey){
+    auto id = ShapeIdFactory::create(aKey);
+    publishAssemblyAddedEvent(id);
+}
+
+void ShapeSignalWrapper::onAssemblyRemoved(std::shared_ptr<ShapeKey> aKey){
+    auto id = ShapeIdFactory::create(aKey);
+    publishAssemblyRemovedEvent(id);
 }

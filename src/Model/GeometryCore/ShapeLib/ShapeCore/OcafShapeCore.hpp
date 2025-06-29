@@ -82,6 +82,10 @@ class OcafShapeCore : public ShapeCore {
     virtual bool importDocument(Handle(TDocStd_Document) aDoc) override; 
     
     private:
+
+    void addShapeAttributeToLabel(TDF_Label& aLabel);
+    void addAssemblyAttributeToLabel(TDF_Label& aLabel);
+
     void importAssemblyLabel(
         Handle(XCAFDoc_ShapeTool) aShapeTool, 
         const TDF_Label& aLabel

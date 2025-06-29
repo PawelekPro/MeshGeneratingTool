@@ -47,16 +47,6 @@ Standard_Boolean XmlShapeLibDrivers_ShapeIdDriver::Paste(
     if (shapeIdAttr.IsNull()) {
         return Standard_False;
     }
-    Standard_Integer labelTagInt, parentLabelTagInt;
-    
-    Standard_Boolean labelTagRead = labelTag.GetInteger(labelTagInt);
-    Standard_Boolean parentLabelTagRead = parentLabelTag.GetInteger(parentLabelTagInt);
-
-    if (labelTagRead == NULL || parentLabelTagRead == NULL) {
-        return Standard_False;
-    }
-    
-    shapeIdAttr->Set(labelTagInt, parentLabelTagInt);
     return Standard_True;
 }
 
@@ -70,12 +60,5 @@ void XmlShapeLibDrivers_ShapeIdDriver::Paste(
     if (attr.IsNull()) {
         return;
     }
-
-    Standard_Integer labelTagInt, parentLabelTagInt;
-    attr->Get(labelTagInt, parentLabelTagInt);
-    
     XmlObjMgt_Element& anElement = theTarget.Element();
-    
-    anElement.setAttribute(::LabelTag(), labelTagInt);
-    anElement.setAttribute(::ParentLabelTag(), parentLabelTagInt);
 }

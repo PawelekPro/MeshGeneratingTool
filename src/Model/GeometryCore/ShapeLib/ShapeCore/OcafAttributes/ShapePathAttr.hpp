@@ -30,6 +30,9 @@ class ShapePathAttr : public LabelPathAttr {
 	public:
 	DEFINE_STANDARD_RTTIEXT(ShapePathAttr, LabelPathAttr)
 	
+	ShapePathAttr();
+	ShapePathAttr(const std::vector<int>& labelPath);
+	
 	static const Standard_GUID& GetID();
 	const Standard_GUID& ID() const override;
 };

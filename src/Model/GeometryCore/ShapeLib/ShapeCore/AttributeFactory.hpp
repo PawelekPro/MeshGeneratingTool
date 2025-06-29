@@ -25,9 +25,9 @@
 #include <memory>
 #include "ShapeSignalsPublisher.hpp"
 
-class ShapePathAttr;
-class AssemblyPathAttr;
-class ShapeKey;
+#include "ShapePathAttr.hpp"
+#include "LabelPathAttr.hpp"
+#include "AssemblyPathAttr.hpp"
 
 class AttributeFactory {
 
@@ -36,7 +36,7 @@ class AttributeFactory {
     ~AttributeFactory() = default;
 
     Handle(ShapePathAttr) shapePathAttr(std::shared_ptr<ShapeKey> aKey);
-    Handle(AssemblyPathAttr) AssemblyPathAttr(std::shared_ptr<ShapeKey> aKey);
+    Handle(AssemblyPathAttr) assemblyPathAttr(std::shared_ptr<ShapeKey> aKey);
 
     private:
     ShapeSignalsPublisher& _publisher;

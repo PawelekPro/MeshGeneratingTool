@@ -34,9 +34,6 @@ class LabelPathAttr : public TDF_Attribute {
 public:
 	DEFINE_STANDARD_RTTIEXT(LabelPathAttr, TDF_Attribute)
 	
-
-
-
 	static const Standard_GUID& GetID();
 	const Standard_GUID& ID() const override;
 
@@ -65,7 +62,7 @@ public:
 		const Standard_Boolean forceIt = Standard_False
 	) override;
 
-	
+
 	std::vector<int> labelPath() const {return _labelPath;}    
 	
 	using LabelPathSignal = boost::signals2::signal<

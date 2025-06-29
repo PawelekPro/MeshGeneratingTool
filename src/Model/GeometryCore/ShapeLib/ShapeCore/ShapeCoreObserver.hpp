@@ -30,6 +30,8 @@ class ShapeCoreObserver {
     virtual void onShapeAdded(std::shared_ptr<ShapeKey>) = 0;
     virtual void onShapeRemoved(std::shared_ptr<ShapeKey>) = 0;
 
+    virtual void onAssemblyAdded(std::shared_ptr<ShapeKey>) = 0;
+    virtual void onAssemblyRemoved(std::shared_ptr<ShapeKey>) = 0;
 };
 
 #endif 

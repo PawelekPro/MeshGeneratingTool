@@ -29,7 +29,10 @@ class AssemblyPathAttr : public LabelPathAttr {
 
 	public:
 	DEFINE_STANDARD_RTTIEXT(AssemblyPathAttr, LabelPathAttr)
-	
+
+	AssemblyPathAttr();
+	AssemblyPathAttr(const std::vector<int>& labelPath);
+    
 	static const Standard_GUID& GetID();
 	const Standard_GUID& ID() const override;
 

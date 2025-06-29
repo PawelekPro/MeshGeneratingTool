@@ -52,5 +52,5 @@ std::shared_ptr<ShapeKey> LabelKeyTool::keyFromLabel(const TDF_Label& aLabel) {
 }
 
 std::shared_ptr<ShapeKey> LabelKeyTool::keyFromAttr(Handle(LabelPathAttr) aAttr) {
-    return std::make_shared<ShapeKey>(aAttr->shapeTreePath());
+    return std::make_shared<ShapeKey>(aAttr->labelPath());
 }

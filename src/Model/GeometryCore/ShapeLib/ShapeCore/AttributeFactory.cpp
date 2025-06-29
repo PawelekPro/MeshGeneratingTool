@@ -19,6 +19,9 @@
 
 #include "AttributeFactory.hpp"
 #include "LabelPathAttr.hpp"
+#include "ShapePathAttr.hpp"
+#include "AssemblyPathAttr.hpp"
+
 #include "OcafShapeCore.hpp"
 #include "ShapeKey.hpp"
 
@@ -26,10 +29,10 @@ AttributeFactory::AttributeFactory(
     ShapeSignalsPublisher& aPublisher
 ) : _publisher(aPublisher) {}
 
-Handle(LabelPathAttr) AttributeFactory::shapeKeyAttr(
+Handle(ShapePathAttr) AttributeFactory::shapePathAttr(
     std::shared_ptr<ShapeKey> aKey
 ) {
-    Handle(LabelPathAttr) attr = new LabelPathAttr(
+    Handle(ShapePathAttr) attr = new ShapePathAttr(
        aKey->shapeTreePath() 
     );
 
@@ -48,6 +51,35 @@ Handle(LabelPathAttr) AttributeFactory::shapeKeyAttr(
         ) {
             auto key = std::make_shared<ShapeKey>(aShapeTreePath);
             publisher.get().publishShapeRemoved(key);
+        }
+    );
+    
+    return attr;
+}
+
+
+Handle(AssemblyPathAttr) AttributeFactory::assemblyPathAttr(
+    std::shared_ptr<ShapeKey> aKey
+) {
+    Handle(AssemblyPathAttr) attr = new AssemblyPathAttr(
+       aKey->shapeTreePath() 
+    );
+
+    attr->shapeAddedSignal().connect(
+        [publisher = std::ref(_publisher)](
+            std::vector<int> aShapeTreePath
+        ) {
+            auto key = std::make_shared<ShapeKey>(aShapeTreePath);
+            publisher.get().publishAssemblyAdded(key);
+        }
+    );
+
+    attr->shapeRemovedSignal().connect(
+        [publisher = std::ref(_publisher)](
+            std::vector<int> aShapeTreePath
+        ) {
+            auto key = std::make_shared<ShapeKey>(aShapeTreePath);
+            publisher.get().publishAssemblyRemoved(key);
         }
     );
     

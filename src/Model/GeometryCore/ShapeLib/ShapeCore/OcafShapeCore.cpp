@@ -32,10 +32,15 @@
 #include <TNaming_NamedShape.hxx>
 #include <TDocStd_Modified.hxx>
 #include <Quantity_ColorRGBA.hxx>
+
 #include "XmlShapeLibDrivers.hpp"
 #include "CoreShapeMap.hpp"
 #include "AttributeFactory.hpp"
 #include "LabelKeyTool.hpp"
+
+#include "ShapePathAttr.hpp"
+#include "LabelPathAttr.hpp"
+#include "AssemblyPathAttr.hpp"
 
 OcafShapeCore::OcafShapeCore()
 {
@@ -75,26 +80,39 @@ bool OcafShapeCore::write(const std::string& aSavePath) const {
     return true;
 }
 
+void OcafShapeCore::addShapeAttributeToLabel(
+    TDF_Label& aLabel
+) {
+    auto key = _labelKeyTool->keyFromLabel(aLabel);  
+    Handle(ShapePathAttr) attr = _attrFactory->shapePathAttr(
+        key
+    );
+    aLabel.AddAttribute(attr);
+}
+
+void OcafShapeCore::addAssemblyAttributeToLabel(
+    TDF_Label& aLabel
+) {
+    auto key = _labelKeyTool->keyFromLabel(aLabel);  
+    Handle(AssemblyPathAttr) attr = _attrFactory->assemblyPathAttr(
+        key
+    );
+    aLabel.AddAttribute(attr);
+}
+
+
 std::shared_ptr<ShapeKey> OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
     TDF_Label mainLabel = _shapeTool->AddShape(aShape);
 
-    Standard_Integer mainLabelTag = mainLabel.Tag();
-    Handle(LabelPathAttr) mainAttr = _attrFactory->shapeKeyAttr(
-        std::make_shared<ShapeKey>(mainLabelTag, 0)
-    );
-    
-    mainLabel.AddAttribute(mainAttr);
+    addShapeAttributeToLabel(mainLabel);
     for (TopExp_Explorer exp(aShape, TopAbs_SHAPE); exp.More(); exp.Next()) {
         const TopoDS_Shape& subShape = exp.Current();
         if (subShape.IsEqual(aShape))
             continue;
         TDF_Label subLabel = _shapeTool->AddShape(subShape);
-        Standard_Integer subLabelTag = subLabel.Tag();
-        
-        Handle(LabelPathAttr) subAttr = _attrFactory->shapeKeyAttr(
-            std::make_shared<ShapeKey>(subLabelTag, mainLabelTag)
-        );
-        subLabel.AddAttribute(subAttr);
+       
+        auto subKey = _labelKeyTool->keyFromLabel(subLabel);  
+        addShapeAttributeToLabel(subLabel);    
     }
     return _labelKeyTool->keyFromLabel(mainLabel);
 }
@@ -168,7 +186,8 @@ TDF_Label OcafShapeCore::registerAssemblyLabel(
 
     TDF_Label localAssemblyLabel = _shapeTool->NewShape();
     _shapeTool->SetShape(localAssemblyLabel, assemblyShape);
-   
+    addAssemblyAttributeToLabel(localAssemblyLabel);
+    
     return localAssemblyLabel;
 }
 
@@ -184,11 +203,7 @@ TDF_Label OcafShapeCore::registerFreeShapeLabel(
     shape.Move(loc);
 
     TDF_Label localLabel = _shapeTool->AddShape(shape);
-    auto key = _labelKeyTool->keyFromLabel(localLabel);
-    Handle(LabelPathAttr) attr = _attrFactory->shapeKeyAttr(
-        key
-    );
-    localLabel.AddAttribute(attr);
+    addShapeAttributeToLabel(localLabel);
 
     return localLabel;
 } 
@@ -207,11 +222,7 @@ TDF_Label OcafShapeCore::registerSubAssemblyLabel(
     _shapeTool->SetShape(localSubAssemblyLabel, subAssemblyShape);
     _shapeTool->AddComponent(aLocalParentAssemblyLabel, subAssemblyShape);
 
-    auto key = _labelKeyTool->keyFromLabel(localSubAssemblyLabel);
-    Handle(LabelPathAttr) attr = _attrFactory->shapeKeyAttr(
-        key
-    );
-    localSubAssemblyLabel.AddAttribute(attr);
+    addAssemblyAttributeToLabel(localSubAssemblyLabel);
     
     return localSubAssemblyLabel;
 }
@@ -233,11 +244,7 @@ TDF_Label OcafShapeCore::registerComponentLabel(
         aLocalParentAssemblyLabel, shape
     );
 
-    auto key = _labelKeyTool->keyFromLabel(localComponentLabel);
-    Handle(LabelPathAttr) attr = _attrFactory->shapeKeyAttr(
-        key
-    );
-    localComponentLabel.AddAttribute(attr);
+    addShapeAttributeToLabel(localComponentLabel);
     
     return localComponentLabel;
 }

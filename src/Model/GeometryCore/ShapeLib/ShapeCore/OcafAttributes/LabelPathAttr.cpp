@@ -65,12 +65,7 @@ void LabelPathAttr::Paste(
 }
 
 Standard_OStream& LabelPathAttr::Dump(Standard_OStream& os) const {
-  os << "LabelPathAttr(TreePath=[";
-  for (size_t i = 0; i < _labelPath.size(); ++i) {
-    os << _labelPath[i];
-    if (i + 1 < _labelPath.size()) os << ":";
-  }
-  os << "])";
+  os << "LabelPathAttr";
   return os;
 }
 

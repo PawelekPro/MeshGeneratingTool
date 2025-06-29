@@ -38,8 +38,12 @@ public:
         onShapeRemoved(aShapeKey);
     }
 
-    void publishShapeModified(std::shared_ptr<ShapeKey> aShapeKey) {
-        onShapeModified(aShapeKey);
+    void publishAssemblyAdded(std::shared_ptr<ShapeKey> aShapeKey) {
+        onAssemblyAdded(aShapeKey);
+    }
+
+    void publishAssemblyRemoved(std::shared_ptr<ShapeKey> aShapeKey) {
+        onAssemblyRemoved(aShapeKey);
     }
 
     void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver)  {
@@ -58,12 +62,32 @@ public:
                 }
             }
         );
+
+        onAssemblyAdded.connect(
+            [weakObs = std::weak_ptr(aObserver)](std::shared_ptr<ShapeKey> id) {
+                if (auto obs = weakObs.lock()) {
+                    obs->onAssemblyAdded(id);
+                }
+            }
+        );
+
+        onAssemblyRemoved.connect(
+            [weakObs = std::weak_ptr(aObserver)](std::shared_ptr<ShapeKey> id) {
+                if (auto obs = weakObs.lock()) {
+                    obs->onAssemblyRemoved(id);
+                }
+            }
+        );
+
     }
 
 private:
     ShapeSignal onShapeAdded;
     ShapeSignal onShapeRemoved;
     ShapeSignal onShapeModified;
+
+    ShapeSignal onAssemblyAdded;
+    ShapeSignal onAssemblyRemoved;
 };
 
 #endif // SHAPEEVENTSPUBLISHER_HPP
