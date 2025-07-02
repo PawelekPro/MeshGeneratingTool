@@ -46,7 +46,6 @@ TEST_F(GeometryTest, ImportSTEPFile) {
     // Act
     geometry->importSTEP(filePath);
 
-
     // Assert
     auto shapeMap = geometry->shapeView()->shapeMap();
     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    

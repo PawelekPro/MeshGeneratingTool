@@ -26,18 +26,30 @@
 
 class ShapeEventTracker {
     public:
-    std::vector<ShapeAddedEvent> addEvents;
-    std::vector<ShapeRemovedEvent> removeEvents;
+    std::vector<ShapeAddedEvent> shapeAddedEvents;
+    std::vector<ShapeRemovedEvent> shapeRemovedEvents;
+
+    std::vector<AssemblyAddedEvent> assemblyAddedEvents;
+    std::vector<AssemblyRemovedEvent> assemblyRemovedEvents;
+
     std::vector<ProgressMessage> progressMessages;
 
-    void onRemovedEvent(const ShapeRemovedEvent& event) {
-        removeEvents.push_back(event);
+    void onShapeRemovedEvent(const ShapeRemovedEvent& event) {
+        shapeRemovedEvents.push_back(event);
     }
 
-    void onAddEvent(const ShapeAddedEvent& event) {
-        addEvents.push_back(event);
+    void onShapeAddedEvent(const ShapeAddedEvent& event) {
+        shapeAddedEvents.push_back(event);
     }
 
+    void onAssemblyAddedEvent(const AssemblyAddedEvent& event) {
+        assemblyAddedEvents.push_back(event);
+    }
+    
+    void onAssemblyRemovedEvent(const AssemblyRemovedEvent& event) {
+        assemblyRemovedEvents.push_back(event);
+    }
+    
     void onProgressMessage(const ProgressMessage& event) {
         progressMessages.push_back(event);
     }

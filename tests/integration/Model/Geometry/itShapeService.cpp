@@ -26,87 +26,125 @@
 #include <gmock/gmock.h>
 
 class ShapeServiceTest : public ::testing::Test {
-    protected:
-    std::unique_ptr<MessageBus> messageBus;
-    std::unique_ptr<ShapeEventTracker> shapeEventTracker;
+protected:
+    static inline std::unique_ptr<MessageBus> messageBus;
+    static inline std::unique_ptr<ShapeEventTracker> shapeEventTracker;
+    static inline std::shared_ptr<ShapeCore> shapeCore;
+    static inline std::unique_ptr<ShapeService> shapeService;
 
-    std::shared_ptr<ShapeCore> shapeCore;
-    std::unique_ptr<ShapeService> shapeService;
 
-    void SetUp() override {
+    static void SetUpTestSuite() {
         messageBus = std::make_unique<MessageBus>();
         shapeEventTracker = std::make_unique<ShapeEventTracker>();
-        
+
         messageBus->subscribe<ShapeAddedEvent>(
-            [this](const ShapeAddedEvent& event) {
-                shapeEventTracker->onAddEvent(event);
+            [](const ShapeAddedEvent& event) {
+                shapeEventTracker->onShapeAddedEvent(event);
             }
         );
         messageBus->subscribe<ShapeRemovedEvent>(
-            [this](const ShapeRemovedEvent& event) {
-                shapeEventTracker->onRemovedEvent(event);
+            [](const ShapeRemovedEvent& event) {
+                shapeEventTracker->onShapeRemovedEvent(event);
             }
         );
-
+        messageBus->subscribe<AssemblyAddedEvent>(
+            [](const AssemblyAddedEvent& event) {
+                shapeEventTracker->onAssemblyAddedEvent(event);
+            }
+        );
+        messageBus->subscribe<AssemblyRemovedEvent>(
+            [](const AssemblyRemovedEvent& event) {
+                shapeEventTracker->onAssemblyRemovedEvent(event);
+            }
+        );
         messageBus->subscribe<ProgressMessage>(
-            [this](const ProgressMessage& event) {
+            [](const ProgressMessage& event) {
                 shapeEventTracker->onProgressMessage(event);
             }
         );
-        
+
         shapeCore = std::make_shared<OcafShapeCore>();
         shapeService = std::make_unique<ShapeService>(*messageBus, shapeCore);
     }
 
+    static void TearDownTestSuite() {
+        messageBus.reset();
+        shapeEventTracker.reset();
+        shapeCore.reset();
+        shapeService.reset();
+    }
 };
 
-TEST_F(ShapeServiceTest, ShapeServicePublishesShapeAddedEventOnSingleSTEPImport) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-   
-    // Act 
-    shapeService->importSTEP(filePath);
-    
-    // Assert
-    ASSERT_EQ(shapeEventTracker->addEvents.size(), 1);
-    auto publishedId = shapeEventTracker->addEvents[0].shapeId;
-    ASSERT_TRUE(shapeCore->shapeMap()->containsId(publishedId));
-    ASSERT_FALSE(shapeCore->shapeMap()->atId(publishedId).IsNull());
-}
+class ShapeServiceCubeImportTest : public ShapeServiceTest {
+protected:
+    static void SetUpTestSuite() {
+        ShapeServiceTest::SetUpTestSuite();
+        std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+        shapeService->importSTEP(filePath);
+    }
+    static inline ShapeId importedShapeId = ShapeId::invalidId();
 
-TEST_F(ShapeServiceTest, ShapeServicePublishesProgressMessagesOnSETPImport) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-   
-    // Act 
-    shapeService->importSTEP(filePath);
-    
-    // Assert
+};
+
+class ShapeServiceJointImportTest : public ShapeServiceTest {
+protected:
+    static void SetUpTestSuite() {
+        ShapeServiceTest::SetUpTestSuite();
+        std::string filePath = std::string(TESTS_DATA_PATH) + "/joint.stp";
+        shapeService->importSTEP(filePath);
+    }
+
+    static inline ShapeId importedAssemblyId = ShapeId::invalidId();
+    static inline std::vector<ShapeId> importedShapes;
+
+};
+
+TEST_F(ShapeServiceCubeImportTest, ShapeMapContainsImportedShape) {
+    ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
+    ShapeServiceCubeImportTest::importedShapeId = \
+        shapeEventTracker->shapeAddedEvents[0].shapeId;
+    ASSERT_EQ(shapeCore->shapeMap()->freeShapes().size(), 1);
+    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapeId));
+    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapeId).IsNull());
+};
+
+TEST_F(ShapeServiceCubeImportTest, ProgressMessagesArePublished) {
     ASSERT_TRUE(shapeEventTracker->progressMessages.size() > 0);
+};
+
+TEST_F(ShapeServiceCubeImportTest, ShapeAddedMessageIsPublishedWithCorrectId) {
+    ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
+};
+
+// JOINT.stp import
+TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShapes) {
+    ASSERT_EQ(shapeEventTracker->assemblyAddedEvents.size(), 1);
+    ShapeServiceJointImportTest::importedAssemblyId = \
+        shapeEventTracker->assemblyAddedEvents[0].shapeId;
+
+    ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 2);
+    ShapeServiceJointImportTest::importedShapes.push_back(
+        shapeEventTracker->shapeAddedEvents[0].shapeId
+    );
+    ShapeServiceJointImportTest::importedShapes.push_back(
+        shapeEventTracker->shapeAddedEvents[1].shapeId
+    );
 }
 
-TEST_F(ShapeServiceTest, ShapeServicePublishesOnSingleRemoveShape) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-    shapeService->importSTEP(filePath);
-    auto importedShapeId = shapeEventTracker->addEvents[0].shapeId;
-   
-    // Act 
-    shapeService->removeShape(importedShapeId);
+TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShape) {
+    ASSERT_EQ(shapeCore->shapeMap()->freeShapes().size(), 1);
+
+    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedAssemblyId));
+    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedAssemblyId).IsNull());
+
+
+    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapes[0]));
+    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapes[1]));
     
-    // Assert
-    ASSERT_EQ(shapeEventTracker->removeEvents.size(), 1);
-    ASSERT_FALSE(shapeCore->shapeMap()->containsId(importedShapeId));
+    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapes[0]).IsNull());
+    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapes[1]).IsNull());
 }
 
-TEST_F(ShapeServiceTest, ShapeServiceImportSTEPWithMultipleComponents) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/joint.stp";
-   
-    // Act 
-    shapeService->importSTEP(filePath);
-    shapeCore->write("joint.xml");
-    
-    // Assert
-    ASSERT_EQ(shapeEventTracker->addEvents.size(), 2);
+TEST_F(ShapeServiceJointImportTest, ProgressMessagesArePublished) {
+    ASSERT_TRUE(shapeEventTracker->progressMessages.size() > 0);
 }
