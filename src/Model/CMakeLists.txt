@@ -13,7 +13,6 @@ TARGET_LINK_LIBRARIES(Model PUBLIC
     ${GMSH_LIB}
     GeometryCore
     MeshCore
-    Document
 )
 
 

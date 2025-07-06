@@ -11,9 +11,7 @@ target_link_libraries(GeometryCore PUBLIC
     ShapeLib
     Geometry_Events
     Geometry_Commands
-    BaseCommands
-    Messages
-    Progress
+    Tools
 )
 
 target_include_directories(GeometryCore PUBLIC 

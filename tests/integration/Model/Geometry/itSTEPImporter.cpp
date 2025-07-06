@@ -22,6 +22,7 @@
 
 #include "STEPImporter.hpp"
 #include "ShapeImporter.hpp"
+
 #include <iostream>
 #include <sstream>
 #include <TDF_LabelSequence.hxx>
@@ -30,38 +31,71 @@
 #include <XCAFDoc_DocumentTool.hxx>
 #include <TDocStd_Document.hxx>
 
-class STEPImporterTest : public ::testing::Test {
+class STEPImporterCubeTest : public ::testing::Test {
 protected:
+    static inline std::string filePath;
+    static inline Handle(TDocStd_Document) doc;
     STEPImporter importer;
+    
+    static void SetUpTestSuite() {
+        filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+    }
+
+    static void TearDownTestSuite() {
+        doc.Nullify();
+    }
 };
 
-TEST_F(STEPImporterTest, TestImportingPartFlangeFile){
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
-    IdleProgressIndicator indicator;
-    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-        importer.importFreeShapes(filePath, indicator);
-    EXPECT_EQ(shapes.size(), 1);
-    EXPECT_EQ(shapes[0].second.color.r, 1);
-    EXPECT_EQ(shapes[0].second.color.g, 1);
-    EXPECT_EQ(shapes[0].second.color.b, 0);
+class STEPImporterJointTest : public ::testing::Test {
+protected:
+    static inline std::string filePath;
+    static inline Handle(TDocStd_Document) doc;
+    STEPImporter importer;
+
+    static void SetUpTestSuite() {
+        filePath = std::string(TESTS_DATA_PATH) + "/joint.stp";
+    }
+
+    static void TearDownTestSuite() {
+        doc.Nullify();
+    }
+};
+
+TEST_F(STEPImporterCubeTest, TestImportCubeFile) {
+    doc = importer.import(filePath);
+} 
+
+TEST_F(STEPImporterCubeTest, TestImportedDocHasOneShapeOnly) {
+    ASSERT_FALSE(doc.IsNull());
+
+    Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
+
+    TDF_LabelSequence labels;
+    shapeTool->GetFreeShapes(labels);
+
+    EXPECT_EQ(labels.Length(), 1);
 }
 
-TEST_F(STEPImporterTest, TestImportingPartFlangeFileIntoDoc){
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/flange.stp";
-    IdleProgressIndicator indicator;
-    auto doc = importer.importFreeShapesIntoDoc(filePath, indicator);
-    TDF_LabelSequence freeShapes;
-    Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(
-        doc->Main()
-    );
-    shapeTool->GetFreeShapes(freeShapes);
-    ASSERT_EQ(freeShapes.Size(), 1);
-}
+TEST_F(STEPImporterJointTest, TestImportJointTest) {
+    doc = importer.import(filePath);
+} 
 
-TEST_F(STEPImporterTest, TestImportingPartCubeFile){
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-    IdleProgressIndicator indicator;
-    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes = 
-        importer.importFreeShapes(filePath, indicator);
-    EXPECT_EQ(shapes.size(), 1);
+TEST_F(STEPImporterJointTest, TestImportedDocHasOneAssemblyWith2SubParts) {
+    ASSERT_FALSE(doc.IsNull());
+
+    Handle(XCAFDoc_ShapeTool) shapeTool = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
+
+    TDF_LabelSequence roots;
+    shapeTool->GetFreeShapes(roots);
+
+    EXPECT_EQ(roots.Length(), 1);
+
+    TDF_Label rootAssembly = roots.First();
+
+    EXPECT_TRUE(shapeTool->IsAssembly(rootAssembly));
+
+    TDF_LabelSequence children;
+    shapeTool->GetComponents(rootAssembly, children);
+    
+    EXPECT_EQ(children.Length(), 2);
 }

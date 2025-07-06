@@ -20,15 +20,16 @@
 #include <memory>
 #include "MessageBus.hpp"
 #include "ShapeSignalWrapper.hpp"
+#include "ShapeImporter.hpp"
+
 class ShapeCore;
 class ShapeService{
     public:
     ShapeService(MessageBus& aMessageBus, std::shared_ptr<ShapeCore>);
     ~ShapeService() = default;
 
-    void importSTEP(const std::string& aFilePath);
-    void importSTL(const std::string& aFilePath);
-   
+    void importShapes(const ShapeImporter& aImporter, const std::string& aFilePath);
+
     void removeShape(const ShapeId& aShapeId);
     void scaleShape(const ShapeId& aShapeId, float aScaleFactor);
 

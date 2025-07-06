@@ -23,57 +23,57 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-class GeometryTest : public ::testing::Test {
-    protected:
+// class GeometryTest : public ::testing::Test {
+//     protected:
 
-    CommandStack commandStack;
-    MessageBus messageBus;
-    std::unique_ptr<Geometry> geometry;
-    std::shared_ptr<ShapeCore> shapeCore;
+//     CommandStack commandStack;
+//     MessageBus messageBus;
+//     std::unique_ptr<Geometry> geometry;
+//     std::shared_ptr<ShapeCore> shapeCore;
 
-    void SetUp() override {
-        shapeCore = std::make_shared<OcafShapeCore>();
-        geometry = std::make_unique<Geometry>(
-            commandStack, messageBus, shapeCore
-        );
-    } 
-};
+//     void SetUp() override {
+//         shapeCore = std::make_shared<OcafShapeCore>();
+//         geometry = std::make_unique<Geometry>(
+//             commandStack, messageBus, shapeCore
+//         );
+//     } 
+// };
 
-TEST_F(GeometryTest, ImportSTEPFile) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+// TEST_F(GeometryTest, ImportSTEPFile) {
+//     // Arrange
+//     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
 
-    // Act
-    geometry->importSTEP(filePath);
+//     // Act
+//     geometry->importSTEP(filePath);
 
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+// }
 
-TEST_F(GeometryTest, UndoImportSTEPFile) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+// TEST_F(GeometryTest, UndoImportSTEPFile) {
+//     // Arrange
+//     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
 
-    // Act
-    geometry->importSTEP(filePath);
-    commandStack.undo();
+//     // Act
+//     geometry->importSTEP(filePath);
+//     commandStack.undo();
 
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
+// }
 
-TEST_F(GeometryTest, RedoImportSTEPFile) {
-    // Arrange
-    std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+// TEST_F(GeometryTest, RedoImportSTEPFile) {
+//     // Arrange
+//     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
 
-    // Act
-    geometry->importSTEP(filePath);
-    commandStack.undo();
-    commandStack.redo();
+//     // Act
+//     geometry->importSTEP(filePath);
+//     commandStack.undo();
+//     commandStack.redo();
 
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+// }

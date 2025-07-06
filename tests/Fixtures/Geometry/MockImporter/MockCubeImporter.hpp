@@ -17,20 +17,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STLIMPORTER_HPP
-#define STLIMPORTER_HPP
+#ifndef MOCKCUBEIMPORTER_HPP
+#define MOCKCUBEIMPORTER_HPP 
 
 #include "ShapeImporter.hpp"
+#include "StubShapes.hpp"
 
-class STLImporter : public ShapeImporter{
-    public:
-    ~STLImporter() override = default;
+#include <XCAFDoc_DocumentTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <TDF_Label.hxx>
 
-    virtual Handle(TDocStd_Document) import(
-        const std::string& aFilePath, 
+class MockCubeImporter : public ShapeImporter {
+public:
+    Handle(TDocStd_Document) import(
+        const std::string& aFilePath,
         const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
-    ) const override;
+    ) const override 
+    {
+        aProgressIndicator.progress("start", 0);
+        Handle(TDocStd_Document) doc = initDocument();
 
+        auto shapeTool = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
+        TopoDS_Shape cubeShape = StubShapes::cube();
+
+        aProgressIndicator.progress("progress", 50);
+        TDF_Label label = shapeTool->NewShape();
+        shapeTool->SetShape(label, cubeShape);
+
+        aProgressIndicator.progress("finish", 100);
+        return doc;
+    }
 };
 
 #endif

@@ -5,8 +5,8 @@ add_library(ShapeImport
 )
 
 target_link_libraries(ShapeImport PUBLIC
-    Shapes
     OccUtils
+    Tools
 )
 
 target_include_directories(ShapeImport PUBLIC

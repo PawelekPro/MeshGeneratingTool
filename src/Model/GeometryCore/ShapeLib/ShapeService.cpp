@@ -34,37 +34,27 @@ ShapeService::ShapeService(
         connectToShapeCore();
     }        
 
-void ShapeService::importSTEP(const std::string& aFilePath){
+void ShapeService::importShapes(
+    const ShapeImporter& aImporter, 
+    const std::string& aFilePath
+){
     MessageProgressIndicator progressIndicator(_messageBus);
-    STEPImporter stepImporter;
- 
-    auto doc = stepImporter.importFreeShapesIntoDoc(
+    auto doc = aImporter.import(
         aFilePath,
         progressIndicator
     );
     _shapeCore->importDocument(doc);
 };
 
-void ShapeService::importSTL(const std::string& aFilePath){
-    MessageProgressIndicator progressIndicator(_messageBus);
-    STLImporter stlImporter;
-    auto shapes = stlImporter.importFreeShapes(aFilePath, progressIndicator);
-    for (const auto& [shape, attr] : shapes) {
-        auto shapeId = _shapeCore->registerNewFreeShape(shape);
-    }
-};
-
 void ShapeService::removeShape(const ShapeId& aShapeId){
     _shapeCore->removeShape(ShapeIdFactory::getKey(aShapeId));
 };
-
 
 void ShapeService::scaleShape(const ShapeId& aShapeId, float aScaleFactor){
     auto shape = _shapeCore->shapeMap()->atId(aShapeId);
     auto scaledShape = ShapeTools::scaleShape(shape, aScaleFactor);
     _shapeCore->updateShape({ShapeIdFactory::getKey(aShapeId), scaledShape});
 };
-
 
 void ShapeService::connectToShapeCore() {
     _shapeCore->attachObserver(_signalWrapper);

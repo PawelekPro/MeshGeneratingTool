@@ -8,9 +8,10 @@ target_link_libraries(utMessages PUBLIC
 
 target_link_libraries(utMessages PUBLIC
     Messages
+    Fixtures
 )
 
 target_include_directories(utMessages PUBLIC
     ${CMAKE_SOURCE_DIR}
-    ${TESTS_FIXTURES_PATH}
+    ${TEST_FIXTURES_PATH}
 )

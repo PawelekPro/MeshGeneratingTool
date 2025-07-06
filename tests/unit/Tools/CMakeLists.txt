@@ -1,6 +1,7 @@
 add_subdirectory(Messages)
 add_subdirectory(Commands)
 add_subdirectory(Progress)
+add_subdirectory(FileUtils)
 
 add_executable(utTools
     utRun.cpp
@@ -20,9 +21,14 @@ target_link_options(utTools PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utMe
 target_link_options(utTools PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utProgress> 
                                      $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--whole-archive>)
 
+target_link_options(utTools PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/WHOLEARCHIVE:utFileUtils> 
+                                     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wl,--whole-archive>)
+
+
 target_link_libraries(utTools PRIVATE utMessages)
 target_link_libraries(utTools PRIVATE utCommands)
 target_link_libraries(utTools PRIVATE utProgress)
+target_link_libraries(utTools PRIVATE utFileUtils)
 
 include(GoogleTest)
 gtest_discover_tests(utTools)

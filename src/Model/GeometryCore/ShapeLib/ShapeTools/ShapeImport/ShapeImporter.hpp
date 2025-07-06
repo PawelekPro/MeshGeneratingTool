@@ -21,24 +21,11 @@
 #define SHAPEIMPORTER_HPP
 
 #include "ProgressIndicator.hpp"
+#include "FileUtils.hpp"
 
-#include <TopoDS_Shape.hxx>
 #include <Standard_Handle.hxx>
-
-#include <vector>
+#include <XCAFApp_Application.hxx>
 #include <string>
-#include <fstream>
-
-struct ShapeColor{
-    int r;
-    int g;
-    int b;
-};
-
-struct ShapeAttr{
-    std::string name;
-    ShapeColor color;
-};
 
 class TDocStd_Document;
 class ShapeImporter {
@@ -46,18 +33,12 @@ class ShapeImporter {
     public:
     virtual ~ShapeImporter() = default;
 
-    virtual std::vector<std::pair<TopoDS_Shape, ShapeAttr>> importFreeShapes(
+    virtual Handle(TDocStd_Document) import(
         const std::string& aFilePath, 
         const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
     ) const = 0;
 
-    virtual Handle(TDocStd_Document) importFreeShapesIntoDoc(
-        const std::string& aFilePath, 
-        const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
-    ) const = 0;
-
-    protected:
-    std::ifstream readFile(const std::string& aFilePath) const;
+    Handle(TDocStd_Document) initDocument() const;
 };
 
 #endif

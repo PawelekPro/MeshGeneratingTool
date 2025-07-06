@@ -31,127 +31,29 @@
 #include <Quantity_ColorRGBA.hxx>
 #include <XmlXCAFDrivers.hxx>
 
-
-Handle(TDocStd_Document) STEPImporter::importFreeShapesIntoDoc(
+Handle(TDocStd_Document) STEPImporter::import(
     const std::string& aFilePath,
     const ProgressIndicator& aProgressIndicator
 ) const {
     OccProgressIndicator progressIndicator(aProgressIndicator);
 
-    auto fileStream  = readFile(aFilePath);
+    auto fileStream  = FileUtils::readFile(aFilePath);
+
     STEPCAFControl_Reader reader;
     reader.SetColorMode(true);
     reader.SetNameMode(true);
 
-    IFSelect_ReturnStatus result = reader.ReadStream("STEPFileStream", fileStream);
+    IFSelect_ReturnStatus result = reader.ReadStream(
+        "STEPFileStream", 
+        *fileStream
+    );
+
     if (result != IFSelect_RetDone) {
-        throw std::runtime_error("Failed to read STEP file.");
+        throw Exceptions::File::FileException("Could not read STEP file");
     }
 
-    auto app = XCAFApp_Application::GetApplication();
-    Handle(TDocStd_Document) document;
-    app->NewDocument("XmlXCAF", document);
+    auto document = initDocument();
     reader.Transfer(document, progressIndicator.Start());
-    std::string savePath = "rawFromImport.xml";
-    TCollection_ExtendedString xmlPath(savePath.c_str());
-    XmlXCAFDrivers::DefineFormat(app);
-    if (!XCAFApp_Application::GetApplication()->SaveAs(document, xmlPath)) {
-    }
+
     return document;
-}
-
-std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STEPImporter::importFreeShapes(
-    const std::string& aFilePath,
-    const ProgressIndicator& aProgressIndicator
-) const {
-    auto fileStream  = readFile(aFilePath);
-    STEPCAFControl_Reader reader;
-    reader.SetColorMode(true);
-    reader.SetNameMode(true);
-
-    IFSelect_ReturnStatus result = reader.ReadStream("STEPFileStream", fileStream);
-    if (result != IFSelect_RetDone) {
-        throw std::runtime_error("Failed to read STEP file.");
-    }
-
-    auto app = XCAFApp_Application::GetApplication();
-    Handle(TDocStd_Document) document;
-    app->NewDocument("XmlXCAF", document);
-
-    OccProgressIndicator progressIndicator(aProgressIndicator);
-    reader.Transfer(document, progressIndicator.Start());
-
-    Handle(XCAFDoc_ColorTool) colorTool = 
-        XCAFDoc_DocumentTool::ColorTool(document->Main());
-
-    Handle(XCAFDoc_ShapeTool) shapeTool =
-        XCAFDoc_DocumentTool::ShapeTool(document->Main());
-  
-    TDF_LabelSequence freeShapeLabels;
-    shapeTool->GetFreeShapes(freeShapeLabels);
-        
-    std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes;
-    for (auto label : freeShapeLabels){
-        Handle(TDataStd_Name) nameAttribute;
-        std::string name = "name";
-        if (label.FindAttribute(TDataStd_Name::GetID(), nameAttribute)) {
-            auto shapeName = nameAttribute->Get();
-            Standard_Integer requiredLength = shapeName.Length() + 1;
-            Standard_PCharacter utf8CString = new char[requiredLength];
-            shapeName.ToUTF8CString(utf8CString);
-            name = utf8CString;
-            delete[] utf8CString;
-        }
-
-        Quantity_ColorRGBA colorRGBA;
-        colorTool->GetColor(label, colorRGBA);
-        Quantity_Color color = colorRGBA.GetRGB();
-        ShapeColor shapeColor;
-        shapeColor.r = color.Red(); 
-        shapeColor.g = color.Green(); 
-        shapeColor.b = color.Blue(); 
-        ShapeAttr shapeAttrs;
-        shapeAttrs.name = name;
-        shapeAttrs.color = shapeColor;
-        std::pair<TopoDS_Shape, ShapeAttr> pair(
-            shapeTool->GetShape(label), shapeAttrs
-        );
-        shapes.push_back(pair);
-
-    }
-    // 
-    // auto shapeLabels = reader.GetShapeLabelMap();
-    // XCAFDoc_DataMapIteratorOfDataMapOfShapeLabel mapIter(shapeLabels);
-   
-    // std::vector<std::pair<TopoDS_Shape, ShapeAttr>> shapes;
-    // for (auto it = mapIter; it.More(); it.Next()) {
-    //     const TopoDS_Shape shape = it.Key();
-    //     const TDF_Label label = it.Value();
-
-    //     Handle(TDataStd_Name) nameAttribute;
-    //     std::string name = "name";
-    //     if (label.FindAttribute(TDataStd_Name::GetID(), nameAttribute)) {
-    //         auto shapeName = nameAttribute->Get();
-    //         Standard_Integer requiredLength = shapeName.Length() + 1;
-    //         Standard_PCharacter utf8CString = new char[requiredLength];
-    //         shapeName.ToUTF8CString(utf8CString);
-    //         name = utf8CString;
-    //         delete[] utf8CString;
-    //     }
-
-    //     Quantity_ColorRGBA colorRGBA;
-    //     colorTool->GetColor(label, colorRGBA);
-    //     Quantity_Color color = colorRGBA.GetRGB();
-    //     ShapeColor shapeColor;
-    //     shapeColor.r = color.Red(); 
-    //     shapeColor.g = color.Green(); 
-    //     shapeColor.b = color.Blue(); 
-    //     ShapeAttr shapeAttrs;
-    //     shapeAttrs.name = name;
-    //     shapeAttrs.color = shapeColor;
-    //     std::pair<TopoDS_Shape, ShapeAttr> pair(shape, shapeAttrs);
-    //     shapes.push_back(pair);
-    // }
-
-    return shapes;
 }

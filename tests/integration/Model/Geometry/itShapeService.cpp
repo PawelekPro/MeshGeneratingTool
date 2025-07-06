@@ -21,6 +21,8 @@
 #include "OcafShapeCore.hpp"
 #include "GeometryEvents.hpp"
 #include "ShapeEventTracker.hpp"
+#include "MockCubeImporter.hpp"
+#include "MockCubeAssemblyImporter.hpp"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -32,37 +34,9 @@ protected:
     static inline std::shared_ptr<ShapeCore> shapeCore;
     static inline std::unique_ptr<ShapeService> shapeService;
 
-
     static void SetUpTestSuite() {
         messageBus = std::make_unique<MessageBus>();
-        shapeEventTracker = std::make_unique<ShapeEventTracker>();
-
-        messageBus->subscribe<ShapeAddedEvent>(
-            [](const ShapeAddedEvent& event) {
-                shapeEventTracker->onShapeAddedEvent(event);
-            }
-        );
-        messageBus->subscribe<ShapeRemovedEvent>(
-            [](const ShapeRemovedEvent& event) {
-                shapeEventTracker->onShapeRemovedEvent(event);
-            }
-        );
-        messageBus->subscribe<AssemblyAddedEvent>(
-            [](const AssemblyAddedEvent& event) {
-                shapeEventTracker->onAssemblyAddedEvent(event);
-            }
-        );
-        messageBus->subscribe<AssemblyRemovedEvent>(
-            [](const AssemblyRemovedEvent& event) {
-                shapeEventTracker->onAssemblyRemovedEvent(event);
-            }
-        );
-        messageBus->subscribe<ProgressMessage>(
-            [](const ProgressMessage& event) {
-                shapeEventTracker->onProgressMessage(event);
-            }
-        );
-
+        shapeEventTracker = std::make_unique<ShapeEventTracker>(*messageBus);
         shapeCore = std::make_shared<OcafShapeCore>();
         shapeService = std::make_unique<ShapeService>(*messageBus, shapeCore);
     }
@@ -79,24 +53,21 @@ class ShapeServiceCubeImportTest : public ShapeServiceTest {
 protected:
     static void SetUpTestSuite() {
         ShapeServiceTest::SetUpTestSuite();
-        std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
-        shapeService->importSTEP(filePath);
+        MockCubeImporter importer;
+        shapeService->importShapes(importer, "mockPath");
     }
     static inline ShapeId importedShapeId = ShapeId::invalidId();
-
 };
 
 class ShapeServiceJointImportTest : public ShapeServiceTest {
 protected:
     static void SetUpTestSuite() {
         ShapeServiceTest::SetUpTestSuite();
-        std::string filePath = std::string(TESTS_DATA_PATH) + "/joint.stp";
-        shapeService->importSTEP(filePath);
+        MockCubesAssemblyImporter importer;
+        shapeService->importShapes(importer, "mockPath");
     }
-
     static inline ShapeId importedAssemblyId = ShapeId::invalidId();
     static inline std::vector<ShapeId> importedShapes;
-
 };
 
 TEST_F(ShapeServiceCubeImportTest, ShapeMapContainsImportedShape) {
@@ -116,7 +87,6 @@ TEST_F(ShapeServiceCubeImportTest, ShapeAddedMessageIsPublishedWithCorrectId) {
     ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
 };
 
-// JOINT.stp import
 TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShapes) {
     ASSERT_EQ(shapeEventTracker->assemblyAddedEvents.size(), 1);
     ShapeServiceJointImportTest::importedAssemblyId = \

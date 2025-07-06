@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2024 Krystian Fudali
+* Copyright (C) 2024 Paweł Gilewicz, Krystian Fudali
 *
 * This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
 *
@@ -17,19 +17,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STLIMPORTER_HPP
-#define STLIMPORTER_HPP
+#ifndef FILEUTILS_HPP
+#define FILEUTILS_HPP
 
-#include "ShapeImporter.hpp"
+#include <fstream>
+#include <string>
+#include <memory>
 
-class STLImporter : public ShapeImporter{
-    public:
-    ~STLImporter() override = default;
+#include "FileExceptions.hpp"
 
-    virtual Handle(TDocStd_Document) import(
-        const std::string& aFilePath, 
-        const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
-    ) const override;
+namespace FileUtils{
+    
+    std::unique_ptr<std::ifstream> readFile(const std::string& aFilePath);
 
 };
 

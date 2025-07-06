@@ -19,14 +19,8 @@
 
 #include "STLImporter.hpp"
 #include <TDocStd_Document.hxx>
-std::vector<std::pair<TopoDS_Shape, ShapeAttr>> STLImporter::importFreeShapes(
-	const std::string& aFilePath, 
-	const ProgressIndicator& aProgressIndicator
-) const {
-	return std::vector<std::pair<TopoDS_Shape, ShapeAttr>>();
-};
 
-Handle(TDocStd_Document) STLImporter::importFreeShapesIntoDoc(
+Handle(TDocStd_Document) STLImporter::import(
 	const std::string& aFilePath, 
 	const ProgressIndicator& aProgressIndicator
 ) const {

@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "GeometryStubs.hpp"
+#include "StubShapes.hpp"
 #include "OcafShapeCore.hpp"
 
 class OcafShapeCoreTest : public ::testing::Test {

@@ -12,5 +12,5 @@ target_link_libraries(utProgress PUBLIC
 
 target_include_directories(utProgress PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${TESTS_FIXTURES_PATH}
+    ${TEST_FIXTURES_PATH}
 )

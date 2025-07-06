@@ -11,10 +11,11 @@ target_link_libraries(itGeometry PUBLIC
 
 target_link_libraries(itGeometry PUBLIC
     GeometryCore
+    MockImporter
+    GeometryFixtures
 )
 
 target_compile_definitions(itGeometry PRIVATE TESTS_DATA_PATH="${TESTS_DATA_PATH}")
 target_include_directories(itGeometry PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${TESTS_FIXTURES_PATH}
 )

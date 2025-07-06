@@ -20,6 +20,7 @@
 
 #include "ImportSTEPCommand.hpp"
 #include "ShapeService.hpp"
+#include "STEPImporter.hpp"
 
 ImportSTEPCommand::ImportSTEPCommand(
     std::shared_ptr<ShapeService> aShapeService,
@@ -30,6 +31,7 @@ ImportSTEPCommand::ImportSTEPCommand(
     _filePath(aFilePath) {}
 
 bool ImportSTEPCommand::executeAction(){
-    _shapeService->importSTEP(_filePath);
+    STEPImporter importer;
+    _shapeService->importShapes(importer, _filePath);
     return true;
 }

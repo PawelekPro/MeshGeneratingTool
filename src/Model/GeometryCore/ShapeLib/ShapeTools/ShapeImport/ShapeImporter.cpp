@@ -20,10 +20,9 @@
 #include "ShapeImporter.hpp"
 #include <stdexcept>
 
-std::ifstream ShapeImporter::readFile(const std::string& aFilePath) const{
-    std::ifstream file(aFilePath);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + aFilePath);
-    }
-    return file;
+Handle(TDocStd_Document) ShapeImporter::initDocument() const {
+    auto app = XCAFApp_Application::GetApplication();
+    Handle(TDocStd_Document) document;
+    app->NewDocument("XmlXCAF", document);
+    return document;
 }

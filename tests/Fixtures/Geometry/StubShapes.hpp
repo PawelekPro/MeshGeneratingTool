@@ -17,20 +17,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STLIMPORTER_HPP
-#define STLIMPORTER_HPP
+#ifndef STUBSHAPES_HPP
+#define STUBSHAPES_HPP 
 
-#include "ShapeImporter.hpp"
+#include <TopExp.hxx>
+#include <TopoDS_Shape.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
-class STLImporter : public ShapeImporter{
-    public:
-    ~STLImporter() override = default;
+#include <memory>
+#include <vector>
 
-    virtual Handle(TDocStd_Document) import(
-        const std::string& aFilePath, 
-        const ProgressIndicator& aProgressIndicator = IdleProgressIndicator()
-    ) const override;
+#include "ShapeKey.hpp"
+#include "ShapeCoreObserver.hpp"
 
-};
+namespace StubShapes{
+    inline TopTools_IndexedMapOfShape subShapes(const TopoDS_Shape& aShape){
+        TopTools_IndexedMapOfShape subShapes;
+        TopExp::MapShapes(aShape, subShapes);
+        return subShapes;
+    }
+
+    inline TopoDS_Shape cube() {
+        return BRepPrimAPI_MakeBox(1.0, 1.0, 1.0).Shape();
+    }
+
+    inline TopoDS_Shape sphere() {
+        return BRepPrimAPI_MakeSphere(1.0).Shape();
+    }
+}
+
 
 #endif
