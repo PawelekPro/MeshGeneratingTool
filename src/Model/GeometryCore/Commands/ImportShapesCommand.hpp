@@ -17,30 +17,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <memory>
-#include "MessageBus.hpp"
-#include "ShapeSignalWrapper.hpp"
+#ifndef IMPORTSHAPESCOMMAND_HPP
+#define IMPORTSHAPESCOMMAND_HPP
+
+#include <string>
+#include <TopoDS_Shape.hxx>
+
+#include "ShapeLibCommand.hpp"
 #include "ShapeImporter.hpp"
 
-class ShapeCore;
-class ShapeService{
-    public:
-    ShapeService(MessageBus& aMessageBus, std::shared_ptr<ShapeCore>);
-    ~ShapeService() = default;
+class ShapeService;
+class ImportShapesCommand : public ShapeLibCommand {
 
-    void importShapes(
-        std::shared_ptr<ShapeImporter> aImporter, 
+    public:
+
+    ImportShapesCommand(
+        std::shared_ptr<ShapeService> aShapeService,
+        std::shared_ptr<ShapeImporter> aImporter,
         const std::string& aFilePath
     );
-
-    void removeShape(const ShapeId& aShapeId);
-    void scaleShape(const ShapeId& aShapeId, float aScaleFactor);
-
-    std::shared_ptr<ShapeCore> shapeCore() const {return _shapeCore;};
     
+    bool executeAction() override;
+
     private:
-    void connectToShapeCore();
-    std::shared_ptr<ShapeCore> _shapeCore;
-    MessageBus& _messageBus;
-    std::shared_ptr<ShapeSignalWrapper> _signalWrapper;
+    std::shared_ptr<ShapeService> _shapeService;
+    std::shared_ptr<ShapeImporter> _importer;
+    const std::string _filePath;
 };
+
+#endif

@@ -1,12 +1,13 @@
 add_library(Geometry_Commands 
-    ImportSTEPCommand.cpp
+    ImportShapesCommand.cpp
     GeoCommandsFactory.cpp
     ShapeLibCommand.cpp
 )
 
 target_link_libraries(Geometry_Commands
     BaseCommands 
-    ShapeLib 
+    ShapeLib
+    ShapeImport
     ${OCC_LIBRARIES}
 )
 

@@ -22,23 +22,27 @@
 
 #include <memory>
 #include <string>
+#include "ImporterFactory.hpp"
 
-class ImportSTEPCommand;
+class ImportShapesCommand;
 class ShapeService;
 
 class GeoCommandsFactory {
 
     public:    
     GeoCommandsFactory(
-        std::shared_ptr<ShapeService> aShapeService
+        std::shared_ptr<ShapeService> aShapeService,
+        std::shared_ptr<ImporterFactory> aImporterFactory
     );
 
-    std::unique_ptr<ImportSTEPCommand> importSTEP(
-        const std::string& aFilePath
+    std::unique_ptr<ImportShapesCommand> import(
+        const std::string& aFilePath,
+        ImportFormat aImportFormat
     ) const;
 
     private:
     std::shared_ptr<ShapeService> _shapeService;
+    std::shared_ptr<ImporterFactory> _importerFactory;
 };
 
 #endif

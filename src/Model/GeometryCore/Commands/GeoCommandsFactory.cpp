@@ -18,19 +18,26 @@
 */
 
 #include "GeoCommandsFactory.hpp"
-#include "ImportSTEPCommand.hpp"
+#include "ImporterFactory.hpp"
+
+#include "ImportShapesCommand.hpp"
 
 GeoCommandsFactory::GeoCommandsFactory(
-    std::shared_ptr<ShapeService> aShapeService
+    std::shared_ptr<ShapeService> aShapeService,
+    std::shared_ptr<ImporterFactory> aImporterFactory
     ) : 
-    _shapeService(aShapeService){}
+    _shapeService(aShapeService), _importerFactory(aImporterFactory)
+    {}
 
-std::unique_ptr<ImportSTEPCommand> GeoCommandsFactory::importSTEP(
-    const std::string& aFilePath
+std::unique_ptr<ImportShapesCommand> GeoCommandsFactory::import(
+    const std::string& aFilePath,
+    ImportFormat aImportFormat
 ) const {
-    std::unique_ptr<ImportSTEPCommand> command = 
-        std::make_unique<ImportSTEPCommand>(
+    auto importer = _importerFactory->importer(aImportFormat);
+    std::unique_ptr<ImportShapesCommand> command = 
+        std::make_unique<ImportShapesCommand>(
             _shapeService,
+            std::move(importer),
             aFilePath
         );
     return command;

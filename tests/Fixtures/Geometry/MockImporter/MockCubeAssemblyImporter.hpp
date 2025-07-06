@@ -9,7 +9,7 @@
 #include <XCAFDoc_ShapeTool.hxx>
 #include <TDF_Label.hxx>
 
-class MockCubesAssemblyImporter : public ShapeImporter {
+class MockCubeAssemblyImporter : public ShapeImporter {
 public:
     Handle(TDocStd_Document) import(
         const std::string& aFilePath,

@@ -18,12 +18,13 @@
 */
 
 #include "Geometry.hpp"
-#include "ImportSTEPCommand.hpp"
+#include "ImportShapesCommand.hpp"
 
 Geometry::Geometry(
     CommandStack& aCommandStack, 
     MessageBus& aMessageBus,
-    std::shared_ptr<ShapeCore> aShapeCore
+    std::shared_ptr<ShapeCore> aShapeCore,
+    std::shared_ptr<ImporterFactory> aImporterFactory
 ) : 
 _commandStack(aCommandStack),
 _eventBus(aMessageBus),
@@ -31,10 +32,11 @@ _eventBus(aMessageBus),
 _shapeCore(aShapeCore),
 _shapeView(std::make_shared<ShapeView>(aShapeCore->shapeMap())),
 _shapeService(std::make_shared<ShapeService>(aMessageBus, aShapeCore)),
-_commandFactory(_shapeService){}
+_importerFactory(aImporterFactory),
+_commandFactory(_shapeService, _importerFactory){}
 
 void Geometry::importSTEP(const std::string& aFilePath){
-    auto importCommand = _commandFactory.importSTEP(aFilePath);
+    auto importCommand = _commandFactory.import(aFilePath, ImportFormat::STEP);
     if (importCommand) {
         _commandStack.execute(std::move(importCommand));
     }

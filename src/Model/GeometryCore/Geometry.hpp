@@ -28,6 +28,8 @@
 #include "CommandStack.hpp"
 #include "OcafShapeCore.hpp"
 #include "GeoCommandsFactory.hpp"
+#include "ImporterFactory.hpp"
+
 #include "ShapeService.hpp"
 #include "ShapeView.hpp"
 #include "ShapeId.hpp"
@@ -38,7 +40,8 @@ class Geometry {
     Geometry(
         CommandStack& aCommandStack, 
         MessageBus& aMessageBus,
-        std::shared_ptr<ShapeCore> aShapeCore
+        std::shared_ptr<ShapeCore> aShapeCore,
+        std::shared_ptr<ImporterFactory> aImporterFactory = std::make_shared<FileImporterFactory>()
     );
     ~Geometry() = default;
 
@@ -59,6 +62,8 @@ class Geometry {
     std::shared_ptr<ShapeCore> _shapeCore;
     std::shared_ptr<ShapeView> _shapeView;
     std::shared_ptr<ShapeService> _shapeService;
+
+    std::shared_ptr<ImporterFactory> _importerFactory;
     GeoCommandsFactory _commandFactory;
 };
 

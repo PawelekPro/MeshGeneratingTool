@@ -19,61 +19,87 @@
 
 #include "Geometry.hpp"
 #include "OcafShapeCore.hpp"
+#include "MockCubeImporter.hpp"
+#include "MockCubeAssemblyImporter.hpp"
+#include "MockImporterFactory.hpp"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-// class GeometryTest : public ::testing::Test {
-//     protected:
+template <typename ImporterFactoryType>
+class GeometryTestBase : public ::testing::Test {
+protected:
+    CommandStack commandStack;
+    MessageBus messageBus;
+    std::unique_ptr<Geometry> geometry;
+    std::shared_ptr<ShapeCore> shapeCore;
+    std::shared_ptr<ImporterFactory> factory;
 
-//     CommandStack commandStack;
-//     MessageBus messageBus;
-//     std::unique_ptr<Geometry> geometry;
-//     std::shared_ptr<ShapeCore> shapeCore;
+    void SetUp() override {
+        shapeCore = std::make_shared<OcafShapeCore>();
+        factory = std::make_shared<ImporterFactoryType>();
+        geometry = std::make_unique<Geometry>(
+            commandStack, messageBus, shapeCore, factory
+        );
+    }
+};
 
-//     void SetUp() override {
-//         shapeCore = std::make_shared<OcafShapeCore>();
-//         geometry = std::make_unique<Geometry>(
-//             commandStack, messageBus, shapeCore
-//         );
-//     } 
-// };
+class GeometryCubeImporterTest
+    : public GeometryTestBase<MockCubeImporterFactory> {};
 
-// TEST_F(GeometryTest, ImportSTEPFile) {
-//     // Arrange
-//     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+class GeometryCubeAssemblyImporterTest
+    : public GeometryTestBase<MockCubeAssemblyImporterFactory> {};
 
-//     // Act
-//     geometry->importSTEP(filePath);
 
-//     // Assert
-//     auto shapeMap = geometry->shapeView()->shapeMap();
-//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-// }
+TEST_F(GeometryCubeImporterTest, ImportCubeFile) {
+    geometry->importSTEP("mockPath");
 
-// TEST_F(GeometryTest, UndoImportSTEPFile) {
-//     // Arrange
-//     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+}
 
-//     // Act
-//     geometry->importSTEP(filePath);
-//     commandStack.undo();
+TEST_F(GeometryCubeImporterTest, UndoImportCubeFile) {
+    geometry->importSTEP("mockPath");
+    commandStack.undo();
+    
+    // Assert
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
+}
 
-//     // Assert
-//     auto shapeMap = geometry->shapeView()->shapeMap();
-//     ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
-// }
+TEST_F(GeometryCubeImporterTest, RedoImportCubeFile) {
+    geometry->importSTEP("mockPath");
+    commandStack.undo();
+    commandStack.redo();
+    
+    // Assert
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+}
 
-// TEST_F(GeometryTest, RedoImportSTEPFile) {
-//     // Arrange
-//     std::string filePath = std::string(TESTS_DATA_PATH) + "/cube.stp";
 
-//     // Act
-//     geometry->importSTEP(filePath);
-//     commandStack.undo();
-//     commandStack.redo();
+TEST_F(GeometryCubeAssemblyImporterTest, ImportCubeFile) {
+    geometry->importSTEP("mockPath");
 
-//     // Assert
-//     auto shapeMap = geometry->shapeView()->shapeMap();
-//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-// }
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+}
+
+TEST_F(GeometryCubeAssemblyImporterTest, UndoImportCubeFile) {
+    geometry->importSTEP("mockPath");
+    commandStack.undo();
+    
+    // Assert
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
+}
+
+TEST_F(GeometryCubeAssemblyImporterTest, RedoImportCubeFile) {
+    geometry->importSTEP("mockPath");
+    commandStack.undo();
+    commandStack.redo();
+    
+    // Assert
+    auto shapeMap = geometry->shapeView()->shapeMap();
+    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+}

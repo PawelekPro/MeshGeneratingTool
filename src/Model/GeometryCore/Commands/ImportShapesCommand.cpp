@@ -18,20 +18,21 @@
 */
 
 
-#include "ImportSTEPCommand.hpp"
+#include "ImportShapesCommand.hpp"
 #include "ShapeService.hpp"
 #include "STEPImporter.hpp"
 
-ImportSTEPCommand::ImportSTEPCommand(
+ImportShapesCommand::ImportShapesCommand(
     std::shared_ptr<ShapeService> aShapeService,
+    std::shared_ptr<ShapeImporter> aImporter,
     const std::string& aFilePath
     ) : 
     ShapeLibCommand(aShapeService->shapeCore()),
     _shapeService(aShapeService),
+    _importer(aImporter),
     _filePath(aFilePath) {}
 
-bool ImportSTEPCommand::executeAction(){
-    STEPImporter importer;
-    _shapeService->importShapes(importer, _filePath);
+bool ImportShapesCommand::executeAction(){
+    _shapeService->importShapes(_importer, _filePath);
     return true;
 }

@@ -35,11 +35,11 @@ ShapeService::ShapeService(
     }        
 
 void ShapeService::importShapes(
-    const ShapeImporter& aImporter, 
+    std::shared_ptr<ShapeImporter> aImporter, 
     const std::string& aFilePath
 ){
     MessageProgressIndicator progressIndicator(_messageBus);
-    auto doc = aImporter.import(
+    auto doc = aImporter->import(
         aFilePath,
         progressIndicator
     );

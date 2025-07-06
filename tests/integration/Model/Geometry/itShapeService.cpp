@@ -53,7 +53,7 @@ class ShapeServiceCubeImportTest : public ShapeServiceTest {
 protected:
     static void SetUpTestSuite() {
         ShapeServiceTest::SetUpTestSuite();
-        MockCubeImporter importer;
+        auto importer = std::make_shared<MockCubeImporter>();
         shapeService->importShapes(importer, "mockPath");
     }
     static inline ShapeId importedShapeId = ShapeId::invalidId();
@@ -63,7 +63,7 @@ class ShapeServiceJointImportTest : public ShapeServiceTest {
 protected:
     static void SetUpTestSuite() {
         ShapeServiceTest::SetUpTestSuite();
-        MockCubesAssemblyImporter importer;
+        auto importer = std::make_shared<MockCubeAssemblyImporter>();
         shapeService->importShapes(importer, "mockPath");
     }
     static inline ShapeId importedAssemblyId = ShapeId::invalidId();

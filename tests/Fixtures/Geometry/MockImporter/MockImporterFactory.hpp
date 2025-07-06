@@ -17,28 +17,27 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IMPORTSTEPCOMMAND_HPP
-#define IMPORTSTEPCOMMAND_HPP
+#ifndef MOCKIMPORTERFACTORY_HPP
+#define MOCKIMPORTERFACTORY_HPP
 
-#include <string>
-#include <TopoDS_Shape.hxx>
+#include "ImporterFactory.hpp"
+#include "MockCubeImporter.hpp"
+#include "MockCubeAssemblyImporter.hpp"
 
-#include "ShapeLibCommand.hpp"
-class ShapeService;
-class ImportSTEPCommand : public ShapeLibCommand {
+class MockCubeImporterFactory : public ImporterFactory {
+    std::shared_ptr<ShapeImporter> importer(
+        ImportFormat format
+    ) const override {
+        return std::make_unique<MockCubeImporter>();
+    };
+};
 
-    public:
-
-    ImportSTEPCommand(
-        std::shared_ptr<ShapeService> aShapeService,
-        const std::string& aFilePath
-    );
-    
-    bool executeAction() override;
-
-    private:
-    std::shared_ptr<ShapeService> _shapeService;
-    const std::string _filePath;
+class MockCubeAssemblyImporterFactory : public ImporterFactory {
+    std::shared_ptr<ShapeImporter> importer(
+        ImportFormat format
+    ) const override {
+        return std::make_unique<MockCubeAssemblyImporter>();
+    };
 };
 
 #endif

@@ -17,30 +17,42 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef IMPORTERFACTORY_HPP
+#define IMPORTERFACTORY_HPP
+
 #include <memory>
-#include "MessageBus.hpp"
-#include "ShapeSignalWrapper.hpp"
 #include "ShapeImporter.hpp"
+#include "STEPImporter.hpp"
+#include "STLImporter.hpp"
 
-class ShapeCore;
-class ShapeService{
-    public:
-    ShapeService(MessageBus& aMessageBus, std::shared_ptr<ShapeCore>);
-    ~ShapeService() = default;
-
-    void importShapes(
-        std::shared_ptr<ShapeImporter> aImporter, 
-        const std::string& aFilePath
-    );
-
-    void removeShape(const ShapeId& aShapeId);
-    void scaleShape(const ShapeId& aShapeId, float aScaleFactor);
-
-    std::shared_ptr<ShapeCore> shapeCore() const {return _shapeCore;};
-    
-    private:
-    void connectToShapeCore();
-    std::shared_ptr<ShapeCore> _shapeCore;
-    MessageBus& _messageBus;
-    std::shared_ptr<ShapeSignalWrapper> _signalWrapper;
+enum class ImportFormat {
+    STEP,
+    STL
 };
+
+class ImporterFactory {
+public:
+    virtual ~ImporterFactory() = default;
+
+    virtual std::shared_ptr<ShapeImporter> importer(
+        ImportFormat format
+    ) const = 0;
+};
+
+class FileImporterFactory : public ImporterFactory {
+public:
+    std::shared_ptr<ShapeImporter> importer(
+        ImportFormat format
+    ) const override {
+        switch (format) {
+            case ImportFormat::STEP:
+                return std::make_unique<STEPImporter>();
+            case ImportFormat::STL:
+                return std::make_unique<STLImporter>();
+            default:
+                throw std::runtime_error("Unknown ImportFormat");
+        }
+    }
+};
+
+#endif
