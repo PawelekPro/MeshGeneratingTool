@@ -21,8 +21,6 @@
 #include "LabelPathAttr.hpp"
 #include "ShapePathAttr.hpp"
 #include "AssemblyPathAttr.hpp"
-
-#include "OcafShapeCore.hpp"
 #include "ShapeKey.hpp"
 
 AttributeFactory::AttributeFactory(

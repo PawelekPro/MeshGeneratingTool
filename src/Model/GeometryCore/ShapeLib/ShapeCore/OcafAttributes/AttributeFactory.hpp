@@ -23,8 +23,8 @@
 #include <TDF_Attribute.hxx>
 #include <Standard_Handle.hxx>
 #include <memory>
-#include "ShapeSignalsPublisher.hpp"
 
+#include "ShapeSignalsPublisher.hpp"
 #include "ShapePathAttr.hpp"
 #include "LabelPathAttr.hpp"
 #include "AssemblyPathAttr.hpp"

@@ -20,15 +20,30 @@
 #ifndef SPYSHAPECOREOBSERVER_HPP
 #define SPYSHAPECOREOBSERVER_HPP 
 
+#include "ShapeCoreObserver.hpp"
+
 class SpyShapeCoreObserver : public ShapeCoreObserver {
+    
+    public:
+    SpyShapeCoreObserver() = default;
+
     void onShapeAdded(std::shared_ptr<ShapeKey> key) override { 
         shapeAddedPublished.push_back(key);
     }
     void onShapeRemoved(std::shared_ptr<ShapeKey> key) override { 
         shapeRemovedPublished.push_back(key);
     }
-    public:
-    SpyShapeCoreObserver() = default;
+    void onAssemblyAdded(std::shared_ptr<ShapeKey> key) override { 
+        assemblyAddedPublished.push_back(key);
+    }
+    void onAssemblyRemoved(std::shared_ptr<ShapeKey> key) override { 
+        assemblyRemovedPublished.push_back(key);
+    }
+
     std::vector<std::shared_ptr<ShapeKey>> shapeAddedPublished;
     std::vector<std::shared_ptr<ShapeKey>> shapeRemovedPublished;
+    std::vector<std::shared_ptr<ShapeKey>> assemblyAddedPublished;
+    std::vector<std::shared_ptr<ShapeKey>> assemblyRemovedPublished;
 };
+
+#endif

@@ -22,6 +22,8 @@
 
 #include "StubShapes.hpp"
 #include "OcafShapeCore.hpp"
+#include "SpyShapeCoreObserver.hpp"
+#include <memory>
 
 class OcafShapeCoreTest : public ::testing::Test {
 protected:

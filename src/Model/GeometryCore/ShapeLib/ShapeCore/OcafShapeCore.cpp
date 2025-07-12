@@ -80,27 +80,6 @@ bool OcafShapeCore::write(const std::string& aSavePath) const {
     return true;
 }
 
-void OcafShapeCore::addShapeAttributeToLabel(
-    TDF_Label& aLabel
-) {
-    auto key = _labelKeyTool->keyFromLabel(aLabel);  
-    Handle(ShapePathAttr) attr = _attrFactory->shapePathAttr(
-        key
-    );
-    aLabel.AddAttribute(attr);
-}
-
-void OcafShapeCore::addAssemblyAttributeToLabel(
-    TDF_Label& aLabel
-) {
-    auto key = _labelKeyTool->keyFromLabel(aLabel);  
-    Handle(AssemblyPathAttr) attr = _attrFactory->assemblyPathAttr(
-        key
-    );
-    aLabel.AddAttribute(attr);
-}
-
-
 std::shared_ptr<ShapeKey> OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
     TDF_Label mainLabel = _shapeTool->AddShape(aShape);
 

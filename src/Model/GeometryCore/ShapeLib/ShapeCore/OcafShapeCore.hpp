@@ -44,14 +44,6 @@
 #include <TDF_DeltaOnResume.hxx>
 #include <XCAFDoc_ShapeMapTool.hxx>
 
-enum class DeltaType{
-    Removal,
-    Addition,
-    Modification,
-    Forget,
-    Resume
-};
-
 class OcafShapeCore : public ShapeCore {
     
     public:

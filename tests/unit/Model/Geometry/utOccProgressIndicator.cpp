@@ -29,9 +29,7 @@ using ::testing::StrEq;
 
 class MockProgressIndicator : public ProgressIndicator {
 public:
-    MOCK_METHOD(void, begin, (const std::string& aMessage, int aMaxProgress), (const, override));
     MOCK_METHOD(void, progress, (const std::string& aMessage, int aProgress), (const, override));
-    MOCK_METHOD(void, finish, (const std::string& aMessage), (const, override));
 };
 
 class OccProgressIndicatorTest : public ::testing::Test {
