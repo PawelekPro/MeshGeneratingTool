@@ -22,8 +22,10 @@
 
 #include "OcafShapeRegistry.hpp"
 #include "ShapeImportData.hpp"
-
 #include "StubShapes.hpp"
+#include "LabelKeyTool.hpp"
+#include "ShapeIdFactory.hpp"
+
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <TDocStd_Document.hxx>
@@ -35,6 +37,8 @@ class OcafShapeRegistryTest : public ::testing::Test {
     std::shared_ptr<ShapeRegistry> shapeRegistry;
     ShapeSignalsPublisher publisher;
     Handle(TDocStd_Document) document;
+    Handle(XCAFDoc_ShapeTool) shapeTool;
+    ShapeImportData cubeData;
 
     void SetUp() {
         attributeFactory = std::make_shared<AttributeFactory>(
@@ -45,41 +49,41 @@ class OcafShapeRegistryTest : public ::testing::Test {
         app->NewDocument("XmlXCAF", document);
         app->InitDocument(document);
 
+        shapeTool = XCAFDoc_DocumentTool::ShapeTool(document->Main());
+
         shapeRegistry = std::make_shared<OcafShapeRegistry>(
             document,
             attributeFactory
         );
+
+        ColorRGBA color(0.5, 0.5, 0.5, 0.5);
+        std::string name = "name";
+        TopoDS_Shape cube = StubShapes::cube();
+        TopLoc_Location loc;
+        cubeData = ShapeImportData(
+            cube, loc, name, color
+        );
+
     }
 };
 
 TEST_F(OcafShapeRegistryTest, TestRegisteredShapeReturnsCorrectAttributes){
-    ColorRGBA color(0.5, 0.5, 0.5, 0.5);
-    std::string name = "name";
-    TopoDS_Shape cube = StubShapes::cube();
-    TopLoc_Location loc;
-    ShapeImportData cubeData(
-        cube, loc, name, color
-    );
-
     auto shape = shapeRegistry->registerShape(cubeData);
     ASSERT_FALSE(shape->shape().IsNull());    
-    EXPECT_EQ(shape->shape(), cube);    
-    EXPECT_EQ(shape->name(), name);
-    EXPECT_EQ(shape->color(), color);    
+    EXPECT_EQ(shape->shape(), cubeData.shape);    
+    EXPECT_EQ(shape->location(), cubeData.location);    
+    EXPECT_EQ(shape->name(), cubeData.name);
+    EXPECT_EQ(shape->color(), cubeData.color);    
 }
 
 TEST_F(OcafShapeRegistryTest, TestRegisteredComponentIsPlacedUnderParent){
-    ASSERT_TRUE(true);    
-}
-
-TEST_F(OcafShapeRegistryTest, TestRegisteredComponentHasName){
-    ASSERT_TRUE(true);    
-}
-
-TEST_F(OcafShapeRegistryTest, TestRegisteredComponentHasColor){
-    ASSERT_TRUE(true);    
-}
-
-TEST_F(OcafShapeRegistryTest, TestRegisteredComponentHasCorrectShapeAndLoc){
-        ASSERT_TRUE(true);    
+    auto shape = shapeRegistry->registerShape(cubeData);
+    ShapeId id = shape->id();
+    auto label = LabelKeyTool::labelFromKey(
+        document->Main(), 
+        ShapeIdFactory::getKey(id)
+    );
+    auto foundLabel = shapeTool->FindShape(shape->shape());
+    ASSERT_FALSE(foundLabel.IsNull());
+    EXPECT_EQ(foundLabel, label);
 }
