@@ -17,21 +17,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPESIGNALSOBSERVER_HPP
-#define SHAPESIGNALSOBSERVER_HPP
+#ifndef SHAPEREGISTRY_HPP
+#define SHAPEREGISTRY_HPP
 
-class ShapeKey;
-class ShapeCoreObserver {
+#include <TDF_Label.hxx>
+#include "Shape.hpp"
+#include "ShapeImportData.hpp"
 
+class ShapeRegistry {
     public:
-    ShapeCoreObserver() = default;
-    virtual ~ShapeCoreObserver() = default;    
 
-    virtual void onShapeAdded(std::shared_ptr<ShapeKey>) = 0;
-    virtual void onShapeRemoved(std::shared_ptr<ShapeKey>) = 0;
+    virtual ~ShapeRegistry() = default;
 
-    virtual void onAssemblyAdded(std::shared_ptr<ShapeKey>) = 0;
-    virtual void onAssemblyRemoved(std::shared_ptr<ShapeKey>) = 0;
+    virtual std::shared_ptr<Shape> registerShape(
+        const ShapeImportData& aShapeData,
+        TDF_Label aLocalParent = TDF_Label{}
+    ) = 0;
+
+    virtual TDF_Label baseLabel() = 0;
+
 };
-
-#endif 
+#endif

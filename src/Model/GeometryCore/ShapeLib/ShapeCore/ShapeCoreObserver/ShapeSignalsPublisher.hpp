@@ -25,7 +25,7 @@
 #include <boost/signals2.hpp>
 
 class ShapeSignalsPublisher {
-public:
+    public:
     using ShapeSignal = boost::signals2::signal<void(std::shared_ptr<ShapeKey>)>;
 
     ShapeSignalsPublisher() = default;
@@ -36,14 +36,6 @@ public:
 
     void publishShapeRemoved(std::shared_ptr<ShapeKey> aShapeKey) {
         onShapeRemoved(aShapeKey);
-    }
-
-    void publishAssemblyAdded(std::shared_ptr<ShapeKey> aShapeKey) {
-        onAssemblyAdded(aShapeKey);
-    }
-
-    void publishAssemblyRemoved(std::shared_ptr<ShapeKey> aShapeKey) {
-        onAssemblyRemoved(aShapeKey);
     }
 
     void attachObserver(std::shared_ptr<ShapeCoreObserver> aObserver)  {
@@ -62,32 +54,12 @@ public:
                 }
             }
         );
-
-        onAssemblyAdded.connect(
-            [weakObs = std::weak_ptr(aObserver)](std::shared_ptr<ShapeKey> id) {
-                if (auto obs = weakObs.lock()) {
-                    obs->onAssemblyAdded(id);
-                }
-            }
-        );
-
-        onAssemblyRemoved.connect(
-            [weakObs = std::weak_ptr(aObserver)](std::shared_ptr<ShapeKey> id) {
-                if (auto obs = weakObs.lock()) {
-                    obs->onAssemblyRemoved(id);
-                }
-            }
-        );
-
     }
 
 private:
     ShapeSignal onShapeAdded;
     ShapeSignal onShapeRemoved;
     ShapeSignal onShapeModified;
-
-    ShapeSignal onAssemblyAdded;
-    ShapeSignal onAssemblyRemoved;
 };
 
 #endif // SHAPEEVENTSPUBLISHER_HPP

@@ -1,6 +1,7 @@
 add_subdirectory(OcafAttributes)
-add_subdirectory(XmlShapeLibDrivers)
 add_subdirectory(ShapeDocumentImport)
+add_subdirectory(ShapeMap)
+add_subdirectory(ShapeRegistry)
 
 add_library(ShapeCore
     ShapeCore.cpp
@@ -11,6 +12,7 @@ target_link_libraries(ShapeCore PUBLIC
     ${OCC_LIBRARIES}
     Shapes
     ShapeMap
+    ShapeRegistry
     XmlShapeLibDrivers
     OcafAttributes
     ShapeDocumentImport

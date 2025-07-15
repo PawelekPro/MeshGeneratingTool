@@ -17,25 +17,27 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ASSEMBLYPATHTTR_HPP
-#define ASSEMBLYPATHTTR_HPP
+#ifndef ATTRIBUTEFACTORY_HPP
+#define ATTRIBUTEFACTORY_HPP
 
+#include <TDF_Attribute.hxx>
+#include <Standard_Handle.hxx>
+#include <memory>
+
+#include "ShapeSignalsPublisher.hpp"
+#include "ShapePathAttr.hpp"
 #include "LabelPathAttr.hpp"
 
-class AssemblyPathAttr;
-DEFINE_STANDARD_HANDLE(AssemblyPathAttr, LabelPathAttr)
+class AttributeFactory {
 
-class AssemblyPathAttr : public LabelPathAttr {
+    public:
+    AttributeFactory(ShapeSignalsPublisher& aCore);
+    ~AttributeFactory() = default;
 
-	public:
-	DEFINE_STANDARD_RTTIEXT(AssemblyPathAttr, LabelPathAttr)
+    Handle(ShapePathAttr) shapePathAttr(std::shared_ptr<ShapeKey> aKey);
 
-	AssemblyPathAttr();
-	AssemblyPathAttr(const std::vector<int>& labelPath);
-    
-	static const Standard_GUID& GetID();
-	const Standard_GUID& ID() const override;
-
+    private:
+    ShapeSignalsPublisher& _publisher;
 };
 
 #endif

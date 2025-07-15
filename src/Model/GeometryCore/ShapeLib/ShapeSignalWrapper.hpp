@@ -32,14 +32,8 @@ class ShapeSignalWrapper : public ShapeCoreObserver{
     void onShapeAdded(std::shared_ptr<ShapeKey>) override;
     void onShapeRemoved(std::shared_ptr<ShapeKey>) override;
 
-    void onAssemblyAdded(std::shared_ptr<ShapeKey>) override;
-    void onAssemblyRemoved(std::shared_ptr<ShapeKey>) override;
-    
     void publishShapeAddedEvent(const ShapeId& aShapeId);
     void publishShapeRemovedEvent(const ShapeId& aShapeId);
-
-    void publishAssemblyAddedEvent(const ShapeId& aShapeId);
-    void publishAssemblyRemovedEvent(const ShapeId& aShapeId);
     
     private:
     MessageBus& _eventBus;

@@ -17,24 +17,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "AssemblyPathAttr.hpp"
+#ifndef COLOR_HPP
+#define COLOR_HPP
 
-IMPLEMENT_STANDARD_RTTIEXT(AssemblyPathAttr, LabelPathAttr)
+#include <Quantity_ColorRGBA.hxx>
+#include <Quantity_Color.hxx>
 
-static const Standard_GUID GUID_ShapeIdAttr(
-  "83f512d4-d099-4ca0-9146-7c4c8875e94c"
-);
+using ColorRGBA = Quantity_ColorRGBA;
 
-AssemblyPathAttr::AssemblyPathAttr()
-: LabelPathAttr() {}
-
-AssemblyPathAttr::AssemblyPathAttr(const std::vector<int>& labelPath)
-: LabelPathAttr(labelPath) {}
-
-const Standard_GUID& AssemblyPathAttr::GetID() {
-  return GUID_ShapeIdAttr;
-}
-
-const Standard_GUID& AssemblyPathAttr::ID() const {
-  return GetID();
-}
+#endif

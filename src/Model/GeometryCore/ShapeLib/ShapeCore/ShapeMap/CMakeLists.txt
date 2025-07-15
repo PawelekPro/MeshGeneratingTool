@@ -1,7 +1,6 @@
 add_library(ShapeMap
     CoreShapeMap.cpp
-    LabelKeyTool.cpp
-    )
+)
 
 target_link_libraries(ShapeMap PUBLIC
     ${OCC_LIBRARIES}

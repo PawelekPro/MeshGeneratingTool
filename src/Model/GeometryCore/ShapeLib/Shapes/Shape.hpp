@@ -17,29 +17,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ATTRIBUTEFACTORY_HPP
-#define ATTRIBUTEFACTORY_HPP
+#ifndef SHAPE_HPP
+#define SHAPE_HPP
 
-#include <TDF_Attribute.hxx>
-#include <Standard_Handle.hxx>
-#include <memory>
+#include <string>
+#include <TopoDS_Shape.hxx>
+#include <TopLoc_Location.hxx>
 
-#include "ShapeSignalsPublisher.hpp"
-#include "ShapePathAttr.hpp"
-#include "LabelPathAttr.hpp"
-#include "AssemblyPathAttr.hpp"
+#include "ShapeId.hpp"
+#include "Color.hpp"
 
-class AttributeFactory {
-
+class Shape {
     public:
-    AttributeFactory(ShapeSignalsPublisher& aCore);
-    ~AttributeFactory() = default;
+    virtual ~Shape() = default;
 
-    Handle(ShapePathAttr) shapePathAttr(std::shared_ptr<ShapeKey> aKey);
-    Handle(AssemblyPathAttr) assemblyPathAttr(std::shared_ptr<ShapeKey> aKey);
+    virtual ShapeId id() const = 0;
 
-    private:
-    ShapeSignalsPublisher& _publisher;
+    virtual bool isAssembly() const = 0;
+    virtual TopoDS_Shape shape() const = 0;
+    virtual TopLoc_Location location() const = 0;
+    
+    virtual std::string name() const = 0;
+    virtual ColorRGBA color() const = 0;
 };
 
 #endif

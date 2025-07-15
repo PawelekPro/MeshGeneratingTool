@@ -21,29 +21,23 @@
 #define OCAFSHAPECORE_HPP
 
 #include "ShapeCore.hpp"
-#include "ShapeSignalsPublisher.hpp"
-#include "LabelPathAttr.hpp"
 #include "ShapeKey.hpp"
-#include "LabelKeyTool.hpp"
-#include "AttributeFactory.hpp"
+#include "ShapeRegistry.hpp"
 
-#include <string>
 #include <TDocStd_Document.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <gp_Trsf.hxx>
 #include <TDF_Label.hxx>
+
+#include <string>
 #include <set>
 #include <spdlog/spdlog.h>
 
-#include <TDF_DeltaOnAddition.hxx>
-#include <TDF_DeltaOnForget.hxx>
-#include <TDF_DeltaOnModification.hxx>
-#include <TDF_DeltaOnRemoval.hxx>
-#include <TDF_DeltaOnResume.hxx>
-#include <XCAFDoc_ShapeMapTool.hxx>
 
+class AttributeFactory;
+class ShapeRegistry;
 class OcafShapeCore : public ShapeCore {
     
     public:
@@ -51,16 +45,16 @@ class OcafShapeCore : public ShapeCore {
     
     virtual ~OcafShapeCore() = default;
 
-    std::shared_ptr<ShapeKey> registerNewFreeShape(
+    std::shared_ptr<Shape> registerNewFreeShape(
         const TopoDS_Shape& Shape
     ) override;
 
     bool removeShape(
-        std::shared_ptr<ShapeKey> aShapeKey
+        const ShapeId& aShapeKey
     ) override;
 
     bool updateShape(
-        const std::pair<std::shared_ptr<ShapeKey>, TopoDS_Shape>& aUpdatedShape
+        const std::pair<ShapeId, TopoDS_Shape>& aUpdatedShape
     ) override;
    
     bool openCommand() override;
@@ -75,49 +69,13 @@ class OcafShapeCore : public ShapeCore {
     
     private:
 
-    void addShapeAttributeToLabel(TDF_Label& aLabel);
-    void addAssemblyAttributeToLabel(TDF_Label& aLabel);
-
-    void importAssemblyLabel(
-        Handle(XCAFDoc_ShapeTool) aShapeTool, 
-        const TDF_Label& aLabel
-    );
-
-    void importComponentLabel(
-        TDF_Label& aLocalParentAssemblyLabel,
-        Handle(XCAFDoc_ShapeTool) aShapeTool, 
-        const TDF_Label& aLabel
-    );    
-
-    TDF_Label registerAssemblyLabel(
-        Handle(XCAFDoc_ShapeTool) aShapeTool, 
-        const TDF_Label& aLabel
-    );
-
-    TDF_Label registerFreeShapeLabel(
-        Handle(XCAFDoc_ShapeTool) aShapeTool, 
-        const TDF_Label& aLabel
-    );
-
-    TDF_Label registerSubAssemblyLabel(
-        TDF_Label& aLocalParentAssemblyLabel,
-        Handle(XCAFDoc_ShapeTool) aShapeTool, 
-        const TDF_Label& aLabel
-    );
-    
-    TDF_Label registerComponentLabel(
-        TDF_Label& aLocalParentAssemblyLabel,
-        Handle(XCAFDoc_ShapeTool) aShapeTool, 
-        const TDF_Label& aLabel
-    );
-    
     Handle(TDocStd_Document) _document;
     Handle(XCAFDoc_ShapeTool) _shapeTool;
     Handle(XCAFDoc_ColorTool) _colorTool;
 
     TDF_Label _shapeLabel;
-    std::unique_ptr<AttributeFactory> _attrFactory;
-    std::unique_ptr<LabelKeyTool> _labelKeyTool;
+    std::shared_ptr<AttributeFactory> _attrFactory;
+    std::shared_ptr<ShapeRegistry> _shapeRegistry;
 };
 
 #endif

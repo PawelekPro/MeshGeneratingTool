@@ -1,7 +1,7 @@
+add_subdirectory(XmlShapeLibDrivers)
+
 add_library(OcafAttributes
-    AttributeFactory.cpp
     LabelPathAttr.cpp
-    AssemblyPathAttr.cpp
     ShapePathAttr.cpp
 )
 

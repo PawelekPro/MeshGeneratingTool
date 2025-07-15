@@ -17,57 +17,48 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEREGISTRY_HPP
-#define SHAPEREGISTRY_HPP
+#ifndef OCAFSHAPE_HPP
+#define OCAFSHAPE_HPP
 
+#include "Shape.hpp"
 #include <XCAFDoc_ShapeTool.hxx>
-#include <TDocStd_Document.hxx>
+#include <XCAFDoc_ColorTool.hxx>
 #include <Standard_Handle.hxx>
 #include <TDF_Label.hxx>
-#include <TopLoc_Location.hxx>
 
-struct Color {
-    int r = 0;
-    int g = 0;
-    int b = 0;
+struct OcafShapeTools {
+    OcafShapeTools(
+        Handle(XCAFDoc_ShapeTool) aShapeTool,
+        Handle(XCAFDoc_ColorTool) aColorTool
+    ) : shapeTool(aShapeTool), colorTool(aColorTool){}
+    Handle(XCAFDoc_ShapeTool) shapeTool;
+    Handle(XCAFDoc_ColorTool) colorTool;
 };
 
-class ShapeData {
+class OcafShape : public Shape {
+
     public:
-    ShapeData(
-        TopoDS_Shape aShape,
-        const TopLoc_Location aLocation,
-        const std::string& aName,
-        const Color& aColor
-    ) : 
-    _shape(aShape),
-    _location(aLocation),
-    _name(aName),
-    _color(aColor) {}
+    OcafShape(
+        TDF_Label aShapeLabel,
+        OcafShapeTools aTools
+    );
+    
+    ~OcafShape() = default;
+
+    inline ShapeId id() const override {return _id;};
+    
+    bool isAssembly() const override; 
+    TopoDS_Shape shape() const override; 
+    TopLoc_Location location() const override; 
+
+    std::string name() const override;
+    ColorRGBA color() const override;
 
     private:
-    TopoDS_Shape _shape;
-    TopLoc_Location _location;
-    std::string _name;
-    Color _color;
+    ShapeId _id;
+    TDF_Label _label;
+    Handle(XCAFDoc_ShapeTool) _shapeTool;
+    Handle(XCAFDoc_ColorTool) _colorTool;
 };
 
-class ShapeRegistry {
-    public:
-
-    virtual ~ShapeRegistry() = default;
-
-    virtual TDF_Label registerComponent(
-        const ShapeData& aShapeData,
-        TDF_Label& aLocalParent
-    ) = 0;
-
-    virtual TDF_Label registerAssembly(
-        const ShapeData& aShapeData,
-        TDF_Label& aLocalParent
-    ) = 0;
-
-    virtual TDF_Label baseLabel() = 0;
-
-};
 #endif

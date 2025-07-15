@@ -32,13 +32,6 @@ namespace ShapeDocumentImport
         Handle(TDocStd_Document) aSourceDoc
     );
 
-    bool importAssembly(
-        Handle(XCAFDoc_ShapeTool) aSourceTool,
-        const TDF_Label& aSourceLabel,
-        std::shared_ptr<ShapeRegistry> aDestRegistry,
-        TDF_Label aDestParentLabel
-    );
-
     bool importComponent(
         Handle(XCAFDoc_ShapeTool) aSourceTool,
         const TDF_Label& aSourceLabel,
@@ -46,7 +39,14 @@ namespace ShapeDocumentImport
         TDF_Label aDestParentLabel
     );
 
-    ShapeData extractShape(
+    bool importPart(
+        Handle(XCAFDoc_ShapeTool) aSourceTool,
+        const TDF_Label& aSourceLabel,
+        std::shared_ptr<ShapeRegistry> aDestRegistry,
+        TDF_Label aDestParentLabel
+    );
+
+    ShapeImportData extractShape(
         Handle(XCAFDoc_ShapeTool) aSourceTool,
         const TDF_Label& aLabel
     );

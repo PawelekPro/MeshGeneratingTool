@@ -19,38 +19,31 @@
 
 #include "LabelKeyTool.hpp"
 #include <TDF_Tool.hxx>
+#include <TColStd_ListOfInteger.hxx>
 
-LabelKeyTool::LabelKeyTool(
-    Handle(XCAFDoc_ShapeTool) aShapeTool
-) : _shapeTool(aShapeTool){}
-
-TDF_Label LabelKeyTool::labelFromKey(std::shared_ptr<ShapeKey> aKey){
+TDF_Label LabelKeyTool::labelFromKey(
+    TDF_Label rootLabel, 
+    std::shared_ptr<ShapeKey> aKey
+){
     TColStd_ListOfInteger tagList;
-
-    TDF_Tool::TagList(_shapeTool->Label(), tagList);
+    TDF_Tool::TagList(rootLabel, tagList);
     
     for(auto treeNode : aKey->shapeTreePath()){
         tagList.Append(treeNode);
     }
 
     TDF_Label foundLabel;
-    TDF_Tool::Label(_shapeTool->Label().Data(), tagList, foundLabel, false);
+    TDF_Tool::Label(rootLabel.Data(), tagList, foundLabel, false);
     return foundLabel;
 }
 
-std::shared_ptr<ShapeKey> LabelKeyTool::keyFromLabel(const TDF_Label& aLabel) {
+std::shared_ptr<ShapeKey> LabelKeyTool::keyFromLabel(TDF_Label aLabel) {
     std::vector<int> tagPath;
     TDF_Label current = aLabel;
-
-    while (!current.IsNull() && current != _shapeTool->Label()) {
+    while (!current.IsNull() && current != aLabel.Root()) {
         tagPath.push_back(current.Tag());
         current = current.Father();
     }
     std::reverse(tagPath.begin(), tagPath.end());
-
     return std::make_shared<ShapeKey>(tagPath);
-}
-
-std::shared_ptr<ShapeKey> LabelKeyTool::keyFromAttr(Handle(LabelPathAttr) aAttr) {
-    return std::make_shared<ShapeKey>(aAttr->labelPath());
 }

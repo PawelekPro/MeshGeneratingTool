@@ -29,9 +29,6 @@ class ShapeEventTracker {
     std::vector<ShapeAddedEvent> shapeAddedEvents;
     std::vector<ShapeRemovedEvent> shapeRemovedEvents;
 
-    std::vector<AssemblyAddedEvent> assemblyAddedEvents;
-    std::vector<AssemblyRemovedEvent> assemblyRemovedEvents;
-
     std::vector<ProgressMessage> progressMessages;
 
     ShapeEventTracker(MessageBus& aMessageBus){
@@ -43,16 +40,6 @@ class ShapeEventTracker {
         aMessageBus.subscribe<ShapeRemovedEvent>(
             [this](const ShapeRemovedEvent& event) {
                 onShapeRemovedEvent(event);
-            }
-        );
-        aMessageBus.subscribe<AssemblyAddedEvent>(
-            [this](const AssemblyAddedEvent& event) {
-                onAssemblyAddedEvent(event);
-            }
-        );
-        aMessageBus.subscribe<AssemblyRemovedEvent>(
-            [this](const AssemblyRemovedEvent& event) {
-                onAssemblyRemovedEvent(event);
             }
         );
         aMessageBus.subscribe<ProgressMessage>(
@@ -70,14 +57,6 @@ class ShapeEventTracker {
         shapeAddedEvents.push_back(event);
     }
 
-    void onAssemblyAddedEvent(const AssemblyAddedEvent& event) {
-        assemblyAddedEvents.push_back(event);
-    }
-    
-    void onAssemblyRemovedEvent(const AssemblyRemovedEvent& event) {
-        assemblyRemovedEvents.push_back(event);
-    }
-    
     void onProgressMessage(const ProgressMessage& event) {
         progressMessages.push_back(event);
     }

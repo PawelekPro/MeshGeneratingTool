@@ -33,17 +33,9 @@ class SpyShapeCoreObserver : public ShapeCoreObserver {
     void onShapeRemoved(std::shared_ptr<ShapeKey> key) override { 
         shapeRemovedPublished.push_back(key);
     }
-    void onAssemblyAdded(std::shared_ptr<ShapeKey> key) override { 
-        assemblyAddedPublished.push_back(key);
-    }
-    void onAssemblyRemoved(std::shared_ptr<ShapeKey> key) override { 
-        assemblyRemovedPublished.push_back(key);
-    }
 
     std::vector<std::shared_ptr<ShapeKey>> shapeAddedPublished;
     std::vector<std::shared_ptr<ShapeKey>> shapeRemovedPublished;
-    std::vector<std::shared_ptr<ShapeKey>> assemblyAddedPublished;
-    std::vector<std::shared_ptr<ShapeKey>> assemblyRemovedPublished;
 };
 
 #endif

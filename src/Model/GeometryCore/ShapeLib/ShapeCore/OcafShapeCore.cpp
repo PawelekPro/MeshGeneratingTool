@@ -33,14 +33,12 @@
 #include <TDocStd_Modified.hxx>
 #include <Quantity_ColorRGBA.hxx>
 
+
 #include "XmlShapeLibDrivers.hpp"
 #include "CoreShapeMap.hpp"
 #include "AttributeFactory.hpp"
 #include "LabelKeyTool.hpp"
-
-#include "ShapePathAttr.hpp"
-#include "LabelPathAttr.hpp"
-#include "AssemblyPathAttr.hpp"
+#include "OcafShapeRegistry.hpp"
 
 OcafShapeCore::OcafShapeCore()
 {
@@ -61,7 +59,7 @@ OcafShapeCore::OcafShapeCore()
     _shapeLabel = _shapeTool->Label();
     _shapeMap   = std::make_shared<CoreShapeMap>(_shapeTool);
     _attrFactory = std::move(std::make_unique<AttributeFactory>(_publisher));
-    _labelKeyTool = std::move(std::make_unique<LabelKeyTool>(_shapeTool));
+    _shapeRegistry = std::make_shared<OcafShapeRegistry>(_document, _attrFactory);
 }
 
 bool OcafShapeCore::write(const std::string& aSavePath) const {
@@ -80,163 +78,32 @@ bool OcafShapeCore::write(const std::string& aSavePath) const {
     return true;
 }
 
-std::shared_ptr<ShapeKey> OcafShapeCore::registerNewFreeShape(const TopoDS_Shape& aShape) {
-    TDF_Label mainLabel = _shapeTool->AddShape(aShape);
-
-    addShapeAttributeToLabel(mainLabel);
-    for (TopExp_Explorer exp(aShape, TopAbs_SHAPE); exp.More(); exp.Next()) {
-        const TopoDS_Shape& subShape = exp.Current();
-        if (subShape.IsEqual(aShape))
-            continue;
-        TDF_Label subLabel = _shapeTool->AddShape(subShape);
-       
-        auto subKey = _labelKeyTool->keyFromLabel(subLabel);  
-        addShapeAttributeToLabel(subLabel);    
-    }
-    return _labelKeyTool->keyFromLabel(mainLabel);
-}
-
 bool OcafShapeCore::importDocument(Handle(TDocStd_Document) aDoc) {
-    Handle(XCAFDoc_ShapeTool) srcShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
-    TDF_LabelSequence freeShapes;
-    TDF_LabelSequence shapes;
-    srcShapeTool->GetFreeShapes(freeShapes);
-    srcShapeTool->GetShapes(shapes);
-    for (Standard_Integer i = 1; i <= freeShapes.Length(); ++i) {
-        auto label = freeShapes.Value(i);
-        bool isAssembly = srcShapeTool->IsAssembly(label);
-        bool isFree = srcShapeTool->IsFree(label);
-        if (isAssembly) {
-            importAssemblyLabel(srcShapeTool, label);
-        } 
-        else if (isFree) {
-            registerFreeShapeLabel(srcShapeTool, label);
-        }
-    }
     return true;
 }
 
-void OcafShapeCore::importAssemblyLabel(
-    Handle(XCAFDoc_ShapeTool) aSourceShapeTool, 
-    const TDF_Label& aLabel
-){
-    TDF_Label assemblyLabel = registerAssemblyLabel(aSourceShapeTool, aLabel);
-    TDF_LabelSequence children;
-    aSourceShapeTool->GetComponents(aLabel, children);
-    for (Standard_Integer i = 1; i <= children.Length(); ++i) {
-        importComponentLabel(assemblyLabel, aSourceShapeTool, children.Value(i));
-    }
-};
-
-void OcafShapeCore::importComponentLabel(
-    TDF_Label& aLocalAssemblyLabel,
-    Handle(XCAFDoc_ShapeTool) aSourceShapeTool, 
-    const TDF_Label& aLabel
-) {
-    if (aSourceShapeTool->IsAssembly(aLabel)){
-        TDF_Label componentLabel = registerSubAssemblyLabel(
-            aLocalAssemblyLabel, aSourceShapeTool, aLabel
-        );
-        TDF_LabelSequence children;
-        aSourceShapeTool->GetComponents(aLabel, children);
-        for (Standard_Integer i = 1; i <= children.Length(); ++i) {
-            importComponentLabel(
-                componentLabel, 
-                aSourceShapeTool, 
-                children.Value(i)
-            );
-        }
-    }
-    else {
-        auto label = registerComponentLabel(
-            aLocalAssemblyLabel, aSourceShapeTool, aLabel
-        );
-    }
-}
-
-TDF_Label OcafShapeCore::registerAssemblyLabel(
-    Handle(XCAFDoc_ShapeTool) aSourceShapeTool, 
-    const TDF_Label& aSourceAssemblyLabel
-) {
-    TopoDS_Shape assemblyShape = aSourceShapeTool->GetShape(aSourceAssemblyLabel);
-    if (assemblyShape.IsNull()) {
-        return TDF_Label();
-    }
-
-    TDF_Label localAssemblyLabel = _shapeTool->NewShape();
-    _shapeTool->SetShape(localAssemblyLabel, assemblyShape);
-    addAssemblyAttributeToLabel(localAssemblyLabel);
-    
-    return localAssemblyLabel;
-}
-
-TDF_Label OcafShapeCore::registerFreeShapeLabel(
-    Handle(XCAFDoc_ShapeTool) aSourceShapeTool, 
-    const TDF_Label& aSourceLabel
-) {
-    TopoDS_Shape shape = aSourceShapeTool->GetShape(aSourceLabel);
-    if (shape.IsNull())
-        return TDF_Label();
-
-    TopLoc_Location loc = aSourceShapeTool->GetLocation(aSourceLabel);
-    shape.Move(loc);
-
-    TDF_Label localLabel = _shapeTool->AddShape(shape);
-    addShapeAttributeToLabel(localLabel);
-
-    return localLabel;
-} 
-
-TDF_Label OcafShapeCore::registerSubAssemblyLabel(
-    TDF_Label& aLocalParentAssemblyLabel,
-    Handle(XCAFDoc_ShapeTool) aSourceShapeTool, 
-    const TDF_Label& aSourceSubAssemblyLabel
-) {
-    TopoDS_Shape subAssemblyShape = aSourceShapeTool->GetShape(aSourceSubAssemblyLabel);
-    if (subAssemblyShape.IsNull()) {
-        return TDF_Label();
-    }
-
-    TDF_Label localSubAssemblyLabel = _shapeTool->NewShape();
-    _shapeTool->SetShape(localSubAssemblyLabel, subAssemblyShape);
-    _shapeTool->AddComponent(aLocalParentAssemblyLabel, subAssemblyShape);
-
-    addAssemblyAttributeToLabel(localSubAssemblyLabel);
-    
-    return localSubAssemblyLabel;
-}
-    
-TDF_Label OcafShapeCore::registerComponentLabel(
-    TDF_Label& aLocalParentAssemblyLabel,
-    Handle(XCAFDoc_ShapeTool) aSourceShapeTool, 
-    const TDF_Label& aSourceLabel
-) {
-    TopoDS_Shape shape = aSourceShapeTool->GetShape(aSourceLabel);
-    if (shape.IsNull()) {
-        return TDF_Label();
-    }
-
-    TopLoc_Location loc = aSourceShapeTool->GetLocation(aSourceLabel);
-    shape.Move(loc);
-
-    TDF_Label localComponentLabel = _shapeTool->AddComponent(
-        aLocalParentAssemblyLabel, shape
+bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {
+    auto label = LabelKeyTool::labelFromKey(
+        _document->Main(), 
+        ShapeIdFactory::getKey(aShapeId)
     );
-
-    addShapeAttributeToLabel(localComponentLabel);
-    
-    return localComponentLabel;
-}
-
-bool OcafShapeCore::removeShape(std::shared_ptr<ShapeKey> aShapeKey) {
-    auto label = _labelKeyTool->labelFromKey(aShapeKey);
     return _shapeTool->RemoveShape(label);
 }
 
-bool OcafShapeCore::updateShape(
-    const std::pair<std::shared_ptr<ShapeKey>, TopoDS_Shape>& aShapeKeyPair
+std::shared_ptr<Shape> OcafShapeCore::registerNewFreeShape(
+    const TopoDS_Shape& aShape
 ) {
-    auto label = _labelKeyTool->labelFromKey(aShapeKeyPair.first);
+    return std::make_shared<OcafShape>(
+        _shapeTool->NewShape(), OcafShapeTools(_shapeTool, _colorTool)
+    );
+}
+
+bool OcafShapeCore::updateShape(
+    const std::pair<ShapeId, TopoDS_Shape>& aShapeKeyPair
+) {
+    auto label = LabelKeyTool::labelFromKey(
+        _document->Main(), ShapeIdFactory::getKey(aShapeKeyPair.first)
+    );
     _shapeTool->SetShape(label, aShapeKeyPair.second);
     return true;
 }

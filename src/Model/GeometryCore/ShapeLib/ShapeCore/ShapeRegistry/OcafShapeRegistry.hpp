@@ -20,8 +20,9 @@
 #ifndef OCAFSHAPEREGISTRY_HPP
 #define OCAFSHAPEREGISTRY_HPP
 
-#include <XCAFDoc_ShapeTool.hxx>
 #include <TDocStd_Document.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
 #include <Standard_Handle.hxx>
 #include <TDF_Label.hxx>
 
@@ -30,25 +31,22 @@
 #include "ShapeRegistry.hpp"
 #include "AttributeFactory.hpp"
 #include "LabelKeyTool.hpp"
+#include "OcafShape.hpp"
+
 
 class OcafShapeRegistry : public ShapeRegistry {
 
     public:
     OcafShapeRegistry(
-        Handle(XCAFDoc_ShapeTool) aShapeTool,
-        std::shared_ptr<AttributeFactory> attrFactory
+        Handle(TDocStd_Document) aDocument,
+        std::shared_ptr<AttributeFactory> aAttrFactory
     );
 
     virtual ~OcafShapeRegistry() = default;
 
-    TDF_Label registerComponent(
-        const ShapeData& aShapeData,
-        TDF_Label& aLocalParent
-    ) override;
-
-    TDF_Label registerAssembly(
-        const ShapeData& aShapeData,
-        TDF_Label& aLocalParent
+    std::shared_ptr<Shape> registerShape(
+        const ShapeImportData& aShapeData,
+        TDF_Label aLocalParent = TDF_Label{}
     ) override;
 
     inline TDF_Label baseLabel() override { 
@@ -56,11 +54,14 @@ class OcafShapeRegistry : public ShapeRegistry {
     }
 
     private:
-    void addShapeAttributeToLabel(TDF_Label&);
-    void addAssemblyAttributeToLabel(TDF_Label&);
+    void addPathAttribute(TDF_Label);
+    
+    void setNameAttribute(TDF_Label, const std::string&);
+    void setColor(TDF_Label, const ColorRGBA&);
 
+    Handle(TDocStd_Document) _document; 
+    Handle(XCAFDoc_ColorTool) _colorTool; 
     Handle(XCAFDoc_ShapeTool) _shapeTool;
-    std::unique_ptr<LabelKeyTool> _labelKeyTool;
     std::shared_ptr<AttributeFactory> _attrFactory;
 };
 

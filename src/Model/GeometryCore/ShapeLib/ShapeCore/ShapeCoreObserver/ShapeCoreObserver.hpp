@@ -17,29 +17,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LABELKEYTOOL_HPP
-#define LABELKEYTOOL_HPP
+#ifndef SHAPESIGNALSOBSERVER_HPP
+#define SHAPESIGNALSOBSERVER_HPP
 
-#include <TDF_Label.hxx>
-#include <Standard_Handle.hxx>
-#include <XCAFDoc_ShapeTool.hxx>
+class ShapeKey;
+class ShapeCoreObserver {
 
-#include "ShapeKey.hpp"
-#include "LabelPathAttr.hpp"
+    public:
+    ShapeCoreObserver() = default;
+    virtual ~ShapeCoreObserver() = default;    
 
-class LabelKeyTool {
-
-    public: 
-    LabelKeyTool(Handle(XCAFDoc_ShapeTool) aShapeTool);
-    ~LabelKeyTool() = default;
-    
-    TDF_Label labelFromKey(std::shared_ptr<ShapeKey> aKey);
-
-    std::shared_ptr<ShapeKey> keyFromLabel(const TDF_Label& aLabel);
-    std::shared_ptr<ShapeKey> keyFromAttr(Handle(LabelPathAttr) aAttribute);
-
-    private:
-    Handle(XCAFDoc_ShapeTool) _shapeTool;
+    virtual void onShapeAdded(std::shared_ptr<ShapeKey>) = 0;
+    virtual void onShapeRemoved(std::shared_ptr<ShapeKey>) = 0;
 };
 
-#endif
+#endif 

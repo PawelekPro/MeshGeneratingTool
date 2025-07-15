@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2024 Krystian Fudali
 *
-* This file is part of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
+* This file is Shape of the Mesh Generating Tool. (https://github.com/PawelekPro/MeshGeneratingTool)
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -10,7 +10,7 @@
 *
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* MERCHANTABILITY or FITNESS FOR A ShapeICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
@@ -27,25 +27,30 @@
 #include "ShapeMap.hpp"
 #include "ShapeKey.hpp"
 
-class LabelKeyTool;
 class CoreShapeMap : public ShapeMap {
 
     public:
     CoreShapeMap(Handle(XCAFDoc_ShapeTool) aShapeTool);
     ~CoreShapeMap() = default;
  
-    bool containsId(const ShapeId& id) const override;
-    bool containsShape(const TopoDS_Shape& id) const override;
+    bool containsId(const ShapeId& id) const override; 
+    bool containsTShape(TopoDS_Shape id) const override; 
+    bool containsShape(std::shared_ptr<Shape> shape) const override;
     
-    const TopoDS_Shape atId(const ShapeId& id) const override;
-    const ShapeId atShape(const TopoDS_Shape& shape) const override;
+    std::shared_ptr<Shape> atId(const ShapeId& id) const override;
+    std::shared_ptr<Shape> shapeFromTopo(
+        TopoDS_Shape shape
+    ) const override;
 
-    std::vector<ShapeIdPair> freeShapes() const override;
-    std::vector<ShapeIdPair> subShapes(const ShapeId& id) const override; 
+    std::vector<std::shared_ptr<Shape>> freeShapes() const override;
+    std::vector<std::shared_ptr<Shape>> assemblyShapes(
+        ShapeId&
+    ) const override;
+
+    std::shared_ptr<Shape> parentAssembly(ShapeId&) const override;
 
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;
-    std::unique_ptr<LabelKeyTool> _labelKeyTool;
 };
 
 #endif

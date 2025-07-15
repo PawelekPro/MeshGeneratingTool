@@ -1,5 +1,4 @@
 add_subdirectory(Shapes)
-add_subdirectory(ShapeMap)
 add_subdirectory(ShapeTools)
 add_subdirectory(ShapeCore)
 

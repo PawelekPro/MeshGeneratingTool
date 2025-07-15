@@ -47,13 +47,13 @@ void ShapeService::importShapes(
 };
 
 void ShapeService::removeShape(const ShapeId& aShapeId){
-    _shapeCore->removeShape(ShapeIdFactory::getKey(aShapeId));
+    _shapeCore->removeShape(aShapeId);
 };
 
 void ShapeService::scaleShape(const ShapeId& aShapeId, float aScaleFactor){
     auto shape = _shapeCore->shapeMap()->atId(aShapeId);
-    auto scaledShape = ShapeTools::scaleShape(shape, aScaleFactor);
-    _shapeCore->updateShape({ShapeIdFactory::getKey(aShapeId), scaledShape});
+    auto scaledShape = ShapeTools::scaleShape(shape->shape(), aScaleFactor);
+    _shapeCore->updateShape({aShapeId, scaledShape});
 };
 
 void ShapeService::connectToShapeCore() {

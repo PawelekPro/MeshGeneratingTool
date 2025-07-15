@@ -17,29 +17,31 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ShapeSignalWrapper.hpp"
-#include "GeometryEvents.hpp"
-#include "ShapeIdFactory.hpp"
-#include <memory>
+#ifndef SHAPEIMPORTDATA_HPP
+#define SHAPEIMPORTDATA_HPP
 
-ShapeSignalWrapper::ShapeSignalWrapper(
-    MessageBus& aMessageBus
-) : _eventBus(aMessageBus){}
+#include <TopoDS_Shape.hxx>
+#include <TopLoc_Location.hxx>
 
-void ShapeSignalWrapper::publishShapeAddedEvent(const ShapeId& aShapeId){
-    _eventBus.publish(ShapeAddedEvent(aShapeId));
-}
+#include "Color.hpp"
 
-void ShapeSignalWrapper::publishShapeRemovedEvent(const ShapeId& aShapeId){
-    _eventBus.publish(ShapeRemovedEvent(aShapeId));
-}
+struct ShapeImportData {
+    ShapeImportData(
+        TopoDS_Shape aShape,
+        const TopLoc_Location aLocation,
+        const std::string& aName,
+        const ColorRGBA& aColor
+    ) : 
+    shape(aShape),
+    location(aLocation),
+    name(aName),
+    color(aColor) {}
+    ShapeImportData(){};
 
-void ShapeSignalWrapper::onShapeAdded(std::shared_ptr<ShapeKey> aKey){
-    auto id = ShapeIdFactory::create(aKey);
-    publishShapeAddedEvent(id);
-}
+    TopoDS_Shape shape;
+    TopLoc_Location location;
+    std::string name;
+    ColorRGBA color;
+};
 
-void ShapeSignalWrapper::onShapeRemoved(std::shared_ptr<ShapeKey> aKey){
-    auto id = ShapeIdFactory::create(aKey);
-    publishShapeRemovedEvent(id);
-}
+#endif

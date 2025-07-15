@@ -17,29 +17,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ShapeSignalWrapper.hpp"
-#include "GeometryEvents.hpp"
-#include "ShapeIdFactory.hpp"
-#include <memory>
+#ifndef LABELKEYTOOL_HPP
+#define LABELKEYTOOL_HPP
 
-ShapeSignalWrapper::ShapeSignalWrapper(
-    MessageBus& aMessageBus
-) : _eventBus(aMessageBus){}
+#include <TDF_Label.hxx>
+#include "ShapeKey.hpp"
 
-void ShapeSignalWrapper::publishShapeAddedEvent(const ShapeId& aShapeId){
-    _eventBus.publish(ShapeAddedEvent(aShapeId));
+namespace LabelKeyTool {
+    TDF_Label labelFromKey(TDF_Label aRoot, std::shared_ptr<ShapeKey> aKey);
+    std::shared_ptr<ShapeKey> keyFromLabel(TDF_Label aLabel);
 }
 
-void ShapeSignalWrapper::publishShapeRemovedEvent(const ShapeId& aShapeId){
-    _eventBus.publish(ShapeRemovedEvent(aShapeId));
-}
-
-void ShapeSignalWrapper::onShapeAdded(std::shared_ptr<ShapeKey> aKey){
-    auto id = ShapeIdFactory::create(aKey);
-    publishShapeAddedEvent(id);
-}
-
-void ShapeSignalWrapper::onShapeRemoved(std::shared_ptr<ShapeKey> aKey){
-    auto id = ShapeIdFactory::create(aKey);
-    publishShapeRemovedEvent(id);
-}
+#endif

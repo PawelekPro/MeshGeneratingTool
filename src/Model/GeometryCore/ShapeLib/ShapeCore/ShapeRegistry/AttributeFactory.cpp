@@ -20,7 +20,6 @@
 #include "AttributeFactory.hpp"
 #include "LabelPathAttr.hpp"
 #include "ShapePathAttr.hpp"
-#include "AssemblyPathAttr.hpp"
 #include "ShapeKey.hpp"
 
 AttributeFactory::AttributeFactory(
@@ -49,35 +48,6 @@ Handle(ShapePathAttr) AttributeFactory::shapePathAttr(
         ) {
             auto key = std::make_shared<ShapeKey>(aShapeTreePath);
             publisher.get().publishShapeRemoved(key);
-        }
-    );
-    
-    return attr;
-}
-
-
-Handle(AssemblyPathAttr) AttributeFactory::assemblyPathAttr(
-    std::shared_ptr<ShapeKey> aKey
-) {
-    Handle(AssemblyPathAttr) attr = new AssemblyPathAttr(
-       aKey->shapeTreePath() 
-    );
-
-    attr->shapeAddedSignal().connect(
-        [publisher = std::ref(_publisher)](
-            std::vector<int> aShapeTreePath
-        ) {
-            auto key = std::make_shared<ShapeKey>(aShapeTreePath);
-            publisher.get().publishAssemblyAdded(key);
-        }
-    );
-
-    attr->shapeRemovedSignal().connect(
-        [publisher = std::ref(_publisher)](
-            std::vector<int> aShapeTreePath
-        ) {
-            auto key = std::make_shared<ShapeKey>(aShapeTreePath);
-            publisher.get().publishAssemblyRemoved(key);
         }
     );
     

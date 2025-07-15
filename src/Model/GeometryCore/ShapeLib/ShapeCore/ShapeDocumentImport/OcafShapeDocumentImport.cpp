@@ -30,20 +30,20 @@ bool ShapeDocumentImport::importDocument(
 
     TDF_LabelSequence freeShapes;
     sourceShapeTool->GetFreeShapes(freeShapes);
+    
     for (Standard_Integer i = 1; i <= freeShapes.Length(); ++i) {
         auto label = freeShapes.Value(i);
         bool isAssembly = sourceShapeTool->IsAssembly(label);
-        bool isFree = sourceShapeTool->IsFree(label);
         if (isAssembly) {
-            ShapeDocumentImport::importAssembly(
+            ShapeDocumentImport::importComponent(
                 sourceShapeTool,
                 label,
                 aDestRegistry,
                 aDestRegistry->baseLabel()
             );
         } 
-        else if (isFree) {
-            ShapeDocumentImport::importComponent(
+        else {
+            ShapeDocumentImport::importPart(
                 sourceShapeTool,
                 label,
                 aDestRegistry,
@@ -51,15 +51,6 @@ bool ShapeDocumentImport::importDocument(
             );
         }
     }
-    return true;
-}
-
-bool ShapeDocumentImport::importAssembly(
-    Handle(XCAFDoc_ShapeTool) aSourceTool,
-    const TDF_Label& aSourceLabel,
-    std::shared_ptr<ShapeRegistry> aDestRegistry,
-    TDF_Label aDestParentLabel
-) {
     return true;
 }
 
@@ -72,9 +63,18 @@ bool ShapeDocumentImport::importComponent(
     return true;
 }
 
-ShapeData ShapeDocumentImport::extractShape(
+bool ShapeDocumentImport::importPart(
+    Handle(XCAFDoc_ShapeTool) aSourceTool,
+    const TDF_Label& aSourceLabel,
+    std::shared_ptr<ShapeRegistry> aDestRegistry,
+    TDF_Label aDestParentLabel
+) {
+    return true;
+}
+
+ShapeImportData ShapeDocumentImport::extractShape(
     Handle(XCAFDoc_ShapeTool) aSourceTool,
     const TDF_Label& aLabel
 ) {
-    return ShapeData();
+    return ShapeImportData(TopoDS_Shape(), TopLoc_Location(), "shape", ColorRGBA());
 }
