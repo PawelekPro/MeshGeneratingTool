@@ -56,13 +56,14 @@ class OcafShapeRegistryTest : public ::testing::Test {
             attributeFactory
         );
 
-        ColorRGBA color(0.5, 0.5, 0.5, 0.5);
-        std::string name = "name";
+        ColorRGBA cubeColor(0.5, 0.5, 0.5, 0.5);
+        std::string cubeName = "cubeName";
         TopoDS_Shape cube = StubShapes::cube();
-        TopLoc_Location loc;
+        TopLoc_Location cubeLoc;
         cubeData = ShapeImportData(
-            cube, loc, name, color
+            cube, cubeLoc, cubeName, cubeColor
         );
+
 
     }
 };
@@ -75,6 +76,22 @@ TEST_F(OcafShapeRegistryTest, TestRegisteredShapeReturnsCorrectAttributes){
     EXPECT_EQ(shape->name(), cubeData.name);
     EXPECT_EQ(shape->color(), cubeData.color);    
 }
+
+TEST_F(OcafShapeRegistryTest, TestRegisteredChildShapeReturnsCorrectAttributes){
+    auto parent = shapeRegistry->registerShape(cubeData);
+    ShapeId id = parent->id();
+    auto parentLabel = LabelKeyTool::labelFromKey(
+        document->Main(), 
+        ShapeIdFactory::getKey(id)
+    );
+    auto shape = shapeRegistry->registerShape(cubeData, parentLabel);
+    ASSERT_FALSE(shape->shape().IsNull());    
+    EXPECT_EQ(shape->shape(), cubeData.shape);    
+    EXPECT_EQ(shape->location(), cubeData.location);    
+    EXPECT_EQ(shape->name(), cubeData.name);
+    EXPECT_EQ(shape->color(), cubeData.color);    
+}
+
 
 TEST_F(OcafShapeRegistryTest, TestRegisteredComponentIsPlacedUnderMain){
     auto shape = shapeRegistry->registerShape(cubeData);
@@ -117,7 +134,19 @@ TEST_F(OcafShapeRegistryTest, TestRegisterSameShapeUnderMainTwiceThrows) {
     );
 }
 
-TEST_F(OcafShapeRegistryTest, TestRegisterSameShapeUnderParentTwiceAssignsDifferentIds) {
+TEST_F(OcafShapeRegistryTest, TestRegisterExistingShapeUnderParentAssignsDifferentIds) {
+    auto parent = shapeRegistry->registerShape(cubeData);
+    ShapeId id = parent->id();
+    auto parentLabel = LabelKeyTool::labelFromKey(
+        document->Main(), 
+        ShapeIdFactory::getKey(id)
+    );
+    auto shape = shapeRegistry->registerShape(cubeData, parentLabel);
+    EXPECT_NE(id, shape->id());
+}
+
+
+TEST_F(OcafShapeRegistryTest, TestRegisteringTheSameShapeTwiceUnderAParentAssignsDifferentIds){
     auto parent = shapeRegistry->registerShape(cubeData);
     ShapeId id = parent->id();
     auto parentLabel = LabelKeyTool::labelFromKey(
@@ -125,8 +154,7 @@ TEST_F(OcafShapeRegistryTest, TestRegisterSameShapeUnderParentTwiceAssignsDiffer
         ShapeIdFactory::getKey(id)
     );
     
-    auto shape = shapeRegistry->registerShape(cubeData, parentLabel);
-    id = shape->id();
-    shape = shapeRegistry->registerShape(cubeData, parentLabel);
-    EXPECT_NE(id, shape->id());
+    auto shape_a = shapeRegistry->registerShape(cubeData, parentLabel);
+    auto shape_b = shapeRegistry->registerShape(cubeData, parentLabel);
+    EXPECT_NE(shape_a->id(), shape_b->id());
 }

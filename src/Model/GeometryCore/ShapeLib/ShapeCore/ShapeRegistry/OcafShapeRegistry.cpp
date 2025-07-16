@@ -37,17 +37,14 @@ std::shared_ptr<Shape> OcafShapeRegistry::registerShape(
     TopoDS_Shape locatedShape = aShapeData.shape.Located(aShapeData.location);
 
 
-    if(aLocalParent.IsNull()){
+    TDF_Label label;
+    if (aLocalParent.IsNull()){
         TDF_Label foundLabel;
-        if (_shapeTool->FindShape(locatedShape, foundLabel, true)){
+        if (_shapeTool->FindShape(locatedShape, foundLabel, false)){
             throw Exceptions::ShapeRegistry::ShapeAlreadyRegistered(
                 "Trying to register the same shape twice in identical location."
             );
         }
-    }
-
-    TDF_Label label;
-    if (aLocalParent.IsNull()){
         label = _shapeTool->AddShape(
             locatedShape
         );
@@ -94,6 +91,5 @@ void OcafShapeRegistry::setColor(
     TDF_Label aLabel,
     const ColorRGBA& aColor
 ) {
-    auto shape = _shapeTool->GetShape(aLabel);
-    _colorTool->SetColor(shape, aColor, XCAFDoc_ColorType::XCAFDoc_ColorGen);
+    _colorTool->SetColor(aLabel, aColor, XCAFDoc_ColorType::XCAFDoc_ColorGen);
 }
