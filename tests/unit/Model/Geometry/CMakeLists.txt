@@ -4,6 +4,7 @@ add_library(utGeometry
     utOccProgressIndicator.cpp
     utOcafShapeRegistry.cpp
     utOcafShapeDocumentImport.cpp
+    utLabelKeyTool.cpp
 )
 
 find_package(GTest REQUIRED)

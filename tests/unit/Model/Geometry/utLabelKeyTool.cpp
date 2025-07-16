@@ -21,3 +21,30 @@
 #include <gmock/gmock.h>
 
 #include "LabelKeyTool.hpp"
+#include "StubShapes.hpp"
+
+#include <XCAFApp_Application.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <TDocStd_Document.hxx>
+#include <TDF_Label.hxx>
+
+class LabelKeyToolTest : public ::testing::Test {
+    protected:
+    Handle(TDocStd_Document) document;
+    Handle(XCAFDoc_ShapeTool) shapeTool;
+
+    void SetUp() {
+        auto app = XCAFApp_Application::GetApplication();
+        app->NewDocument("XmlXCAF", document);
+        app->InitDocument(document);
+        shapeTool = XCAFDoc_DocumentTool::ShapeTool(document->Main());
+    }
+};
+
+TEST_F(LabelKeyToolTest, KeyToLabelToLabelToKeyAreEqual) {
+    auto label = shapeTool->AddShape(StubShapes::cube()); 
+    auto key = LabelKeyTool::keyFromLabel(label);
+    auto fetchedLabel = LabelKeyTool::labelFromKey(document->Main(), key);
+    EXPECT_EQ(label, fetchedLabel);
+}
