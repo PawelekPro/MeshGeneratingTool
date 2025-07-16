@@ -35,6 +35,17 @@ std::shared_ptr<Shape> OcafShapeRegistry::registerShape(
     TDF_Label aLocalParent
 ) {
     TopoDS_Shape locatedShape = aShapeData.shape.Located(aShapeData.location);
+
+
+    if(aLocalParent.IsNull()){
+        TDF_Label foundLabel;
+        if (_shapeTool->FindShape(locatedShape, foundLabel, true)){
+            throw Exceptions::ShapeRegistry::ShapeAlreadyRegistered(
+                "Trying to register the same shape twice in identical location."
+            );
+        }
+    }
+
     TDF_Label label;
     if (aLocalParent.IsNull()){
         label = _shapeTool->AddShape(

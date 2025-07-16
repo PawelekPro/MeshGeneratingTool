@@ -17,25 +17,27 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SHAPEREGISTRY_HPP
-#define SHAPEREGISTRY_HPP
+#ifndef REGISTRYEXCEPTIONS_HPP
+#define REGISTRYEXCEPTIONS_HPP
 
-#include <TDF_Label.hxx>
-#include "Shape.hpp"
-#include "RegistryExceptions.hpp"
-#include "ShapeImportData.hpp"
+#include <stdexcept>
+#include <string>
+namespace Exceptions{
+namespace ShapeRegistry {
 
-class ShapeRegistry {
-    public:
+    class ShapeRegistryException : public std::runtime_error {
+        public:
+            explicit ShapeRegistryException(const std::string& message)
+                : std::runtime_error(message) {}
+    };
 
-    virtual ~ShapeRegistry() = default;
-
-    virtual std::shared_ptr<Shape> registerShape(
-        const ShapeImportData& aShapeData,
-        TDF_Label aLocalParent = TDF_Label{}
-    ) = 0;
-
-    virtual TDF_Label baseLabel() = 0;
+    class ShapeAlreadyRegistered : public ShapeRegistryException {
+        public:
+            explicit ShapeAlreadyRegistered(const std::string& message)
+                : ShapeRegistryException(message) {}
+    };
 
 };
+};
+
 #endif

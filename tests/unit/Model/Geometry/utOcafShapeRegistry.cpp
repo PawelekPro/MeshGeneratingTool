@@ -76,7 +76,7 @@ TEST_F(OcafShapeRegistryTest, TestRegisteredShapeReturnsCorrectAttributes){
     EXPECT_EQ(shape->color(), cubeData.color);    
 }
 
-TEST_F(OcafShapeRegistryTest, TestRegisteredComponentIsPlacedUnderParent){
+TEST_F(OcafShapeRegistryTest, TestRegisteredComponentIsPlacedUnderMain){
     auto shape = shapeRegistry->registerShape(cubeData);
     ShapeId id = shape->id();
     auto label = LabelKeyTool::labelFromKey(
@@ -86,4 +86,47 @@ TEST_F(OcafShapeRegistryTest, TestRegisteredComponentIsPlacedUnderParent){
     auto foundLabel = shapeTool->FindShape(shape->shape());
     ASSERT_FALSE(foundLabel.IsNull());
     EXPECT_EQ(foundLabel, label);
+}
+
+TEST_F(OcafShapeRegistryTest, TestRegisteredComponentIsPlacedUnderParent){
+    auto parent = shapeRegistry->registerShape(cubeData);
+    ShapeId id = parent->id();
+    auto parentLabel = LabelKeyTool::labelFromKey(
+        document->Main(), 
+        ShapeIdFactory::getKey(id)
+    );
+    
+    auto shape = shapeRegistry->registerShape(cubeData, parentLabel);
+    
+    id = shape->id();
+    auto childLabel = LabelKeyTool::labelFromKey(
+        document->Main(), 
+        ShapeIdFactory::getKey(id)
+    );
+    ASSERT_FALSE(parentLabel.IsNull());
+    ASSERT_FALSE(childLabel.IsNull());
+    EXPECT_TRUE(parent->isAssembly());
+    EXPECT_EQ(childLabel.Father(), parentLabel);
+}
+
+TEST_F(OcafShapeRegistryTest, TestRegisterSameShapeUnderMainTwiceThrows) {
+    auto shape = shapeRegistry->registerShape(cubeData);
+    EXPECT_THROW(
+        shapeRegistry->registerShape(cubeData),
+        Exceptions::ShapeRegistry::ShapeAlreadyRegistered
+    );
+}
+
+TEST_F(OcafShapeRegistryTest, TestRegisterSameShapeUnderParentTwiceAssignsDifferentIds) {
+    auto parent = shapeRegistry->registerShape(cubeData);
+    ShapeId id = parent->id();
+    auto parentLabel = LabelKeyTool::labelFromKey(
+        document->Main(), 
+        ShapeIdFactory::getKey(id)
+    );
+    
+    auto shape = shapeRegistry->registerShape(cubeData, parentLabel);
+    id = shape->id();
+    shape = shapeRegistry->registerShape(cubeData, parentLabel);
+    EXPECT_NE(id, shape->id());
 }
