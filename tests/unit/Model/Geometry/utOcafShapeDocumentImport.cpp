@@ -20,6 +20,65 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-TEST(ShapeDocumentImportTest, AssertTrue){
-    ASSERT_TRUE(true);    
+#include <TDocStd_Document.hxx>
+#include <XCAFApp_Application.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <TDataStd_Name.hxx>
+#include <TopLoc_Location.hxx>
+#include <TopLoc_Location.hxx>
+#include <gp_Trsf.hxx>
+#include <gp_Vec.hxx>
+
+#include "StubShapes.hpp"
+#include "OcafShapeDocumentImport.hpp"
+
+class ShapeDocumentImportTest : public ::testing::Test{
+    protected:
+    std::shared_ptr<ShapeRegistry> shapeRegistry;
+    ShapeSignalsPublisher publisher;
+    Handle(TDocStd_Document) document;
+    Handle(XCAFDoc_ShapeTool) shapeTool;
+    Handle(XCAFDoc_ColorTool) colorTool;
+    ShapeImportData cubeData;
+
+    std::string name = "cubeShape";
+    ColorRGBA color = ColorRGBA(0.5, 0.5, 0.5, 0.5);
+    TDF_Label label;
+
+    TopLoc_Location location;
+
+    
+    void SetUp() {
+        auto app = XCAFApp_Application::GetApplication();
+        app->NewDocument("XmlXCAF", document);
+        app->InitDocument(document);
+
+        shapeTool = XCAFDoc_DocumentTool::ShapeTool(document->Main());
+        colorTool = XCAFDoc_DocumentTool::ColorTool(document->Main());
+
+        gp_Trsf trsf;
+        trsf.SetTranslation(gp_Vec(10.0, 20.0, 30.0));
+        location = TopLoc_Location(trsf);
+        auto shape = StubShapes::cube().Located(location);
+        label = shapeTool->AddShape(shape);
+        TDataStd_Name::Set(
+            label, 
+            TCollection_ExtendedString(
+                name.c_str()
+            )
+        );
+        colorTool->SetColor(label, color, XCAFDoc_ColorType::XCAFDoc_ColorGen);
+    }
+
+};
+
+
+TEST_F(ShapeDocumentImportTest, ExtractShapeExtractsNameColorShapeLocation){
+    ShapeImportData data = ShapeDocumentImport::extractShape(shapeTool, label);
+    ASSERT_FALSE(data.shape.IsNull());    
+    EXPECT_EQ(data.color, color);
+    EXPECT_EQ(data.name, name);
+    EXPECT_EQ(data.location, location);
 }
