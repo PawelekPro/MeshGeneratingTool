@@ -35,7 +35,7 @@ bool ShapeDocumentImport::importDocument(
         auto label = freeShapes.Value(i);
         bool isAssembly = sourceShapeTool->IsAssembly(label);
         if (isAssembly) {
-            ShapeDocumentImport::importComponent(
+            ShapeDocumentImport::importAssembly(
                 sourceShapeTool,
                 label,
                 aDestRegistry,
@@ -54,13 +54,16 @@ bool ShapeDocumentImport::importDocument(
     return true;
 }
 
-bool ShapeDocumentImport::importComponent(
+bool ShapeDocumentImport::importAssembly(
     Handle(XCAFDoc_ShapeTool) aSourceTool,
     const TDF_Label& aSourceLabel,
     std::shared_ptr<ShapeRegistry> aDestRegistry,
     TDF_Label aDestParentLabel
 ) {
-    return true;
+    
+
+
+
 }
 
 bool ShapeDocumentImport::importPart(

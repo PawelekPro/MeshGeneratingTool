@@ -11,7 +11,6 @@ target_link_libraries(itGeometry PUBLIC
 
 target_link_libraries(itGeometry PUBLIC
     GeometryCore
-    MockImporter
     GeometryFixtures
 )
 

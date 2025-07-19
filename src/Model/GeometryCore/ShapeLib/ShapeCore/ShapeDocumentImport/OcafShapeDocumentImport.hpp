@@ -32,7 +32,7 @@ namespace ShapeDocumentImport
         Handle(TDocStd_Document) aSourceDoc
     );
 
-    bool importComponent(
+    bool importAssembly(
         Handle(XCAFDoc_ShapeTool) aSourceTool,
         const TDF_Label& aSourceLabel,
         std::shared_ptr<ShapeRegistry> aDestRegistry,

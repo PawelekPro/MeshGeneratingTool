@@ -31,54 +31,77 @@
 #include <gp_Trsf.hxx>
 #include <gp_Vec.hxx>
 
-#include "StubShapes.hpp"
+#include "StubShapeDocument.hpp"
 #include "OcafShapeDocumentImport.hpp"
+
+class MockShapeRegistry : public ShapeRegistry {
+public:
+    MOCK_METHOD(std::shared_ptr<Shape>, registerShape,
+                (const ShapeImportData& aShapeData, TDF_Label aLocalParent), (override));
+
+    MOCK_METHOD(TDF_Label, baseLabel, (), (override));
+};
+
+MATCHER_P(ShapeImportDataEq, expected, "Matches ShapeImportData fields") {
+    return  arg.name == expected.name &&
+            arg.color == expected.color &&
+            arg.location == expected.location &&
+            arg.shape == expected.shape;
+};
 
 class ShapeDocumentImportTest : public ::testing::Test{
     protected:
-    std::shared_ptr<ShapeRegistry> shapeRegistry;
-    ShapeSignalsPublisher publisher;
-    Handle(TDocStd_Document) document;
-    Handle(XCAFDoc_ShapeTool) shapeTool;
-    Handle(XCAFDoc_ColorTool) colorTool;
-    ShapeImportData cubeData;
+    StubShapeDocument stubDoc;
+    std::shared_ptr<MockShapeRegistry> mockRegistry;
 
-    std::string name = "cubeShape";
-    ColorRGBA color = ColorRGBA(0.5, 0.5, 0.5, 0.5);
-    TDF_Label label;
-
-    TopLoc_Location location;
-
-    
-    void SetUp() {
-        auto app = XCAFApp_Application::GetApplication();
-        app->NewDocument("XmlXCAF", document);
-        app->InitDocument(document);
-
-        shapeTool = XCAFDoc_DocumentTool::ShapeTool(document->Main());
-        colorTool = XCAFDoc_DocumentTool::ColorTool(document->Main());
-
-        gp_Trsf trsf;
-        trsf.SetTranslation(gp_Vec(10.0, 20.0, 30.0));
-        location = TopLoc_Location(trsf);
-        auto shape = StubShapes::cube().Located(location);
-        label = shapeTool->AddShape(shape);
-        TDataStd_Name::Set(
-            label, 
-            TCollection_ExtendedString(
-                name.c_str()
-            )
-        );
-        colorTool->SetColor(label, color, XCAFDoc_ColorType::XCAFDoc_ColorGen);
+    void SetUp() override {
+        stubDoc = StubShapeDocument();
+        mockRegistry = std::make_shared<MockShapeRegistry>();
     }
-
 };
 
-
 TEST_F(ShapeDocumentImportTest, ExtractShapeExtractsNameColorShapeLocation){
-    ShapeImportData data = ShapeDocumentImport::extractShape(shapeTool, label);
+    ShapeImportData data = ShapeDocumentImport::extractShape(
+        stubDoc.shapeTool, stubDoc.freeLabel
+    );
     ASSERT_FALSE(data.shape.IsNull());    
-    EXPECT_EQ(data.color, color);
-    EXPECT_EQ(data.name, name);
-    EXPECT_EQ(data.location, location);
+    EXPECT_EQ(data.color, stubDoc.freeColor);
+    EXPECT_EQ(data.name, stubDoc.freeName);
+    EXPECT_EQ(data.location, stubDoc.freeLocation);
+}
+
+TEST_F(ShapeDocumentImportTest, ImportPartCallsRegistryWithCorrectShapeData) {
+    ShapeImportData expectedData = ShapeDocumentImport::extractShape(
+        stubDoc.shapeTool, stubDoc.freeLabel
+    );
+
+    EXPECT_CALL(*mockRegistry, baseLabel())
+        .WillOnce(testing::Return(TDF_Label{}));
+
+    EXPECT_CALL(*mockRegistry, registerShape(
+        ShapeImportDataEq(expectedData),
+        TDF_Label{}
+    )).Times(1);
+
+    bool result = ShapeDocumentImport::importPart(
+        stubDoc.shapeTool, stubDoc.freeLabel,
+        mockRegistry, stubDoc.freeLabel
+    );
+
+    EXPECT_TRUE(result);
+}
+
+TEST_F(ShapeDocumentImportTest, ImportAssemblyCallsRegistryWithCorrectShapeData){
+    bool importer = ShapeDocumentImport::importAssembly(
+        stubDoc.shapeTool, stubDoc.freeLabel, 
+        mockRegistry, mockRegistry->baseLabel()
+    );
+
+}
+
+TEST_F(ShapeDocumentImportTest, ImportDocumentCallsRegistryForAllShapes){
+    bool importer = ShapeDocumentImport::importDocument(
+        mockRegistry, stubDoc.document
+    );
+
 }
