@@ -25,6 +25,10 @@ TDF_Label LabelKeyTool::labelFromKey(
     TDF_Label rootLabel, 
     std::shared_ptr<ShapeKey> aKey
 ){
+    if (rootLabel.IsNull()){
+        return TDF_Label{};
+    }
+
     TColStd_ListOfInteger tagList;
     
     for(auto treeNode : aKey->shapeTreePath()){
@@ -37,6 +41,9 @@ TDF_Label LabelKeyTool::labelFromKey(
 }
 
 std::shared_ptr<ShapeKey> LabelKeyTool::keyFromLabel(TDF_Label aLabel) {
+    if(aLabel.IsNull()){
+        return std::make_shared<ShapeKey>(std::vector<int>());
+    }
     std::vector<int> tagPath;
     TDF_Label current = aLabel;
     while (!current.IsNull()) {

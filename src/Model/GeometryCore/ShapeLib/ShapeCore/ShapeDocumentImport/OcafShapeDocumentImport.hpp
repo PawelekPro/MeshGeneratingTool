@@ -25,30 +25,42 @@
 #include <Standard_Handle.hxx>
 #include <TDocStd_Document.hxx>
 
-namespace ShapeDocumentImport
-{
+class OcafShapeDocumentImporter{
+    public: 
+    OcafShapeDocumentImporter(
+        std::shared_ptr<ShapeRegistry> aDestRegistry
+    );
+    
     bool importDocument(
-        std::shared_ptr<ShapeRegistry> aDestRegistry,
         Handle(TDocStd_Document) aSourceDoc
     );
-
-    bool importAssembly(
-        Handle(XCAFDoc_ShapeTool) aSourceTool,
+    
+    protected:
+    TDF_Label importAssembly(
         const TDF_Label& aSourceLabel,
-        std::shared_ptr<ShapeRegistry> aDestRegistry,
         TDF_Label aDestParentLabel
     );
 
-    bool importPart(
-        Handle(XCAFDoc_ShapeTool) aSourceTool,
+    TDF_Label importPart(
         const TDF_Label& aSourceLabel,
-        std::shared_ptr<ShapeRegistry> aDestRegistry,
         TDF_Label aDestParentLabel
     );
 
     ShapeImportData extractShape(
-        Handle(XCAFDoc_ShapeTool) aSourceTool,
         const TDF_Label& aLabel
     );
+
+    void importLabelSequence(
+        const TDF_LabelSequence& aLabelSequence, 
+        TDF_Label aDestParentLabel
+    );
+
+    private:
+        std::shared_ptr<ShapeRegistry> _destRegistry;
+        Handle(TDocStd_Document) _sourceDocument;
+        Handle(XCAFDoc_ShapeTool) _sourceShapeTool;
+        Handle(XCAFDoc_ColorTool) _sourceColorTool;
 };
+
+
 #endif

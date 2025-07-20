@@ -41,10 +41,13 @@ class StubShapeDocument {
 
         shapeTool = XCAFDoc_DocumentTool::ShapeTool(document->Main());
         colorTool = XCAFDoc_DocumentTool::ColorTool(document->Main());
+    }
+    
 
-        gp_Trsf trsf;
+    void addAssembly(){
         assemblyLabel = shapeTool->NewShape();
         setName(assemblyLabel, assemblyName);
+        gp_Trsf trsf;
 
         trsf.SetTranslation(gp_Vec(1.0, 2.0, 3.0));
         childSphereLocation = TopLoc_Location(trsf);
@@ -65,7 +68,11 @@ class StubShapeDocument {
         );
         setName(childCubeLabel, childCubeName);
         colorTool->SetColor(childCubeLabel, childCubeColor, XCAFDoc_ColorType::XCAFDoc_ColorGen);       
+    }
 
+
+    void addFree(){
+        gp_Trsf trsf;
         trsf.SetTranslation(gp_Vec(7.0, 8.0, 9.0));
         freeLocation = TopLoc_Location(trsf);
         freeShape = StubShapes::sphere().Located(freeLocation);

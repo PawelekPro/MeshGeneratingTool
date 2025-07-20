@@ -35,8 +35,6 @@ std::shared_ptr<Shape> OcafShapeRegistry::registerShape(
     TDF_Label aLocalParent
 ) {
     TopoDS_Shape locatedShape = aShapeData.shape.Located(aShapeData.location);
-
-
     TDF_Label label;
     if (aLocalParent.IsNull()){
         TDF_Label foundLabel;

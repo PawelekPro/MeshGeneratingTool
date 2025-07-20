@@ -33,6 +33,22 @@
 
 #include "StubShapeDocument.hpp"
 #include "OcafShapeDocumentImport.hpp"
+#include "ShapeIdFactory.hpp"
+
+class StubShape : public Shape {
+    virtual ShapeId id() const override {
+        return ShapeIdFactory::create(
+            std::make_shared<ShapeKey>(std::vector<int>{1,2,3})
+        );
+    };
+
+    virtual bool isAssembly() const override {return true;}
+    virtual TopoDS_Shape shape() const override {return TopoDS_Shape();}
+    virtual TopLoc_Location location() const override {return TopLoc_Location();}
+    
+    virtual std::string name() const override {return "name";}
+    virtual ColorRGBA color() const override {return ColorRGBA();}
+};
 
 class MockShapeRegistry : public ShapeRegistry {
 public:
@@ -53,55 +69,76 @@ class ShapeDocumentImportTest : public ::testing::Test{
     protected:
     StubShapeDocument stubDoc;
     std::shared_ptr<MockShapeRegistry> mockRegistry;
+    std::shared_ptr<OcafShapeDocumentImporter> importer;
 
     void SetUp() override {
         stubDoc = StubShapeDocument();
         mockRegistry = std::make_shared<MockShapeRegistry>();
+        ON_CALL(*mockRegistry, registerShape)
+            .WillByDefault(testing::Return(std::make_shared<StubShape>()));
+
+        ON_CALL(*mockRegistry, baseLabel)
+            .WillByDefault(testing::Return(TDF_Label{}));
+
+        importer = std::make_shared<OcafShapeDocumentImporter>(
+            mockRegistry
+        );
     }
 };
 
-TEST_F(ShapeDocumentImportTest, ExtractShapeExtractsNameColorShapeLocation){
-    ShapeImportData data = ShapeDocumentImport::extractShape(
-        stubDoc.shapeTool, stubDoc.freeLabel
+TEST_F(ShapeDocumentImportTest, ImportDocumentWithOneShapeCallsRegistryWithCorrectData) {
+    stubDoc.addFree();
+    ShapeImportData expectedData(
+        stubDoc.freeShape, 
+        stubDoc.freeLocation, 
+        stubDoc.freeName, 
+        stubDoc.freeColor
     );
-    ASSERT_FALSE(data.shape.IsNull());    
-    EXPECT_EQ(data.color, stubDoc.freeColor);
-    EXPECT_EQ(data.name, stubDoc.freeName);
-    EXPECT_EQ(data.location, stubDoc.freeLocation);
-}
-
-TEST_F(ShapeDocumentImportTest, ImportPartCallsRegistryWithCorrectShapeData) {
-    ShapeImportData expectedData = ShapeDocumentImport::extractShape(
-        stubDoc.shapeTool, stubDoc.freeLabel
-    );
-
     EXPECT_CALL(*mockRegistry, baseLabel())
-        .WillOnce(testing::Return(TDF_Label{}));
+        .WillRepeatedly(testing::Return(TDF_Label{}));
 
     EXPECT_CALL(*mockRegistry, registerShape(
         ShapeImportDataEq(expectedData),
         TDF_Label{}
     )).Times(1);
 
-    bool result = ShapeDocumentImport::importPart(
-        stubDoc.shapeTool, stubDoc.freeLabel,
-        mockRegistry, stubDoc.freeLabel
-    );
-
-    EXPECT_TRUE(result);
-}
-
-TEST_F(ShapeDocumentImportTest, ImportAssemblyCallsRegistryWithCorrectShapeData){
-    bool importer = ShapeDocumentImport::importAssembly(
-        stubDoc.shapeTool, stubDoc.freeLabel, 
-        mockRegistry, mockRegistry->baseLabel()
-    );
+    importer->importDocument(stubDoc.document);
 
 }
 
-TEST_F(ShapeDocumentImportTest, ImportDocumentCallsRegistryForAllShapes){
-    bool importer = ShapeDocumentImport::importDocument(
-        mockRegistry, stubDoc.document
-    );
 
-}
+
+// TEST_F(ShapeDocumentImportTest, ImportPartCallsRegistryWithCorrectShapeData) {
+//     ShapeImportData expectedData = ShapeDocumentImport::extractShape(
+//         stubDoc.shapeTool, stubDoc.freeLabel
+//     );
+
+//     EXPECT_CALL(*mockRegistry, baseLabel())
+//         .WillOnce(testing::Return(TDF_Label{}));
+
+//     EXPECT_CALL(*mockRegistry, registerShape(
+//         ShapeImportDataEq(expectedData),
+//         TDF_Label{}
+//     )).Times(1);
+
+//     ShapeDocumentImport::importPart(
+//         stubDoc.shapeTool, stubDoc.freeLabel,
+//         mockRegistry, stubDoc.freeLabel
+//     );
+// }
+
+
+// TEST_F(ShapeDocumentImportTest, ImportAssemblyCallsRegistryWithCorrectShapeData){
+//     ShapeDocumentImport::importAssembly(
+//         stubDoc.shapeTool, stubDoc.freeLabel, 
+//         mockRegistry, mockRegistry->baseLabel()
+//     );
+
+// }
+
+// TEST_F(ShapeDocumentImportTest, ImportDocumentCallsRegistryForAllShapes){
+//     bool importer = ShapeDocumentImport::importDocument(
+//         mockRegistry, stubDoc.document
+//     );
+
+// }
