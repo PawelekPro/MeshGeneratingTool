@@ -58,7 +58,7 @@ TDF_Label OcafShapeDocumentImporter::importAssembly(
         aSourceLabel,
         aDestParentLabel
     );
-
+    auto isNull = assemblyLabel.IsNull();
     TDF_LabelSequence components;
     _sourceShapeTool->GetComponents(aSourceLabel, components);
     importLabelSequence(
@@ -77,6 +77,7 @@ TDF_Label OcafShapeDocumentImporter::importPart(
         partImportData,
         aDestParentLabel
     );
+    auto trsf = shape->location().Transformation();
     auto key = ShapeIdFactory::getKey(shape->id());
     auto partLabel = LabelKeyTool::labelFromKey(
         _destRegistry->baseLabel(), key

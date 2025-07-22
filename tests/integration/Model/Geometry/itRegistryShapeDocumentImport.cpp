@@ -34,14 +34,20 @@
 #include "StubShapeDocument.hpp"
 #include "OcafShapeDocumentImport.hpp"
 #include "ShapeIdFactory.hpp"
-#include "StubShapes.hpp"
+#include "OcafShapeRegistry.hpp"
+#include "AttributeFactory.hpp"
 
-class MockShapeRegistry : public ShapeRegistry {
+
+class SpyShapeRegistry : public OcafShapeRegistry {
 public:
+    using OcafShapeRegistry::OcafShapeRegistry;
+
     MOCK_METHOD(std::shared_ptr<Shape>, registerShape,
                 (const ShapeImportData& aShapeData, TDF_Label aLocalParent), (override));
 
-    MOCK_METHOD(TDF_Label, baseLabel, (), (override));
+    std::shared_ptr<Shape> realRegisterShape(const ShapeImportData& aShapeData, TDF_Label aLocalParent) {
+        return OcafShapeRegistry::registerShape(aShapeData, aLocalParent);
+    }
 };
 
 MATCHER_P(ShapeImportDataEq, expected, "Matches ShapeImportData fields") {
@@ -51,42 +57,41 @@ MATCHER_P(ShapeImportDataEq, expected, "Matches ShapeImportData fields") {
             arg.shape == expected.shape;
 };
 
-class ShapeDocumentImportTest : public ::testing::Test{
+
+class RegistryDocumentImporterIntegrationTest : public ::testing::Test{
     protected:
-    StubShapeDocument stubDoc;
-    std::shared_ptr<MockShapeRegistry> mockRegistry;
+    StubShapeDocument stubSourceDoc;
+    StubShapeDocument stubDestDoc;
+    ShapeSignalsPublisher publisher;
+    std::shared_ptr<AttributeFactory> attrFactory;
+    std::shared_ptr<ShapeRegistry> registry;
     std::shared_ptr<OcafShapeDocumentImporter> importer;
 
     void SetUp() override {
-        stubDoc = StubShapeDocument();
-        mockRegistry = std::make_shared<MockShapeRegistry>();
-        ON_CALL(*mockRegistry, registerShape)
-            .WillByDefault(testing::Return(std::make_shared<StubShape>()));
+        stubSourceDoc = StubShapeDocument();
+        stubDestDoc = StubShapeDocument();
 
-        ON_CALL(*mockRegistry, baseLabel)
-            .WillByDefault(testing::Return(TDF_Label{}));
-
+        attrFactory = std::make_shared<AttributeFactory>(publisher);
+        registry = std::make_shared<SpyShapeRegistry>(
+            stubDestDoc.document, attrFactory
+        );
         importer = std::make_shared<OcafShapeDocumentImporter>(
-            mockRegistry
+            registry
         );
     }
 };
 
-TEST_F(ShapeDocumentImportTest, ImportDocumentWithOneShapeCallsRegistryWithCorrectData) {
-    stubDoc.addFree();
-    ShapeImportData expectedData(
-        stubDoc.freeShape, 
-        stubDoc.freeLocation, 
-        stubDoc.freeName, 
-        stubDoc.freeColor
-    );
-    EXPECT_CALL(*mockRegistry, baseLabel())
-        .WillRepeatedly(testing::Return(TDF_Label{}));
+TEST_F(RegistryDocumentImporterIntegrationTest, TestTrue) {
+    stubSourceDoc.addFree();
+    stubSourceDoc.addAssembly();
+   
+    EXPECT_CALL(*std::static_pointer_cast<SpyShapeRegistry>(registry),
+            registerShape(::testing::_, ::testing::_))
+    .WillOnce([&](const ShapeImportData& data, TDF_Label label) {
+        return std::static_pointer_cast<SpyShapeRegistry>(registry)->realRegisterShape(
+            data, label
+        );
+    });
 
-    EXPECT_CALL(*mockRegistry, registerShape(
-        ShapeImportDataEq(expectedData),
-        TDF_Label{}
-    )).Times(1);
-
-    importer->importDocument(stubDoc.document);
+    importer->importDocument(stubSourceDoc.document);
 }

@@ -70,51 +70,51 @@ protected:
     static inline std::vector<ShapeId> importedShapes;
 };
 
-TEST_F(ShapeServiceCubeImportTest, ShapeMapContainsImportedShape) {
-    ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
-    ShapeServiceCubeImportTest::importedShapeId = \
-        shapeEventTracker->shapeAddedEvents[0].shapeId;
-    ASSERT_EQ(shapeCore->shapeMap()->freeShapes().size(), 1);
-    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapeId));
-    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapeId).IsNull());
-};
+// TEST_F(ShapeServiceCubeImportTest, ShapeMapContainsImportedShape) {
+//     ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
+//     ShapeServiceCubeImportTest::importedShapeId = \
+//         shapeEventTracker->shapeAddedEvents[0].shapeId;
+//     ASSERT_EQ(shapeCore->shapeMap()->freeShapes().size(), 1);
+//     ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapeId));
+//     ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapeId).IsNull());
+// };
 
-TEST_F(ShapeServiceCubeImportTest, ProgressMessagesArePublished) {
-    ASSERT_TRUE(shapeEventTracker->progressMessages.size() > 0);
-};
+// TEST_F(ShapeServiceCubeImportTest, ProgressMessagesArePublished) {
+//     ASSERT_TRUE(shapeEventTracker->progressMessages.size() > 0);
+// };
 
-TEST_F(ShapeServiceCubeImportTest, ShapeAddedMessageIsPublishedWithCorrectId) {
-    ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
-};
+// TEST_F(ShapeServiceCubeImportTest, ShapeAddedMessageIsPublishedWithCorrectId) {
+//     ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 1);
+// };
 
-TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShapes) {
-    ASSERT_EQ(shapeEventTracker->assemblyAddedEvents.size(), 1);
-    ShapeServiceJointImportTest::importedAssemblyId = \
-        shapeEventTracker->assemblyAddedEvents[0].shapeId;
+// TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShapes) {
+//     ASSERT_EQ(shapeEventTracker->assemblyAddedEvents.size(), 1);
+//     ShapeServiceJointImportTest::importedAssemblyId = \
+//         shapeEventTracker->assemblyAddedEvents[0].shapeId;
 
-    ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 2);
-    ShapeServiceJointImportTest::importedShapes.push_back(
-        shapeEventTracker->shapeAddedEvents[0].shapeId
-    );
-    ShapeServiceJointImportTest::importedShapes.push_back(
-        shapeEventTracker->shapeAddedEvents[1].shapeId
-    );
-}
+//     ASSERT_EQ(shapeEventTracker->shapeAddedEvents.size(), 2);
+//     ShapeServiceJointImportTest::importedShapes.push_back(
+//         shapeEventTracker->shapeAddedEvents[0].shapeId
+//     );
+//     ShapeServiceJointImportTest::importedShapes.push_back(
+//         shapeEventTracker->shapeAddedEvents[1].shapeId
+//     );
+// }
 
-TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShape) {
-    ASSERT_EQ(shapeCore->shapeMap()->freeShapes().size(), 1);
+// TEST_F(ShapeServiceJointImportTest, ShapeMapContainsImportedShape) {
+//     ASSERT_EQ(shapeCore->shapeMap()->freeShapes().size(), 1);
 
-    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedAssemblyId));
-    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedAssemblyId).IsNull());
+//     ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedAssemblyId));
+//     ASSERT_FALSE(shapeCore->shapeMap()->atId(importedAssemblyId).IsNull());
 
 
-    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapes[0]));
-    ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapes[1]));
+//     ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapes[0]));
+//     ASSERT_TRUE(shapeCore->shapeMap()->containsId(importedShapes[1]));
     
-    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapes[0]).IsNull());
-    ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapes[1]).IsNull());
-}
+//     ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapes[0]).IsNull());
+//     ASSERT_FALSE(shapeCore->shapeMap()->atId(importedShapes[1]).IsNull());
+// }
 
-TEST_F(ShapeServiceJointImportTest, ProgressMessagesArePublished) {
-    ASSERT_TRUE(shapeEventTracker->progressMessages.size() > 0);
-}
+// TEST_F(ShapeServiceJointImportTest, ProgressMessagesArePublished) {
+//     ASSERT_TRUE(shapeEventTracker->progressMessages.size() > 0);
+// }

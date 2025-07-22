@@ -78,14 +78,14 @@ TEST_F(GeometryCubeImporterTest, RedoImportCubeFile) {
 }
 
 
-TEST_F(GeometryCubeAssemblyImporterTest, ImportCubeFile) {
+TEST_F(GeometryCubeAssemblyImporterTest, ImportCubeAssemblyFile) {
     geometry->importSTEP("mockPath");
 
     auto shapeMap = geometry->shapeView()->shapeMap();
     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
 }
 
-TEST_F(GeometryCubeAssemblyImporterTest, UndoImportCubeFile) {
+TEST_F(GeometryCubeAssemblyImporterTest, UndoImportCubeAssemblyFile) {
     geometry->importSTEP("mockPath");
     commandStack.undo();
     
@@ -94,7 +94,7 @@ TEST_F(GeometryCubeAssemblyImporterTest, UndoImportCubeFile) {
     ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
 }
 
-TEST_F(GeometryCubeAssemblyImporterTest, RedoImportCubeFile) {
+TEST_F(GeometryCubeAssemblyImporterTest, RedoImportCubeAssemblyFile) {
     geometry->importSTEP("mockPath");
     commandStack.undo();
     commandStack.redo();

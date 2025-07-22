@@ -31,6 +31,23 @@
 
 #include "ShapeKey.hpp"
 #include "ShapeCoreObserver.hpp"
+#include "Shape.hpp"
+#include "ShapeIdFactory.hpp"
+class StubShape : public Shape {
+    virtual ShapeId id() const override {
+        return ShapeIdFactory::create(
+            std::make_shared<ShapeKey>(std::vector<int>{1,2,3})
+        );
+    };
+
+    virtual bool isAssembly() const override {return true;}
+    virtual TopoDS_Shape shape() const override {return TopoDS_Shape();}
+    virtual TopLoc_Location location() const override {return TopLoc_Location();}
+    
+    virtual std::string name() const override {return "name";}
+    virtual ColorRGBA color() const override {return ColorRGBA();}
+};
+
 
 namespace StubShapes{
     inline TopTools_IndexedMapOfShape subShapes(const TopoDS_Shape& aShape){

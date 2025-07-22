@@ -39,6 +39,7 @@
 #include "AttributeFactory.hpp"
 #include "LabelKeyTool.hpp"
 #include "OcafShapeRegistry.hpp"
+#include "OcafShapeDocumentImport.hpp"
 
 OcafShapeCore::OcafShapeCore()
 {
@@ -79,7 +80,8 @@ bool OcafShapeCore::write(const std::string& aSavePath) const {
 }
 
 bool OcafShapeCore::importDocument(Handle(TDocStd_Document) aDoc) {
-    return true;
+    OcafShapeDocumentImporter importer(_shapeRegistry);
+    return importer.importDocument(aDoc);
 }
 
 bool OcafShapeCore::removeShape(const ShapeId& aShapeId) {

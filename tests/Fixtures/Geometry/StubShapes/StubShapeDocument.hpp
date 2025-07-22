@@ -52,19 +52,24 @@ class StubShapeDocument {
         trsf.SetTranslation(gp_Vec(1.0, 2.0, 3.0));
         childSphereLocation = TopLoc_Location(trsf);
         childSphereShape = StubShapes::cube();
+        
+        childSphereLabel = shapeTool->AddShape(childSphereShape);
         childSphereLabel = shapeTool->AddComponent(
             assemblyLabel,
-            childSphereShape.Located(childSphereLocation)
+            childSphereLabel,
+            childSphereLocation
         );
-
         setName(childSphereLabel, childSphereName);
         colorTool->SetColor(childSphereLabel, childSphereColor, XCAFDoc_ColorType::XCAFDoc_ColorGen);
 
         trsf.SetTranslation(gp_Vec(4.0, 5.0, 6.0));
         childCubeLocation = TopLoc_Location(trsf);
         childCubeShape = StubShapes::cube();
+        childCubeLabel = shapeTool->AddShape(childCubeShape);
         childCubeLabel = shapeTool->AddComponent(
-            assemblyLabel, childCubeShape.Located(childCubeLocation)
+            assemblyLabel,
+            childCubeLabel,
+            childCubeLocation
         );
         setName(childCubeLabel, childCubeName);
         colorTool->SetColor(childCubeLabel, childCubeColor, XCAFDoc_ColorType::XCAFDoc_ColorGen);       

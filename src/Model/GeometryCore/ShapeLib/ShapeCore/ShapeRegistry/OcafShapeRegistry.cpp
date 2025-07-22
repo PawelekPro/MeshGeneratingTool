@@ -34,22 +34,26 @@ std::shared_ptr<Shape> OcafShapeRegistry::registerShape(
     const ShapeImportData& aShapeData,
     TDF_Label aLocalParent
 ) {
-    TopoDS_Shape locatedShape = aShapeData.shape.Located(aShapeData.location);
     TDF_Label label;
     if (aLocalParent.IsNull()){
         TDF_Label foundLabel;
-        if (_shapeTool->FindShape(locatedShape, foundLabel, false)){
+        if (_shapeTool->FindShape(aShapeData.shape, foundLabel, false)){
             throw Exceptions::ShapeRegistry::ShapeAlreadyRegistered(
                 "Trying to register the same shape twice in identical location."
             );
         }
         label = _shapeTool->AddShape(
-            locatedShape
+            aShapeData.shape.Located(aShapeData.location)
         );
     } else {
+        auto prototypeLabel = _shapeTool->AddShape(
+            aShapeData.shape
+        );
+
         label = _shapeTool->AddComponent(
             aLocalParent,
-            locatedShape
+            prototypeLabel,
+            aShapeData.location 
         );
     }
 

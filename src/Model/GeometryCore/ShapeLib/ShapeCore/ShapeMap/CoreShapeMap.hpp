@@ -40,14 +40,20 @@ class CoreShapeMap : public ShapeMap {
     std::shared_ptr<Shape> atId(const ShapeId& id) const override;
     std::shared_ptr<Shape> shapeFromTopo(
         TopoDS_Shape shape
-    ) const override;
+    ) const override {
+        std::shared_ptr<Shape> ptr;
+        return ptr;
+    }
 
     std::vector<std::shared_ptr<Shape>> freeShapes() const override;
     std::vector<std::shared_ptr<Shape>> assemblyShapes(
         ShapeId&
-    ) const override;
+    ) const override {return std::vector<std::shared_ptr<Shape>>();};
 
-    std::shared_ptr<Shape> parentAssembly(ShapeId&) const override;
+    std::shared_ptr<Shape> parentAssembly(ShapeId&) const override{
+        std::shared_ptr<Shape> ptr;
+        return ptr;
+    }
 
     private:
     Handle(XCAFDoc_ShapeTool) _shapeTool;

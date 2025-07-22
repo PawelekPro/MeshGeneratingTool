@@ -2,6 +2,7 @@ add_library(itGeometry
     itSTEPImporter.cpp
     itShapeService.cpp
     itGeometry.cpp
+    itRegistryShapeDocumentImport.cpp
 )
 
 find_package(GTest REQUIRED)
