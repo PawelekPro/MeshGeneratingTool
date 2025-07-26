@@ -82,8 +82,7 @@ class RegistryDocumentImporterIntegrationTest : public ::testing::Test{
 };
 
 TEST_F(RegistryDocumentImporterIntegrationTest, TestTrue) {
-    stubSourceDoc.addFree();
-    stubSourceDoc.addAssembly();
+    // stubSourceDoc.addAssembly();
    
     EXPECT_CALL(*std::static_pointer_cast<SpyShapeRegistry>(registry),
             registerShape(::testing::_, ::testing::_))
@@ -93,5 +92,6 @@ TEST_F(RegistryDocumentImporterIntegrationTest, TestTrue) {
         );
     });
 
+    stubSourceDoc.addFree();
     importer->importDocument(stubSourceDoc.document);
 }

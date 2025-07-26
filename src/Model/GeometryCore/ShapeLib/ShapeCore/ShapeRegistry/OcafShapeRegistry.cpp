@@ -49,12 +49,15 @@ std::shared_ptr<Shape> OcafShapeRegistry::registerShape(
         auto prototypeLabel = _shapeTool->AddShape(
             aShapeData.shape
         );
-
-        label = _shapeTool->AddComponent(
-            aLocalParent,
-            prototypeLabel,
-            aShapeData.location 
-        );
+        if (_shapeTool->IsAssembly(aLocalParent)){
+            label = _shapeTool->AddComponent(
+                aLocalParent,
+                prototypeLabel,
+                aShapeData.location 
+            );
+        } else {
+            label = prototypeLabel;
+        }
     }
 
     addPathAttribute(label);

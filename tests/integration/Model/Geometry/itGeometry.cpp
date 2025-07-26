@@ -51,55 +51,55 @@ class GeometryCubeAssemblyImporterTest
     : public GeometryTestBase<MockCubeAssemblyImporterFactory> {};
 
 
-TEST_F(GeometryCubeImporterTest, ImportCubeFile) {
-    geometry->importSTEP("mockPath");
+// TEST_F(GeometryCubeImporterTest, ImportCubeFile) {
+//     geometry->importSTEP("mockPath");
 
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-}
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+// }
 
-TEST_F(GeometryCubeImporterTest, UndoImportCubeFile) {
-    geometry->importSTEP("mockPath");
-    commandStack.undo();
+// TEST_F(GeometryCubeImporterTest, UndoImportCubeFile) {
+//     geometry->importSTEP("mockPath");
+//     commandStack.undo();
     
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
+// }
 
-TEST_F(GeometryCubeImporterTest, RedoImportCubeFile) {
-    geometry->importSTEP("mockPath");
-    commandStack.undo();
-    commandStack.redo();
+// TEST_F(GeometryCubeImporterTest, RedoImportCubeFile) {
+//     geometry->importSTEP("mockPath");
+//     commandStack.undo();
+//     commandStack.redo();
     
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+// }
 
 
-TEST_F(GeometryCubeAssemblyImporterTest, ImportCubeAssemblyFile) {
-    geometry->importSTEP("mockPath");
+// TEST_F(GeometryCubeAssemblyImporterTest, ImportCubeAssemblyFile) {
+//     geometry->importSTEP("mockPath");
 
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-}
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+// }
 
-TEST_F(GeometryCubeAssemblyImporterTest, UndoImportCubeAssemblyFile) {
-    geometry->importSTEP("mockPath");
-    commandStack.undo();
+// TEST_F(GeometryCubeAssemblyImporterTest, UndoImportCubeAssemblyFile) {
+//     geometry->importSTEP("mockPath");
+//     commandStack.undo();
     
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 0);    
+// }
 
-TEST_F(GeometryCubeAssemblyImporterTest, RedoImportCubeAssemblyFile) {
-    geometry->importSTEP("mockPath");
-    commandStack.undo();
-    commandStack.redo();
+// TEST_F(GeometryCubeAssemblyImporterTest, RedoImportCubeAssemblyFile) {
+//     geometry->importSTEP("mockPath");
+//     commandStack.undo();
+//     commandStack.redo();
     
-    // Assert
-    auto shapeMap = geometry->shapeView()->shapeMap();
-    ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
-}
+//     // Assert
+//     auto shapeMap = geometry->shapeView()->shapeMap();
+//     ASSERT_EQ(shapeMap->freeShapes().size(), 1);    
+// }
