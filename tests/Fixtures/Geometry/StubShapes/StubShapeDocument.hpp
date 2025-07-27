@@ -46,6 +46,9 @@ class StubShapeDocument {
 
     void addAssembly(){
         assemblyLabel = shapeTool->NewShape();
+        assemblyShape = shapeTool->GetShape(assemblyLabel);
+        assemblyLocation = shapeTool->GetLocation(assemblyLabel);
+        colorTool->SetColor(assemblyLabel, assemblyColor, XCAFDoc_ColorType::XCAFDoc_ColorGen);
         setName(assemblyLabel, assemblyName);
         gp_Trsf trsf;
 
@@ -90,8 +93,11 @@ class StubShapeDocument {
     Handle(XCAFDoc_ShapeTool) shapeTool;
     Handle(XCAFDoc_ColorTool) colorTool;
     
-    TDF_Label assemblyLabel;
+    TopoDS_Shape assemblyShape;
     std::string assemblyName = "assemblyName";
+    ColorRGBA assemblyColor = ColorRGBA{0.4, 0.4, 0.4, 0.4};
+    TDF_Label assemblyLabel;
+    TopLoc_Location assemblyLocation;
 
     TopoDS_Shape childSphereShape;
     std::string childSphereName = "childSphereName";

@@ -51,12 +51,12 @@ public:
 };
 
 MATCHER_P(ShapeImportDataEq, expected, "Matches ShapeImportData fields") {
-    return  arg.name == expected.name &&
-            arg.color == expected.color &&
-            arg.location == expected.location &&
-            arg.shape == expected.shape;
+    bool nameEqual = arg.name == expected.name;
+    bool colorEqual = arg.color == expected.color;
+    bool locationEqual = arg.location == expected.location;
+    bool shapeEqual = arg.shape.TShape() == expected.shape.TShape();
+    return nameEqual && colorEqual && locationEqual && shapeEqual;
 };
-
 
 class RegistryDocumentImporterIntegrationTest : public ::testing::Test{
     protected:
@@ -81,9 +81,7 @@ class RegistryDocumentImporterIntegrationTest : public ::testing::Test{
     }
 };
 
-TEST_F(RegistryDocumentImporterIntegrationTest, TestTrue) {
-    // stubSourceDoc.addAssembly();
-   
+TEST_F(RegistryDocumentImporterIntegrationTest, RegistryGetsCalledOnceOnDocumentWithSingleFileImport) {
     EXPECT_CALL(*std::static_pointer_cast<SpyShapeRegistry>(registry),
             registerShape(::testing::_, ::testing::_))
     .WillOnce([&](const ShapeImportData& data, TDF_Label label) {
@@ -94,4 +92,91 @@ TEST_F(RegistryDocumentImporterIntegrationTest, TestTrue) {
 
     stubSourceDoc.addFree();
     importer->importDocument(stubSourceDoc.document);
+}
+
+TEST_F(RegistryDocumentImporterIntegrationTest, RegistryGetsCalledForAssemblyAndAllPartsInside) {
+    stubSourceDoc.addAssembly();
+
+    ShapeImportData expectedAssembly(
+        stubSourceDoc.assemblyShape,
+        stubSourceDoc.assemblyLocation,
+        stubSourceDoc.assemblyName,
+        stubSourceDoc.assemblyColor
+    );
+    ShapeImportData expectedCube(
+        stubSourceDoc.childCubeShape,
+        stubSourceDoc.childCubeLocation,
+        stubSourceDoc.childCubeName,
+        stubSourceDoc.childCubeColor
+    );
+    ShapeImportData expectedSphere(
+        stubSourceDoc.childSphereShape,
+        stubSourceDoc.childSphereLocation,
+        stubSourceDoc.childSphereName,
+        stubSourceDoc.childSphereColor
+    );
+
+    std::vector<ShapeImportData> actualCalls;
+
+    EXPECT_CALL(*std::static_pointer_cast<SpyShapeRegistry>(registry),
+                registerShape(::testing::_, ::testing::_))
+        .Times(3)
+        .WillRepeatedly([&](const ShapeImportData& data, TDF_Label label) {
+            actualCalls.push_back(data);
+            return std::static_pointer_cast<SpyShapeRegistry>(
+                registry
+            )->realRegisterShape(data, label);
+        });
+
+
+    importer->importDocument(stubSourceDoc.document);
+    EXPECT_THAT(actualCalls, ::testing::UnorderedElementsAre(
+        ShapeImportDataEq(expectedAssembly),
+        ShapeImportDataEq(expectedCube),
+        ShapeImportDataEq(expectedSphere)
+    ));
+}
+
+TEST_F(RegistryDocumentImporterIntegrationTest, DestDocAfterImportHasCorrectPartCount) {
+    stubSourceDoc.addAssembly();
+    stubSourceDoc.addFree();
+
+    EXPECT_CALL(*std::static_pointer_cast<SpyShapeRegistry>(registry),
+                registerShape(::testing::_, ::testing::_))
+        .Times(4)
+        .WillRepeatedly([&](const ShapeImportData& data, TDF_Label label) {
+            return std::static_pointer_cast<SpyShapeRegistry>(
+                registry
+            )->realRegisterShape(data, label);
+        });
+    importer->importDocument(stubSourceDoc.document);
+
+    TDF_LabelSequence freeShapes;
+    stubDestDoc.shapeTool->GetFreeShapes(freeShapes);
+    ASSERT_EQ(freeShapes.Length(), 2);
+}
+
+TEST_F(RegistryDocumentImporterIntegrationTest, AssemblyInDestDocHasCorrectPartsAfterImport) {
+    stubSourceDoc.addAssembly();
+    EXPECT_CALL(*std::static_pointer_cast<SpyShapeRegistry>(registry),
+                registerShape(::testing::_, ::testing::_))
+        .Times(3)
+        .WillRepeatedly([&](const ShapeImportData& data, TDF_Label label) {
+            return std::static_pointer_cast<SpyShapeRegistry>(
+                registry
+            )->realRegisterShape(data, label);
+        });
+    importer->importDocument(stubSourceDoc.document);
+
+    TDF_LabelSequence freeShapes;
+    stubDestDoc.shapeTool->GetFreeShapes(freeShapes);
+    ASSERT_EQ(freeShapes.Length(), 1);
+    auto assemblyLabel = freeShapes.Value(1);
+    ASSERT_TRUE(stubDestDoc.shapeTool->IsAssembly(assemblyLabel));
+    TDF_LabelSequence components;
+    stubDestDoc.shapeTool->GetComponents(assemblyLabel, components);
+    ASSERT_EQ(components.Length(), 2);
+    for (Standard_Integer i = 1; i <= components.Length(); ++i) {
+        EXPECT_FALSE(components.Value(i).IsNull());
+    }
 }
